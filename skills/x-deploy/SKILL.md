@@ -26,9 +26,6 @@ Deployment workflows with environment management and rollback support.
 | status | Check deployment status |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "rollback", "revert", "previous version" | rollback |
@@ -36,12 +33,8 @@ Scan user input for keywords:
 | (default) | deploy |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (deploy)
-3. **If no arguments provided**, ask for target environment
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: deploy
+- **No-args behavior**: Ask for target environment
 
 ## Behavioral Skills
 

@@ -27,9 +27,6 @@ Scale-adaptive implementation planning with automatic complexity detection and a
 | analyze | Code analysis |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "brainstorm", "ideas", "requirements", "discover" | brainstorm |
@@ -38,12 +35,8 @@ Scan user input for keywords:
 | (default) | plan |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (plan)
-3. **If no arguments provided**, ask for planning scope
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: plan
+- **No-args behavior**: Ask for planning scope
 
 ## Behavioral Skills
 
@@ -52,9 +45,9 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- An exploration agent for codebase discovery
-- A thinking agent for complex planning decisions
+Consider delegating to specialized agents:
+- **Exploration**: Codebase discovery, pattern identification
+- **Thinking**: Complex planning, multi-factor analysis
 
 ## Complexity Tracks
 

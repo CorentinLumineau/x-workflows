@@ -25,21 +25,14 @@ Safe git operations including conventional commits, feature branches, and releas
 | release | Release workflow with versioning |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "release", "tag", "version", "publish" | release |
 | (default) | commit |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (commit)
-3. **If no arguments provided**, analyze staged changes
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: commit
+- **No-args behavior**: Analyze staged changes
 
 ## Behavioral Skills
 

@@ -24,11 +24,8 @@ Holistic code health analyzer that scores coverage, best-practices, and refactor
 | improve (default) | Holistic analysis |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (improve)
-3. **Load mode instructions** from `references/`
-4. **Follow instructions** completely
+- **Default mode**: improve (single-mode skill)
+- **No-args behavior**: Run full code health analysis
 
 ## Behavioral Skills
 
@@ -39,10 +36,10 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- A testing agent for coverage analysis
-- A review agent for best practices audit
-- An exploration agent for refactoring opportunities
+Consider delegating to specialized agents:
+- **Testing**: Coverage analysis, test gap identification
+- **Review**: Best practices audit, SOLID validation
+- **Exploration**: Refactoring opportunities discovery
 
 ## Analysis Workflow
 

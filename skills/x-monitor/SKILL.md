@@ -26,9 +26,6 @@ Monitoring setup and alerting configuration for observability.
 | dashboard | Create monitoring dashboards |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "alert", "alerting", "notify", "pagerduty" | alert |
@@ -36,12 +33,8 @@ Scan user input for keywords:
 | (default) | setup |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (setup)
-3. **If no arguments provided**, analyze current monitoring state
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: setup
+- **No-args behavior**: Analyze current monitoring state
 
 ## Behavioral Skills
 

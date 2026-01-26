@@ -25,27 +25,20 @@ Intelligent Q&A and comprehensive research with evidence-based methodology.
 | deep | Comprehensive research |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "deep research", "comprehensive", "thorough", "prd", "competitive analysis" | deep |
 | (default) | ask |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (ask)
-3. **If no arguments provided**, ask for question
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: ask
+- **No-args behavior**: Ask for question
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- An exploration agent for codebase investigation
-- A web search tool for external research
+Consider delegating to specialized agents:
+- **Exploration**: Codebase investigation, file discovery
+- **Web Search**: External research, documentation lookup
 
 ## Research Approaches
 

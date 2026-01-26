@@ -25,21 +25,14 @@ Quick reference for all x/ commands and behavioral rules management.
 | rules | Rules directory management |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "rules", "create rule", "list rules", "behavioral" | rules |
 | (default) | help |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (help)
-3. **If no arguments provided**, show command overview
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: help
+- **No-args behavior**: Show command overview
 
 ## Command Categories
 

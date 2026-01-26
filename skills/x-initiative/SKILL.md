@@ -27,9 +27,6 @@ Multi-phase project tracking across sessions using file-based persistence.
 | status | Display progress status |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "continue", "resume", "pick up", "where was I" | continue |
@@ -38,12 +35,8 @@ Scan user input for keywords:
 | (default) | create |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (create)
-3. **If no arguments provided**, check for active initiatives
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: create
+- **No-args behavior**: Check for active initiatives
 
 ## Behavioral Skills
 

@@ -24,11 +24,8 @@ Project documentation setup with intelligent stack detection and complete docume
 | setup (default) | Project documentation setup |
 
 ## Execution
-
-1. **Detect mode** from user input (always setup for this skill)
-2. **If no arguments provided**, detect project stack automatically
-3. **Load mode instructions** from `references/`
-4. **Follow instructions** completely
+- **Default mode**: setup (single-mode skill)
+- **No-args behavior**: Detect project stack automatically
 
 ## Documentation Structure
 

@@ -26,9 +26,6 @@ Guided workflow execution with human-first checkpoints and background task manag
 | agent | Subagent information |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "background", "async", "running tasks", "check tasks" | background |
@@ -36,12 +33,8 @@ Scan user input for keywords:
 | (default) | orchestrate |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (orchestrate)
-3. **If no arguments provided**, list available workflows
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: orchestrate
+- **No-args behavior**: List available workflows
 
 ## Available Workflows
 

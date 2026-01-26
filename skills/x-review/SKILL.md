@@ -26,9 +26,6 @@ Pre-merge validation with auto-detected target branch, conflict detection, and q
 | improve | Pareto-focused improvements |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "audit", "best practices", "solid", "quality check" | audit |
@@ -36,12 +33,8 @@ Scan user input for keywords:
 | (default) | review |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (review)
-3. **If no arguments provided**, review staged changes
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: review
+- **No-args behavior**: Review staged changes
 
 ## Behavioral Skills
 
@@ -59,9 +52,9 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- A review agent for systematic code analysis
-- An exploration agent for pattern analysis
+Consider delegating to specialized agents:
+- **Review**: Systematic code analysis, SOLID checks
+- **Exploration**: Pattern analysis, architecture review
 
 ## Review Checklist
 

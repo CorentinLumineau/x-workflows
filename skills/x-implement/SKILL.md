@@ -28,9 +28,6 @@ Context-aware implementation with automatic pattern discovery and smart workflow
 | cleanup | Dead code removal, tech debt |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "fix", "bug", "error", "broken", "failing" | fix |
@@ -40,12 +37,8 @@ Scan user input for keywords:
 | (default) | implement |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (implement)
-3. **If no arguments provided**, ask for task description
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: implement
+- **No-args behavior**: Ask for task description
 
 ## Behavioral Skills
 
@@ -65,10 +58,10 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- An exploration agent for pattern discovery
-- A testing agent for test execution
-- A review agent for SOLID validation
+Consider delegating to specialized agents:
+- **Exploration**: Pattern discovery, codebase analysis
+- **Testing**: Test execution, coverage analysis
+- **Review**: SOLID validation, quality checks
 
 ## TDD Workflow
 
@@ -80,15 +73,7 @@ If your agent supports subagents, consider using:
 ```
 
 ## Quality Gates
-
-All modes enforce these gates:
-
-| Gate | Must Pass |
-|------|-----------|
-| Lint | ✓ |
-| Types | ✓ |
-| Tests | ✓ |
-| Build | ✓ |
+All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 
 ## Checklist
 

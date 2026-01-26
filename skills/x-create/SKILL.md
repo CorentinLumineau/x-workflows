@@ -26,9 +26,6 @@ Generate best-practice-compliant plugin components through interactive wizards.
 | agent | Create subagent |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "command", "slash command" | command |
@@ -36,12 +33,8 @@ Scan user input for keywords:
 | (default) | skill |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (skill)
-3. **If no arguments provided**, ask what to create
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: skill
+- **No-args behavior**: Ask what to create
 
 ## Component Types
 

@@ -27,9 +27,6 @@ Documentation management with intelligent sync detection, generation, and cleanu
 | cleanup | Remove stale documentation |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "generate", "create docs", "add documentation" | generate |
@@ -38,12 +35,8 @@ Scan user input for keywords:
 | (default) | docs |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (docs)
-3. **If no arguments provided**, analyze documentation state
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: docs
+- **No-args behavior**: Analyze documentation state
 
 ## Behavioral Skills
 
@@ -52,9 +45,9 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- A documentation agent for generation
-- An exploration agent for code analysis
+Consider delegating to specialized agents:
+- **Documentation**: Generation, formatting, structure
+- **Exploration**: Code analysis, API extraction
 
 ## Documentation Principles
 

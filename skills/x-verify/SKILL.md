@@ -26,9 +26,6 @@ Context-aware quality verification with auto-fix enforcement. Zero-tolerance qua
 | coverage | Test coverage improvement |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "build", "compile", "bundle", "artifact" | build |
@@ -36,12 +33,8 @@ Scan user input for keywords:
 | (default) | verify |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (verify)
-3. **If no arguments provided**, run full verification
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: verify
+- **No-args behavior**: Run full verification
 
 ## Behavioral Skills
 
@@ -51,20 +44,12 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- A testing agent for test execution and coverage analysis
-- A review agent for quality assessment
+Consider delegating to specialized agents:
+- **Testing**: Test execution, coverage analysis
+- **Review**: Quality assessment, gate validation
 
 ## Quality Gates
-
-All modes enforce these quality gates:
-
-| Gate | Command Example | Must Pass |
-|------|-----------------|-----------|
-| Lint | `npm run lint` | ✓ |
-| Types | `npm run type-check` | ✓ |
-| Tests | `npm test` | ✓ |
-| Build | `npm run build` | ✓ |
+All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 
 ## Verification Workflow
 

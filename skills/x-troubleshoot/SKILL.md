@@ -27,9 +27,6 @@ Deep diagnostic analysis with systematic root cause investigation using hypothes
 | feedback | Post-implementation feedback intake |
 
 ## Mode Detection
-
-Scan user input for keywords:
-
 | Keywords | Mode |
 |----------|------|
 | "feedback", "report", "found bug", "discovered", "adjustment" | feedback |
@@ -38,12 +35,8 @@ Scan user input for keywords:
 | (default) | troubleshoot |
 
 ## Execution
-
-1. **Detect mode** from user input
-2. **If no valid mode detected**, use default (troubleshoot)
-3. **If no arguments provided**, ask for problem description
-4. **Load mode instructions** from `references/`
-5. **Follow instructions** completely
+- **Default mode**: troubleshoot
+- **No-args behavior**: Ask for problem description
 
 ## Behavioral Skills
 
@@ -52,9 +45,9 @@ This workflow activates these knowledge skills:
 
 ## Agent Suggestions
 
-If your agent supports subagents, consider using:
-- A debugging agent for complex multi-layer issues
-- An exploration agent for codebase investigation
+Consider delegating to specialized agents:
+- **Debugging**: Complex multi-layer issue investigation
+- **Exploration**: Codebase search, dependency tracing
 
 ## Debugging Methodology
 
