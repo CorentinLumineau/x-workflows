@@ -23,7 +23,7 @@ Pre-merge validation with auto-detected target branch, conflict detection, and q
 |------|-------------|
 | review (default) | Pre-merge PR review |
 | audit | SOLID audit, best practices check |
-| improve | Pareto-focused improvements |
+| improve | **Delegates to x-improve skill** for holistic analysis |
 
 ## Mode Detection
 | Keywords | Mode |

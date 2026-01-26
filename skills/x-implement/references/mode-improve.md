@@ -29,6 +29,9 @@ This mode activates:
 | `sequential-thinking` | Prioritization decisions |
 
 <instructions>
+
+> **Tip**: For comprehensive holistic analysis with health scores, consider using `/x-improve` instead. This mode focuses on targeted improvements to specific code.
+
 ### Phase 1: Quality Assessment
 
 Analyze current code quality:
