@@ -1,0 +1,130 @@
+# Mode: fix
+
+> **Invocation**: `/x-implement fix` or `/x-implement fix "description"`
+> **Legacy Command**: `/x:fix`
+
+<purpose>
+Rapid bug fixing for clear errors with obvious solutions. Parse error, identify cause, apply minimal fix, verify immediately. Escalate unclear issues to debug or troubleshoot modes.
+</purpose>
+
+## Behavioral Skills
+
+This mode activates:
+- `debugging` - Debug methodology
+- `context-awareness` - Project context
+
+## Agents
+
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-refactorer` | Error spans 3+ components | sonnet |
+| `ccsetup:x-tester` | Post-fix verification | haiku |
+
+## MCP Servers
+
+| Server | When |
+|--------|------|
+| `context7` | Library API lookup |
+
+<instructions>
+### Phase 1: Error Analysis
+
+Parse the error:
+1. **Identify error type** - Compile, runtime, test failure
+2. **Locate source** - File, line, stack trace
+3. **Classify complexity**:
+   - **Clear**: Obvious cause → Fix immediately
+   - **Ambiguous**: 2-3 possible causes → Quick hypotheses
+   - **Complex**: Multi-layer → Escalate
+
+### Phase 2: Quick Fix
+
+**For clear errors**:
+
+| Error Type | Action |
+|------------|--------|
+| Type error | Add type guard/fix type |
+| Import error | Add missing import |
+| Test failure | Fix logic OR update expectation |
+| Runtime error | Check null/undefined, add validation |
+
+**For ambiguous errors** (2-3 possible causes):
+1. Form quick hypotheses (max 3)
+2. Test most likely first
+3. Apply first working fix
+
+### Phase 3: Verification
+
+Run affected tests immediately:
+```bash
+pnpm test -- --testPathPattern="{affected_file}"
+```
+
+Requirements:
+- All affected tests pass
+- No regressions introduced
+
+### Phase 4: Workflow Transition
+
+Present next step:
+```json
+{
+  "questions": [{
+    "question": "Fix applied and verified. Continue?",
+    "header": "Next",
+    "options": [
+      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-git commit", "description": "Commit the fix"},
+      {"label": "Stop", "description": "Manual review first"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+</instructions>
+
+## Escalation Rules
+
+| Situation | Escalate To |
+|-----------|-------------|
+| Root cause unclear | `/x-troubleshoot debug` |
+| Intermittent failure | `/x-troubleshoot` |
+| Multi-layer issue | `/x-troubleshoot` |
+| Need flow understanding | `/x-troubleshoot debug` |
+
+<critical_rules>
+1. **Speed First** - Minimal overhead, just fix
+2. **Clear Errors Only** - Obvious cause, obvious solution
+3. **Verify Immediately** - Run affected tests
+4. **Escalate Complexity** - Don't struggle, route appropriately
+</critical_rules>
+
+<decision_making>
+**Execute immediately when**:
+- Error message is clear
+- Root cause is obvious
+- Fix is straightforward
+
+**Use lightweight hypotheses when**:
+- 2-3 potential root causes
+- Generic error message
+- Can test in <30 seconds each
+
+**Escalate when**:
+- Intermittent failure
+- Unclear root cause after 2-3 attempts
+- Multi-layer issue
+</decision_making>
+
+## References
+
+- @core-docs/error-handling/debugging-strategies.md - Debugging strategies
+- @skills/debugging/SKILL.md - Debug methodology
+
+<success_criteria>
+- [ ] Error cause identified
+- [ ] Minimal fix applied
+- [ ] Affected tests pass
+- [ ] No regressions
+- [ ] Workflow transition presented
+</success_criteria>

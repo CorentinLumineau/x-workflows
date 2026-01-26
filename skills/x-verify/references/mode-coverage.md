@@ -1,0 +1,195 @@
+# Mode: coverage
+
+> **Invocation**: `/x-verify coverage` or `/x-verify coverage "description"`
+> **Legacy Command**: `/x:improve-coverage`
+
+## Purpose
+
+<purpose>
+Test coverage improvement using Pareto prioritization. Analyze coverage gaps, identify high-impact areas, and write tests to improve coverage systematically.
+</purpose>
+
+## Behavioral Skills
+
+This mode activates:
+- `testing` - Testing pyramid enforcement
+- `analysis` - Pareto prioritization
+- `code-quality` - Quality targets
+
+## Agents
+
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-tester` | Test writing, coverage analysis | haiku |
+| `ccsetup:x-explorer` | Pattern discovery | haiku |
+
+## MCP Servers
+
+| Server | When |
+|--------|------|
+| `sequential-thinking` | Prioritization decisions |
+
+## Instructions
+
+<instructions>
+
+### Phase 1: Coverage Analysis
+
+Generate current coverage report:
+```bash
+pnpm test -- --coverage
+```
+
+Analyze:
+- Overall coverage percentage
+- Per-file coverage
+- Uncovered lines/branches
+
+### Phase 2: Gap Identification
+
+Identify coverage gaps with Pareto focus:
+
+| Priority | Criteria |
+|----------|----------|
+| **P1** | Critical paths (auth, payments, data) with <80% coverage |
+| **P2** | Public APIs with <90% coverage |
+| **P3** | Utility functions with <95% coverage |
+| **P4** | Edge cases, error paths |
+
+### Phase 3: Test Planning
+
+For each gap, plan tests following pyramid:
+
+| Test Type | Distribution | When |
+|-----------|-------------|------|
+| Unit | 70% | Pure functions, isolated logic |
+| Integration | 20% | API endpoints, service interactions |
+| E2E | 10% | Critical user flows |
+
+### Phase 4: Test Implementation
+
+Use x-tester agent for test writing:
+
+```
+Task(
+  subagent_type: "ccsetup:x-tester",
+  model: "haiku",
+  prompt: "Write tests to cover {gap} following testing pyramid"
+)
+```
+
+For each test:
+1. Write test (following TDD)
+2. Verify it fails initially (red)
+3. Ensure implementation passes (green)
+4. Check coverage increased
+
+### Phase 5: Coverage Verification
+
+Re-run coverage:
+```bash
+pnpm test -- --coverage
+```
+
+Verify:
+- [ ] Target coverage met (95%+)
+- [ ] All new tests passing
+- [ ] No regression in existing tests
+
+### Phase 6: Workflow Transition
+
+Present next step:
+```json
+{
+  "questions": [{
+    "question": "Coverage improved to {new_coverage}% (from {old_coverage}%). Continue?",
+    "header": "Next",
+    "options": [
+      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-git commit", "description": "Commit tests"},
+      {"label": "Continue improving", "description": "Add more tests"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+
+## Coverage Targets
+
+| Category | Target |
+|----------|--------|
+| Overall | 95%+ |
+| Critical paths | 100% |
+| Public APIs | 95%+ |
+| Utilities | 90%+ |
+
+## Test Patterns
+
+### Unit Test Pattern
+```typescript
+describe('functionName', () => {
+  it('should handle normal case', () => {
+    expect(fn(input)).toBe(expected);
+  });
+
+  it('should handle edge case', () => {
+    expect(fn(edgeInput)).toBe(edgeExpected);
+  });
+
+  it('should throw on invalid input', () => {
+    expect(() => fn(invalid)).toThrow();
+  });
+});
+```
+
+### Integration Test Pattern
+```typescript
+describe('API endpoint', () => {
+  it('should return expected response', async () => {
+    const response = await request(app).get('/endpoint');
+    expect(response.status).toBe(200);
+  });
+});
+```
+
+
+</instructions>
+
+## Critical Rules
+
+<critical_rules>
+1. **Pareto Focus** - High-impact gaps first
+2. **Pyramid Distribution** - 70/20/10 ratio
+3. **TDD Approach** - Red → green → refactor
+4. **Use Test Utils** - Shared utilities from tests/utils/
+</critical_rules>
+
+## Decision Making
+
+<decision_making>
+**Write tests autonomously when**:
+- Clear gap identified
+- Pattern exists to follow
+- Pure function testing
+
+**Use AskUserQuestion when**:
+- Multiple test approaches
+- Mock vs real dependency decision
+- Coverage vs maintenance trade-off
+</decision_making>
+
+## References
+
+- @core-docs/testing/testing-pyramid.md - Testing distribution
+- @core-docs/testing/coverage-strategies.md - Coverage strategies
+- @core-docs/testing/tdd-green-red-refactor.md - TDD methodology
+
+## Success Criteria
+
+<success_criteria>
+- [ ] Coverage gaps identified
+- [ ] P1 gaps addressed
+- [ ] Target coverage met
+- [ ] All tests passing
+- [ ] Pyramid distribution maintained
+</success_criteria>

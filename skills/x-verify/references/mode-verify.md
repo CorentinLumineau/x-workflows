@@ -1,0 +1,172 @@
+# Mode: verify
+
+> **Invocation**: `/x-verify` or `/x-verify verify`
+> **Legacy Command**: `/x:verify`
+
+## Purpose
+
+<purpose>
+Zero-tolerance quality validation. Run all quality gates (lint, type-check, tests, build) with auto-fix loop until 100% passing. No issues tolerated.
+</purpose>
+
+## Behavioral Skills
+
+This mode activates:
+- `testing` - Testing pyramid enforcement
+- `code-quality` - Quality gates validation
+
+## Agents
+
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-tester` | Parallel gate execution | haiku |
+| `ccsetup:x-reviewer` | Analysis mode | sonnet |
+
+## MCP Servers
+
+| Server | When |
+|--------|------|
+| `sequential-thinking` | Auto-fix decision logic |
+| `memory` | Cross-session persistence |
+
+## Instructions
+
+<instructions>
+
+### Phase 1: Context Detection
+
+Detect verification mode:
+
+| Context | Mode |
+|---------|------|
+| No staged files | Test mode - targeted tests |
+| Staged files detected | Full verification |
+| "quality" keyword | Analysis mode |
+| "docs" keyword | Documentation validation |
+
+### Phase 2: Quality Gate Execution
+
+Run all gates in parallel using x-tester agents:
+
+```
+Task(
+  subagent_type: "ccsetup:x-tester",
+  model: "haiku",
+  run_in_background: true,
+  prompt: "Run lint check"
+)
+// Same for type-check, tests, build
+```
+
+#### Gate Specifications
+
+| Gate | Command | Pass Criteria |
+|------|---------|---------------|
+| Lint | `pnpm lint` | No errors |
+| Types | `pnpm type-check` | No errors |
+| Tests | `pnpm test` | 100% pass |
+| Build | `pnpm build` | Success |
+
+### Phase 3: Auto-Fix Loop
+
+If any gate fails:
+
+```
+While (failures exist):
+  1. Attempt auto-fix (ESLint --fix, Prettier)
+  2. Re-run failed gate
+  3. If still failing:
+     - Use Sequential Thinking for analysis
+     - Apply manual fix
+  4. Verify fix worked
+```
+
+**Auto-fix commands**:
+```bash
+pnpm lint --fix
+pnpm prettier --write .
+```
+
+### Phase 4: Documentation Validation
+
+Verify documentation:
+- [ ] Documentation structure exists
+- [ ] Code changes have doc updates
+- [ ] No broken references
+
+### Phase 5: Workflow Transition
+
+Present next step based on result:
+
+**Success**:
+```json
+{
+  "questions": [{
+    "question": "All quality gates passed. Continue?",
+    "header": "Next",
+    "options": [
+      {"label": "/x-git commit (Recommended)", "description": "Commit verified changes"},
+      {"label": "/x-review", "description": "Code review before commit"},
+      {"label": "Stop", "description": "Done for now"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+
+**Failure** (after auto-fix attempts):
+```json
+{
+  "questions": [{
+    "question": "Quality gates failed. How to proceed?",
+    "header": "Next",
+    "options": [
+      {"label": "/x-implement fix (Recommended)", "description": "Fix failing tests"},
+      {"label": "Continue fixing", "description": "I'll fix manually"},
+      {"label": "Stop", "description": "Investigate offline"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+
+
+</instructions>
+
+## Critical Rules
+
+<critical_rules>
+1. **Zero Tolerance** - ALL issues MUST be fixed
+2. **100% Passing** - Continue loop until everything passes
+3. **Auto-Fix First** - Try automated fixes before manual
+4. **No Deferrals** - Don't skip or postpone issues
+</critical_rules>
+
+## Decision Making
+
+<decision_making>
+**Execute autonomously when**:
+- Issues have obvious auto-fixes
+- Test failure matches code change
+- Clear lint/type errors
+
+**Use AskUserQuestion when**:
+- Test failure unclear (intentional change?)
+- Multiple fix strategies
+- Significant code changes needed
+</decision_making>
+
+## References
+
+- @core-docs/testing/testing-pyramid.md - Testing methodology
+- @core-docs/testing/coverage-strategies.md - Coverage targets
+- @skills/code-quality/SKILL.md - Quality enforcement
+
+## Success Criteria
+
+<success_criteria>
+- [ ] All quality gates passed
+- [ ] 100% test pass rate
+- [ ] Auto-fixes applied where possible
+- [ ] Workflow transition presented
+</success_criteria>

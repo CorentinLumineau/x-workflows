@@ -1,0 +1,203 @@
+# Mode: deep
+
+> **Invocation**: `/x-research deep` or `/x-research deep "topic"`
+> **Legacy Command**: `/x:deep-research`
+
+<purpose>
+Transform ideas into complete PRDs through comprehensive web research, competitive analysis, and technical feasibility assessment.
+</purpose>
+
+## Behavioral Skills
+
+This mode activates:
+- `context-awareness` - Project context loading
+
+## Agents
+
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-explorer` | Codebase analysis | haiku |
+
+## MCP Servers
+
+| Server | When |
+|--------|------|
+| `context7` | Library documentation |
+| `sequential-thinking` | Analysis structuring |
+
+<instructions>
+
+## Instructions
+
+### Phase 1: Research Scope
+
+Define research scope:
+
+```json
+{
+  "questions": [{
+    "question": "What type of research do you need?",
+    "header": "Type",
+    "options": [
+      {"label": "Feature PRD", "description": "Full product requirements"},
+      {"label": "Technical assessment", "description": "Feasibility analysis"},
+      {"label": "Competitive analysis", "description": "Market research"},
+      {"label": "Library comparison", "description": "Tool selection"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+
+### Phase 2: Information Gathering
+
+#### Technical Research
+- Context7 for library docs
+- Codebase analysis
+- Architecture patterns
+
+#### Market Research
+- WebSearch for competitors
+- Feature comparisons
+- Pricing analysis
+
+### Phase 3: Analysis
+
+Use Sequential Thinking for structured analysis:
+
+```javascript
+mcp__sequential_thinking__sequentialthinking({
+  thought: "Analyzing {topic}...",
+  thoughtNumber: 1,
+  totalThoughts: 5,
+  nextThoughtNeeded: true
+})
+```
+
+### Phase 4: Document Generation
+
+#### PRD Template
+```markdown
+# Product Requirements Document: {Feature}
+
+## Executive Summary
+{Brief overview}
+
+## Problem Statement
+{What problem this solves}
+
+## Goals
+- Goal 1
+- Goal 2
+
+## Non-Goals
+- Non-goal 1
+
+## User Stories
+- As a {user}, I want {action} so that {benefit}
+
+## Technical Requirements
+### Functional
+- Requirement 1
+
+### Non-Functional
+- Performance: {requirement}
+- Security: {requirement}
+
+## Design
+{High-level design}
+
+## Dependencies
+- Dependency 1
+
+## Timeline
+| Phase | Duration | Deliverable |
+|-------|----------|-------------|
+| {Phase} | {Time} | {What} |
+
+## Success Metrics
+- Metric 1: Target
+
+## Risks
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| {Risk} | {Level} | {Strategy} |
+
+## Open Questions
+- Question 1
+
+## References
+- {Source 1}
+```
+
+#### Competitive Analysis Template
+```markdown
+# Competitive Analysis: {Category}
+
+## Overview
+{Market overview}
+
+## Competitors
+
+### {Competitor 1}
+- **Strengths**: {list}
+- **Weaknesses**: {list}
+- **Pricing**: {info}
+- **Key Features**: {list}
+
+## Comparison Matrix
+| Feature | Us | Comp 1 | Comp 2 |
+|---------|----|----|--------|
+| {Feature} | {✓/✗} | {✓/✗} | {✓/✗} |
+
+## Recommendations
+1. {Recommendation}
+```
+
+### Phase 5: Workflow Transition
+
+```json
+{
+  "questions": [{
+    "question": "Research document complete. What's next?",
+    "header": "Next",
+    "options": [
+      {"label": "/x-plan design (Recommended)", "description": "Design the solution"},
+      {"label": "/x-initiative create", "description": "Create initiative"},
+      {"label": "Stop", "description": "Review document first"}
+    ],
+    "multiSelect": false
+  }]
+}
+```
+
+</instructions>
+
+## Research Quality
+
+- **Multiple Sources**: Don't rely on single source
+- **Recent Data**: Prefer recent information
+- **Verified**: Cross-check facts
+- **Cited**: Reference all sources
+
+<critical_rules>
+
+1. **Evidence-Based** - Facts, not opinions
+2. **Structured Output** - Use templates
+3. **Cite Sources** - Track where info came from
+4. **Be Thorough** - Comprehensive research
+
+</critical_rules>
+
+## References
+
+- @core-docs/mcp/context7.md - Documentation lookup
+
+<success_criteria>
+
+- [ ] Scope defined
+- [ ] Research conducted
+- [ ] Analysis completed
+- [ ] Document generated
+
+</success_criteria>
