@@ -1,0 +1,19 @@
+{
+  "name": "x-workflows",
+  "description": "Generic development workflow orchestration skills. Plan, implement, verify, review - works with any domain knowledge skills and any AI agent. Includes complexity routing, documentation sync, and initiative tracking.",
+  "version": "1.0.0",
+  "author": { "name": "ccsetup contributors" },
+  "license": "Apache-2.0",
+  "skills": "skills/**/*.md",
+  "keywords": [
+    "workflows",
+    "orchestration",
+    "planning",
+    "implementation",
+    "verification",
+    "review",
+    "git",
+    "initiative",
+    "complexity"
+  ]
+}
