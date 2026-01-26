@@ -94,7 +94,9 @@ x-initiative create → [work] → x-initiative continue → x-initiative archiv
 
 ## Knowledge Skills Integration
 
-Workflow skills reference knowledge skills from x-devsecops for domain expertise:
+Workflow skills reference knowledge skills from x-devsecops for domain expertise.
+
+**See [DEPENDENCIES.md](DEPENDENCIES.md) for the complete dependency matrix.**
 
 | Workflow | Knowledge Skills Used |
 |----------|----------------------|
