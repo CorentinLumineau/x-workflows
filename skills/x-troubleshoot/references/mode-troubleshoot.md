@@ -29,6 +29,23 @@ This mode activates:
 
 <instructions>
 
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 30%, context 30%, technical 25%, scope 5%, risk 10%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Research relevant sources (Context7, codebase, web)
+   - Ask clarifying question with reformulation if > 80%
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode**: Vague problem description, multiple hypotheses valid, no error message provided, environment unspecified.
+
+---
+
 ## Instructions
 
 ### Phase 1: Symptom Collection

@@ -29,7 +29,8 @@ Holistic code health analyzer that scores coverage, best-practices, and refactor
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `analysis` - Pareto 80/20 prioritization
 - `code-quality` - SOLID, DRY, KISS assessment
 - `testing` - Coverage evaluation

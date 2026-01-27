@@ -31,7 +31,25 @@ This mode activates:
 | `memory` | Cross-session persistence |
 
 <instructions>
-### Phase 0: Context Loading
+
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 25%, context 20%, technical 30%, scope 15%, risk 10%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Research relevant sources (Context7, codebase, web)
+   - Ask clarifying question with reformulation if > 80%
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 0b
+
+**Triggers for this mode**: Multiple implementation approaches, missing acceptance criteria, breaking change to public API, TDD scope unclear.
+
+---
+
+### Phase 0b: Context Loading
 
 Load project context following context-awareness skill:
 

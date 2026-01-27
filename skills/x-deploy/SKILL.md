@@ -38,9 +38,10 @@ Deployment workflows with environment management and rollback support.
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
 
 ### Always Active
+- `interview` - Zero-doubt confidence gate (Phase 0, CRITICAL for production)
 - `infrastructure` - IaC patterns, Docker, Terraform
 
 ### Context-Triggered

@@ -40,7 +40,8 @@ Deep diagnostic analysis with systematic root cause investigation using hypothes
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `debugging` - Hypothesis-driven debugging methodology
 
 ## Agent Suggestions

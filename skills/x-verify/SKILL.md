@@ -38,7 +38,8 @@ Context-aware quality verification with auto-fix enforcement. Zero-tolerance qua
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `testing` - Testing pyramid enforcement
 - `quality-gates` - CI quality checks
 

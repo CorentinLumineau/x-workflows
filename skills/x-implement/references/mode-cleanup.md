@@ -27,6 +27,24 @@ This mode activates:
 | `sequential-thinking` | Complex decisions |
 
 <instructions>
+
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 20%, context 30%, technical 25%, scope 15%, risk 10%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Research relevant sources (Context7, codebase, web)
+   - Ask clarifying question with reformulation if > 80%
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode**: Definition of "clean" unclear, deletion criteria undefined, scope boundaries unclear.
+
+---
+
 ### Phase 1: Detection
 
 Identify cleanup targets:

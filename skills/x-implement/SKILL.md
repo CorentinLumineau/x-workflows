@@ -42,9 +42,10 @@ Context-aware implementation with automatic pattern discovery and smart workflow
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
 
 ### Always Active
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `code-quality` - SOLID, DRY, KISS enforcement
 - `testing` - Testing pyramid (70/20/10)
 

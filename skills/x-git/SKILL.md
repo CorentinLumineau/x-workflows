@@ -36,7 +36,8 @@ Safe git operations including conventional commits, feature branches, and releas
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0, high-risk for release)
 - `release-management` - SemVer, changelog, safe git operations
 
 ## Safety Rules

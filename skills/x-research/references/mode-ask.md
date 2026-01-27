@@ -26,6 +26,25 @@ This mode activates:
 
 <instructions>
 
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 35%, context 30%, technical 20%, scope 10%, risk 5%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Research relevant sources (Context7, codebase, web)
+   - Ask clarifying question with reformulation if > 80%
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode**: Question topic unclear, answer depth unclear.
+
+**Note**: Research mode is typically low-risk - bypass often appropriate for simple questions.
+
+---
+
 ## Instructions
 
 ### Phase 1: Question Classification

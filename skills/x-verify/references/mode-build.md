@@ -31,6 +31,23 @@ This mode activates:
 
 <instructions>
 
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 20%, context 25%, technical 30%, scope 15%, risk 10%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Research relevant sources (Context7, codebase, web)
+   - Ask clarifying question with reformulation if > 80%
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode**: Build target unclear, multiple build configurations available.
+
+---
+
 ### Phase 1: Build System Detection
 
 Detect build system from project:

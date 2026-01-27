@@ -14,6 +14,29 @@ This mode activates:
 
 <instructions>
 
+### Phase 0: Interview Check (REQUIRED - HIGH RISK)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 15%, context 10%, technical 20%, scope 15%, risk **40%**)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Research relevant sources (Context7, codebase, web)
+   - Ask clarifying question with reformulation if > 80%
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode** (CRITICAL):
+- Version bump type unclear (major/minor/patch?)
+- Unreleased changes unreviewed
+- Tag already exists (would overwrite)
+- Breaking changes present (needs migration guide)
+
+**Note**: Release mode has **40% risk weight** - always interview unless version is explicitly specified.
+
+---
+
 ### Phase 1: Pre-Release Checks
 
 Verify ready for release:

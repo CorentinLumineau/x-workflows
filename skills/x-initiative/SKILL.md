@@ -40,7 +40,8 @@ Multi-phase project tracking across sessions using file-based persistence.
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `initiative` - Multi-session tracking patterns
 
 ## Persistence

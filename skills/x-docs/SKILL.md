@@ -40,7 +40,8 @@ Documentation management with intelligent sync detection, generation, and cleanu
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `documentation` - Doc sync patterns
 
 ## Agent Suggestions

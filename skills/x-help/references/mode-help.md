@@ -9,6 +9,24 @@ Quick reference for all x/ commands and skills. Show available commands, their p
 
 <instructions>
 
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 30%, context 30%, technical 15%, scope 20%, risk 5%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Ask clarifying question
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode**: Help topic unclear (which commands?).
+
+**Note**: Help mode is typically low-risk - bypass often appropriate.
+
+---
+
 ### Phase 1: Display Command Overview
 
 ```markdown

@@ -9,6 +9,24 @@ Background task management - list, check status, and retrieve output from async 
 
 <instructions>
 
+### Phase 0: Interview Check (REQUIRED)
+
+Before proceeding, verify confidence using `interview` behavioral skill:
+
+1. **Load interview state** - Check `.claude/interview-state.json`
+2. **Assess confidence** - Calculate composite score (weights: problem 25%, context 35%, technical 20%, scope 15%, risk 5%)
+3. **If confidence < 100%**:
+   - Identify lowest dimension
+   - Ask clarifying question
+   - Loop until 100%
+4. **If confidence = 100%** - Proceed to Phase 1
+
+**Triggers for this mode**: Which tasks to manage unclear.
+
+**Note**: Background task management is typically low-risk - bypass often appropriate.
+
+---
+
 ## Instructions
 
 ### Phase 1: Task Discovery

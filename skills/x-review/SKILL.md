@@ -38,9 +38,10 @@ Pre-merge validation with auto-detected target branch, conflict detection, and q
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
 
 ### Always Active
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `code-quality` - SOLID, DRY, KISS enforcement
 - `owasp` - Security vulnerability check
 
