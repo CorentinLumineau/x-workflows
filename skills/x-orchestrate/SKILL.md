@@ -36,6 +36,11 @@ Guided workflow execution with human-first checkpoints and background task manag
 - **Default mode**: orchestrate
 - **No-args behavior**: List available workflows
 
+## Behavioral Skills
+
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
+
 ## Available Workflows
 
 | Workflow | Sequence |

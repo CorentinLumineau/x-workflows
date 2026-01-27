@@ -41,10 +41,11 @@ For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://
 | `x-setup` | Project documentation scaffolding |
 | `x-create` | Create skills, commands, agents |
 
-### Behavioral Skills (3)
+### Behavioral Skills (4)
 
 | Skill | Description |
 |-------|-------------|
+| `interview` | Zero-doubt confidence gate (Phase 0 for all workflows) |
 | `complexity-detection` | Route issues to appropriate debugging tier |
 | `documentation` | Sync documentation with code changes |
 | `initiative` | Cross-session project tracking patterns |
@@ -143,6 +144,7 @@ x-workflows/
 │   ├── x-orchestrate/
 │   ├── x-setup/
 │   ├── x-create/
+│   ├── interview/
 │   ├── complexity-detection/
 │   ├── documentation/
 │   ├── initiative/

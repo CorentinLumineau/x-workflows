@@ -38,9 +38,10 @@ Monitoring setup and alerting configuration for observability.
 
 ## Behavioral Skills
 
-This workflow activates these knowledge skills:
+This workflow activates these behavioral skills:
 
 ### Always Active
+- `interview` - Zero-doubt confidence gate (Phase 0)
 - `monitoring` - Golden signals, SLOs, observability
 
 ### Context-Triggered

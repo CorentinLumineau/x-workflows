@@ -26,7 +26,7 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 | Orchestration | x-orchestrate | orchestrate, background, agent |
 | Setup | x-setup, x-create | setup, skill, command, agent |
 | Operations | x-deploy, x-monitor | deploy, monitor |
-| Behavioral | complexity-detection, documentation, initiative | (auto-activated) |
+| Behavioral | interview, complexity-detection, documentation, initiative | (auto-activated) |
 
 ## Workflow Patterns
 

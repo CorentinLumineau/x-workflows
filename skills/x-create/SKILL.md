@@ -36,6 +36,11 @@ Generate best-practice-compliant plugin components through interactive wizards.
 - **Default mode**: skill
 - **No-args behavior**: Ask what to create
 
+## Behavioral Skills
+
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
+
 ## Component Types
 
 ### Skills

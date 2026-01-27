@@ -27,6 +27,11 @@ Project documentation setup with intelligent stack detection and complete docume
 - **Default mode**: setup (single-mode skill)
 - **No-args behavior**: Detect project stack automatically
 
+## Behavioral Skills
+
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
+
 ## Documentation Structure
 
 Creates complete structure:

@@ -34,6 +34,11 @@ Quick reference for all x/ commands and behavioral rules management.
 - **Default mode**: help
 - **No-args behavior**: Show command overview
 
+## Behavioral Skills
+
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
+
 ## Command Categories
 
 | Category | Skills | Purpose |

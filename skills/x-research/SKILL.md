@@ -34,6 +34,11 @@ Intelligent Q&A and comprehensive research with evidence-based methodology.
 - **Default mode**: ask
 - **No-args behavior**: Ask for question
 
+## Behavioral Skills
+
+This workflow activates these behavioral skills:
+- `interview` - Zero-doubt confidence gate (Phase 0)
+
 ## Agent Suggestions
 
 Consider delegating to specialized agents:
