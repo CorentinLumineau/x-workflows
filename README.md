@@ -8,6 +8,18 @@ x-workflows provides **workflow** skills - the "HOW to work" for software develo
 
 Workflow skills orchestrate development tasks and reference knowledge skills (from x-devsecops) for domain expertise.
 
+## Architecture
+
+x-workflows is part of the **ccsetup 3-repository architecture** ("Swiss Watch" design):
+
+| Repository | Role | Description |
+|------------|------|-------------|
+| **x-devsecops** | WHAT to know | 26 knowledge skills (domain expertise) |
+| **x-workflows** | HOW to work | 19 workflow skills (development processes) ← *You are here* |
+| **ccsetup** | Orchestration | Commands, agents, hooks |
+
+For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://github.com/clmusic/ccsetup/blob/main/ARCHITECTURE.md)
+
 ## Skills Catalog
 
 ### Core Workflow Skills (14)
