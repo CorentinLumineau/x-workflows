@@ -43,37 +43,19 @@ Multi-phase project tracking across sessions using file-based persistence.
 This workflow activates these behavioral skills:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
-## Persistence Patterns
-
-See references for persistence implementation:
-- `references/checkpoint-protocol.md` - Memory MCP checkpoint patterns
-- `references/memory.md` - Entity naming and Memory operations
-
 ## Persistence
 
-Store initiative state in project files for cross-session persistence.
+See @skills/initiative/SKILL.md for persistence schema and patterns.
 
-### Primary Storage: .claude/initiative.json
+Canonical references for persistence implementation:
+- @skills/initiative/references/checkpoint-protocol.md - Memory MCP checkpoint lifecycle
+- @skills/initiative/references/memory.md - Entity naming and Memory MCP operations
 
-```json
-{
-  "name": "initiative-name",
-  "status": "in_progress",
-  "currentMilestone": "M1",
-  "lastUpdated": "2026-01-23T16:00:00Z",
-  "progress": {
-    "M0": "completed",
-    "M1": "in_progress"
-  },
-  "checkpoints": [
-    {
-      "milestone": "M0",
-      "completedAt": "2026-01-22T14:00:00Z",
-      "notes": "Standards and setup complete"
-    }
-  ]
-}
-```
+### Write Order (All State Changes)
+
+1. **initiative.json** (REQUIRED) — Primary checkpoint
+2. **WORKFLOW-STATUS.yaml** (REQUIRED) — Rich context
+3. **Memory MCP** (OPTIONAL) — Cross-session, graceful degradation
 
 ### Session Start Recovery
 

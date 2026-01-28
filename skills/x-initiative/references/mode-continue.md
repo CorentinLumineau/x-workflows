@@ -8,7 +8,7 @@ Context-aware continuation - prioritizes conversation context, then file checkpo
 
 ## References
 
-Persistence patterns: See `checkpoint-protocol.md` and `memory.md`
+Persistence patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
 
 <instructions>
 
@@ -31,11 +31,15 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Context Priority Check
 
-Check for context in priority order:
+Check for context in priority order (highest to lowest):
 
-1. **Conversation context** - Recent messages in this session
-2. **File checkpoint** - `.claude/initiative.json`
-3. **Active initiatives** - Files in `documentation/milestones/_active/`
+1. **Conversation context** — Recent messages in this session (HIGHEST)
+2. **initiative.json** — `.claude/initiative.json` fast checkpoint (PRIMARY file)
+3. **WORKFLOW-STATUS.yaml** — `_active/*/WORKFLOW-STATUS.yaml` rich context (SECONDARY file)
+4. **Memory MCP** — Cross-session checkpoint via `open_nodes(["initiative-checkpoint"])` (TERTIARY, optional)
+5. **Active initiatives** — Directory scan of `documentation/milestones/_active/` (FALLBACK)
+
+Use the first available source. If sources conflict, the higher-priority source wins.
 
 ### Phase 2: Load Checkpoint
 

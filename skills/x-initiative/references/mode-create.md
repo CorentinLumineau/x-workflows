@@ -8,7 +8,7 @@ Create new initiative documentation with Pareto-optimized milestone breakdown. S
 
 ## References
 
-Persistence patterns: See `checkpoint-protocol.md` and `memory.md`
+Persistence patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
 
 <instructions>
 
@@ -111,12 +111,15 @@ documentation/milestones/_active/{initiative-name}/
 - Related code: {links}
 ```
 
-### Phase 5: Save Checkpoint
+### Phase 5: Save Checkpoint (Sync Protocol)
 
-Create `.claude/initiative.json`:
+Write all persistence layers in order:
+
+**1. initiative.json** (REQUIRED — primary checkpoint):
 
 ```json
 {
+  "version": "2.0",
   "name": "initiative-name",
   "status": "in_progress",
   "currentMilestone": "M1",
@@ -124,6 +127,31 @@ Create `.claude/initiative.json`:
   "progress": { "M1": "in_progress" }
 }
 ```
+
+**2. WORKFLOW-STATUS.yaml** (REQUIRED — created in Phase 4)
+
+Already created in Phase 4. Verify it reflects the same state as initiative.json.
+
+**3. Memory MCP** (OPTIONAL — graceful degradation):
+
+```typescript
+mcp__plugin_ccsetup_memory__create_entities({
+  entities: [{
+    name: "initiative-checkpoint",
+    entityType: "checkpoint",
+    observations: [
+      "initiative:{name}",
+      "milestone:M1",
+      "phase:planning",
+      "last_action:Initiative created with {n} milestones",
+      "next_action:Begin M1 implementation",
+      "timestamp:{ISO8601}"
+    ]
+  }]
+})
+```
+
+If Memory MCP is unavailable, log warning and continue — file-based persistence is sufficient.
 
 ### Phase 6: Workflow Transition
 

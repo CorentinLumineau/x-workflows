@@ -8,7 +8,7 @@ Initiative archival with comprehensive documentation updates and lessons learned
 
 ## References
 
-Archive checkpoint patterns: See `checkpoint-protocol.md`
+Archive checkpoint patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
 
 <instructions>
 
@@ -92,10 +92,18 @@ Capture lessons:
    | {name} | {date} | {summary} | [Link]({path}) |
    ```
 
-4. **Remove checkpoint**:
+4. **Remove file checkpoint**:
    ```bash
    rm .claude/initiative.json
    ```
+
+5. **Clear Memory MCP checkpoint** (OPTIONAL — graceful degradation):
+   ```typescript
+   mcp__plugin_ccsetup_memory__delete_entities({
+     entityNames: ["initiative-checkpoint"]
+   })
+   ```
+   If Memory MCP is unavailable, skip — no stale checkpoint risk since file is the primary SSoT.
 
 ### Phase 4: Final Report
 
