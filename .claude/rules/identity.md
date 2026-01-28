@@ -27,6 +27,30 @@
 
 ---
 
+## Skill Types
+
+| Type | Prefix | Trigger | ccsetup Command | Example |
+|------|--------|---------|-----------------|---------|
+| **Core Workflow** | `x-*` | User invokes via command | Yes (optional) | x-implement, x-verify |
+| **Behavioral** | none | Auto-triggered by conditions | **Never** | interview, complexity-detection |
+
+### Core Workflow Skills (`x-*`)
+- User-invocable execution workflows
+- Named with `x-` prefix (e.g., `x-implement`, `x-plan`)
+- May have corresponding `/command` in ccsetup (registered in `commands-registry.yml`)
+- Define complete execution steps for a task
+- Located in `skills/x-{name}/`
+
+### Behavioral Skills (no prefix)
+- Auto-triggered by specific conditions (not user-invoked)
+- Named **without** prefix (e.g., `interview`, `complexity-detection`)
+- **Never** have command wrappers in ccsetup - **never** added to `commands-registry.yml`
+- Act as internal workflow modifiers, gates, or routers
+- Typically have `category: behavioral` in SKILL.md metadata
+- Located in `skills/{name}/` (no x- prefix)
+
+---
+
 ## When to Update This Repo
 
 | Trigger | Action |

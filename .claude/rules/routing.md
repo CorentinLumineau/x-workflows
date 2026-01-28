@@ -15,13 +15,19 @@
 ## Decision Tree
 
 ```
-New component needed?
+New skill needed?
 │
-├─ Is it workflow execution (HOW to do something)?
-│  ├─ YES → Create in x-workflows/skills/{name}/
-│  │        └─ Includes: steps, modes, playbooks, templates
-│  │
-│  └─ NO → Continue below
+├─ Is it triggered automatically by conditions?
+│  └─ YES → Behavioral skill (no x- prefix)
+│           Location: skills/{name}/
+│           ⚠️  No command wrapper in ccsetup - NEVER add to commands-registry.yml
+│           Examples: interview, complexity-detection
+│
+├─ Is it a user-invocable workflow?
+│  └─ YES → Core workflow skill (x-* prefix)
+│           Location: skills/x-{name}/
+│           May have command wrapper in ccsetup (via commands-registry.yml)
+│           Examples: x-implement, x-plan, x-verify
 │
 ├─ Is it domain knowledge (WHAT to know)?
 │  └─ YES → x-devsecops/skills/{category}/{name}/
@@ -32,3 +38,12 @@ New component needed?
 └─ Is it a core behavioral rule?
    └─ YES → ccsetup/core-docs/RULES.md
 ```
+
+### Skill Type Quick Reference
+
+| Question | Answer | Skill Type |
+|----------|--------|------------|
+| User explicitly invokes it? | Yes | Core Workflow (`x-*`) |
+| Auto-triggers on conditions? | Yes | Behavioral (no prefix) |
+| Needs command in ccsetup? | Maybe | Core Workflow only |
+| Acts as gate/router/modifier? | Yes | Behavioral |
