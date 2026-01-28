@@ -5,6 +5,7 @@ description: |
   Activates on: ambiguity, missing info, high risk, low confidence.
   Applies to: ALL workflow skills.
 category: behavioral
+user-invocable: false
 triggers:
   - ambiguity_detected
   - missing_information

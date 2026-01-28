@@ -11,6 +11,7 @@ metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: behavioral
+  user-invocable: false
 ---
 
 # Complexity Detection

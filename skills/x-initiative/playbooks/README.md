@@ -23,6 +23,12 @@ related-docs:
 ```
 playbooks/
 ├── README.md (this file)          # Overview
+├── guides/                         # How-to guides
+│   ├── quick-start.md             # Getting started with initiatives
+│   └── llm-assistant-guide.md     # Guide for AI assistants
+├── examples/                       # Example initiatives
+│   ├── dependency-update-example.md  # Dependency update initiative
+│   └── refactoring-example.md     # Codebase refactoring initiative
 └── templates/                      # Reusable templates
     ├── initiative-template.md     # Template for new initiatives
     ├── milestone-template.md      # Template for milestone files

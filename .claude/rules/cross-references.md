@@ -25,8 +25,8 @@ Follow @ccsetup/core-docs/RULES.md for behavioral guidelines
 
 ## Version Sync
 
-This repository is included as a submodule in ccsetup. When releasing:
+This repository is a source repo for ccsetup. When releasing:
 
 1. Tag release in x-workflows
-2. Update submodule reference in ccsetup
+2. Run `make sync-skills` in ccsetup to pull latest skills
 3. Coordinate breaking changes with ccsetup maintainers
