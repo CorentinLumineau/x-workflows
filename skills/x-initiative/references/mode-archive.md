@@ -74,62 +74,74 @@ Capture lessons:
 - {pattern}: {when to use}
 ```
 
-### Phase 3: Archive Operations
+### Phase 3: Generate Executive Summary
 
-1. **Update initiative status**:
-   ```markdown
-   ## Status: Completed
-   **Completed**: {date}
-   ```
+Read the initiative folder (`_active/{name}/`) and distill into a **single** archive file.
+Do NOT copy the folder — generate a summary then delete the source.
 
-2. **Move to archive**:
+Write `documentation/milestones/_archived/{name}.md`:
+
+```markdown
+# Archive: {Name}
+
+**Status**: Completed
+**Duration**: {start_date} → {end_date}
+**Milestones**: {count} completed
+
+## Summary
+
+{2-3 sentence overview of what the initiative accomplished and why it mattered}
+
+## Milestones
+
+| # | Name | Outcome |
+|---|------|---------|
+| M1 | {name} | {one-line result} |
+| M2 | {name} | {one-line result} |
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| {decision} | {why} | {result} |
+
+## Lessons Learned
+
+- **What worked**: {lesson}
+- **What to improve**: {lesson}
+
+## Key Deliverables
+
+- {deliverable with file path if relevant}
+```
+
+Keep it **under 80 lines**. This is a reference document, not a copy of the initiative.
+
+### Phase 4: Archive Operations
+
+1. **Write executive summary**:
    ```bash
-   mv documentation/milestones/_active/{name}/ documentation/milestones/_archived/{name}/
+   # Single file, not a folder
+   documentation/milestones/_archived/{name}.md
    ```
 
-3. **Update ARCHIVE.md**:
-   ```markdown
-   | {name} | {date} | {summary} | [Link]({path}) |
+2. **Delete active initiative folder**:
+   ```bash
+   rm -rf documentation/milestones/_active/{name}/
    ```
 
-4. **Remove file checkpoint**:
+3. **Remove file checkpoint**:
    ```bash
    rm .claude/initiative.json
    ```
 
-5. **Clear Memory MCP checkpoint** (OPTIONAL — graceful degradation):
+4. **Clear Memory MCP checkpoint** (OPTIONAL — graceful degradation):
    ```typescript
    mcp__plugin_ccsetup_memory__delete_entities({
      entityNames: ["initiative-checkpoint"]
    })
    ```
-   If Memory MCP is unavailable, skip — no stale checkpoint risk since file is the primary SSoT.
-
-### Phase 4: Final Report
-
-```markdown
-## Initiative Archive Report
-
-**Initiative**: {name}
-**Duration**: {start} → {end}
-**Status**: Completed
-
-### Summary
-{brief summary}
-
-### Milestones Completed
-- M1: {name} ✓
-- M2: {name} ✓
-
-### Key Deliverables
-- {deliverable}
-
-### Lessons Learned
-- {key lesson}
-
-### Archive Location
-`documentation/milestones/_archived/{name}/`
-```
+   If Memory MCP is unavailable, skip — file is the primary SSoT.
 
 ### Phase 5: Workflow Transition
 
@@ -155,9 +167,9 @@ Capture lessons:
 Before archiving:
 - [ ] All milestones complete
 - [ ] Tests passing
-- [ ] Docs updated
 - [ ] Lessons captured
-- [ ] ARCHIVE.md updated
+- [ ] Executive summary written to `_archived/{name}.md`
+- [ ] Active folder deleted
 - [ ] Checkpoint removed
 
 <critical_rules>
@@ -177,8 +189,8 @@ Before archiving:
 
 - [ ] Completion verified
 - [ ] Lessons captured
-- [ ] Files moved to archive
-- [ ] Index updated
+- [ ] Executive summary generated (single file, <80 lines)
+- [ ] Active folder deleted
 - [ ] Checkpoint removed
 
 </success_criteria>
