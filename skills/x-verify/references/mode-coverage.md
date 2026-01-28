@@ -75,13 +75,10 @@ Identify coverage gaps with Pareto focus:
 
 ### Phase 3: Test Planning
 
-For each gap, plan tests following pyramid:
+For each gap, plan tests following the testing pyramid (70/20/10):
 
-| Test Type | Distribution | When |
-|-----------|-------------|------|
-| Unit | 70% | Pure functions, isolated logic |
-| Integration | 20% | API endpoints, service interactions |
-| E2E | 10% | Critical user flows |
+> **Canonical source**: See `@quality-testing` skill for detailed testing pyramid definitions.
+> Quick reference: 70% unit (pure functions), 20% integration (APIs), 10% E2E (user flows).
 
 ### Phase 4: Test Implementation
 

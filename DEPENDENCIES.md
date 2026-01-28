@@ -20,7 +20,7 @@ This document maps how x-workflows skills depend on x-devsecops knowledge skills
 │       ▼            ▼          ▼         ▼         ▼         │
 ├─────────────────────────────────────────────────────────────┤
 │                     x-devsecops                              │
-│               (WHAT to know - 26 skills)                    │
+│               (WHAT to know - 39 skills)                    │
 │                                                             │
 │  code-quality │ testing │ owasp │ release-mgmt │ infra      │
 └─────────────────────────────────────────────────────────────┘
@@ -50,6 +50,7 @@ This document maps how x-workflows skills depend on x-devsecops knowledge skills
 | `x-orchestrate` | - | - |
 | `x-setup` | - | - |
 | `x-create` | - | - |
+| `x-prompt` | - | - |
 
 ### Behavioral Skills
 
@@ -171,66 +172,79 @@ Skills that are activated **conditionally** based on:
 
 ## x-devsecops Skill Catalog
 
-### Code (5 skills)
+### Code (7 skills)
 
 | Skill | Description |
 |-------|-------------|
+| `api-design` | REST/GraphQL API best practices |
 | `code-quality` | SOLID, DRY, KISS, YAGNI principles |
 | `design-patterns` | Creational, structural, behavioral patterns |
-| `llm-optimization` | LLM-friendly code patterns |
 | `error-handling` | Robust error handling patterns |
-| `api-design` | REST/GraphQL API best practices |
+| `llm-optimization` | LLM-friendly code patterns |
+| `refactoring-patterns` | Safe refactoring techniques |
+| `sdk-design` | SDK and client library design |
 
-### Security (8 skills)
+### Security (9 skills)
 
 | Skill | Description |
 |-------|-------------|
+| `api-security` | API security patterns, authentication flows |
 | `authentication` | Auth patterns, session management |
 | `authorization` | RBAC, ABAC, permission models |
-| `owasp` | OWASP Top 10 vulnerability prevention |
-| `input-validation` | Input sanitization, validation patterns |
-| `secrets` | Secrets management, rotation |
-| `container-security` | Image scanning, runtime security |
 | `compliance` | Regulatory compliance patterns |
+| `container-security` | Image scanning, runtime security |
+| `input-validation` | Input sanitization, validation patterns |
+| `owasp` | OWASP Top 10 vulnerability prevention |
+| `secrets` | Secrets management, rotation |
 | `supply-chain` | Dependency security, SBOM |
 
-### Quality (4 skills)
+### Quality (7 skills)
 
 | Skill | Description |
 |-------|-------------|
-| `testing` | Testing pyramid, TDD, coverage |
+| `accessibility-wcag` | WCAG 2.1/2.2 compliance |
 | `debugging` | Three-tier debugging methodology |
-| `quality-gates` | Build, lint, type-check gates |
+| `load-testing` | Load, stress, and soak testing |
+| `observability` | Logs, metrics, traces patterns |
 | `performance` | Performance optimization, profiling |
+| `quality-gates` | Build, lint, type-check gates |
+| `testing` | Testing pyramid, TDD, coverage |
 
-### Delivery (4 skills)
+### Delivery (5 skills)
 
 | Skill | Description |
 |-------|-------------|
 | `ci-cd` | Pipeline automation, deployment |
-| `release-management` | Versioning, changelog, releases |
-| `infrastructure` | IaC, cloud patterns |
+| `deployment-strategies` | Blue-green, canary, rolling |
 | `feature-flags` | Feature toggle patterns |
+| `infrastructure` | IaC, cloud patterns |
+| `release-management` | Versioning, changelog, releases |
 
-### Operations (2 skills)
+### Operations (4 skills)
 
 | Skill | Description |
 |-------|-------------|
-| `monitoring` | Metrics, alerting, dashboards |
+| `disaster-recovery` | RTO/RPO planning, backup strategies |
 | `incident-response` | Runbooks, incident handling |
+| `monitoring` | Metrics, alerting, dashboards |
+| `sre-practices` | SLOs, error budgets, reliability |
 
-### Meta (2 skills)
+### Meta (3 skills)
 
 | Skill | Description |
 |-------|-------------|
 | `analysis` | Pareto 80/20 prioritization |
+| `architecture-patterns` | Microservices, event-driven, CQRS |
 | `decision-making` | Trade-off analysis, ADRs |
 
-### Data (1 skill)
+### Data (4 skills)
 
 | Skill | Description |
 |-------|-------------|
+| `caching` | Redis, cache invalidation patterns |
 | `database` | Query patterns, migrations, optimization |
+| `message-queues` | Async communication, event-driven |
+| `nosql` | MongoDB, DynamoDB, document modeling |
 
 ---
 
@@ -311,8 +325,9 @@ Before removing or renaming a knowledge skill:
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.0 | 2026-01-28 | Updated skill catalog (26→39), added x-prompt |
 | 1.0.0 | 2026-01-26 | Initial dependency mapping |
 
 ---
 
-**Last Updated:** 2026-01-26
+**Last Updated:** 2026-01-28

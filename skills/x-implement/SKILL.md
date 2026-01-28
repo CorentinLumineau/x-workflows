@@ -66,12 +66,8 @@ Consider delegating to specialized agents:
 
 ## TDD Workflow
 
-```
-1. Write failing test (Red)
-2. Write minimal code to pass (Green)
-3. Refactor while tests pass (Refactor)
-4. Repeat
-```
+> **Canonical source**: `@quality-testing` skill
+> Follow Red-Green-Refactor cycle: failing test → minimal passing code → refactor.
 
 ## Quality Gates
 All modes enforce: **Lint** | **Types** | **Tests** | **Build**
