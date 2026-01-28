@@ -1,10 +1,9 @@
-# Mode: improve
+# Mode: enhance
 
-> **Invocation**: `/x-implement improve` or `/x-implement improve "description"`
-> **Legacy Command**: `/x:improve`
+> **Invocation**: `/x-implement enhance` or `/x-implement enhance "description"`
 
 <purpose>
-Code quality improvements with Pareto focus. Identify the 20% of changes that deliver 80% of value. Enhance existing code without changing behavior.
+Targeted code quality improvements with Pareto focus. Identify the 20% of changes that deliver 80% of value. Enhance specific code without changing behavior.
 </purpose>
 
 ## Behavioral Skills

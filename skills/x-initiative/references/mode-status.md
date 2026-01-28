@@ -6,10 +6,9 @@
 Display and manage workflow state for cross-session context. Show progress on active initiatives.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `initiative` - Tracking patterns
+Status tracking patterns: See `checkpoint-protocol.md`
 
 <instructions>
 

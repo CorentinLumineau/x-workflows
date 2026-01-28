@@ -24,7 +24,7 @@ Context-aware implementation with automatic pattern discovery and smart workflow
 | implement (default) | New feature implementation with TDD |
 | fix | Quick bug fixing with escalation |
 | refactor | Safe refactoring with zero regression |
-| improve | Code quality improvements |
+| enhance | Targeted code quality improvements |
 | cleanup | Dead code removal, tech debt |
 
 ## Mode Detection
@@ -32,7 +32,7 @@ Context-aware implementation with automatic pattern discovery and smart workflow
 |----------|------|
 | "fix", "bug", "error", "broken", "failing" | fix |
 | "refactor", "restructure", "reorganize" | refactor |
-| "improve", "enhance", "better", "optimize" | improve |
+| "enhance", "improve", "better", "optimize" | enhance |
 | "cleanup", "clean", "remove dead", "tech debt" | cleanup |
 | (default) | implement |
 
@@ -89,5 +89,5 @@ All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 - **For implement mode**: See `references/mode-implement.md`
 - **For fix mode**: See `references/mode-fix.md`
 - **For refactor mode**: See `references/mode-refactor.md`
-- **For improve mode**: See `references/mode-improve.md`
+- **For enhance mode**: See `references/mode-enhance.md`
 - **For cleanup mode**: See `references/mode-cleanup.md`

@@ -1,21 +1,6 @@
----
-name: documentation
-description: |
-  Synchronize documentation with code changes. Detect staleness and update appropriately.
-  Activate when code changes may affect documentation, or when managing docs.
-  Triggers: docs, document, readme, changelog, update docs, sync docs.
-license: Apache-2.0
-compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Read Write Edit Grep Glob
-metadata:
-  author: ccsetup contributors
-  version: "1.0.0"
-  category: behavioral
----
+# Documentation Sync Patterns
 
-# Documentation
-
-Keep documentation synchronized with code changes.
+> Reference for keeping documentation synchronized with code changes
 
 ## Critical Rules
 
@@ -91,3 +76,8 @@ These files can exist outside `/documentation/`:
 - `README.md` files (project root, major directories)
 - `CLAUDE.md` navigation files
 - `CHANGELOG.md` at project root
+
+---
+
+**Version**: 1.0.0
+**Source**: Consolidated from `documentation` behavioral skill

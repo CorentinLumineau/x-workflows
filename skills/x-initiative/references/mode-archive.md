@@ -6,10 +6,9 @@
 Initiative archival with comprehensive documentation updates and lessons learned capture.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `initiative` - Tracking patterns
+Archive checkpoint patterns: See `checkpoint-protocol.md`
 
 <instructions>
 

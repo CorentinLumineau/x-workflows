@@ -6,10 +6,9 @@
 Context-aware continuation - prioritizes conversation context, then file checkpoints, then active initiatives.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `initiative` - Multi-session tracking patterns
+Persistence patterns: See `checkpoint-protocol.md` and `memory.md`
 
 <instructions>
 

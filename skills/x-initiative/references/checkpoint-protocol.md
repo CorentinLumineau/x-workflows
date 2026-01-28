@@ -208,7 +208,7 @@ observations:
   - "phase:implementation"
   - "last_action:Created CHECKPOINT-PROTOCOL.md"
   - "next_action:Create TRANSITION-PROTOCOL.md"
-  - "context_files:skills/initiative/references/CHECKPOINT-PROTOCOL.md"
+  - "context_files:skills/x-initiative/references/checkpoint-protocol.md"
   - "session_duration:2h15m"
   - "files_modified:12"
   - "timestamp:2026-01-09T11:30:00Z"
@@ -229,7 +229,7 @@ observations: [initiative, last_milestone, next_action, timestamp]}])
 ```markdown
 5. **Checkpoint Update** (via initiative skill)
    - Update checkpoint with milestone progress
-   - See @skills/initiative/references/CHECKPOINT-PROTOCOL.md
+   - See `checkpoint-protocol.md` in this directory
 ```
 
 ## Synchronization with WORKFLOW-STATUS.yaml
@@ -256,7 +256,7 @@ Checkpoints should stay synchronized with WORKFLOW-STATUS.yaml:
 
 ## References
 
-- @skills/initiative/SKILL.md - Full skill documentation
+- @skills/x-initiative/SKILL.md - Full skill documentation
 - @core-docs/mcp/memory.md - Memory MCP documentation
 - @skills/x-initiative/playbooks/README.md - Initiative methodology
 

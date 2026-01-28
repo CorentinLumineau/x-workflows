@@ -42,7 +42,11 @@ Documentation management with intelligent sync detection, generation, and cleanu
 
 This workflow activates these behavioral skills:
 - `interview` - Zero-doubt confidence gate (Phase 0)
-- `documentation` - Doc sync patterns
+
+## Sync Patterns Reference
+
+For detailed sync patterns, staleness detection, and category placement rules:
+- See `references/doc-sync-patterns.md`
 
 ## Agent Suggestions
 

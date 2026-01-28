@@ -7,10 +7,9 @@
 Documentation router that analyzes documentation state and routes to appropriate sub-mode (generate, sync, cleanup).
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `documentation` - Doc management
+See `doc-sync-patterns.md` for documentation patterns.
 
 <instructions>
 
@@ -102,10 +101,10 @@ documentation/
 └── reference/          ✓/✗
 ```
 
-## References
+## Additional References
 
 - @core-docs/DOCUMENTATION-FRAMEWORK.md - Doc structure
-- @skills/documentation/SKILL.md - Doc patterns
+- `doc-sync-patterns.md` - Doc patterns
 
 <critical_rules>
 

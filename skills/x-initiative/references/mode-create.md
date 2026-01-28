@@ -6,11 +6,9 @@
 Create new initiative documentation with Pareto-optimized milestone breakdown. Set up multi-session project tracking.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `initiative` - Multi-session tracking patterns
-- `analysis` - Pareto prioritization
+Persistence patterns: See `checkpoint-protocol.md` and `memory.md`
 
 <instructions>
 

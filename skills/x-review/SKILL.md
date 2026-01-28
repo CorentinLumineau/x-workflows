@@ -23,14 +23,14 @@ Pre-merge validation with auto-detected target branch, conflict detection, and q
 |------|-------------|
 | review (default) | Pre-merge PR review |
 | audit | SOLID audit, best practices check |
-| improve | **Delegates to x-improve skill** for holistic analysis |
 
 ## Mode Detection
 | Keywords | Mode |
 |----------|------|
 | "audit", "best practices", "solid", "quality check" | audit |
-| "improve", "fix practices", "pareto" | improve |
 | (default) | review |
+
+> **Note**: For code improvements, use `/x-improve` (holistic analysis with health scores) or `/x-implement enhance` (targeted improvements).
 
 ## Execution
 - **Default mode**: review
@@ -101,4 +101,3 @@ All reviews must check:
 
 - **For review mode**: See `references/mode-review.md`
 - **For audit mode**: See `references/mode-audit.md`
-- **For improve mode**: See `references/mode-improve.md`

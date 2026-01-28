@@ -7,10 +7,9 @@
 Generate new documentation for undocumented code. Create docs from code analysis.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `documentation` - Doc patterns
+See `doc-sync-patterns.md` for documentation patterns.
 
 ## Agents
 

@@ -7,10 +7,9 @@
 Documentation cleanup - identify and fix stale, broken, or outdated documentation. Remove dead docs, fix broken links.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `documentation` - Doc patterns
+See `doc-sync-patterns.md` for documentation patterns.
 
 ## Agents
 
@@ -133,10 +132,10 @@ For each issue:
 
 </critical_rules>
 
-## References
+## Additional References
 
 - @core-docs/DOCUMENTATION-FRAMEWORK.md - Structure
-- @skills/documentation/SKILL.md - Patterns
+- `doc-sync-patterns.md` - Patterns
 
 <success_criteria>
 

@@ -2,32 +2,19 @@
 type: playbook
 audience: [developers, architects, project-managers, llms]
 scope: framework-agnostic
-last-updated: 2025-11-03
+last-updated: 2026-01-27
 status: current
 related-docs:
   - templates/
-  - guides/
 ---
 
 # Initiative Playbooks
 
-**Purpose**: Methodology and templates for creating, managing, and tracking project initiatives
+**Purpose**: Templates for creating, managing, and tracking project initiatives
 
 **Audience**: Developers, Architects, Project Managers, **LLM Assistants**
 
-**Scope**: HOW to design and manage initiatives from planning to completion
-
----
-
-## 🎯 Overview
-
-This directory contains the **playbooks** (methodology) for initiative management. It answers **HOW** questions:
-- How do I create a new initiative?
-- How do I structure milestones?
-- How do I track progress?
-- How do I ensure quality?
-
-**Companion**: When implemented in projects, the `milestones/` directory tracks **WHAT** initiatives exist and their current status.
+**Scope**: Templates used by the x-initiative skill for initiative creation
 
 ---
 
@@ -35,18 +22,18 @@ This directory contains the **playbooks** (methodology) for initiative managemen
 
 ```
 playbooks/
-├── README.md (this file)          # Complete methodology guide
-├── templates/                      # Reusable templates
-│   ├── initiative-template.md     # Template for new initiatives
-│   ├── milestone-template.md      # Template for milestone files
-│   └── phase-template.md          # Template for phases
-├── guides/                         # Step-by-step guides
-│   ├── quick-start.md             # Getting started guide
-│   └── llm-assistant-guide.md     # Guide for LLM assistants
-└── examples/                       # Real-world examples
-    ├── dependency-update-example.md
-    └── refactoring-example.md
+├── README.md (this file)          # Overview
+└── templates/                      # Reusable templates
+    ├── initiative-template.md     # Template for new initiatives
+    ├── milestone-template.md      # Template for milestone files
+    └── phase-template.md          # Template for phases
 ```
+
+## Related Documentation
+
+Educational content has been moved to the documentation folder:
+- **Guides**: `documentation/development/initiative-guides/`
+- **Examples**: `documentation/examples/initiative-examples/`
 
 ---
 

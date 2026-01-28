@@ -15,7 +15,7 @@ x-workflows is part of the **ccsetup 3-repository architecture** ("Swiss Watch" 
 | Repository | Role | Description |
 |------------|------|-------------|
 | **x-devsecops** | WHAT to know | 26 knowledge skills (domain expertise) |
-| **x-workflows** | HOW to work | 19 workflow skills (development processes) ← *You are here* |
+| **x-workflows** | HOW to work | 18 workflow skills (development processes) ← *You are here* |
 | **ccsetup** | Orchestration | Commands, agents, hooks |
 
 For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://github.com/clmusic/ccsetup/blob/main/ARCHITECTURE.md)
@@ -41,14 +41,12 @@ For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://
 | `x-setup` | Project documentation scaffolding |
 | `x-create` | Create skills, commands, agents |
 
-### Behavioral Skills (4)
+### Behavioral Skills (2)
 
 | Skill | Description |
 |-------|-------------|
 | `interview` | Zero-doubt confidence gate (Phase 0 for all workflows) |
 | `complexity-detection` | Route issues to appropriate debugging tier |
-| `documentation` | Sync documentation with code changes |
-| `initiative` | Cross-session project tracking patterns |
 
 ### NEW Workflow Skills (2)
 
@@ -146,8 +144,6 @@ x-workflows/
 │   ├── x-create/
 │   ├── interview/
 │   ├── complexity-detection/
-│   ├── documentation/
-│   ├── initiative/
 │   ├── x-deploy/
 │   └── x-monitor/
 ├── LICENSE

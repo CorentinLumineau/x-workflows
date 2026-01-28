@@ -7,10 +7,9 @@
 Synchronize documentation with code changes. Detect staleness and update docs to match current implementation.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `documentation` - Doc sync patterns
+See `doc-sync-patterns.md` for detailed sync patterns and staleness detection.
 
 ## Agents
 
@@ -131,9 +130,9 @@ For each stale doc:
 
 </critical_rules>
 
-## References
+## Additional References
 
-- @skills/documentation/SKILL.md - Doc patterns
+- `doc-sync-patterns.md` - Doc patterns
 - @core-docs/DOCUMENTATION-FRAMEWORK.md - Standards
 
 <success_criteria>

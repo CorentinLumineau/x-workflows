@@ -42,7 +42,12 @@ Multi-phase project tracking across sessions using file-based persistence.
 
 This workflow activates these behavioral skills:
 - `interview` - Zero-doubt confidence gate (Phase 0)
-- `initiative` - Multi-session tracking patterns
+
+## Persistence Patterns
+
+See references for persistence implementation:
+- `references/checkpoint-protocol.md` - Memory MCP checkpoint patterns
+- `references/memory.md` - Entity naming and Memory operations
 
 ## Persistence
 

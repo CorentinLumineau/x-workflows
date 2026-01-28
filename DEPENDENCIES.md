@@ -56,8 +56,6 @@ This document maps how x-workflows skills depend on x-devsecops knowledge skills
 | Workflow Skill | Required Dependencies | Context-Triggered |
 |----------------|----------------------|-------------------|
 | `complexity-detection` | debugging | - |
-| `documentation` | - | - |
-| `initiative` | - | - |
 
 ---
 

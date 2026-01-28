@@ -14,7 +14,7 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 | Category | Skills | Primary Modes |
 |----------|--------|---------------|
 | Planning | x-plan | brainstorm, design, analyze |
-| Implementation | x-implement, x-improve | implement, fix, refactor, cleanup |
+| Implementation | x-implement, x-improve | implement, fix, refactor, enhance, cleanup |
 | Verification | x-verify | verify, build, coverage |
 | Review | x-review | review, audit |
 | Git | x-git | commit, release |
@@ -26,7 +26,7 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 | Orchestration | x-orchestrate | orchestrate, background, agent |
 | Setup | x-setup, x-create | setup, skill, command, agent |
 | Operations | x-deploy, x-monitor | deploy, monitor |
-| Behavioral | interview, complexity-detection, documentation, initiative | (auto-activated) |
+| Behavioral | interview, complexity-detection | (auto-activated) |
 
 ## Workflow Patterns
 
@@ -51,10 +51,10 @@ No build required - pure markdown documentation.
 
 ```bash
 # Validate skill structure
-find skills -name "SKILL.md" | wc -l  # Should be 19+
+find skills -name "SKILL.md" | wc -l  # Should be 18
 
 # Validate mode references
-find skills -path "*/references/mode-*.md" | wc -l  # Should be 41+
+find skills -path "*/references/mode-*.md" | wc -l  # Should be 46
 
 # Check for empty files
 find skills -name "*.md" -empty

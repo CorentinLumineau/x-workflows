@@ -7,10 +7,9 @@
 Project documentation setup - creates complete `/documentation/**` structure with intelligent stack detection.
 </purpose>
 
-## Behavioral Skills
+## References
 
-This mode activates:
-- `documentation` - Doc patterns
+See `@skills/x-docs/references/doc-sync-patterns.md` for documentation patterns.
 
 <instructions>
 
