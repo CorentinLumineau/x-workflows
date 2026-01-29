@@ -23,10 +23,12 @@ Pre-merge validation with auto-detected target branch, conflict detection, and q
 |------|-------------|
 | review (default) | Pre-merge PR review |
 | audit | SOLID audit, best practices check |
+| security | OWASP Top 10 security assessment |
 
 ## Mode Detection
 | Keywords | Mode |
 |----------|------|
+| "security", "owasp", "vulnerability", "security review" | security |
 | "audit", "best practices", "solid", "quality check" | audit |
 | (default) | review |
 
@@ -101,3 +103,4 @@ All reviews must check:
 
 - **For review mode**: See `references/mode-review.md`
 - **For audit mode**: See `references/mode-audit.md`
+- **For security mode**: See `references/mode-security.md`

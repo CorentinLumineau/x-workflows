@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.3.1] - 2026-01-29
+
+### Removed
+- **x-deploy skill** - orphan skill with no command routing
+- **x-monitor skill** - orphan skill with no command routing
+- x-deploy/x-monitor triggers from interview skill
+
+### Added
+- **Security review mode** for x-review (`/x-review security`)
+- OWASP Top 10 checklist in mode-security.md
+
+### Fixed
+- Broken references to non-existent core-docs subdirectories
+- Interview confidence-model.md example now uses x-git release
+
+---
+
+## [0.3.0] - 2026-01-28
+
 ### Added
 - validate-rules.sh script and project context
 - Core Workflow vs Behavioral skill type documentation

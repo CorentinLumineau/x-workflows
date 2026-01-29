@@ -67,18 +67,6 @@ Each workflow has specific scenarios that should activate the interview behavior
 | release | Tag already exists | Risk | Would overwrite |
 | release | Breaking changes present | Risk | Needs migration guide |
 
-### x-deploy
-
-| Mode | Trigger | Category | Example |
-|------|---------|----------|---------|
-| deploy | Target environment unclear | Missing | "Deploy it" (where?) |
-| deploy | Production deployment | Risk | Always requires confirmation |
-| deploy | No rollback plan | Risk | What if it fails? |
-| deploy | Database migrations present | Risk | Irreversible data changes |
-| deploy | Feature flags not configured | Missing | New feature exposure |
-| rollback | Target version unclear | Missing | Roll back to what? |
-| rollback | Data loss potential | Risk | Migration reversal |
-
 ### x-verify
 
 | Mode | Trigger | Category | Example |
@@ -172,17 +160,6 @@ Each workflow has specific scenarios that should activate the interview behavior
 | setup | Project type unclear | Ambiguity | "Set up documentation" |
 | setup | Stack detection failed | Missing | "Initialize structure" |
 | setup | Existing docs conflict | Risk | "Create doc structure" |
-
-### x-monitor
-
-| Mode | Trigger | Category | Example |
-|------|---------|----------|---------|
-| setup | Monitoring scope unclear | Ambiguity | "Set up monitoring" |
-| setup | SLO targets undefined | Missing | "Configure observability" |
-| alert | Alert thresholds undefined | Missing | "Add alerting" |
-| alert | Severity classification unclear | Ambiguity | "Configure alerts" |
-| dashboard | Target audience unclear | Ambiguity | "Create dashboard" |
-| dashboard | Metrics selection needed | Ambiguity | "Build dashboard" |
 
 ## Universal Triggers
 

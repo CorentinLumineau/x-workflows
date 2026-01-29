@@ -184,8 +184,8 @@ For each principle:
 
 ## References
 
-- @core-docs/principles/solid.md - SOLID details
-- @core-docs/principles/dry-kiss-yagni.md - Quality principles
+- @core-docs/PRINCIPLES.md - SOLID, DRY, KISS, YAGNI details
+- @skills/code-quality/SKILL.md - Quality enforcement
 
 <success_criteria>
 

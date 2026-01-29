@@ -206,8 +206,8 @@ Present next step based on review:
 
 ## References
 
-- @core-docs/principles/solid.md - SOLID principles
-- @core-docs/security/owasp-top-10.md - Security checklist
+- @core-docs/PRINCIPLES.md - SOLID principles
+- @skills/security/owasp/SKILL.md - Security checklist
 - @skills/code-quality/SKILL.md - Quality standards
 
 <success_criteria>

@@ -31,7 +31,6 @@ Different workflows prioritize different dimensions:
 | **x-troubleshoot** | 30% | 30% | 25% | 5% | 10% |
 | **x-git commit** | 20% | 25% | 20% | 25% | 10% |
 | **x-git release** | 15% | 10% | 20% | 15% | **40%** |
-| **x-deploy** | 10% | 20% | 20% | 10% | **40%** |
 | **x-verify** | 25% | 20% | 30% | 15% | 10% |
 | **x-review** | 20% | 25% | 30% | 15% | 10% |
 | **x-improve** | 25% | 25% | 25% | 15% | 10% |
@@ -54,15 +53,15 @@ Different workflows prioritize different dimensions:
 composite = Σ (dimension_score × dimension_weight)
 ```
 
-Example for `x-deploy`:
+Example for `x-git release`:
 ```
-problem: 90 × 0.10 =  9.0
-context: 80 × 0.20 = 16.0
+problem: 80 × 0.15 = 12.0
+context: 90 × 0.10 =  9.0
 technical: 85 × 0.20 = 17.0
-scope: 75 × 0.10 =  7.5
+scope: 75 × 0.15 = 11.25
 risk: 60 × 0.40 = 24.0
 ─────────────────────────
-composite = 73.5%
+composite = 73.25%
 ```
 
 ## Dimension Scoring Guidelines

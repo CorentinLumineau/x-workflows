@@ -6,7 +6,7 @@ description: |
   Triggers: research, ask, question, investigate, deep dive, analyze, find out.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Read Grep Glob Bash
+allowed-tools: Read Grep Glob Bash WebFetch WebSearch
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
@@ -23,11 +23,15 @@ Intelligent Q&A and comprehensive research with evidence-based methodology.
 |------|-------------|
 | ask (default) | Quick Q&A |
 | deep | Comprehensive research |
+| assess | Integration pattern assessment |
+| lessons | Knowledge base sync |
 
 ## Mode Detection
 | Keywords | Mode |
 |----------|------|
 | "deep research", "comprehensive", "thorough", "prd", "competitive analysis" | deep |
+| "assess", "integration", "pertinence", "evaluate pattern" | assess |
+| "lessons", "best practices", "knowledge sync", "update knowledge" | lessons |
 | (default) | ask |
 
 ## Execution
@@ -116,3 +120,5 @@ Consider delegating to specialized agents:
 
 - **For ask mode**: See `references/mode-ask.md`
 - **For deep mode**: See `references/mode-deep.md`
+- **For assess mode**: See `references/mode-assess.md`
+- **For lessons mode**: See `references/mode-lessons.md`
