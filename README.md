@@ -48,13 +48,6 @@ For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://
 | `interview` | Zero-doubt confidence gate (Phase 0 for all workflows) |
 | `complexity-detection` | Route issues to appropriate debugging tier |
 
-### NEW Workflow Skills (2)
-
-| Skill | Description |
-|-------|-------------|
-| `x-deploy` | Deployment workflows, rollback support |
-| `x-monitor` | Monitoring setup, alerting configuration |
-
 ## Installation
 
 ### With skills.sh
@@ -116,8 +109,6 @@ Workflow skills reference knowledge skills from x-devsecops for domain expertise
 | x-review | code-quality, owasp |
 | x-git | release-management |
 | x-troubleshoot | debugging |
-| x-deploy | infrastructure, container-security |
-| x-monitor | monitoring, incident-response |
 
 ## Structure
 
@@ -143,9 +134,7 @@ x-workflows/
 │   ├── x-setup/
 │   ├── x-create/
 │   ├── interview/
-│   ├── complexity-detection/
-│   ├── x-deploy/
-│   └── x-monitor/
+│   └── complexity-detection/
 ├── LICENSE
 └── README.md
 ```

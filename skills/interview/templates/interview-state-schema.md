@@ -32,7 +32,7 @@ Interview state is persisted to `.claude/interview-state.json` for cross-session
     "workflow": {
       "type": "string",
       "description": "Active workflow skill",
-      "examples": ["x-implement", "x-plan", "x-deploy"]
+      "examples": ["x-implement", "x-plan", "x-verify"]
     },
     "mode": {
       "type": "string",
