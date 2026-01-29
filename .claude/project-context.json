@@ -1,7 +1,7 @@
 {
   "name": "x-workflows",
   "description": "Execution layer — HOW to work. Workflow skills for Claude Code agents.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "language": "markdown",
   "framework": "claude-code-plugin",
   "architecture": "skill-based",
