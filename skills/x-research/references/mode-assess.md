@@ -362,8 +362,8 @@ Task([
 
 ## References
 
-- @core-docs/mcp/sequential-thinking.md - Analysis structuring
-- @core-docs/tools/ask-user-question.md - User approval gates
+- Sequential Thinking MCP server - Analysis structuring (built-in)
+- AskUserQuestion tool - User approval gates (built-in)
 
 <success_criteria>
 

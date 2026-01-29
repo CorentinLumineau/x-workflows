@@ -194,9 +194,7 @@ describe('API endpoint', () => {
 
 ## References
 
-- @core-docs/testing/testing-pyramid.md - Testing distribution
-- @core-docs/testing/coverage-strategies.md - Coverage strategies
-- @core-docs/testing/tdd-green-red-refactor.md - TDD methodology
+- @skills/quality-testing/ - Testing pyramid, coverage strategies, and TDD methodology
 
 ## Success Criteria
 

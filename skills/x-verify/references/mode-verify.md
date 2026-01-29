@@ -175,9 +175,8 @@ Present next step based on result:
 
 ## References
 
-- @core-docs/testing/testing-pyramid.md - Testing methodology
-- @core-docs/testing/coverage-strategies.md - Coverage targets
-- @skills/code-quality/SKILL.md - Quality enforcement
+- @skills/quality-testing/ - Testing pyramid and coverage targets
+- @skills/code-code-quality/ - Quality enforcement
 
 ## Success Criteria
 

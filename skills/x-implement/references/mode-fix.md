@@ -138,8 +138,7 @@ Present next step:
 
 ## References
 
-- @core-docs/error-handling/debugging-strategies.md - Debugging strategies
-- @skills/debugging/SKILL.md - Debug methodology
+- @skills/quality-debugging/ - Debugging strategies and methodology
 
 <success_criteria>
 - [ ] Error cause identified

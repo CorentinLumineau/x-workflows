@@ -216,5 +216,5 @@ Suggest follow-up learning:
 
 ## References
 
-- @core-docs/patterns/ - Design patterns
-- @core-docs/principles/solid.md - SOLID principles
+- @skills/code-design-patterns/ - Design patterns
+- @skills/code-code-quality/ - SOLID principles

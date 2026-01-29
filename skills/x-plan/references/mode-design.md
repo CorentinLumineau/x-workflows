@@ -202,9 +202,8 @@ Present next step:
 
 ## References
 
-- @core-docs/principles/solid.md - SOLID principles
-- @core-docs/patterns/ - Design patterns
-- @skills/code-quality/SKILL.md - Quality enforcement
+- @skills/code-code-quality/ - SOLID principles
+- @skills/code-design-patterns/ - Design patterns
 
 <success_criteria>
 

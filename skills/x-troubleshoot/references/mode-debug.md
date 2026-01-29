@@ -185,5 +185,4 @@ Escalate to `/x-troubleshoot` when:
 
 ## References
 
-- @core-docs/error-handling/debugging-strategies.md - Techniques
-- @skills/debugging/SKILL.md - Methodology
+- @skills/quality-debugging/ - Debugging techniques and methodology

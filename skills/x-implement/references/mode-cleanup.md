@@ -166,8 +166,7 @@ Present next step:
 
 ## References
 
-- @core-docs/principles/dry-kiss-yagni.md - YAGNI principle
-- @skills/code-quality/SKILL.md - Quality enforcement
+- @skills/code-code-quality/ - YAGNI principle and quality enforcement
 
 <success_criteria>
 - [ ] Dead code identified

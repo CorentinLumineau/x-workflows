@@ -152,5 +152,4 @@ Task({
 
 ## References
 
-- @core-docs/tools/task.md - Task tool usage
-- @core-docs/AGENT_SELECTION_GUIDE.md - Selection guide
+- @skills/agent-awareness/ - Agent selection guide and task management

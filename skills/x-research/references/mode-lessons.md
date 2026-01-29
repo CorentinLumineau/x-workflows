@@ -341,8 +341,8 @@ Next Steps:
 
 ## References
 
-- @core-docs/tools/web-fetch.md - Web content fetching
-- @core-docs/tools/ask-user-question.md - User approval gates
+- WebFetch tool - Web content fetching (built-in)
+- AskUserQuestion tool - User approval gates (built-in)
 
 <success_criteria>
 

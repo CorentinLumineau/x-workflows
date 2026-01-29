@@ -218,6 +218,4 @@ Use these markers for thinking transparency:
 
 ## References
 
-- @core-docs/error-handling/debugging-strategies.md - Debugging patterns
-- @skills/debugging/SKILL.md - Methodology
-- @templates/optional/observability/logging.md - Log analysis (optional)
+- @skills/quality-debugging/ - Debugging patterns and methodology

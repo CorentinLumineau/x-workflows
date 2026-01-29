@@ -237,9 +237,9 @@ When focus provided, skip Phase 1 parallel analysis and run single agent.
 
 ## References
 
-- @core-docs/principles/pareto-80-20.md - Pareto prioritization
-- @core-docs/testing/testing-pyramid.md - Coverage targets (70/20/10)
-- @core-docs/principles/solid.md - Best practices reference
+- @skills/meta-analysis/ - Pareto 80/20 prioritization
+- @skills/quality-testing/ - Coverage targets (70/20/10)
+- @skills/code-code-quality/ - SOLID best practices
 
 ---
 

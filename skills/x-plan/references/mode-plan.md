@@ -166,9 +166,8 @@ Present next step:
 
 ## References
 
-- @core-docs/principles/pareto-80-20.md - Pareto prioritization
-- @skills/x-initiative/playbooks/README.md - Initiative methodology
-- @skills/analysis/SKILL.md - Analysis patterns
+- @skills/meta-analysis/ - Pareto prioritization and analysis patterns
+- @skills/x-initiative/ - Initiative methodology
 
 <success_criteria>
 

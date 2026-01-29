@@ -158,4 +158,4 @@ Kill stale tasks, clean up task files.
 
 ## References
 
-- @core-docs/tools/task.md - Task tool usage
+- @skills/agent-awareness/ - Task tool and agent management
