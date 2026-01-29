@@ -1,7 +1,7 @@
 {
   "name": "x-workflows",
   "description": "Execution layer — HOW to work. Workflow skills for Claude Code agents.",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "language": "markdown",
   "framework": "claude-code-plugin",
   "architecture": "skill-based",
@@ -9,7 +9,7 @@
   "package_manager": null,
   "skillCount": 19,
   "categories": {
-    "core-workflows": ["x-implement", "x-verify", "x-review", "x-git", "x-deploy", "x-monitor"],
+    "core-workflows": ["x-implement", "x-verify", "x-review", "x-git"],
     "planning": ["x-plan", "x-improve", "x-research"],
     "project-management": ["x-initiative", "x-orchestrate"],
     "support": ["x-docs", "x-help", "x-setup", "x-create", "x-troubleshoot"],

@@ -192,4 +192,4 @@ Commit is complete when:
 ## References
 
 - @core-docs/RULES.md - Git workflow rules
-- @skills/git-workflow/SKILL.md - Safe operations
+- @skills/delivery-release-management/ - Safe release operations

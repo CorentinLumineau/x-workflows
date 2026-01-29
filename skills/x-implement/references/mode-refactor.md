@@ -196,9 +196,7 @@ Apply these principles:
 
 ## References
 
-- @core-docs/principles/solid.md - SOLID principles
-- @core-docs/principles/dry-kiss-yagni.md - Code quality
-- @skills/code-quality/SKILL.md - Quality enforcement
+- @skills/code-code-quality/ - SOLID, DRY, KISS, YAGNI principles
 
 <success_criteria>
 - [ ] **Scope assessed** (Phase 0 complete)

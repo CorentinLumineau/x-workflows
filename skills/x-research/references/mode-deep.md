@@ -208,7 +208,7 @@ mcp__sequential_thinking__sequentialthinking({
 
 ## References
 
-- @core-docs/mcp/context7.md - Documentation lookup
+- Context7 MCP server - Documentation lookup (built-in)
 
 <success_criteria>
 

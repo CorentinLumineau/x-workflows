@@ -179,8 +179,7 @@ Goal → Actors → Impacts → Deliverables
 
 ## References
 
-- @core-docs/principles/pareto-80-20.md - Pareto prioritization
-- @skills/analysis/SKILL.md - Analysis patterns
+- @skills/meta-analysis/ - Pareto prioritization and analysis patterns
 
 <success_criteria>
 

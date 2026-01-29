@@ -169,4 +169,4 @@ On completion:
 
 ## References
 
-- @core-docs/tools/task.md - Task and agent management
+- @skills/agent-awareness/ - Agent selection and management

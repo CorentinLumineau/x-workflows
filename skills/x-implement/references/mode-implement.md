@@ -164,10 +164,9 @@ Present next step via AskUserQuestion:
 
 ## References
 
-- @core-docs/principles/solid.md - SOLID principles
-- @core-docs/testing/tdd-green-red-refactor.md - TDD methodology
-- @core-docs/testing/testing-pyramid.md - Testing distribution
-- @core-docs/patterns/ - Design patterns
+- @skills/code-code-quality/ - SOLID principles
+- @skills/quality-testing/ - TDD methodology and testing pyramid
+- @skills/code-design-patterns/ - Design patterns
 
 <success_criteria>
 - [ ] Context detected, patterns discovered

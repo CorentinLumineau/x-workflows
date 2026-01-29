@@ -23,7 +23,7 @@ This document defines the canonical boilerplate text used across all 33 commands
 ```markdown
 ## Tool Usage
 
-> **Reference**: All tool patterns follow @core-docs/tools/README.md
+> **Reference**: Tools are built-in to Claude Code. See @skills/agent-awareness/ for agent patterns.
 
 ### Tools Used by This Command
 
@@ -34,16 +34,16 @@ This document defines the canonical boilerplate text used across all 33 commands
 
 ### Standard Tool References
 
-| Tool | Standard Reference |
-|------|-------------------|
-| Task | @core-docs/tools/task.md |
-| Context7 | @core-docs/mcp/context7.md |
-| Sequential Thinking | @core-docs/mcp/sequential-thinking.md |
-| Memory | @core-docs/mcp/memory.md |
-| claude-in-chrome | Built-in browser automation MCP |
-| AskUserQuestion | @core-docs/tools/ask-user-question.md |
-| TodoWrite | @core-docs/tools/todo-write.md |
-| SlashCommand | @core-docs/tools/slash-command.md |
+| Tool | Description |
+|------|-------------|
+| Task | Agent delegation (built-in) |
+| Context7 | Documentation lookup MCP (built-in) |
+| Sequential Thinking | Complex analysis MCP (built-in) |
+| Memory | Knowledge graph MCP (built-in) |
+| claude-in-chrome | Browser automation MCP (built-in) |
+| AskUserQuestion | User interaction (built-in) |
+| TodoWrite | Task tracking (built-in) |
+| SlashCommand | Command invocation (built-in) |
 
 ---
 
@@ -135,13 +135,13 @@ This document defines the canonical boilerplate text used across all 33 commands
 
 ### Common Reference Paths
 
-| Topic | Path |
-|-------|------|
-| SOLID | @core-docs/principles/solid.md |
-| Testing | @core-docs/testing/testing-pyramid.md |
-| Patterns | @core-docs/patterns/ |
-| Debugging | @core-docs/error-handling/debugging-strategies.md |
-| Error Handling | @templates/optional/error-handling/error-handling-patterns.md |
+| Topic | Skill Reference |
+|-------|-----------------|
+| SOLID | @skills/code-code-quality/ |
+| Testing | @skills/quality-testing/ |
+| Patterns | @skills/code-design-patterns/ |
+| Debugging | @skills/quality-debugging/ |
+| Error Handling | @skills/code-error-handling/ |
 
 ---
 
@@ -152,7 +152,7 @@ This document defines the canonical boilerplate text used across all 33 commands
 ```markdown
 ## Task Subagents for Parallel Execution
 
-> **Pattern**: {Pattern name} (see @core-docs/tools/task.md#{pattern-anchor})
+> **Pattern**: {Pattern name} (see @skills/agent-awareness/ for agent patterns)
 
 **Conditional: {Condition description}** (when {trigger keywords} detected)
 

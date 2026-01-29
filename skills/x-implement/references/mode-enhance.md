@@ -161,9 +161,8 @@ Present next step:
 
 ## References
 
-- @core-docs/principles/pareto-80-20.md - Pareto principle
-- @core-docs/principles/solid.md - SOLID principles
-- @core-docs/principles/dry-kiss-yagni.md - Code quality
+- @skills/meta-analysis/ - Pareto 80/20 principle
+- @skills/code-code-quality/ - SOLID, DRY, KISS principles
 
 <success_criteria>
 - [ ] Quality issues identified

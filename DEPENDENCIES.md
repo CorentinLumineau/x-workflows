@@ -13,9 +13,9 @@ This document maps how x-workflows skills depend on x-devsecops knowledge skills
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     x-workflows                              │
-│                 (HOW to work - 19 skills)                   │
+│                 (HOW to work - 17 skills)                   │
 │                                                             │
-│  x-implement → x-verify → x-review → x-git → x-deploy       │
+│  x-implement → x-verify → x-review → x-git                  │
 │       │            │          │         │         │         │
 │       ▼            ▼          ▼         ▼         ▼         │
 ├─────────────────────────────────────────────────────────────┤
@@ -41,8 +41,6 @@ This document maps how x-workflows skills depend on x-devsecops knowledge skills
 | `x-troubleshoot` | debugging | performance, error-handling |
 | `x-plan` | analysis, decision-making | - |
 | `x-improve` | analysis, code-quality, testing | - |
-| `x-deploy` | infrastructure, ci-cd | container-security, secrets, compliance |
-| `x-monitor` | monitoring | incident-response, performance |
 | `x-initiative` | - | - |
 | `x-docs` | - | - |
 | `x-research` | - | - |
@@ -144,30 +142,6 @@ Skills that are activated **conditionally** based on:
 - `code-quality` - Best practices scoring
 - `testing` - Coverage evaluation
 
-### x-deploy
-
-**Required:**
-- `infrastructure` - IaC patterns, deployment strategies
-- `ci-cd` - Pipeline configuration, automation
-
-**Context-Triggered:**
-| Trigger | Skill | Why |
-|---------|-------|-----|
-| Container deployments | `container-security` | Image scanning, runtime security |
-| Cloud deployments | `secrets` | Secrets management |
-| Regulated industries | `compliance` | Compliance requirements |
-
-### x-monitor
-
-**Required:**
-- `monitoring` - Metrics, alerting, dashboards
-
-**Context-Triggered:**
-| Trigger | Skill | Why |
-|---------|-------|-----|
-| Alert setup | `incident-response` | Runbook integration |
-| Performance monitoring | `performance` | Performance baselines |
-
 ---
 
 ## x-devsecops Skill Catalog
@@ -268,8 +242,6 @@ declare -A REQUIRED_DEPS=(
   ["x-troubleshoot"]="debugging"
   ["x-plan"]="analysis decision-making"
   ["x-improve"]="analysis code-quality testing"
-  ["x-deploy"]="infrastructure ci-cd"
-  ["x-monitor"]="monitoring"
 )
 
 echo "Validating x-workflows → x-devsecops dependencies..."

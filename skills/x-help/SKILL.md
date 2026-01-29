@@ -56,8 +56,6 @@ This workflow activates these behavioral skills:
 | Orchestration | x-orchestrate | Workflows, agents |
 | Setup | x-setup | Project setup |
 | Creation | x-create | Create skills/commands/agents |
-| Deployment | x-deploy | Deployment workflows |
-| Monitoring | x-monitor | Monitoring setup |
 
 ## Workflow Patterns
 

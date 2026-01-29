@@ -42,8 +42,6 @@ declare -A REQUIRED_DEPS=(
   ["x-troubleshoot"]="debugging"
   ["x-plan"]="analysis decision-making"
   ["x-improve"]="analysis code-quality testing"
-  ["x-deploy"]="infrastructure ci-cd"
-  ["x-monitor"]="monitoring"
   ["complexity-detection"]="debugging"
 )
 
@@ -53,8 +51,6 @@ declare -A CONTEXT_DEPS=(
   ["x-verify"]="performance"
   ["x-review"]="authentication performance"
   ["x-troubleshoot"]="performance error-handling"
-  ["x-deploy"]="container-security secrets compliance"
-  ["x-monitor"]="incident-response performance"
 )
 
 # Also dynamically parse any `skill-name` entries from the dependency matrix tables
