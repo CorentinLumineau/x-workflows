@@ -49,7 +49,29 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Issue Understanding
 
-Understand what needs debugging:
+<user_interaction type="structured_question" required="true" id="error_type">
+
+**Question**: What type of error are you seeing?
+
+| Option | Description |
+|--------|-------------|
+| Wrong output | Getting results but they're incorrect |
+| No output | Expected something but nothing happens |
+| Exception | Application crashes or throws errors |
+| Performance | Works but is slow or resource-intensive |
+
+**Allow custom input**: Yes
+**Multi-select**: No
+
+</user_interaction>
+
+<user_interaction type="freeform" required="true" id="error_details">
+
+**Question**: Describe the error and how to reproduce it:
+
+</user_interaction>
+
+Based on `error_type`, apply the appropriate approach:
 
 | Type | Approach |
 |------|----------|
@@ -57,6 +79,20 @@ Understand what needs debugging:
 | No output | Check control flow |
 | Exception | Analyze stack trace |
 | Performance | Profile hot paths |
+
+<checkpoint id="issue_understood" phase="1">
+
+**Issue Understood**
+
+- Error type: {error_type response}
+- Description: {error_details response}
+- Approach: {selected approach from table}
+
+**Proceed to execution tracing?**
+
+</checkpoint>
+
+---
 
 ### Phase 2: Execution Tracing
 
@@ -79,6 +115,33 @@ Entry: {function/endpoint}
 
 ### Phase 3: Hypothesis Testing
 
+<deep_reasoning topic="hypothesis_formation">
+
+Based on the execution trace, form 2-3 hypotheses:
+
+1. **Primary hypothesis**: Most likely cause based on flow analysis
+2. **Secondary hypothesis**: Alternative explanation for the behavior
+3. **Edge case hypothesis**: Less common but possible cause
+
+For each hypothesis, determine:
+- What evidence would support it?
+- What evidence would refute it?
+- What test would distinguish between hypotheses?
+
+</deep_reasoning>
+
+<user_interaction type="confirmation" required="true" id="hypothesis_confirmation">
+
+**Proposed Investigation Order**:
+
+1. **Most likely**: {Primary hypothesis}
+2. **Alternative**: {Secondary hypothesis}
+3. **Edge case**: {Edge case hypothesis}
+
+Investigate in this order?
+
+</user_interaction>
+
 Form focused hypotheses:
 
 1. **Primary hypothesis**: Based on flow analysis
@@ -87,28 +150,40 @@ Form focused hypotheses:
 
 ### Phase 4: Fix Application
 
+<checkpoint id="fix_ready" phase="4">
+
+**Root Cause Identified**
+
+- Location: {file:line where issue occurs}
+- Cause: {description of the root cause}
+- Proposed fix: {description of the fix}
+
+**Apply this fix?**
+
+</checkpoint>
+
 Once issue found:
 1. Apply minimal fix
 2. Verify fix works
 3. Ensure no regressions
 
+---
+
 ### Phase 5: Workflow Transition
 
-Present next step:
-```json
-{
-  "questions": [{
-    "question": "Debug complete. Issue found in {location}. Continue?",
-    "header": "Next",
-    "options": [
-      {"label": "/x-implement fix (Recommended)", "description": "Apply the fix"},
-      {"label": "/x-verify", "description": "Run tests"},
-      {"label": "Stop", "description": "Review first"}
-    ],
-    "multiSelect": false
-  }]
-}
-```
+<user_interaction type="structured_question" required="true" id="next_step">
+
+**Question**: Debug complete. Issue found in {location}. What's next?
+
+| Option | Description |
+|--------|-------------|
+| /x-implement fix (Recommended) | Apply the fix |
+| /x-verify | Run tests to verify |
+| Stop | Review first |
+
+**Multi-select**: No
+
+</user_interaction>
 
 </instructions>
 

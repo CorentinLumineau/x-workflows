@@ -60,6 +60,16 @@ Load project context following context-awareness skill:
 
 ### Phase 1: Discovery
 
+<parallel_exploration max_agents="3">
+
+Explore in parallel:
+
+1. **Existing Patterns** - Search codebase for similar implementations in services/, repos/, components/
+2. **Test Utilities** - Find existing test utilities in tests/utils/ to reuse
+3. **Framework Patterns** - Look up framework best practices via Context7
+
+</parallel_exploration>
+
 Use Task tool with x-explorer agent (haiku):
 
 ```
@@ -75,6 +85,20 @@ Discover:
 - Similar implementations to replicate
 - Test utilities in tests/utils/
 - Framework patterns via Context7
+
+<checkpoint id="discovery_complete" phase="1">
+
+**Discovery Complete**
+
+- Patterns found: {list discovered patterns}
+- Similar implementations: {list files to reference}
+- Test utilities: {list test utilities to use}
+
+**Proceed to implementation?**
+
+</checkpoint>
+
+---
 
 ### Phase 2: Implementation
 
@@ -112,7 +136,34 @@ Requirements:
 - **Testing pyramid**: 70% unit, 20% integration, 10% E2E
 - **Use shared utilities** from tests/utils/
 
+<checkpoint id="tests_passing" phase="3">
+
+**Tests Complete**
+
+- Coverage: {percentage}%
+- Unit tests: {count} ({percentage}%)
+- Integration tests: {count} ({percentage}%)
+- E2E tests: {count} ({percentage}%)
+
+**Proceed to validation?**
+
+</checkpoint>
+
+---
+
 ### Phase 4: Validation
+
+<deep_reasoning topic="quality_validation">
+
+Validate implementation against quality gates:
+
+1. **Type Safety** - Are all types correct? Any `any` types that should be specific?
+2. **SOLID Compliance** - Does new code follow all five principles?
+3. **Test Coverage** - Is 95%+ coverage achieved?
+4. **Build Health** - Does build pass without warnings?
+5. **Documentation** - Are docs in sync with implementation?
+
+</deep_reasoning>
 
 Run quality gates:
 - [ ] Type checking - No errors
@@ -121,24 +172,38 @@ Run quality gates:
 - [ ] Build & lint - Passing
 - [ ] Docs synced
 
+<checkpoint id="validation_complete" phase="4">
+
+**Validation Complete**
+
+Quality gates:
+- Type checking: {pass/fail}
+- SOLID: {pass/fail}
+- Coverage: {percentage}%
+- Build: {pass/fail}
+- Docs: {synced/stale}
+
+**Proceed to workflow transition?**
+
+</checkpoint>
+
+---
+
 ### Phase 5: Workflow Transition
 
-Present next step via AskUserQuestion:
+<user_interaction type="structured_question" required="true" id="next_step">
 
-```json
-{
-  "questions": [{
-    "question": "Implementation complete ({files_changed} files, {coverage}% coverage). Continue workflow?",
-    "header": "Next",
-    "options": [
-      {"label": "/x-verify (Recommended)", "description": "Run all quality gates"},
-      {"label": "/x-review", "description": "Pre-merge code review"},
-      {"label": "Stop workflow", "description": "Manual review first"}
-    ],
-    "multiSelect": false
-  }]
-}
-```
+**Question**: Implementation complete ({files_changed} files, {coverage}% coverage). What's next?
+
+| Option | Description |
+|--------|-------------|
+| /x-verify (Recommended) | Run all quality gates |
+| /x-review | Pre-merge code review |
+| Stop workflow | Manual review first |
+
+**Multi-select**: No
+
+</user_interaction>
 </instructions>
 
 <critical_rules>

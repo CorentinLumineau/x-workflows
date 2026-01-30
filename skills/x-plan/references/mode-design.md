@@ -48,12 +48,50 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Requirements Review
 
+<user_interaction type="structured_question" required="false" id="requirements_source">
+
+**Question**: Where are the requirements coming from?
+
+| Option | Description |
+|--------|-------------|
+| From brainstorm | Requirements from /x-plan brainstorm session |
+| Direct input | User will provide requirements now |
+| Existing document | Requirements in project documentation |
+| Code analysis | Infer requirements from existing code |
+
+**Multi-select**: No
+
+</user_interaction>
+
 Review requirements (from brainstorm or direct input):
 - Functional requirements
 - Non-functional requirements
 - Constraints
 
+<checkpoint id="requirements_reviewed" phase="1">
+
+**Requirements Review Complete**
+
+- Functional: {list functional requirements}
+- Non-functional: {list non-functional requirements}
+- Constraints: {list constraints}
+
+**Proceed to architecture discovery?**
+
+</checkpoint>
+
+---
+
 ### Phase 2: Architecture Discovery
+
+<parallel_exploration max_agents="2">
+
+Explore in parallel:
+
+1. **Existing Architecture** - Search codebase for architectural patterns, layer structure, and conventions
+2. **Best Practices** - Look up recommended architecture patterns for this type of feature via Context7
+
+</parallel_exploration>
 
 Use x-explorer to find existing patterns:
 
@@ -70,6 +108,8 @@ Discover:
 - Design patterns in use
 - Integration patterns
 - Data flow patterns
+
+---
 
 ### Phase 3: Design Creation
 
@@ -133,6 +173,32 @@ Create design document:
 
 ### Phase 4: SOLID Validation
 
+<deep_reasoning topic="solid_validation">
+
+Validate the design against all five SOLID principles:
+
+1. **Single Responsibility Principle**
+   - Does each component have exactly one reason to change?
+   - Are responsibilities clearly separated?
+
+2. **Open/Closed Principle**
+   - Can the design be extended without modification?
+   - Are extension points identified?
+
+3. **Liskov Substitution Principle**
+   - Can subtypes be substituted for their base types?
+   - Are contracts honored?
+
+4. **Interface Segregation Principle**
+   - Are interfaces focused and specific?
+   - Are clients forced to depend on methods they don't use?
+
+5. **Dependency Inversion Principle**
+   - Do high-level modules depend on abstractions?
+   - Are concrete implementations injected?
+
+</deep_reasoning>
+
 Validate design against SOLID:
 
 | Principle | Check | Status |
@@ -143,23 +209,35 @@ Validate design against SOLID:
 | **I**nterface Segregation | No fat interfaces | ✓/✗ |
 | **D**ependency Inversion | Abstractions, not concretions | ✓/✗ |
 
+<checkpoint id="design_complete" phase="4">
+
+**Design Complete**
+
+- Components: {list components}
+- SOLID validation: {pass/fail status}
+- Trade-offs documented: {yes/no}
+
+**Review design before proceeding?**
+
+</checkpoint>
+
+---
+
 ### Phase 5: Workflow Transition
 
-Present next step:
-```json
-{
-  "questions": [{
-    "question": "Design complete. Ready to implement?",
-    "header": "Next",
-    "options": [
-      {"label": "/x-implement (Recommended)", "description": "Start implementation"},
-      {"label": "/x-plan", "description": "Create detailed plan"},
-      {"label": "Stop", "description": "Review design first"}
-    ],
-    "multiSelect": false
-  }]
-}
-```
+<user_interaction type="structured_question" required="true" id="next_step">
+
+**Question**: Design complete. What's next?
+
+| Option | Description |
+|--------|-------------|
+| /x-implement (Recommended) | Start implementation |
+| /x-plan | Create detailed plan |
+| Stop | Review design first |
+
+**Multi-select**: No
+
+</user_interaction>
 
 </instructions>
 
