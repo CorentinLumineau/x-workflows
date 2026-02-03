@@ -1,15 +1,15 @@
 ---
 name: x-implement
 description: |
-  Context-aware implementation with TDD and quality gates. Fixes, refactoring, improvements.
-  Activate when implementing features, fixing bugs, refactoring code, or cleaning up technical debt.
-  Triggers: implement, feature, fix, bug, refactor, improve, cleanup, code change.
+  Context-aware implementation with TDD and quality gates. Fixes, refactoring, migrations.
+  Activate when implementing features, fixing bugs, refactoring code, or migrating systems.
+  Triggers: implement, feature, fix, bug, refactor, improve, cleanup, migrate, code change.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
@@ -26,6 +26,7 @@ Context-aware implementation with automatic pattern discovery and smart workflow
 | refactor | Safe refactoring with zero regression |
 | enhance | Targeted code quality improvements |
 | cleanup | Dead code removal, tech debt |
+| migrate | Large-scale migrations and upgrades |
 
 ## Mode Detection
 | Keywords | Mode |
@@ -34,6 +35,7 @@ Context-aware implementation with automatic pattern discovery and smart workflow
 | "refactor", "restructure", "reorganize" | refactor |
 | "enhance", "improve", "better", "optimize" | enhance |
 | "cleanup", "clean", "remove dead", "tech debt" | cleanup |
+| "migrate", "migration", "upgrade", "convert", "transition" | migrate |
 | (default) | implement |
 
 ## Execution
@@ -72,6 +74,47 @@ Consider delegating to specialized agents:
 ## Quality Gates
 All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 
+## Documentation Sync
+
+After x-implement completes, documentation is automatically checked:
+
+```
+x-implement completes
+        ↓
+documentation skill activates (auto)
+        ↓
+x-docs sync (if drift detected)
+```
+
+This ensures documentation stays synchronized with code changes.
+See: `@skills/documentation` behavioral skill
+
+## migrate Mode
+
+Large-scale migrations and system upgrades.
+
+### Triggers
+- "migrate", "migration", "upgrade major"
+- "convert", "transition", "move to"
+
+### Migration Workflow
+
+```
+1. ANALYZE: Assess current state and target
+2. PLAN: Generate migration roadmap
+3. IMPLEMENT: Execute in phases
+4. VERIFY: Test each phase
+5. CLEANUP: Remove deprecated code
+```
+
+### Complexity Note
+
+**migrate mode typically triggers x-initiative** for multi-session tracking.
+Complex migrations (>5 files, framework changes) are auto-routed via complexity-detection.
+
+### References
+See: `references/mode-migrate.md`
+
 ## Checklist
 
 - [ ] Tests written first (TDD)
@@ -87,3 +130,4 @@ All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 - **For refactor mode**: See `references/mode-refactor.md`
 - **For enhance mode**: See `references/mode-enhance.md`
 - **For cleanup mode**: See `references/mode-cleanup.md`
+- **For migrate mode**: See `references/mode-migrate.md`

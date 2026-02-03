@@ -2,14 +2,14 @@
 name: x-initiative
 description: |
   Multi-phase project tracking across sessions. Create, continue, archive initiatives.
-  Activate when managing multi-session projects, tracking milestones, or resuming work.
-  Triggers: initiative, milestone, project, continue, resume, archive, status.
+  Auto-activated for complex tasks (Tier 3). Manages milestones and cross-session state.
+  Triggers: initiative, milestone, project, continue, resume, archive, status, OR auto-triggered by complexity-detection.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
@@ -37,6 +37,59 @@ Multi-phase project tracking across sessions using file-based persistence.
 ## Execution
 - **Default mode**: create
 - **No-args behavior**: Check for active initiatives
+
+## Auto-Activation
+
+x-initiative is **automatically suggested** by `complexity-detection` when:
+
+### Trigger Conditions
+
+| Condition | Example |
+|-----------|---------|
+| Complexity Tier 3 | Any COMPLEX assessment |
+| Migration keywords | "migrate", "upgrade major version" |
+| Redesign scope | "refactor entire", "rewrite", "redesign" |
+| Multi-phase language | "over several sessions", "multi-day" |
+| Large scope | >5 files, multiple modules |
+
+### Auto-Activation Flow
+
+```
+User request
+    ↓
+complexity-detection assesses
+    ↓
+If COMPLEX detected:
+    ↓
+┌─────────────────────────────────────────────────┐
+│ This task appears complex and may span multiple │
+│ sessions. Would you like to create an           │
+│ initiative to track progress?                   │
+│                                                 │
+│ [Yes, create initiative] [No, proceed directly] │
+└─────────────────────────────────────────────────┘
+```
+
+### When Active Initiative Exists
+
+If an initiative is already active and a new complex task is detected:
+
+```
+┌─────────────────────────────────────────────────┐
+│ Active initiative: "Project Alpha Migration"   │
+│ Progress: Milestone 2/4 (50%)                  │
+│                                                 │
+│ Options:                                        │
+│ [Continue existing] [Start new] [View status]  │
+└─────────────────────────────────────────────────┘
+```
+
+### Opt-Out
+
+Users can bypass auto-activation by:
+- Using explicit `/x-implement` without initiative
+- Adding "quick" or "oneshot" to request
+- Responding "No" to initiative prompt
 
 ## Behavioral Skills
 

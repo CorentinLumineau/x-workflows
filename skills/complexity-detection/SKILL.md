@@ -1,26 +1,155 @@
 ---
 name: complexity-detection
 description: |
-  Intelligent routing for debugging commands based on issue complexity.
-  Activate when detecting errors, bugs, or debugging scenarios to route appropriately.
-  Triggers: error, bug, fix, debug, broken, failing, issue, troubleshoot.
+  Intelligent routing for all workflows based on complexity and intent.
+  Detects workflow type (APEX/ONESHOT/DEBUG/BRAINSTORM) and complexity tier.
+  Auto-triggers x-initiative for complex multi-session tasks.
+  Triggers: any user request (behavioral skill, always active).
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: behavioral
   user-invocable: false
 ---
 
 # Complexity Detection
 
-Intelligent routing for debugging commands based on issue complexity.
+Intelligent routing for all workflows based on complexity and intent.
 
 ## Purpose
 
-Extract complexity detection logic into a shared skill to ensure consistent assessment and DRY compliance across all debugging-related workflows.
+Extract complexity detection logic into a shared skill to ensure consistent assessment and DRY compliance across all workflows. This skill:
+
+1. **Detects workflow intent** → Routes to correct mental model (APEX/ONESHOT/DEBUG/BRAINSTORM)
+2. **Assesses complexity tier** → Determines appropriate skill and mode
+3. **Auto-triggers x-initiative** → For complex multi-session tasks
+
+---
+
+## Workflow Intent Detection
+
+### The 4 Mental Models
+
+| Mental Model | Intent | Description |
+|--------------|--------|-------------|
+| **APEX** | Build/Create | Systematic: Analyze → Plan → Execute → Verify |
+| **ONESHOT** | Quick Fix | Ultra-fast for trivial changes |
+| **DEBUG** | Fix Error | Error resolution and troubleshooting |
+| **BRAINSTORM** | Explore/Research | Research and architectural decisions |
+
+### Intent Detection Patterns
+
+```yaml
+workflow_patterns:
+  APEX:
+    - "add", "implement", "feature", "build", "create"
+    - "refactor", "enhance", "improve", "update"
+    - "integrate", "connect", "setup"
+
+  ONESHOT:
+    - "fix typo", "quick", "simple", "minor"
+    - "rename", "small change", "trivial"
+
+  DEBUG:
+    - "bug", "broken", "error", "crash", "failing"
+    - "intermittent", "doesn't work", "issue"
+    - "troubleshoot", "investigate", "debug"
+
+  BRAINSTORM:
+    - "discuss", "explore", "options", "should we"
+    - "architecture", "design", "approach"
+    - "research", "compare", "evaluate"
+```
+
+### Intent → Skill Mapping
+
+| Intent | Complexity | Route |
+|--------|------------|-------|
+| APEX + SIMPLE | Direct | x-implement |
+| APEX + MODERATE | Plan first | x-plan → x-implement |
+| APEX + COMPLEX | Initiative | **x-initiative** → full APEX flow |
+| ONESHOT | Always SIMPLE | x-implement (autonomous) |
+| DEBUG + SIMPLE | Direct | x-implement fix |
+| DEBUG + MODERATE | Investigate | x-troubleshoot debug |
+| DEBUG + COMPLEX | Initiative | **x-initiative** → x-troubleshoot |
+| BRAINSTORM + SIMPLE | Quick answer | x-research ask |
+| BRAINSTORM + MODERATE | Deep dive | x-research deep |
+| BRAINSTORM + COMPLEX | Initiative | **x-initiative** → x-plan brainstorm |
+
+---
+
+## x-initiative Auto-Trigger
+
+### Automatic Activation Conditions
+
+x-initiative is **automatically suggested** when ANY of these conditions are met:
+
+```yaml
+initiative_triggers:
+  complexity_tier: 3  # COMPLEX tier always triggers
+
+  keywords:
+    - "migrate", "migration"
+    - "refactor entire", "major refactor"
+    - "redesign", "rewrite"
+    - "large-scale", "major change"
+    - "multi-phase", "multi-day"
+
+  scope_signals:
+    - Estimated >5 files affected
+    - Multiple directories/modules involved
+    - Cross-cutting concerns
+
+  duration_signals:
+    - "will take time", "over several sessions"
+    - Estimated >4 hours
+    - Multiple milestones mentioned
+```
+
+### Auto-Suggestion Output Format
+
+When routing is determined, output:
+
+```
+┌─────────────────────────────────────────────────┐
+│ Detected: [WORKFLOW] | Complexity: [TIER]       │
+│ → Recommended: /x-[skill] [mode]                │
+│ → Multi-session: [Yes/No]                       │
+│                                                 │
+│ Override: use explicit /x-* command             │
+└─────────────────────────────────────────────────┘
+```
+
+### Examples
+
+**Example: Complex migration**
+```
+Input: "Migrate from Express to Fastify"
+Detected: APEX | Complexity: COMPLEX
+→ Recommended: /x-initiative → /x-implement migrate
+→ Multi-session: Yes (major framework change)
+```
+
+**Example: Simple fix**
+```
+Input: "Fix typo in README"
+Detected: ONESHOT | Complexity: SIMPLE
+→ Recommended: /x-implement (autonomous)
+→ Multi-session: No
+```
+
+**Example: Intermittent bug**
+```
+Input: "Login crashes randomly on production"
+Detected: DEBUG | Complexity: COMPLEX
+→ Recommended: /x-initiative → /x-troubleshoot
+→ Multi-session: Yes (intermittent + environment-specific)
+```
+
+---
 
 ## Complexity Tiers
 

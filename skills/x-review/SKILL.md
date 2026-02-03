@@ -68,8 +68,27 @@ All reviews must check:
 | SOLID | Principles adherence |
 | Security | No vulnerabilities |
 | Tests | Adequate coverage |
-| Docs | Documentation updated |
+| Docs | Documentation updated (via x-docs verify) |
+| Doc Sync | No stale documentation (auto-verified) |
 | Breaking | Breaking changes documented |
+
+### Documentation Validation (Auto)
+
+Before review starts, the `documentation` behavioral skill runs `x-docs verify` to ensure:
+
+```
+┌─────────────────────────────────────────────────┐
+│ Pre-Review Documentation Check                  │
+├─────────────────────────────────────────────────┤
+│ ✓ API docs match code signatures               │
+│ ✓ Examples are current                          │
+│ ✓ No broken internal links                      │
+│ ⚠ 1 doc may need attention:                    │
+│   • docs/auth.md - new method not documented   │
+└─────────────────────────────────────────────────┘
+```
+
+If documentation drift is detected, the reviewer is notified before proceeding.
 
 ## Review Workflow
 
