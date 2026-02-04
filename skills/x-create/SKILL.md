@@ -1,9 +1,6 @@
 ---
 name: x-create
-description: |
-  Generate best-practice-compliant plugin components through interactive wizards.
-  Activate when creating new skills, commands, or agents for plugins.
-  Triggers: create skill, create command, create agent, add skill, add command.
+description: Generate best-practice-compliant plugin components through interactive wizards.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob

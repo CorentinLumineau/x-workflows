@@ -1,9 +1,6 @@
 ---
 name: interview
-description: |
-  Universal confidence gate ensuring human-in-the-loop before any significant action.
-  Activates on: ambiguity, missing info, high risk, low confidence.
-  Applies to: ALL workflow skills.
+description: Universal confidence gate ensuring human-in-the-loop before any significant action.
 category: behavioral
 user-invocable: false
 triggers:

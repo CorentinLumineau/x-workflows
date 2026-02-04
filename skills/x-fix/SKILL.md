@@ -1,8 +1,6 @@
 ---
 name: x-fix
-description: |
-  Rapid bug fixing for clear errors with obvious solutions. Minimal overhead.
-  ONESHOT workflow, complete phase. Triggers: fix, bug, error, quick fix, typo.
+description: Rapid bug fixing for clear errors with obvious solutions.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

@@ -1,10 +1,6 @@
 ---
 name: complexity-detection
-description: |
-  Intelligent routing for all workflows based on complexity and intent.
-  Detects workflow type (APEX/ONESHOT/DEBUG/BRAINSTORM) and complexity tier.
-  Auto-triggers x-initiative for complex multi-session tasks.
-  Triggers: any user request (behavioral skill, always active).
+description: Intelligent routing for all workflows based on complexity and intent.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob

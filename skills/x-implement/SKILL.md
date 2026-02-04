@@ -1,8 +1,6 @@
 ---
 name: x-implement
-description: |
-  Context-aware implementation with TDD and quality gates.
-  APEX workflow, execute phase. Triggers: implement, build, create, code, feature.
+description: Context-aware implementation with TDD and quality gates.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

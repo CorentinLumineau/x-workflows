@@ -1,8 +1,6 @@
 ---
 name: x-research
-description: |
-  Intelligent Q&A and comprehensive research with evidence-based methodology.
-  BRAINSTORM workflow, deep-explore phase. Triggers: research, ask, question, investigate, deep dive.
+description: Intelligent Q&A and comprehensive research with evidence-based methodology.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash WebFetch WebSearch

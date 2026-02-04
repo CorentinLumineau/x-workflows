@@ -1,8 +1,6 @@
 ---
 name: x-design
-description: |
-  Technical architecture and system design with SOLID validation.
-  BRAINSTORM workflow, action phase. Triggers: design, architecture, system design.
+description: Technical architecture and system design with SOLID validation.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

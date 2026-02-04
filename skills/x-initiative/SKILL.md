@@ -1,9 +1,6 @@
 ---
 name: x-initiative
-description: |
-  Multi-phase project tracking across sessions. Create, continue, archive initiatives.
-  Auto-activated for complex tasks (Tier 3). Manages milestones and cross-session state.
-  Triggers: initiative, milestone, project, continue, resume, archive, status, OR auto-triggered by complexity-detection.
+description: Multi-phase project tracking across sessions with file-based persistence.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

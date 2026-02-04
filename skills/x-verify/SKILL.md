@@ -1,8 +1,6 @@
 ---
 name: x-verify
-description: |
-  Quality verification with auto-fix enforcement. Testing, building, coverage.
-  APEX workflow, test phase. Triggers: verify, test, check, quality, lint, build.
+description: Quality verification with auto-fix enforcement.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

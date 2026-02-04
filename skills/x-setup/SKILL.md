@@ -1,9 +1,6 @@
 ---
 name: x-setup
-description: |
-  Project documentation setup with intelligent stack detection and structure creation.
-  Activate when setting up project documentation, scaffolding docs, or initializing structure.
-  Triggers: setup, scaffold, initialize, create structure, project setup, documentation setup.
+description: Project documentation setup with intelligent stack detection and structure creation.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

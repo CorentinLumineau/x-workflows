@@ -1,8 +1,6 @@
 ---
 name: x-help
-description: |
-  Quick reference for workflow commands and navigation.
-  UTILITY skill. Triggers: help, commands, list, how to, what can.
+description: Quick reference for workflow commands and navigation.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob

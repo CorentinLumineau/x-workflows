@@ -1,8 +1,6 @@
 ---
 name: x-troubleshoot
-description: |
-  Deep diagnostic analysis with hypothesis testing methodology.
-  DEBUG workflow, complete phase. Triggers: troubleshoot, debug, diagnose, investigate, trace.
+description: Deep diagnostic analysis with hypothesis testing methodology.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

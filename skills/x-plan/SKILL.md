@@ -1,8 +1,6 @@
 ---
 name: x-plan
-description: |
-  Scale-adaptive implementation planning with automatic complexity detection.
-  APEX workflow, plan phase. Triggers: plan, implementation plan, task breakdown.
+description: Scale-adaptive implementation planning with automatic complexity detection.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
