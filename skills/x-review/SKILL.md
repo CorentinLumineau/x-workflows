@@ -1,46 +1,42 @@
 ---
 name: x-review
 description: |
-  Pre-merge validation with quality checks. Code review, auditing, best practices assessment.
-  Activate when reviewing code, auditing practices, or checking quality before merge.
-  Triggers: review, audit, code review, PR, pull request, best practices.
+  Pre-merge validation with quality checks and code review.
+  APEX workflow, examine phase. Triggers: review, code review, PR, audit.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
-# x-review
+# /x-review
 
-Pre-merge validation with auto-detected target branch, conflict detection, and quality gates.
+> Perform code review with quality checks before merge.
 
-## Modes
+## Workflow Context
 
-| Mode | Description |
-|------|-------------|
-| review (default) | Pre-merge PR review |
-| audit | SOLID audit, best practices check |
-| security | OWASP Top 10 security assessment |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | APEX |
+| **Phase** | examine (X) |
+| **Position** | 5 of 6 in workflow |
 
-## Mode Detection
-| Keywords | Mode |
-|----------|------|
-| "security", "owasp", "vulnerability", "security review" | security |
-| "audit", "best practices", "solid", "quality check" | audit |
-| (default) | review |
+**Flow**: `x-verify` → **`x-review`** → `x-commit`
 
-> **Note**: For code improvements, use `/x-improve` (holistic analysis with health scores) or `/x-implement enhance` (targeted improvements).
+## Intention
 
-## Execution
-- **Default mode**: review
-- **No-args behavior**: Review staged changes
+**Target**: $ARGUMENTS
+
+{{#if not $ARGUMENTS}}
+Review staged changes.
+{{/if}}
 
 ## Behavioral Skills
 
-This workflow activates these behavioral skills:
+This skill activates:
 
 ### Always Active
 - `interview` - Zero-doubt confidence gate (Phase 0)
@@ -53,54 +49,152 @@ This workflow activates these behavioral skills:
 | `authentication` | Auth-related changes |
 | `performance` | Performance-critical paths |
 
-## Agent Suggestions
+## Agents
 
-Consider delegating to specialized agents:
-- **Review**: Systematic code analysis, SOLID checks
-- **Exploration**: Pattern analysis, architecture review
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-reviewer` | Systematic code analysis | sonnet |
+| `ccsetup:x-explorer` | Pattern analysis | haiku |
+
+<instructions>
+
+### Phase 0: Confidence Check
+
+Activate `@skills/interview/` if:
+- Review scope unclear
+- Multiple review focuses possible
+- Security implications unknown
+
+### Phase 1: Documentation Pre-Check
+
+Before review starts, verify documentation sync:
+
+```
+┌─────────────────────────────────────────────────┐
+│ Pre-Review Documentation Check                  │
+├─────────────────────────────────────────────────┤
+│ Check API docs match code signatures            │
+│ Check examples are current                      │
+│ Check no broken internal links                  │
+│ Flag docs that may need attention               │
+└─────────────────────────────────────────────────┘
+```
+
+### Phase 2: Code Review
+
+For each changed file:
+
+1. **SOLID Compliance**
+   - Single Responsibility
+   - Open/Closed
+   - Liskov Substitution
+   - Interface Segregation
+   - Dependency Inversion
+
+2. **Security Issues**
+   - Input validation
+   - Authentication/Authorization
+   - Data exposure
+   - OWASP Top 10
+
+3. **Test Coverage**
+   - New code has tests
+   - Edge cases covered
+   - Integration tests if needed
+
+### Phase 3: Severity Classification
+
+| Level | Action |
+|-------|--------|
+| Critical | Must fix before merge |
+| Warning | Should fix, or document reason |
+| Info | Suggestion for improvement |
+
+### Phase 4: Review Summary
+
+Generate review summary:
+
+```markdown
+## Review Summary
+
+### Critical Issues
+- [ ] Issue 1: Description (file:line)
+
+### Warnings
+- [ ] Warning 1: Description (file:line)
+
+### Suggestions
+- Info 1: Description
+
+### Overall
+- SOLID: [Pass/Fail]
+- Security: [Pass/Fail]
+- Tests: [Pass/Fail]
+- Docs: [Pass/Fail]
+```
+
+</instructions>
+
+## Human-in-Loop Gates
+
+| Decision Level | Action | Example |
+|----------------|--------|---------|
+| **Critical** | ALWAYS ASK | Critical issues found |
+| **High** | ASK IF ABLE | Multiple warnings |
+| **Medium** | ASK IF UNCERTAIN | Borderline issues |
+| **Low** | PROCEED | Clean review |
+
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: Review findings summary
+2. **Options**: Fix issues, merge with warnings, or block
+3. **Recommendation**: Fix criticals before merge
+4. **Escape**: "Return to /x-implement" option
+
+</human-approval-framework>
+
+## Agent Delegation
+
+**Recommended Agent**: `ccsetup:x-reviewer`
+
+| Delegate When | Keep Inline When |
+|---------------|------------------|
+| Large changeset | Small changes |
+| Security-sensitive | Simple refactors |
+
+## Workflow Chaining
+
+**Next Verb**: `/x-commit`
+
+| Trigger | Chain To | Auto? |
+|---------|----------|-------|
+| Review approved | `/x-commit` | Yes |
+| Changes requested | `/x-implement` | No (show feedback) |
+| Critical issues | Block | No (require fix) |
+
+<chaining-instruction>
+
+When review approved:
+- skill: "x-commit"
+- args: "commit reviewed changes"
+
+On changes requested:
+"Review found issues to address. Return to /x-implement?"
+- Option 1: `/x-implement` - Fix issues
+- Option 2: Request exception (with justification)
+
+</chaining-instruction>
 
 ## Review Checklist
-
-All reviews must check:
 
 | Area | Check |
 |------|-------|
 | SOLID | Principles adherence |
 | Security | No vulnerabilities |
 | Tests | Adequate coverage |
-| Docs | Documentation updated (via x-docs verify) |
-| Doc Sync | No stale documentation (auto-verified) |
+| Docs | Documentation updated |
 | Breaking | Breaking changes documented |
-
-### Documentation Validation (Auto)
-
-Before review starts, the `documentation` behavioral skill runs `x-docs verify` to ensure:
-
-```
-┌─────────────────────────────────────────────────┐
-│ Pre-Review Documentation Check                  │
-├─────────────────────────────────────────────────┤
-│ ✓ API docs match code signatures               │
-│ ✓ Examples are current                          │
-│ ✓ No broken internal links                      │
-│ ⚠ 1 doc may need attention:                    │
-│   • docs/auth.md - new method not documented   │
-└─────────────────────────────────────────────────┘
-```
-
-If documentation drift is detected, the reviewer is notified before proceeding.
-
-## Review Workflow
-
-```
-1. Identify changed files
-2. For each file:
-   a. Check SOLID compliance
-   b. Check security issues
-   c. Check test coverage
-3. Summarize findings
-4. Provide actionable feedback
-```
 
 ## Severity Levels
 
@@ -110,16 +204,37 @@ If documentation drift is detected, the reviewer is notified before proceeding.
 | Warning | Should fix, or document reason |
 | Info | Suggestion for improvement |
 
-## Checklist
+## Critical Rules
 
-- [ ] All SOLID principles checked
+1. **No Critical Issues** - Block merge if critical issues exist
+2. **Document Trade-offs** - If skipping warnings, document why
+3. **Security First** - Security issues are always critical
+4. **Test Coverage** - New code must have tests
+
+## Navigation
+
+| Direction | Verb | When |
+|-----------|------|------|
+| Previous | `/x-verify` | Need more verification |
+| Previous | `/x-implement` | Need to fix issues |
+| Next | `/x-commit` | Review approved |
+
+## Success Criteria
+
+- [ ] All files reviewed
+- [ ] SOLID principles checked
 - [ ] Security review complete
 - [ ] Test coverage adequate
 - [ ] Documentation updated
-- [ ] Breaking changes documented
+- [ ] No critical issues
 
 ## When to Load References
 
-- **For review mode**: See `references/mode-review.md`
-- **For audit mode**: See `references/mode-audit.md`
-- **For security mode**: See `references/mode-security.md`
+- **For review checklist**: See `references/mode-review.md`
+- **For audit patterns**: See `references/mode-audit.md`
+- **For security review**: See `references/mode-security.md`
+
+## References
+
+- @skills/code-code-quality/ - SOLID principles
+- @skills/security-owasp/ - Security checklist

@@ -1,6 +1,6 @@
 # x-workflows
 
-> Agent-agnostic workflow orchestration skills providing HOW to work patterns.
+> Agent-agnostic verb-based workflow skills with 4 canonical workflows.
 > Compatible with Claude Code, Cursor, Copilot, Cline, Devin, and any AI agent.
 
 ## Project Overview
@@ -11,118 +11,161 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 
 ## Quick Reference
 
-| Category | Skills | Primary Modes |
-|----------|--------|---------------|
-| Planning | x-plan | brainstorm, design, analyze |
-| Implementation | x-implement, x-improve | implement, fix, refactor, enhance, cleanup |
-| Verification | x-verify | verify, build, coverage |
-| Review | x-review | review, audit |
-| Git | x-git | commit, release |
-| Debugging | x-troubleshoot | troubleshoot, debug, explain |
-| Documentation | x-docs | docs, generate, sync, cleanup |
-| Project Tracking | x-initiative | create, continue, archive, status |
-| Research | x-research | ask, deep |
-| Help | x-help | help, rules |
-| Orchestration | x-orchestrate | orchestrate, background, agent |
-| Setup | x-setup, x-create | setup, skill, command, agent |
-| Behavioral | interview, complexity-detection | (auto-activated) |
+| Workflow | Purpose | Verbs |
+|----------|---------|-------|
+| **APEX** | Systematic build/create | analyze → plan → implement → verify → review → commit |
+| **ONESHOT** | Quick fixes | fix → [verify] → commit |
+| **DEBUG** | Error resolution | troubleshoot → fix/implement |
+| **BRAINSTORM** | Exploration/research | brainstorm ↔ research → design |
+
+## Verb Skills by Workflow (19)
+
+### BRAINSTORM Workflow (3)
+| Verb | Purpose | Triggers |
+|------|---------|----------|
+| `/x-brainstorm` | Idea capture, requirements discovery | brainstorm, ideas, requirements |
+| `/x-research` | Deep investigation, evidence gathering | research, ask, investigate |
+| `/x-design` | Architectural decisions | design, architecture |
+
+### APEX Workflow (6)
+| Verb | Purpose | Triggers |
+|------|---------|----------|
+| `/x-analyze` | Codebase assessment | analyze, assess, evaluate |
+| `/x-plan` | Implementation planning | plan, task breakdown |
+| `/x-implement` | TDD implementation | implement, build, create |
+| `/x-refactor` | Safe restructuring | refactor, restructure |
+| `/x-verify` | Quality gates | verify, test, lint |
+| `/x-review` | Code review, audits | review, PR, audit |
+
+### ONESHOT Workflow (1)
+| Verb | Purpose | Triggers |
+|------|---------|----------|
+| `/x-fix` | Quick targeted fix | fix, bug, error, typo |
+
+### DEBUG Workflow (1)
+| Verb | Purpose | Triggers |
+|------|---------|----------|
+| `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
+
+### UTILITY (8)
+| Verb | Purpose | Triggers |
+|------|---------|----------|
+| `/x-commit` | Conventional commits | commit, git commit |
+| `/x-release` | Release workflow | release, tag, version |
+| `/x-docs` | Documentation management | docs, documentation |
+| `/x-help` | Command reference | help, commands |
+| `/x-initiative` | Multi-session tracking | initiative, milestone |
+| `/x-setup` | Project initialization | setup, scaffold |
+| `/x-create` | Skill/agent creation | create skill, create agent |
+| `/x-prompt` | Prompt enhancement | enhance prompt |
+
+## Behavioral Skills (2)
+
+| Skill | Purpose |
+|-------|---------|
+| `interview` | Confidence gate (auto-triggered) |
+| `complexity-detection` | Routing logic (auto-triggered) |
 
 ## Workflow Patterns
 
-**Feature Development:**
+**APEX - Feature Development:**
 ```
-x-plan → x-implement → x-verify → x-review → x-git
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /x-commit
 ```
 
-**Bug Fix:**
+**ONESHOT - Quick Bug Fix:**
 ```
-x-troubleshoot → x-implement fix → x-verify → x-git
+/x-fix → [optional: /x-verify] → /x-commit
+```
+
+**DEBUG - Investigation:**
+```
+/x-troubleshoot → /x-fix (simple) OR /x-implement (complex)
+```
+
+**BRAINSTORM - Exploration:**
+```
+/x-brainstorm ↔ /x-research → /x-design → [APPROVAL] → /x-plan (APEX)
 ```
 
 **Multi-Session Project:**
 ```
-x-initiative create → [work] → x-initiative continue → x-initiative archive
+/x-initiative create → [work] → /x-initiative continue → /x-initiative archive
 ```
+
+> See `skills/WORKFLOWS.md` for detailed workflow documentation.
+
+## Human Approval Gates
+
+| Transition | Approval Required |
+|------------|-------------------|
+| BRAINSTORM → APEX | Yes (x-design → x-plan) |
+| Plan → Implement | Yes |
+| DEBUG → APEX | Yes (troubleshoot → implement) |
+| Quick commit | Yes |
+| Release | Yes |
 
 ## Build & Test
 
 No build required - pure markdown documentation.
 
 ```bash
-# Validate skill structure
-find skills -name "SKILL.md" | wc -l  # Should be 18
+# Validate skill structure (should be 19 x-* + 2 behavioral = 21)
+find skills -name "SKILL.md" | wc -l
 
-# Validate mode references
-find skills -path "*/references/mode-*.md" | wc -l  # Should be 46
+# Verify new verb skills exist
+for skill in x-brainstorm x-design x-analyze x-refactor x-fix x-commit x-release; do
+  [ -f "skills/$skill/SKILL.md" ] || echo "MISSING: skills/$skill/SKILL.md"
+done
 
-# Check for empty files
-find skills -name "*.md" -empty
-
-# Verify playbooks & templates
-find skills/x-initiative/playbooks -name "*.md" | wc -l  # Should be 8
-find skills/x-setup/templates -name "*.md" | wc -l       # Should be 16
+# Verify deprecated skills removed
+for skill in x-git x-improve x-orchestrate; do
+  [ -d "skills/$skill" ] && echo "ERROR: skills/$skill should be deleted"
+done
 ```
 
 ## Skill Structure Convention
 
 Every workflow skill follows this structure:
 ```
-skills/{skill-name}/
-├── SKILL.md           # Main skill file with mode routing
-├── references/        # Mode implementation files
-│   ├── mode-{name}.md
-│   └── ...
-├── boilerplates/     # (optional) Generation templates
-├── playbooks/        # (optional) Guides and examples
-└── templates/        # (optional) Output templates
+skills/{verb}/
+├── SKILL.md           # Main skill file with workflow context
+└── references/        # (optional) Supporting documentation
 ```
 
 ### SKILL.md Format
-```markdown
+```yaml
 ---
-title: {Title}
-modes: [list, of, modes]
-category: workflow
+name: x-{verb}
+description: |
+  {One-line description}. {Workflow} workflow.
+  Triggers: {trigger keywords}.
+license: Apache-2.0
+compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
+allowed-tools: {Tool list}
+metadata:
+  author: ccsetup contributors
+  version: "2.0.0"
+  category: workflow
 ---
 
-# /{skill-name}
+# /x-{verb}
 
-{Description}
+> {Tagline describing the action}
 
-## Mode Routing
+## Workflow Context
 
-| Mode | File | Description |
-|------|------|-------------|
-| {mode} | `references/mode-{mode}.md` | {desc} |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | {APEX/ONESHOT/DEBUG/BRAINSTORM} |
+| **Phase** | {phase-name} |
+| **Position** | {N} of {M} in workflow |
 
-## Mode Detection
-{Keywords that trigger each mode}
-
-## Execution
-{How to execute the skill}
-```
-
-### Mode Reference Format
-```markdown
-# Mode: {name}
-
-> **Invocation**: `/{skill} {mode}`
-
-<purpose>
-{What this mode does}
-</purpose>
+**Flow**: `{prev}` → **`{current}`** → `{next}`
 
 <instructions>
-{Step-by-step instructions for any AI agent}
+...
 </instructions>
-
-<critical_rules>
-{Must-follow rules}
-</critical_rules>
-
-<success_criteria>
-- [ ] {Checklist}
-</success_criteria>
 ```
 
 ## Agent Capability Patterns
@@ -137,16 +180,6 @@ Skills may suggest leveraging subagents with these capability patterns:
 | Docs | Documentation generation | Read, Write |
 | Refactor | Safe code restructuring | Read, Edit, Execute tests |
 | Debug | Issue investigation | Read, Execute, Analyze output |
-
-**Agent Implementation Examples:**
-
-| Pattern | Claude Code | Cursor | Generic |
-|---------|-------------|--------|---------|
-| Testing | `ccsetup:x-tester` | Test rule | Subagent with test tools |
-| Review | `ccsetup:x-reviewer` | Review rule | Read-only analysis agent |
-| Explorer | `ccsetup:x-explorer` | Search rule | Navigation-focused agent |
-
-See [AGENT-PATTERNS.md](AGENT-PATTERNS.md) for detailed pattern definitions.
 
 ## Knowledge Skills Integration
 
@@ -170,21 +203,21 @@ Workflows reference these knowledge skills from x-devsecops:
 {type}({scope}): {description}
 
 Types: feat, fix, docs, refactor, test, chore
-Scopes: skill-name, templates, playbooks, refs
+Scopes: skill-name, workflows, refs
 ```
 
-Example: `feat(x-verify): add coverage mode reference`
+Example: `feat(x-fix): add new ONESHOT verb skill`
 
 ## Testing Instructions
 
 When modifying skills:
 1. Ensure SKILL.md has valid YAML frontmatter
-2. Verify all referenced mode files exist in `references/`
+2. Verify workflow context is correct
 3. Check cross-references resolve correctly
-4. Test mode detection keywords
+4. Test trigger keywords
 5. Validate no empty files created
 
 ---
 
-**Version**: 0.2.0
+**Version**: 1.0.0
 **Compatibility**: skills.sh, Claude Code, Cursor, Copilot, Cline, Devin

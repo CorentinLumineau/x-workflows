@@ -1,95 +1,231 @@
 ---
 name: x-troubleshoot
 description: |
-  Deep diagnostic analysis with hypothesis testing methodology. Debugging, code explanation.
-  Activate when debugging issues, troubleshooting problems, or explaining code behavior.
-  Triggers: troubleshoot, debug, diagnose, explain, trace, root cause, investigate.
+  Deep diagnostic analysis with hypothesis testing methodology.
+  DEBUG workflow, complete phase. Triggers: troubleshoot, debug, diagnose, investigate, trace.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
-# x-troubleshoot
+# /x-troubleshoot
 
-Deep diagnostic analysis with systematic root cause investigation using hypothesis testing methodology.
+> Investigate issues systematically with hypothesis-driven debugging.
 
-## Modes
+## Workflow Context
 
-| Mode | Description |
-|------|-------------|
-| troubleshoot (default) | Complex investigation |
-| debug | Code flow debugging |
-| explain | Code explanation |
-| feedback | Post-implementation feedback intake |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | DEBUG |
+| **Phase** | complete |
+| **Position** | 1 of 1 (entry point) |
 
-## Mode Detection
-| Keywords | Mode |
-|----------|------|
-| "feedback", "report", "found bug", "discovered", "adjustment" | feedback |
-| "debug", "trace", "flow", "step through" | debug |
-| "explain", "understand", "what does", "how does" | explain |
-| (default) | troubleshoot |
+**Flow**: **`x-troubleshoot`** → `x-fix` (simple) OR `x-implement` (complex)
 
-## Execution
-- **Default mode**: troubleshoot
-- **No-args behavior**: Ask for problem description
+## Intention
+
+**Problem**: $ARGUMENTS
+
+{{#if not $ARGUMENTS}}
+Ask user: "What issue are you experiencing?"
+{{/if}}
 
 ## Behavioral Skills
 
-This workflow activates these behavioral skills:
+This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `debugging` - Hypothesis-driven debugging methodology
 
-## Agent Suggestions
+## Agents
 
-Consider delegating to specialized agents:
-- **Debugging**: Complex multi-layer issue investigation
-- **Exploration**: Codebase search, dependency tracing
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-debugger` | Complex multi-layer investigation | sonnet |
+| `ccsetup:x-explorer` | Codebase search, dependency tracing | haiku |
+
+## MCP Servers
+
+| Server | When |
+|--------|------|
+| `sequential-thinking` | Complex hypothesis evaluation |
+
+<instructions>
+
+### Phase 0: Confidence Check
+
+Activate `@skills/interview/` if:
+- Problem description unclear
+- No reproduction steps provided
+- Multiple systems potentially involved
+
+### Phase 1: Observe
+
+Gather symptoms and context:
+
+1. **Error Messages** - Exact text, stack traces
+2. **Environment** - Where does it occur?
+3. **Reproducibility** - Always? Sometimes? Specific conditions?
+4. **Recent Changes** - What changed before the issue appeared?
+
+### Phase 2: Hypothesize
+
+Form 2-3 potential causes:
+
+```
+Hypothesis 1: [Most likely cause based on symptoms]
+Evidence for: [What supports this]
+Evidence against: [What contradicts this]
+
+Hypothesis 2: [Alternative cause]
+Evidence for: [What supports this]
+Evidence against: [What contradicts this]
+```
+
+**Prioritize by:**
+- Likelihood based on evidence
+- Ease of testing
+- Potential impact
+
+### Phase 3: Test
+
+Validate hypotheses systematically:
+
+```
+1. Start with most likely hypothesis
+2. Design minimal test to confirm/refute
+3. Execute test
+4. Record results
+5. If confirmed → Resolve
+6. If refuted → Next hypothesis
+```
+
+### Phase 4: Resolve
+
+Based on findings, route to appropriate action:
+
+| Finding | Route To |
+|---------|----------|
+| Simple, clear fix | `/x-fix` |
+| Complex fix needed | `/x-implement` |
+| Needs architectural change | `/x-plan` |
+| Root cause still unclear | Continue investigation |
+
+</instructions>
+
+## Human-in-Loop Gates
+
+| Decision Level | Action | Example |
+|----------------|--------|---------|
+| **Critical** | ALWAYS ASK | Route to x-implement (scope expansion) |
+| **High** | ASK IF ABLE | Multiple valid hypotheses |
+| **Medium** | ASK IF UNCERTAIN | Hypothesis testing approach |
+| **Low** | PROCEED | Continue investigation |
+
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: What was investigated and found
+2. **Options**: Different resolution paths
+3. **Recommendation**: Best path based on findings
+4. **Escape**: "Continue investigating" option
+
+</human-approval-framework>
+
+## Agent Delegation
+
+**Recommended Agent**: `ccsetup:x-debugger`
+
+| Delegate When | Keep Inline When |
+|---------------|------------------|
+| Multi-layer issue | Single component |
+| Production environment | Local development |
+
+## Workflow Chaining
+
+**Next Verbs**: `/x-fix`, `/x-implement`
+
+| Trigger | Chain To | Auto? |
+|---------|----------|-------|
+| Simple fix found | `/x-fix` | Yes |
+| **Complex fix needed** | `/x-implement` | **HUMAN APPROVAL** |
+| Needs planning | `/x-plan` | No (ask) |
+
+<chaining-instruction>
+
+When root cause is found:
+
+**For simple fixes:**
+- skill: "x-fix"
+- args: "{root cause and fix description}"
+
+**For complex fixes (requires approval):**
+"Investigation found {root cause}. This requires implementation changes. Proceed with /x-implement?"
+- Option 1: `/x-implement` - Full implementation
+- Option 2: `/x-fix` - Try simpler approach
+- Option 3: Continue investigating
+
+</chaining-instruction>
 
 ## Debugging Methodology
 
-All modes follow this pattern:
-
 ```
-1. Observe - Gather symptoms, error messages
+1. Observe  - Gather symptoms, error messages
 2. Hypothesize - Form 2-3 potential causes
 3. Test - Validate hypotheses systematically
 4. Resolve - Apply fix, verify solution
 ```
 
-## Escalation Rules
-
-| Complexity | Route To |
-|------------|----------|
-| Clear error, obvious fix | fix mode (x-implement) |
-| Need flow understanding | debug mode |
-| Intermittent, multi-layer | troubleshoot mode |
-
 ## Complexity Detection
 
 Use `complexity-detection` skill to route appropriately:
 
-| Signal | Tier |
-|--------|------|
-| Clear error + line number | Simple → fix |
-| "how does", "trace" | Moderate → debug |
-| "intermittent", "random" | Complex → troubleshoot |
+| Signal | Tier | Action |
+|--------|------|--------|
+| Clear error + line number | Simple | Route to /x-fix |
+| "how does", "trace" | Moderate | Stay in troubleshoot |
+| "intermittent", "random" | Complex | Full investigation |
 
-## Checklist
+## Escalation Rules
+
+| Complexity | Route To |
+|------------|----------|
+| Clear error, obvious fix | `/x-fix` |
+| Need flow understanding | Stay in troubleshoot |
+| Intermittent, multi-layer | Full investigation, may need `/x-initiative` |
+
+## Critical Rules
+
+1. **Systematic Approach** - Follow observe → hypothesize → test → resolve
+2. **Document Findings** - Record what was tried and learned
+3. **Don't Guess** - Test hypotheses, don't assume
+4. **Escalate Appropriately** - Complex issues need proper tracking
+
+## Navigation
+
+| Direction | Verb | When |
+|-----------|------|------|
+| Next (simple) | `/x-fix` | Root cause is simple |
+| Next (complex) | `/x-implement` | Needs real implementation (approval) |
+| Escalate | `/x-initiative` | Multi-session debugging needed |
+
+## Success Criteria
 
 - [ ] Symptoms clearly documented
-- [ ] Hypotheses formed
-- [ ] Each hypothesis tested
+- [ ] Hypotheses formed and tested
 - [ ] Root cause identified
 - [ ] Fix verified
+- [ ] Knowledge captured
 
 ## When to Load References
 
-- **For troubleshoot mode**: See `references/mode-troubleshoot.md`
-- **For debug mode**: See `references/mode-debug.md`
-- **For explain mode**: See `references/mode-explain.md`
-- **For feedback mode**: See `references/mode-feedback.md`
+- **For troubleshoot workflow**: See `references/mode-troubleshoot.md`
+- **For debug patterns**: See `references/mode-debug.md`
+- **For explanation mode**: See `references/mode-explain.md`
+
+## References
+
+- @skills/quality-debugging/ - Debugging strategies and methodology

@@ -1,54 +1,74 @@
 ---
 name: x-docs
 description: |
-  Documentation management with sync detection, verification, and generation.
-  Generate, sync, verify, cleanup docs. Ensures docs stay in sync with code.
-  Triggers: docs, documentation, readme, generate docs, sync docs, verify docs, cleanup docs.
+  Documentation management with sync detection and generation.
+  UTILITY skill. Triggers: docs, documentation, readme, generate docs, sync docs.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
+  version: "3.0.0"
   category: workflow
 ---
 
-# x-docs
+# /x-docs
 
-Documentation management with intelligent sync detection, generation, and cleanup capabilities.
+> Manage documentation - generate, sync, verify, and cleanup.
 
-## Modes
+## Workflow Context
 
-| Mode | Description |
-|------|-------------|
-| docs (default) | Documentation router |
-| generate | Generate new documentation |
-| sync | Sync docs with code changes |
-| verify | Check doc/code consistency |
-| cleanup | Remove stale documentation |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | UTILITY |
+| **Phase** | N/A |
+| **Position** | Auto-triggered after implementation |
 
-## Mode Detection
-| Keywords | Mode |
-|----------|------|
-| "generate", "create docs", "add documentation" | generate |
-| "sync", "update docs", "align", "synchronize" | sync |
-| "verify", "check docs", "docs stale", "validate docs" | verify |
-| "cleanup", "clean docs", "remove stale", "outdated" | cleanup |
-| (default) | docs |
+**Flow**: `[x-implement completes]` → **`x-docs`** (auto) → `[x-review]`
 
-## Execution
-- **Default mode**: docs
-- **No-args behavior**: Analyze documentation state
+## Intention
 
-## verify Mode
+**Target**: $ARGUMENTS
 
-**Purpose**: Check doc/code consistency without modifying files.
+{{#if not $ARGUMENTS}}
+Analyze documentation state.
+{{/if}}
 
-### Trigger Keywords
-- "verify docs", "check docs", "docs stale"
-- "validate docs", "doc drift"
+## Behavioral Skills
 
-### Workflow
+This skill activates:
+- `interview` - Zero-doubt confidence gate (Phase 0)
+
+## Agents
+
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-doc-writer` | Documentation generation | sonnet |
+| `ccsetup:x-explorer` | Code analysis | haiku |
+
+<instructions>
+
+### Phase 0: Confidence Check
+
+Activate `@skills/interview/` if:
+- Documentation scope unclear
+- Multiple doc types affected
+- Breaking changes need documenting
+
+### Phase 1: Documentation Analysis
+
+Determine what's needed:
+
+| Action | Trigger |
+|--------|---------|
+| Generate | "generate", "create docs", "add documentation" |
+| Sync | "sync", "update docs", "align", "synchronize" |
+| Verify | "verify", "check docs", "docs stale" |
+| Cleanup | "cleanup", "clean docs", "remove stale" |
+
+### Phase 2: Sync Detection
+
+Check for documentation drift:
 
 ```
 1. Scan changed files since last doc update
@@ -58,79 +78,79 @@ Documentation management with intelligent sync detection, generation, and cleanu
    - Check for behavior changes (examples)
    - Check for reference changes (moved/renamed)
 3. Report drift with file:line references
-4. Suggest specific updates needed
 ```
 
-### Output Format
+### Phase 3: Execute Action
 
-```
-┌─────────────────────────────────────────────────┐
-│ Documentation Verification Report               │
-├─────────────────────────────────────────────────┤
-│ ✓ 12 docs checked                               │
-│ ⚠ 3 docs need updates                           │
-│ ✗ 1 doc has broken links                        │
-├─────────────────────────────────────────────────┤
-│ Drift detected:                                 │
-│   • src/api/users.ts:45 → docs/api/users.md     │
-│     Function signature changed                  │
-│   • src/services/auth.ts → docs/auth.md         │
-│     New method not documented                   │
-│   • src/utils/format.ts (deleted)               │
-│     Reference in docs/utils.md:23 is broken     │
-└─────────────────────────────────────────────────┘
-```
+**Generate**: Create new documentation
+**Sync**: Update existing docs to match code
+**Verify**: Report drift without modifying
+**Cleanup**: Remove stale documentation
 
-### References
-See: `references/mode-verify.md`
+### Phase 4: Validation
+
+After any doc change:
+- Verify examples still work
+- Check internal links
+- Update navigation if needed
+
+</instructions>
+
+## Human-in-Loop Gates
+
+| Decision Level | Action | Example |
+|----------------|--------|---------|
+| **Critical** | ALWAYS ASK | Delete documentation |
+| **High** | ASK IF ABLE | Major doc restructure |
+| **Medium** | ASK IF UNCERTAIN | Sync decisions |
+| **Low** | PROCEED | Standard updates |
+
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: What documentation drift was found
+2. **Options**: Sync, generate new, or defer
+3. **Recommendation**: Based on drift severity
+4. **Escape**: "Skip doc update" option
+
+</human-approval-framework>
+
+## Agent Delegation
+
+**Recommended Agent**: `ccsetup:x-doc-writer`
+
+| Delegate When | Keep Inline When |
+|---------------|------------------|
+| Large doc generation | Simple updates |
+| API documentation | README updates |
+
+## Workflow Chaining
+
+**Next Verb**: Return to calling workflow
+
+| Trigger | Chain To | Auto? |
+|---------|----------|-------|
+| Docs synced | Return to workflow | Yes |
+| Drift detected | Stay for user decision | No |
 
 ## Auto-Trigger Integration
 
-x-docs is automatically triggered after implementation workflows:
+x-docs is automatically triggered after implementation:
 
 ```
-ENHANCED APEX FLOW:
-x-plan → x-implement → x-verify → [x-docs sync] → x-review → x-git commit
+APEX Flow:
+x-plan → x-implement → x-verify → [x-docs sync] → x-review → x-commit
                                        ↑
                                  AUTO-TRIGGERED
 ```
 
 ### Auto-Trigger Points
 
-| After | Trigger | Mode |
-|-------|---------|------|
-| x-implement completes | Auto | sync |
-| x-verify passes | Auto | sync |
-| Before x-review | Auto | verify |
-| Before x-git commit | Check | verify |
-
-### Integration with x-review
-
-Before code review, x-docs verify runs to ensure:
-- Documentation matches the code being reviewed
-- No stale documentation would be committed
-
-### Integration with x-git commit
-
-Before commit, a verify check runs:
-- If drift detected → Warning with affected files
-- User can choose to sync or commit anyway
-
-## Behavioral Skills
-
-This workflow activates these behavioral skills:
-- `interview` - Zero-doubt confidence gate (Phase 0)
-
-## Sync Patterns Reference
-
-For detailed sync patterns, staleness detection, and category placement rules:
-- See `references/doc-sync-patterns.md`
-
-## Agent Suggestions
-
-Consider delegating to specialized agents:
-- **Documentation**: Generation, formatting, structure
-- **Exploration**: Code analysis, API extraction
+| After | Mode |
+|-------|------|
+| x-implement completes | sync |
+| Before x-review | verify |
+| Before x-commit | verify |
 
 ## Documentation Principles
 
@@ -140,18 +160,6 @@ Consider delegating to specialized agents:
 | Detect before update | Check for drift before writing |
 | Pareto documentation | Document 20% that delivers 80% value |
 | Examples must work | Test all code examples |
-
-## Sync Workflow
-
-```
-1. Detect code changes since last doc update
-2. Identify affected documentation
-3. Verify placement (correct category)
-4. Update documentation to match code
-5. Validate examples still work
-6. Update navigation
-7. Commit docs with related code
-```
 
 ## Documentation Structure
 
@@ -167,7 +175,37 @@ documentation/
 └── troubleshooting/  # Issue resolution
 ```
 
-## Checklist
+## Verification Output Format
+
+```
+┌─────────────────────────────────────────────────┐
+│ Documentation Verification Report               │
+├─────────────────────────────────────────────────┤
+│ Checked: 12 docs                                │
+│ Need updates: 3 docs                            │
+│ Broken links: 1 doc                             │
+├─────────────────────────────────────────────────┤
+│ Drift detected:                                 │
+│   • src/api/users.ts:45 → docs/api/users.md     │
+│     Function signature changed                  │
+└─────────────────────────────────────────────────┘
+```
+
+## Critical Rules
+
+1. **Docs Follow Code** - Never update docs without code context
+2. **Verify First** - Check drift before making changes
+3. **Working Examples** - All code examples must be tested
+4. **Keep Navigation Updated** - Update TOCs and links
+
+## Navigation
+
+| Direction | Verb | When |
+|-----------|------|------|
+| Return | (calling workflow) | Docs complete |
+| Stay | x-docs | More doc work needed |
+
+## Success Criteria
 
 - [ ] Documentation matches code
 - [ ] Examples are tested
@@ -177,8 +215,12 @@ documentation/
 
 ## When to Load References
 
-- **For docs mode**: See `references/mode-docs.md`
-- **For generate mode**: See `references/mode-generate.md`
-- **For sync mode**: See `references/mode-sync.md`
-- **For verify mode**: See `references/mode-verify.md`
-- **For cleanup mode**: See `references/mode-cleanup.md`
+- **For generate patterns**: See `references/mode-generate.md`
+- **For sync patterns**: See `references/mode-sync.md`
+- **For verification**: See `references/mode-verify.md`
+- **For cleanup**: See `references/mode-cleanup.md`
+- **For sync patterns reference**: See `references/doc-sync-patterns.md`
+
+## References
+
+- @skills/documentation/ - Doc sync behavioral skill

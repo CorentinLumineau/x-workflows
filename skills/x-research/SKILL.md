@@ -2,64 +2,76 @@
 name: x-research
 description: |
   Intelligent Q&A and comprehensive research with evidence-based methodology.
-  Activate when researching topics, answering questions, or doing deep analysis.
-  Triggers: research, ask, question, investigate, deep dive, analyze, find out.
+  BRAINSTORM workflow, deep-explore phase. Triggers: research, ask, question, investigate, deep dive.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash WebFetch WebSearch
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
-# x-research
+# /x-research
 
-Intelligent Q&A and comprehensive research with evidence-based methodology.
+> Investigate topics thoroughly with evidence-based methodology.
 
-## Modes
+## Workflow Context
 
-| Mode | Description |
-|------|-------------|
-| ask (default) | Quick Q&A |
-| deep | Comprehensive research |
-| assess | Integration pattern assessment |
-| lessons | Knowledge base sync |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | BRAINSTORM |
+| **Phase** | deep-explore |
+| **Position** | 2 of 3 in workflow |
 
-## Mode Detection
-| Keywords | Mode |
-|----------|------|
-| "deep research", "comprehensive", "thorough", "prd", "competitive analysis" | deep |
-| "assess", "integration", "pertinence", "evaluate pattern" | assess |
-| "lessons", "best practices", "knowledge sync", "update knowledge" | lessons |
-| (default) | ask |
+**Flow**: `x-brainstorm` ↔ **`x-research`** → `x-design`
 
-## Execution
-- **Default mode**: ask
-- **No-args behavior**: Ask for question
+## Intention
+
+**Question**: $ARGUMENTS
+
+{{#if not $ARGUMENTS}}
+Ask user: "What would you like to research?"
+{{/if}}
 
 ## Behavioral Skills
 
-This workflow activates these behavioral skills:
+This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
-## Agent Suggestions
+## Agents
 
-Consider delegating to specialized agents:
-- **Exploration**: Codebase investigation, file discovery
-- **Web Search**: External research, documentation lookup
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-explorer` | Codebase investigation | haiku |
 
-## Research Approaches
+## MCP Servers
+
+| Server | When |
+|--------|------|
+| `context7` | Library documentation |
+
+<instructions>
+
+### Phase 0: Confidence Check
+
+Activate `@skills/interview/` if:
+- Research scope too broad
+- Multiple interpretations possible
+- Success criteria undefined
+
+### Phase 1: Scope Definition
+
+Determine research depth:
 
 | Mode | Depth | Output |
 |------|-------|--------|
-| ask | Quick answer | Direct response |
-| deep | Comprehensive | PRD, analysis document |
+| Quick (ask) | Surface-level answer | Direct response |
+| Deep | Comprehensive investigation | PRD/analysis document |
 
-## Research Methodology
+### Phase 2: Information Gathering
 
-### Quick (ask mode)
-
+**For quick questions:**
 ```
 1. Understand question
 2. Search codebase/docs
@@ -67,8 +79,7 @@ Consider delegating to specialized agents:
 4. Cite sources
 ```
 
-### Deep (deep mode)
-
+**For deep research:**
 ```
 1. Define research scope
 2. Gather information from multiple sources
@@ -77,7 +88,9 @@ Consider delegating to specialized agents:
 5. Include recommendations
 ```
 
-## Evidence-Based Principles
+### Phase 3: Source Verification
+
+Apply evidence-based principles:
 
 | Principle | Description |
 |-----------|-------------|
@@ -86,10 +99,10 @@ Consider delegating to specialized agents:
 | Multiple sources | Cross-reference information |
 | Clear uncertainty | State when unsure |
 
-## Output Formats
+### Phase 4: Output Generation
 
-### Ask Mode Output
-```
+**Quick Answer Format:**
+```markdown
 **Answer**: [Direct answer]
 
 **Sources**:
@@ -97,28 +110,121 @@ Consider delegating to specialized agents:
 - [code reference]
 ```
 
-### Deep Mode Output
-```
+**Deep Research Format:**
+```markdown
 # Research: [Topic]
 
 ## Executive Summary
+[Key findings in 2-3 sentences]
+
 ## Findings
+[Detailed findings organized by theme]
+
 ## Analysis
+[Synthesis and interpretation]
+
 ## Recommendations
+[Actionable next steps]
+
 ## Sources
+[All references cited]
 ```
 
-## Checklist
+</instructions>
+
+## Human-in-Loop Gates
+
+| Decision Level | Action | Example |
+|----------------|--------|---------|
+| **Critical** | ALWAYS ASK | Exit to implementation |
+| **High** | ASK IF ABLE | Scope expansion |
+| **Medium** | ASK IF UNCERTAIN | Research depth |
+| **Low** | PROCEED | Continue research |
+
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: What was found
+2. **Options**: Continue research, take action, or refine scope
+3. **Recommendation**: Based on findings
+4. **Escape**: "Ask different question" option
+
+</human-approval-framework>
+
+## Agent Delegation
+
+**Recommended Agent**: `ccsetup:x-explorer`
+
+| Delegate When | Keep Inline When |
+|---------------|------------------|
+| Large codebase search | Simple questions |
+| Pattern analysis | Direct lookup |
+
+## Workflow Chaining
+
+**Next Verbs**: `/x-design`, `/x-brainstorm`
+
+| Trigger | Chain To | Auto? |
+|---------|----------|-------|
+| "found answer" | `/x-design` | No (suggest) |
+| "need to explore more" | `/x-brainstorm` | No (suggest) |
+| "ready to build" | `/x-plan` | **HUMAN APPROVAL** |
+
+<chaining-instruction>
+
+When research complete:
+"Research complete. What's next?"
+- Option 1: `/x-design` - Make architectural decisions
+- Option 2: `/x-brainstorm` - Explore more options
+- Option 3: `/x-plan` - Start planning implementation (approval required)
+- Option 4: Done - Research complete
+
+</chaining-instruction>
+
+## Research Approaches
+
+| Approach | When |
+|----------|------|
+| Codebase search | Implementation questions |
+| Documentation lookup | API/library questions |
+| Web search | Best practices, external info |
+| Context7 | Library-specific docs |
+
+## Evidence-Based Principles
+
+1. **Cite sources** - Reference documentation and code
+2. **Verify claims** - Test assumptions against code
+3. **Multiple sources** - Cross-reference information
+4. **Clear uncertainty** - State when unsure
+
+## Critical Rules
+
+1. **Be Evidence-Based** - Support claims with references
+2. **State Uncertainty** - Don't pretend to know
+3. **Appropriate Depth** - Match effort to question
+4. **Cite Sources** - Always reference where info came from
+
+## Navigation
+
+| Direction | Verb | When |
+|-----------|------|------|
+| Previous | `/x-brainstorm` | Need broader exploration |
+| Next | `/x-design` | Ready for decisions |
+| Exit to APEX | `/x-plan` | Ready to build (approval) |
+
+## Success Criteria
 
 - [ ] Question clearly understood
-- [ ] Sources identified
-- [ ] Answer evidence-based
-- [ ] Uncertainty noted
-- [ ] Appropriate depth
+- [ ] Sources identified and verified
+- [ ] Answer is evidence-based
+- [ ] Uncertainty noted where applicable
+- [ ] Appropriate depth achieved
 
 ## When to Load References
 
-- **For ask mode**: See `references/mode-ask.md`
-- **For deep mode**: See `references/mode-deep.md`
-- **For assess mode**: See `references/mode-assess.md`
-- **For lessons mode**: See `references/mode-lessons.md`
+- **For quick Q&A**: See `references/mode-ask.md`
+- **For deep research**: See `references/mode-deep.md`
+
+## References
+
+- @skills/meta-analysis/ - Analysis and prioritization

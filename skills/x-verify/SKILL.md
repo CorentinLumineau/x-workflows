@@ -1,67 +1,180 @@
 ---
 name: x-verify
 description: |
-  Quality verification with auto-fix enforcement. Testing, building, coverage improvement.
-  Activate when running tests, verifying builds, checking coverage, or validating quality.
-  Triggers: verify, test, build, coverage, quality, lint, check.
+  Quality verification with auto-fix enforcement. Testing, building, coverage.
+  APEX workflow, test phase. Triggers: verify, test, check, quality, lint, build.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
-# x-verify
+# /x-verify
 
-Context-aware quality verification with auto-fix enforcement. Zero-tolerance quality validation that continues until 100% passing.
+> Run quality gates and ensure all tests pass.
 
-## Modes
+## Workflow Context
 
-| Mode | Description |
-|------|-------------|
-| verify (default) | Full quality gate execution |
-| build | Build management and artifact creation |
-| coverage | Test coverage improvement |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | APEX |
+| **Phase** | test (X) |
+| **Position** | 4 of 6 in workflow |
 
-## Mode Detection
-| Keywords | Mode |
-|----------|------|
-| "build", "compile", "bundle", "artifact" | build |
-| "coverage", "uncovered", "improve coverage" | coverage |
-| (default) | verify |
+**Flow**: `x-implement` → **`x-verify`** → `x-review`
 
-## Execution
-- **Default mode**: verify
-- **No-args behavior**: Run full verification
+## Intention
+
+**Scope**: $ARGUMENTS
+
+{{#if not $ARGUMENTS}}
+Run full verification on all changes.
+{{/if}}
 
 ## Behavioral Skills
 
-This workflow activates these behavioral skills:
+This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `testing` - Testing pyramid enforcement
 - `quality-gates` - CI quality checks
 
-## Agent Suggestions
+## Agents
 
-Consider delegating to specialized agents:
-- **Testing**: Test execution, coverage analysis
-- **Review**: Quality assessment, gate validation
+| Agent | When | Model |
+|-------|------|-------|
+| `ccsetup:x-tester` | Test execution, coverage | haiku |
+
+<instructions>
+
+### Phase 0: Confidence Check
+
+Activate `@skills/interview/` if:
+- Test scope unclear
+- Multiple test strategies possible
+- Coverage targets undefined
+
+### Phase 1: Run Quality Gates
+
+Execute all gates:
+
+```bash
+# Lint check
+pnpm lint
+
+# Type check
+pnpm type-check
+
+# Run tests
+pnpm test
+
+# Build verification
+pnpm build
+```
+
+### Phase 2: Handle Failures
+
+If any gate fails:
+
+```
+Gate Failure Detected
+        ↓
+Attempt Auto-Fix
+        ↓
+Re-run Gate
+        ↓
+Still Failing? → Report and suggest fix
+        ↓
+Passing → Continue
+```
+
+**Auto-fix capabilities:**
+- Lint errors: `pnpm lint --fix`
+- Type errors: Suggest type additions
+- Test failures: Analyze and suggest fixes
+- Build errors: Report with context
+
+### Phase 3: Coverage Analysis
+
+Check test coverage targets:
+
+| Type | Target |
+|------|--------|
+| Unit | 70% |
+| Integration | 20% |
+| E2E | 10% |
+
+If coverage is below target, suggest tests to add.
+
+### Phase 4: Verification Complete
+
+When all gates pass:
+- All linting passes
+- Type checking passes
+- All tests pass
+- Build succeeds
+- Coverage targets met
+
+</instructions>
+
+## Human-in-Loop Gates
+
+| Decision Level | Action | Example |
+|----------------|--------|---------|
+| **Critical** | ALWAYS ASK | Skip verification to commit |
+| **High** | ASK IF ABLE | Persistent test failures |
+| **Medium** | ASK IF UNCERTAIN | Coverage below target |
+| **Low** | PROCEED | Standard verification |
+
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: Current verification status
+2. **Options**: Fix issues, skip (with warning), or investigate
+3. **Recommendation**: Fix before proceeding
+4. **Escape**: "Return to /x-implement" option
+
+</human-approval-framework>
+
+## Agent Delegation
+
+**Recommended Agent**: `ccsetup:x-tester`
+
+| Delegate When | Keep Inline When |
+|---------------|------------------|
+| Large test suite | Quick verification |
+| Coverage analysis | Simple lint/type check |
+
+## Workflow Chaining
+
+**Next Verb**: `/x-review`
+
+| Trigger | Chain To | Auto? |
+|---------|----------|-------|
+| All gates pass | `/x-review` | Yes |
+| Tests fail | `/x-implement` | No (show failures) |
+| Persistent failures | `/x-troubleshoot` | No (ask) |
+
+<chaining-instruction>
+
+When verification passes:
+- skill: "x-review"
+- args: "review verified changes"
+
+On test failures:
+"Verification found {count} failures. Fix with /x-implement or investigate?"
+- Option 1: `/x-implement` - Fix the issues
+- Option 2: `/x-troubleshoot` - Investigate deeper
+- Option 3: Review failures
+
+</chaining-instruction>
 
 ## Quality Gates
-All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 
-## Verification Workflow
-
-```
-1. Run all quality gates
-2. If failures:
-   a. Attempt auto-fix
-   b. Re-run gate
-   c. If still failing, report
-3. Continue until 100% passing
-```
+All must pass:
+- **Lint** | **Types** | **Tests** | **Build**
 
 ## Coverage Targets
 
@@ -71,7 +184,22 @@ All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 | Integration | 20% |
 | E2E | 10% |
 
-## Checklist
+## Critical Rules
+
+1. **Zero Tolerance** - All gates must pass
+2. **Auto-Fix First** - Attempt fixes before reporting
+3. **Coverage Matters** - Track and improve coverage
+4. **No Regressions** - Existing tests must still pass
+
+## Navigation
+
+| Direction | Verb | When |
+|-----------|------|------|
+| Previous | `/x-implement` | Need to fix code |
+| Next | `/x-review` | Verification passes |
+| Branch | `/x-troubleshoot` | Persistent failures |
+
+## Success Criteria
 
 - [ ] All linting passes
 - [ ] Type checking passes
@@ -81,6 +209,11 @@ All modes enforce: **Lint** | **Types** | **Tests** | **Build**
 
 ## When to Load References
 
-- **For verify mode**: See `references/mode-verify.md`
-- **For build mode**: See `references/mode-build.md`
-- **For coverage mode**: See `references/mode-coverage.md`
+- **For verification details**: See `references/mode-verify.md`
+- **For build guidance**: See `references/mode-build.md`
+- **For coverage improvement**: See `references/mode-coverage.md`
+
+## References
+
+- @skills/quality-testing/ - Testing pyramid and strategies
+- @skills/quality-quality-gates/ - CI quality checks

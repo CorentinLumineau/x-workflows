@@ -1,103 +1,191 @@
 ---
 name: x-help
 description: |
-  Quick reference for all workflow commands and rules management.
-  Activate when asking for help, listing commands, or managing behavioral rules.
-  Triggers: help, commands, list, rules, how to, what can.
+  Quick reference for workflow commands and navigation.
+  UTILITY skill. Triggers: help, commands, list, how to, what can.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
-# x-help
+# /x-help
 
-Quick reference for all x/ commands and behavioral rules management.
+> Quick reference for all verb commands and workflow navigation.
 
-## Modes
+## Workflow Context
 
-| Mode | Description |
-|------|-------------|
-| help (default) | Command reference |
-| rules | Rules directory management |
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | UTILITY |
+| **Phase** | N/A |
+| **Position** | Entry point |
 
-## Mode Detection
-| Keywords | Mode |
-|----------|------|
-| "rules", "create rule", "list rules", "behavioral" | rules |
-| (default) | help |
+## Intention
 
-## Execution
-- **Default mode**: help
-- **No-args behavior**: Show command overview
+**Topic**: $ARGUMENTS
 
-## Behavioral Skills
+{{#if not $ARGUMENTS}}
+Show command overview.
+{{/if}}
 
-This workflow activates these behavioral skills:
-- `interview` - Zero-doubt confidence gate (Phase 0)
+<instructions>
 
-## Command Categories
+### Phase 1: Command Reference
 
-| Category | Skills | Purpose |
-|----------|--------|---------|
-| Planning | x-plan | Plan, brainstorm, design, analyze |
-| Implementation | x-implement | Feature, fix, refactor, improve |
-| Verification | x-verify | Test, build, coverage |
-| Review | x-review | Code review, audit |
-| Git | x-git | Commit, release |
-| Debugging | x-troubleshoot | Debug, troubleshoot, explain |
-| Documentation | x-docs | Doc management |
-| Initiative | x-initiative | Project tracking |
-| Research | x-research | Q&A, deep research |
-| Improvement | x-improve | Code health analysis |
-| Orchestration | x-orchestrate | Workflows, agents |
-| Setup | x-setup | Project setup |
-| Creation | x-create | Create skills/commands/agents |
+Display available verb commands organized by workflow:
 
-## Workflow Patterns
+**BRAINSTORM Workflow:**
+| Verb | Purpose |
+|------|---------|
+| `/x-brainstorm` | Idea capture, requirements discovery |
+| `/x-research` | Deep investigation, evidence gathering |
+| `/x-design` | Architectural decisions |
 
-### Feature Development
+**APEX Workflow:**
+| Verb | Purpose |
+|------|---------|
+| `/x-analyze` | Codebase assessment |
+| `/x-plan` | Implementation planning |
+| `/x-implement` | TDD implementation |
+| `/x-refactor` | Safe restructuring |
+| `/x-verify` | Quality gates |
+| `/x-review` | Code review, audits |
+
+**ONESHOT Workflow:**
+| Verb | Purpose |
+|------|---------|
+| `/x-fix` | Quick targeted fix |
+
+**DEBUG Workflow:**
+| Verb | Purpose |
+|------|---------|
+| `/x-troubleshoot` | Hypothesis-driven debugging |
+
+**UTILITY:**
+| Verb | Purpose |
+|------|---------|
+| `/x-commit` | Conventional commits |
+| `/x-release` | Release workflow |
+| `/x-docs` | Documentation management |
+| `/x-help` | Command reference (this) |
+| `/x-initiative` | Multi-session tracking |
+| `/x-setup` | Project initialization |
+| `/x-create` | Skill/agent creation |
+| `/x-prompt` | Prompt enhancement |
+
+### Phase 2: Workflow Patterns
+
+**Feature Development (APEX):**
 ```
-x-plan brainstorm → x-plan design → x-plan
-    ↓
-x-implement → x-verify → x-review → x-git commit
+/x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /x-commit
 ```
 
-### Bug Fix
+**Quick Bug Fix (ONESHOT):**
 ```
-x-troubleshoot → x-implement fix → x-verify → x-git commit
-```
-
-### Release
-```
-x-verify → x-git commit → x-git release
+/x-fix → /x-verify (optional) → /x-commit
 ```
 
-### Multi-Session Project
+**Investigation (DEBUG):**
 ```
-x-initiative create → [work] → x-initiative continue
-    ↓
-x-initiative archive (when complete)
+/x-troubleshoot → /x-fix (simple) OR /x-implement (complex)
 ```
 
-## Rules Management
+**Exploration (BRAINSTORM):**
+```
+/x-brainstorm ↔ /x-research → /x-design → [exit to APEX]
+```
 
-Rules are behavioral guidelines stored in project configuration:
-- Create rules for project-specific patterns
-- List active rules
-- Rules affect all workflows
+**Multi-Session Project:**
+```
+/x-initiative create → [work] → /x-initiative continue → /x-initiative archive
+```
 
-## Checklist
+</instructions>
 
-- [ ] Command reference accessible
-- [ ] Rules can be listed
-- [ ] New rules can be created
-- [ ] Workflows are documented
+## Workflow Quick Reference
 
-## When to Load References
+### BRAINSTORM → APEX Transition
+```
+/x-brainstorm → /x-research → /x-design → [APPROVAL] → /x-plan
+```
+**Note:** Transitioning from BRAINSTORM to APEX requires human approval.
 
-- **For help mode**: See `references/mode-help.md`
-- **For rules mode**: See `references/mode-rules.md`
+### APEX Full Flow
+```
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /x-commit
+```
+**Note:** Plan approval required before implementation.
+
+### DEBUG Resolution Paths
+```
+/x-troubleshoot → /x-fix (simple fix found)
+/x-troubleshoot → [APPROVAL] → /x-implement (complex fix needed)
+```
+
+## Human Approval Gates
+
+| Transition | Approval Required |
+|------------|-------------------|
+| BRAINSTORM → APEX | Yes (x-design → x-plan) |
+| Plan → Implement | Yes |
+| DEBUG → APEX | Yes (troubleshoot → implement) |
+| Commit without verify | Yes |
+| Release | Yes |
+
+## Verb Categories
+
+| Category | Verbs | Purpose |
+|----------|-------|---------|
+| Exploration | brainstorm, research, design | Discover requirements |
+| Planning | analyze, plan | Prepare for implementation |
+| Implementation | implement, refactor, fix | Write code |
+| Quality | verify, review | Ensure quality |
+| Delivery | commit, release | Ship code |
+| Support | docs, help, initiative | Utilities |
+
+## Getting Started
+
+**For new features:**
+```
+/x-brainstorm    # If requirements unclear
+/x-plan          # If requirements clear
+/x-implement     # If plan is trivial
+```
+
+**For bugs:**
+```
+/x-fix           # If cause is obvious
+/x-troubleshoot  # If investigation needed
+```
+
+**For research:**
+```
+/x-research      # Answer questions
+```
+
+## Navigation
+
+For more details on any verb, use:
+```
+/x-{verb}        # See specific skill documentation
+```
+
+For workflow documentation:
+```
+See: skills/WORKFLOWS.md
+```
+
+## Success Criteria
+
+- [ ] User understands available commands
+- [ ] User can navigate workflows
+- [ ] Appropriate verb selected for task
+
+## References
+
+- skills/WORKFLOWS.md - Detailed workflow documentation
+- @core-docs/X_COMMANDS_REFERENCE.md - Full command reference
