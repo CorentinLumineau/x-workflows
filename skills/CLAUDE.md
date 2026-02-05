@@ -40,13 +40,13 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 19 verb skills | `x-{verb}/` |
+| **x-workflows** | HOW to work | 20 verb skills | `x-{verb}/` |
 | **x-devsecops** | WHAT to know | 37 knowledge skills | `{category}-{skill}/` |
 | **local** | Behavioral | 3 | initiative, interview, documentation |
 
-**Total: ~59 skills**
+**Total: ~60 skills**
 
-## Verb Skills by Workflow (19)
+## Verb Skills by Workflow (20)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -75,9 +75,10 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |------|---------|----------|
 | `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
 
-### UTILITY (8)
+### UTILITY (9)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
+| `/x-archive` | Archive completed initiatives | archive, complete initiative |
 | `/x-commit` | Conventional commits | commit, git commit |
 | `/x-release` | Release workflow | release, tag, version |
 | `/x-docs` | Documentation management | docs, documentation |
@@ -142,7 +143,7 @@ Skills are prefixed by category for organization:
 
 ### Multi-Session Project
 ```
-/x-initiative create → [work] → /x-initiative continue → /x-initiative archive
+/x-initiative create → [work] → /x-initiative continue → /x-archive
 ```
 
 ## Human Approval Gates

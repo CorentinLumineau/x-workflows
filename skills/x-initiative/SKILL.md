@@ -20,7 +20,7 @@ Multi-phase project tracking across sessions using file-based persistence.
 |------|-------------|
 | create (default) | Create new initiative |
 | continue | Resume work from last session |
-| archive | Archive completed initiative |
+| archive | Archive completed initiative (delegates to `/x-archive`) |
 | status | Display progress status |
 
 ## Mode Detection
@@ -142,5 +142,7 @@ Each milestone tracks:
 
 - **For create mode**: See `references/mode-create.md`
 - **For continue mode**: See `references/mode-continue.md`
-- **For archive mode**: See `references/mode-archive.md`
+- **For archive mode**: Delegates to `/x-archive` (standalone skill)
 - **For status mode**: See `references/mode-status.md`
+
+> **Note**: The `archive` mode delegates to the standalone `/x-archive` skill for backward compatibility. Users can invoke either `/x-initiative archive` or `/x-archive` directly.
