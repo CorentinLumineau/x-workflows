@@ -92,10 +92,14 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 | `/x:archive` | x-initiative archive | Archive complete |
 | `/x:workflow-status` | x-initiative status | View status |
 
+### Q&A Commands
+| Command | Skill | Description |
+|---------|-------|-------------|
+| `/x:ask` | x-ask | Quick Q&A (codebase, libraries, concepts) |
+
 ### Research Commands
 | Command | Skill | Description |
 |---------|-------|-------------|
-| `/x:ask` | x-research | Quick Q&A |
 | `/x:deep-research` | x-research deep | Comprehensive research |
 
 ### Orchestration Commands

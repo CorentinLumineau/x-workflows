@@ -320,6 +320,7 @@ When approval is needed, use this structure:
 
 | Verb | Purpose |
 |------|---------|
+| `/x-ask` | Zero-friction Q&A |
 | `/x-commit` | Conventional commits |
 | `/x-release` | Release workflow |
 | `/x-docs` | Documentation management |
@@ -329,6 +330,7 @@ When approval is needed, use this structure:
 
 | Skill | Type | Notes |
 |-------|------|-------|
+| `x-ask` | Utility | Zero-friction Q&A |
 | `x-initiative` | Utility | Multi-session tracking |
 | `x-setup` | Utility | Project initialization |
 | `x-create` | Utility | Skill/agent creation |

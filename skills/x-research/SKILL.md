@@ -64,18 +64,11 @@ Determine research depth:
 
 | Mode | Depth | Output |
 |------|-------|--------|
-| Quick (ask) | Surface-level answer | Direct response |
 | Deep | Comprehensive investigation | PRD/analysis document |
 
-### Phase 2: Information Gathering
+> **Quick Q&A**: For simple questions, use `/x-ask` instead. This skill is for comprehensive research.
 
-**For quick questions:**
-```
-1. Understand question
-2. Search codebase/docs
-3. Provide direct answer
-4. Cite sources
-```
+### Phase 2: Information Gathering
 
 **For deep research:**
 ```
@@ -220,7 +213,7 @@ When research complete:
 
 ## When to Load References
 
-- **For quick Q&A**: See `references/mode-ask.md`
+- **For quick Q&A**: Use `/x-ask` (standalone skill)
 - **For deep research**: See `references/mode-deep.md`
 
 ## References
