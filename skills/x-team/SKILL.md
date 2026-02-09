@@ -207,10 +207,25 @@ When team work is complete:
 
 Agent Teams use significantly more tokens than single sessions:
 - Each teammate is a **full Claude Code instance**
-- Token usage scales linearly with team size
+- Token usage scales linearly with team size (3 teammates ≈ 3-4x tokens)
 - Use the minimum team size that achieves parallelism
-- Prefer **Haiku** for teammates doing focused tasks (lower cost)
-- Use **Sonnet** for teammates needing complex reasoning
+
+### Model Selection per Teammate
+
+Choose the cheapest model that fits the task. **Never use Opus for teammates** — reserve it for the lead session only.
+
+| Teammate Role | Model | Cost | When |
+|---------------|-------|------|------|
+| Explorer, search, grep | **Haiku** | Lowest | Read-only codebase navigation, finding files, understanding structure |
+| Test writer, test runner | **Haiku** | Lowest | Writing tests, running validation, coverage checks |
+| Doc writer, changelog | **Haiku** | Lowest | Generating documentation, updating READMEs |
+| Simple/focused implementation | **Haiku** | Lowest | Single-file changes, clear requirements, boilerplate |
+| Complex implementation | **Sonnet** | Medium | Multi-file features, architectural decisions |
+| Security/performance review | **Sonnet** | Medium | Domain expertise, nuanced analysis |
+| Debugging, hypothesis testing | **Sonnet** | Medium | Complex reasoning, root cause analysis |
+| Refactoring | **Sonnet** | Medium | Safe restructuring, SOLID enforcement |
+
+**Rule of thumb**: If the teammate's task could be done by a junior dev following clear instructions → Haiku. If it requires senior-level judgment → Sonnet.
 
 ## Critical Rules
 

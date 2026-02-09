@@ -29,7 +29,7 @@ Team rules:
 - Final synthesis should present consensus and dissenting views
 ```
 
-**Model recommendation**: Sonnet for investigators (complex reasoning needed)
+**Model recommendation**: Sonnet for investigators (complex reasoning needed), Haiku for a pure search/grep investigator
 
 ---
 
@@ -93,7 +93,7 @@ Team rules:
 - Synthesize all findings into a prioritized action list
 ```
 
-**Model recommendation**: Sonnet for all (nuanced analysis needed)
+**Model recommendation**: Sonnet for security/performance reviewers, Haiku for quality reviewer (checklist-based)
 
 ---
 
@@ -125,7 +125,7 @@ Team rules:
 - Once root cause is found, the winning investigator proposes a fix
 ```
 
-**Model recommendation**: Sonnet for all (hypothesis testing needs reasoning)
+**Model recommendation**: Sonnet for hypothesis testers (complex reasoning), Haiku if a teammate only does log/trace search
 
 ---
 
@@ -171,12 +171,20 @@ Team rules:
 
 ## Model Selection
 
-| Role Type | Recommended Model | Why |
-|-----------|------------------|-----|
-| Complex reasoning | Sonnet | Nuanced analysis, architecture |
-| Focused implementation | Sonnet | Code quality matters |
-| Simple tasks, tests | Haiku | Cost-effective, fast |
-| Security/performance | Sonnet | Domain expertise needed |
+**Never use Opus for teammates** — reserve Opus for the lead session only.
+
+| Role Type | Model | Why |
+|-----------|-------|-----|
+| Complex reasoning, architecture | Sonnet | Nuanced analysis, trade-off evaluation |
+| Multi-file implementation | Sonnet | Code quality, cross-file coherence |
+| Security/performance audit | Sonnet | Domain expertise, subtle patterns |
+| Refactoring, debugging | Sonnet | Safe restructuring, hypothesis testing |
+| Test writing, test running | **Haiku** | Focused, clear inputs/outputs, fast |
+| Doc generation, changelog | **Haiku** | Template-driven, lower reasoning |
+| Exploration, search, grep | **Haiku** | Read-only, fast, cheapest option |
+| Simple single-file changes | **Haiku** | Clear requirements, boilerplate work |
+
+**Cost multiplier guide**: A 3-teammate Sonnet team costs ~3-4x a single session. Swapping 1 teammate to Haiku saves ~25-30% of that team's cost.
 
 ## Anti-Patterns
 
