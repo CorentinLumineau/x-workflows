@@ -13,12 +13,12 @@ This mode activates:
 - `debugging` - Debug methodology
 - `context-awareness` - Project context
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-refactorer` | Error spans 3+ components | sonnet |
-| `ccsetup:x-tester` | Post-fix verification | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **refactoring agent** | Error spans 3+ components | Safe restructuring |
+| **test runner** | Post-fix verification | Can edit and run commands |
 
 ## MCP Servers
 

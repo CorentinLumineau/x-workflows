@@ -37,11 +37,11 @@ Ask user: "What would you like to research?"
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Codebase investigation | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Codebase investigation | Fast, read-only |
 
 ## MCP Servers
 
@@ -144,7 +144,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-explorer`
+**Recommended Agent**: **codebase explorer** (codebase investigation)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

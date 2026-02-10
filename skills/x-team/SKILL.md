@@ -2,7 +2,7 @@
 name: x-team
 description: Orchestrate teams of Claude Code sessions for parallel collaborative work.
 license: Apache-2.0
-compatibility: Works with Claude Code (requires Agent Teams experimental feature).
+compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent. Claude Code Agent Teams provides the richest multi-agent experience.
 allowed-tools: Read Grep Glob Bash
 metadata:
   author: ccsetup contributors
@@ -41,6 +41,15 @@ Agent Teams must be enabled in settings:
   "teammateMode": "auto"
 }
 ```
+
+## Platform Notes
+
+| Platform | Team Support | Notes |
+|----------|-------------|-------|
+| Claude Code | Full (Agent Teams) | Native multi-agent coordination with shared task lists |
+| Cursor | Partial | Sequential delegation via skill chaining |
+| Cline | Partial | Sequential delegation via skill chaining |
+| skills.sh | Partial | Script-based coordination |
 
 ## Behavioral Skills
 

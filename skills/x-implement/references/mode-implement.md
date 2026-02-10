@@ -14,13 +14,13 @@ This mode activates:
 - `code-quality` - SOLID/DRY/KISS enforcement
 - `testing` - Testing pyramid (70/20/10)
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Pattern discovery, codebase exploration | haiku |
-| `ccsetup:x-tester` | Test execution, coverage verification | haiku |
-| `ccsetup:x-reviewer` | SOLID validation, quality review | sonnet |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Pattern discovery, codebase exploration | Fast, read-only |
+| **test runner** | Test execution, coverage verification | Can edit and run commands |
+| **code reviewer** | SOLID validation, quality review | Read-only analysis |
 
 ## MCP Servers
 
@@ -70,15 +70,8 @@ Explore in parallel:
 
 </parallel_exploration>
 
-Use Task tool with x-explorer agent (haiku):
-
-```
-Task(
-  subagent_type: "ccsetup:x-explorer",
-  model: "haiku",
-  prompt: "Discover patterns for {feature_type}"
-)
-```
+Delegate to a **codebase explorer** agent (fast, read-only):
+> "Discover patterns for {feature_type}"
 
 Discover:
 - Existing patterns in services/, repos/, components/
@@ -121,15 +114,8 @@ For each layer:
 
 ### Phase 3: Testing
 
-Use testing skill and x-tester agent:
-
-```
-Task(
-  subagent_type: "ccsetup:x-tester",
-  model: "haiku",
-  prompt: "Verify coverage for {files}"
-)
-```
+Delegate to a **test runner** agent (can edit and run commands):
+> "Verify coverage for {files}"
 
 Requirements:
 - **95%+ coverage** for new/changed code

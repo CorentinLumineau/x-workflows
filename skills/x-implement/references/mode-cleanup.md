@@ -13,12 +13,12 @@ This mode activates:
 - `code-quality` - Quality enforcement
 - `context-awareness` - Pattern awareness
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Dead code detection | haiku |
-| `ccsetup:x-tester` | Verification | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Dead code detection | Fast, read-only |
+| **test runner** | Verification | Can edit and run commands |
 
 ## MCP Servers
 

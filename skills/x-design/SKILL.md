@@ -39,11 +39,11 @@ This skill activates:
 - `code-quality` - SOLID principles enforcement
 - `analysis` - Trade-off analysis
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Pattern discovery | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Pattern discovery | Fast, read-only |
 
 ## MCP Servers
 
@@ -76,15 +76,8 @@ Review:
 
 ### Phase 2: Architecture Discovery
 
-Use x-explorer to find existing patterns:
-
-```
-Task(
-  subagent_type: "ccsetup:x-explorer",
-  model: "haiku",
-  prompt: "Find architecture patterns in codebase"
-)
-```
+Delegate to a **codebase explorer** agent (fast, read-only):
+> "Find architecture patterns in codebase"
 
 Discover:
 - Existing architecture layers
@@ -182,7 +175,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-explorer` (pattern discovery)
+**Recommended Agent**: **codebase explorer** (pattern discovery)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

@@ -13,12 +13,12 @@ This mode activates:
 - `code-quality` - Quality enforcement
 - `analysis` - Pareto prioritization
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Quality assessment | sonnet |
-| `ccsetup:x-explorer` | Pattern analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Quality assessment | Read-only analysis |
+| **codebase explorer** | Pattern analysis | Fast, read-only |
 
 ## MCP Servers
 

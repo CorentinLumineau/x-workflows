@@ -40,13 +40,13 @@ This skill activates:
 - `testing` - Test-driven refactoring
 - `complexity-detection` - Scope assessment
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-refactorer` | Complex refactoring | sonnet |
-| `ccsetup:x-tester` | Verification | haiku |
-| `ccsetup:x-explorer` | Pattern discovery, scope analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **refactoring agent** | Complex refactoring | Safe restructuring |
+| **test runner** | Verification | Can edit and run commands |
+| **codebase explorer** | Pattern discovery, scope analysis | Fast, read-only |
 
 ## MCP Servers
 
@@ -167,7 +167,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-refactorer`
+**Recommended Agent**: **refactoring agent** (safe restructuring)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

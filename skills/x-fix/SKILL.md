@@ -38,11 +38,11 @@ This skill activates:
 - `debugging` - Debug methodology (lightweight)
 - `context-awareness` - Project context
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-tester` | Post-fix verification | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **test runner** | Post-fix verification | Can edit and run commands |
 
 ## MCP Servers
 

@@ -13,13 +13,13 @@ This mode activates:
 - `analysis` - Pareto prioritization
 - `context-awareness` - Pattern awareness
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Quality assessment | sonnet |
-| `ccsetup:x-explorer` | Pattern discovery | haiku |
-| `ccsetup:x-tester` | Verification | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Quality assessment | Read-only analysis |
+| **codebase explorer** | Pattern discovery | Fast, read-only |
+| **test runner** | Verification | Can edit and run commands |
 
 ## MCP Servers
 
@@ -52,13 +52,8 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 Analyze current code quality:
 
-```
-Task(
-  subagent_type: "ccsetup:x-reviewer",
-  model: "sonnet",
-  prompt: "Assess code quality and identify improvement opportunities"
-)
-```
+Delegate to a **code reviewer** agent (read-only analysis):
+> "Assess code quality and identify improvement opportunities"
 
 Check for:
 - [ ] SOLID violations

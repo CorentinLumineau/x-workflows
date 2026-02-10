@@ -38,11 +38,11 @@ This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `analysis` - Pareto prioritization
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Codebase analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Codebase analysis | Fast, read-only |
 
 ## MCP Servers
 
@@ -145,7 +145,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-explorer` (for codebase analysis)
+**Recommended Agent**: **codebase explorer** (for codebase analysis)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

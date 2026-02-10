@@ -47,12 +47,12 @@ This skill activates:
 | `authentication` | Auth-related changes |
 | `performance` | Performance-critical paths |
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Systematic code analysis | sonnet |
-| `ccsetup:x-explorer` | Pattern analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Systematic code analysis | Read-only analysis |
+| **codebase explorer** | Pattern analysis | Fast, read-only |
 
 <instructions>
 
@@ -154,7 +154,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-reviewer`
+**Recommended Agent**: **code reviewer** (quality analysis)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

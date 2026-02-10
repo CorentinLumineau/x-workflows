@@ -156,34 +156,17 @@ Standard colors for visual distinction:
 
 ## 5. Task Tool Invocation
 
-### Basic Invocation
-```javascript
-Task({
-  description: "Brief task description",
-  prompt: "Detailed instructions for the agent",
-  subagent_type: "ccsetup:x-{agent-name}"
-})
-```
+### Basic Delegation
+Delegate to a **x-{agent-name}** agent:
+> "Detailed instructions for the agent"
 
-### With Model Override
-```javascript
-Task({
-  description: "Brief task description",
-  prompt: "Detailed instructions",
-  subagent_type: "ccsetup:x-{agent-name}",
-  model: "sonnet"  // Override agent's default model
-})
-```
+### With Characteristics
+Delegate to a **x-{agent-name}** agent (read-only analysis):
+> "Detailed instructions"
 
-### Background Execution
-```javascript
-Task({
-  description: "Long-running task",
-  prompt: "Detailed instructions",
-  subagent_type: "ccsetup:x-{agent-name}",
-  run_in_background: true
-})
-```
+### Background Delegation
+Delegate to a **x-{agent-name}** agent in background:
+> "Long-running task instructions"
 
 ---
 

@@ -47,12 +47,8 @@ When creating multiple items, spawn reviewer in background:
 
 ```
 1. Create items 1-3
-2. Spawn x-reviewer in background:
-   Task(
-     subagent_type: "ccsetup:x-reviewer",
-     run_in_background: true,
-     prompt: "Review items 1-3 for quality and security"
-   )
+2. Delegate to a **code reviewer** agent (quality analysis) in background:
+   > "Review items 1-3 for quality and security"
 3. Continue creating items 4-6
 4. Check reviewer status via TaskOutput
 5. Aggregate review findings
@@ -65,12 +61,8 @@ When implementing features, spawn tester concurrently:
 
 ```
 1. Implement feature A
-2. Spawn x-tester in background:
-   Task(
-     subagent_type: "ccsetup:x-tester",
-     run_in_background: true,
-     prompt: "Run tests for feature A"
-   )
+2. Delegate to a **test runner** agent (can edit and run commands) in background:
+   > "Run tests for feature A"
 3. Continue implementing feature B
 4. Check test results
 5. Fix any failures before proceeding
@@ -165,7 +157,7 @@ Suggests or auto-spawns background agents
 ```
 x-implement (batch mode)
         ↓
-orchestration: spawn x-reviewer after batch 1
+orchestration: spawn code reviewer after batch 1
         ↓
 Continue creating while review runs
         ↓

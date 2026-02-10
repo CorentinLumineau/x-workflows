@@ -11,11 +11,11 @@ Documentation cleanup - identify and fix stale, broken, or outdated documentatio
 
 See `doc-sync-patterns.md` for documentation patterns.
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Doc analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Doc analysis | Fast, read-only |
 
 <instructions>
 

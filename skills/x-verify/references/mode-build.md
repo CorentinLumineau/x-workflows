@@ -15,11 +15,11 @@ This mode activates:
 - `testing` - Pre-build validation
 - `code-quality` - Build quality enforcement
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-tester` | Pre-build verification | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **test runner** | Pre-build verification | Can edit and run commands |
 
 ## MCP Servers
 

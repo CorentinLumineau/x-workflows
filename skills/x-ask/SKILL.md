@@ -40,11 +40,11 @@ This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0, lightweight bypass)
 - `context-awareness` - Project context loading
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Codebase questions | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Codebase questions | Fast, read-only |
 
 ## MCP Servers
 
@@ -72,7 +72,7 @@ Classify the question to select the right tool:
 
 | Type | Signal | Approach |
 |------|--------|----------|
-| **Codebase** | "how does", "where is", file/component names, "this project" | x-explorer agent |
+| **Codebase** | "how does", "where is", file/component names, "this project" | codebase explorer agent |
 | **Library** | Named framework/library, API usage, "how to use" | Context7 MCP |
 | **External** | "latest", dates, external services, current events | WebSearch + WebFetch |
 | **Reasoning** | "compare", "trade-offs", "pros and cons", "should I" | Sequential Thinking |
@@ -82,15 +82,8 @@ Classify the question to select the right tool:
 
 #### For Codebase Questions
 
-Delegate to x-explorer for fast discovery:
-
-```
-Task(
-  subagent_type: "ccsetup:x-explorer",
-  model: "haiku",
-  prompt: "Find code related to {topic}. Report file paths, key functions, and patterns."
-)
-```
+Delegate to a **codebase explorer** agent (fast, read-only):
+> "Find code related to {topic}. Report file paths, key functions, and patterns."
 
 Then synthesize the explorer's findings into a direct answer.
 
@@ -208,9 +201,9 @@ When approval needed, structure question as:
 
 </human-approval-framework>
 
-## Agent Delegation
+## Agent Delegation (Summary)
 
-**Recommended Agent**: `ccsetup:x-explorer` (for codebase questions)
+**Recommended Agent**: **codebase explorer** (for codebase questions)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

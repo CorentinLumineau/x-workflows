@@ -11,12 +11,12 @@ Generate new documentation for undocumented code. Create docs from code analysis
 
 See `doc-sync-patterns.md` for documentation patterns.
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Doc generation | haiku |
-| `ccsetup:x-explorer` | Code analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Doc generation | Read-only analysis |
+| **codebase explorer** | Code analysis | Fast, read-only |
 
 <instructions>
 

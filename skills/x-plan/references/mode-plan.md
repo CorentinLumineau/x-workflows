@@ -13,11 +13,11 @@ This mode activates:
 - `analysis` - Pareto prioritization
 - `context-awareness` - Project context
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Codebase analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Codebase analysis | Fast, read-only |
 
 ## MCP Servers
 

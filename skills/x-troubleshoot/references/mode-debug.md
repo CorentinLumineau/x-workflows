@@ -13,12 +13,12 @@ This mode activates:
 - `debugging` - Debug methodology
 - `context-awareness` - Code understanding
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-refactorer` | Flow tracing | sonnet |
-| `ccsetup:x-explorer` | Code exploration | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **refactoring agent** | Flow tracing | Safe restructuring |
+| **codebase explorer** | Code exploration | Fast, read-only |
 
 ## MCP Servers
 

@@ -39,11 +39,11 @@ This skill activates:
 - `testing` - Testing pyramid enforcement
 - `quality-gates` - CI quality checks
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-tester` | Test execution, coverage | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **test runner** | Test execution, coverage | Can edit and run commands |
 
 <instructions>
 
@@ -138,7 +138,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-tester`
+**Recommended Agent**: **test runner** (test execution)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

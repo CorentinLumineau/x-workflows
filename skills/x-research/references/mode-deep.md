@@ -12,11 +12,11 @@ Transform ideas into complete PRDs through comprehensive web research, competiti
 This mode activates:
 - `context-awareness` - Project context loading
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Codebase analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Codebase analysis | Fast, read-only |
 
 ## MCP Servers
 

@@ -15,12 +15,12 @@ This mode activates:
 - `testing` - Testing pyramid enforcement
 - `code-quality` - Quality gates validation
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-tester` | Parallel gate execution | haiku |
-| `ccsetup:x-reviewer` | Analysis mode | sonnet |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **test runner** | Parallel gate execution | Can edit and run commands |
+| **code reviewer** | Analysis mode | Read-only analysis |
 
 ## MCP Servers
 
@@ -63,17 +63,9 @@ Detect verification mode:
 
 ### Phase 2: Quality Gate Execution
 
-Run all gates in parallel using x-tester agents:
-
-```
-Task(
-  subagent_type: "ccsetup:x-tester",
-  model: "haiku",
-  run_in_background: true,
-  prompt: "Run lint check"
-)
-// Same for type-check, tests, build
-```
+Delegate to **test runner** agents (can edit and run commands) in parallel:
+> "Run lint check"
+> (Same for type-check, tests, build)
 
 #### Gate Specifications
 

@@ -11,12 +11,12 @@ Synchronize documentation with code changes. Detect staleness and update docs to
 
 See `doc-sync-patterns.md` for detailed sync patterns and staleness detection.
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Doc updates | haiku |
-| `ccsetup:x-explorer` | Code analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Doc updates | Read-only analysis |
+| **codebase explorer** | Code analysis | Fast, read-only |
 
 <instructions>
 

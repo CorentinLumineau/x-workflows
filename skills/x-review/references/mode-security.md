@@ -15,12 +15,12 @@ This mode activates:
 - `authentication` - Auth pattern review
 - `authorization` - Access control check
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-security-reviewer` | Security assessment | sonnet |
-| `ccsetup:x-explorer` | Attack surface analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **security auditor** | Security assessment | OWASP, security analysis |
+| **codebase explorer** | Attack surface analysis | Fast, read-only |
 
 ## MCP Servers
 

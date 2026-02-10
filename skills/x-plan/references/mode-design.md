@@ -14,11 +14,11 @@ This mode activates:
 - `analysis` - Trade-off analysis
 - `context-awareness` - Existing patterns
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Pattern discovery | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Pattern discovery | Fast, read-only |
 
 ## MCP Servers
 
@@ -93,15 +93,8 @@ Explore in parallel:
 
 </parallel_exploration>
 
-Use x-explorer to find existing patterns:
-
-```
-Task(
-  subagent_type: "ccsetup:x-explorer",
-  model: "haiku",
-  prompt: "Find architecture patterns in codebase"
-)
-```
+Delegate to a **codebase explorer** agent (fast, read-only):
+> "Find architecture patterns in codebase"
 
 Discover:
 - Existing architecture layers

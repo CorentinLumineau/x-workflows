@@ -39,12 +39,12 @@ This skill activates:
 - `analysis` - Pareto prioritization
 - `code-quality` - Quality assessment
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Quality analysis | sonnet |
-| `ccsetup:x-explorer` | Pattern discovery | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Quality analysis | Read-only analysis |
+| **codebase explorer** | Pattern discovery | Fast, read-only |
 
 ## MCP Servers
 
@@ -74,15 +74,8 @@ Determine analysis scope:
 
 ### Phase 2: Multi-Domain Analysis
 
-Use x-reviewer for comprehensive analysis:
-
-```
-Task(
-  subagent_type: "ccsetup:x-reviewer",
-  model: "sonnet",
-  prompt: "Analyze {scope} across all domains"
-)
-```
+Delegate to a **code reviewer** agent (read-only analysis):
+> "Analyze {scope} across all domains"
 
 #### Quality Domain
 - [ ] SOLID adherence
@@ -176,7 +169,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-reviewer`
+**Recommended Agent**: **code reviewer** (quality analysis)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

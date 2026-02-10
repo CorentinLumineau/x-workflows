@@ -23,11 +23,11 @@ This mode activates:
 - `context-awareness` - Project context loading
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Architecture compatibility analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Architecture compatibility analysis | Fast, read-only |
 
 ## MCP Servers
 
@@ -339,15 +339,8 @@ FAIL if:
 
 For analyzing project architecture compatibility, use exploration agents:
 
-```javascript
-Task([
-  {
-    "subagent_type": "ccsetup:x-explorer",
-    "model": "haiku",
-    "prompt": "Analyze project structure. Identify: component patterns, conventions, common sections. Report: how new patterns could integrate."
-  }
-])
-```
+Delegate to a **codebase explorer** agent (fast, read-only):
+> "Analyze project structure. Identify: component patterns, conventions, common sections. Report: how new patterns could integrate."
 
 **When to use agents:**
 - Understanding current project architecture

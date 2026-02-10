@@ -12,11 +12,11 @@ Educational code explanations for learning and onboarding. Provide clear, compre
 This mode activates:
 - `context-awareness` - Code understanding
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Code analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Code analysis | Fast, read-only |
 
 ## MCP Servers
 

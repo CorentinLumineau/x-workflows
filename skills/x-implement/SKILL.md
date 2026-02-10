@@ -49,12 +49,12 @@ This skill activates:
 | `database` | Schema changes, migrations |
 | `api-design` | API endpoints, contracts |
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-explorer` | Pattern discovery | haiku |
-| `ccsetup:x-tester` | Test execution | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **codebase explorer** | Pattern discovery | Fast, read-only |
+| **test runner** | Test execution | Can edit and run commands |
 
 ## MCP Servers
 
@@ -74,15 +74,8 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Context Discovery
 
-Discover existing patterns:
-
-```
-Task(
-  subagent_type: "ccsetup:x-explorer",
-  model: "haiku",
-  prompt: "Find patterns for {feature type} in codebase"
-)
-```
+Delegate to a **codebase explorer** agent (fast, read-only):
+> "Find patterns for {feature type} in codebase"
 
 Identify:
 - Similar implementations
@@ -158,7 +151,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-tester` (for test execution)
+**Recommended Agent**: **test runner** (for test execution)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

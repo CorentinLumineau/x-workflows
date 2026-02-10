@@ -13,11 +13,11 @@ This mode activates:
 - `code-quality` - Quality enforcement
 - `git-workflow` - Branch management
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-reviewer` | Code review | sonnet |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **code reviewer** | Code review | Read-only analysis |
 
 ## MCP Servers
 
@@ -74,15 +74,8 @@ If conflicts exist, report and suggest resolution.
 
 ### Phase 3: Systematic Review
 
-Use x-reviewer agent for comprehensive review:
-
-```
-Task(
-  subagent_type: "ccsetup:x-reviewer",
-  model: "sonnet",
-  prompt: "Review changes for PR"
-)
-```
+Delegate to a **code reviewer** agent (read-only analysis):
+> "Review changes for PR"
 
 #### Review Checklist
 

@@ -56,7 +56,7 @@ Then ask for:
 
 ```markdown
 ---
-name: ccsetup:x-{name}
+name: x-{name}
 description: "{purpose}"
 model: {haiku|sonnet}
 tools:
@@ -91,13 +91,8 @@ Use this agent when:
 
 ## Example Invocation
 
-```javascript
-Task({
-  subagent_type: "ccsetup:x-{name}",
-  model: "{model}",
-  prompt: "{example_prompt}"
-})
-```
+Delegate to a **x-{name}** agent ({model}):
+> "{example_prompt}"
 
 ## References
 

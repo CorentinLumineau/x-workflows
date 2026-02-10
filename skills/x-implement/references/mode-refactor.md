@@ -15,13 +15,13 @@ This mode activates:
 - `context-awareness` - Pattern awareness
 - `complexity-detection` - Scope assessment
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-refactorer` | Complex refactoring operations | sonnet |
-| `ccsetup:x-tester` | Verification | haiku |
-| `ccsetup:x-explorer` | Pattern discovery, scope analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **refactoring agent** | Complex refactoring operations | Safe restructuring |
+| **test runner** | Verification | Can edit and run commands |
+| **codebase explorer** | Pattern discovery, scope analysis | Fast, read-only |
 
 ## MCP Servers
 

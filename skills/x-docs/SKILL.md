@@ -37,12 +37,12 @@ Analyze documentation state.
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-doc-writer` | Documentation generation | sonnet |
-| `ccsetup:x-explorer` | Code analysis | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **documentation writer** | Documentation generation | Read, write, edit |
+| **codebase explorer** | Code analysis | Fast, read-only |
 
 <instructions>
 
@@ -115,7 +115,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-doc-writer`
+**Recommended Agent**: **documentation writer**
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

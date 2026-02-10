@@ -38,12 +38,12 @@ This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `debugging` - Hypothesis-driven debugging methodology
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-debugger` | Complex multi-layer investigation | sonnet |
-| `ccsetup:x-explorer` | Codebase search, dependency tracing | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **debugger** | Complex multi-layer investigation | Runtime investigation |
+| **codebase explorer** | Codebase search, dependency tracing | Fast, read-only |
 
 ## MCP Servers
 
@@ -135,7 +135,7 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: `ccsetup:x-debugger`
+**Recommended Agent**: **debugger** (runtime investigation)
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|

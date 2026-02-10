@@ -16,12 +16,12 @@ This mode activates:
 - `analysis` - Pareto prioritization
 - `code-quality` - Quality targets
 
-## Agents
+## Agent Delegation
 
-| Agent | When | Model |
-|-------|------|-------|
-| `ccsetup:x-tester` | Test writing, coverage analysis | haiku |
-| `ccsetup:x-explorer` | Pattern discovery | haiku |
+| Role | When | Characteristics |
+|------|------|-----------------|
+| **test runner** | Test writing, coverage analysis | Can edit and run commands |
+| **codebase explorer** | Pattern discovery | Fast, read-only |
 
 ## MCP Servers
 
@@ -82,15 +82,8 @@ For each gap, plan tests following the testing pyramid (70/20/10):
 
 ### Phase 4: Test Implementation
 
-Use x-tester agent for test writing:
-
-```
-Task(
-  subagent_type: "ccsetup:x-tester",
-  model: "haiku",
-  prompt: "Write tests to cover {gap} following testing pyramid"
-)
-```
+Delegate to a **test runner** agent (can edit and run commands):
+> "Write tests to cover {gap} following testing pyramid"
 
 For each test:
 1. Write test (following TDD)
