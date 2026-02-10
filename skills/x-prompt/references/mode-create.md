@@ -173,9 +173,81 @@ Present the enhanced prompt:
 
 ---
 
-### Phase 5: Refinement Offer
+### Phase 5: Skill Suggestion
 
-After output, offer iteration:
+After presenting the enhanced prompt, analyze its intent and suggest the best x-workflow skills to **execute** the task described in the prompt.
+
+**Step 1: Detect intent signals**
+
+Scan the enhanced prompt's purpose, instructions, and context for intent signals:
+
+| Intent Signals | Primary Skill | Workflow |
+|----------------|---------------|----------|
+| build, create, implement, add feature, new | `/x-implement` | APEX |
+| fix, bug, error, typo, patch, broken | `/x-fix` | ONESHOT |
+| debug, diagnose, root cause, investigate error | `/x-troubleshoot` | DEBUG |
+| plan, break down, roadmap, estimate | `/x-plan` | APEX |
+| analyze, assess, evaluate, audit codebase | `/x-analyze` | APEX |
+| design, architect, system design, patterns | `/x-design` | BRAINSTORM |
+| research, investigate, compare, evaluate options | `/x-research` | BRAINSTORM |
+| brainstorm, ideas, requirements, explore | `/x-brainstorm` | BRAINSTORM |
+| refactor, restructure, clean up, reorganize | `/x-refactor` | APEX |
+| test, verify, lint, quality, coverage | `/x-verify` | APEX |
+| review, PR, code review, security review | `/x-review` | APEX |
+| document, docs, readme, API docs | `/x-docs` | UTILITY |
+| release, version, tag, changelog | `/x-release` | UTILITY |
+| setup, scaffold, initialize, bootstrap | `/x-setup` | UTILITY |
+
+**Step 2: Determine complexity**
+
+| Signal | Simple | Moderate | Complex |
+|--------|--------|----------|---------|
+| Scope | Single file/function | Multiple files | Cross-cutting |
+| Dependencies | None | Some | Many |
+| Risk | Low | Medium | High |
+
+**Step 3: Present skill suggestion**
+
+Present the suggestion **outside** the XML output (after the fenced code block), using this format:
+
+````markdown
+## Suggested Execution
+
+Based on your prompt's intent:
+
+| Skill | Why |
+|-------|-----|
+| `/x-{primary}` | {Reason based on detected intent} |
+| `/x-{secondary}` | {Reason if applicable} |
+
+**Recommended workflow chain**:
+```
+/x-{verb1} → /x-{verb2} → /x-{verb3}
+```
+
+**Quick start**: Run `/x-{primary}` with your enhanced prompt above.
+````
+
+**Workflow chain recommendations by complexity:**
+
+| Complexity | Chain |
+|------------|-------|
+| Simple + build | `/x-implement` → `/x-verify` → `/x-commit` |
+| Moderate + build | `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/x-commit` |
+| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/x-commit` |
+| Simple + fix | `/x-fix` → `/x-commit` |
+| Moderate + fix | `/x-fix` → `/x-verify` → `/x-commit` |
+| Any + debug | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
+| Any + explore | `/x-brainstorm` → `/x-research` → `/x-design` → `/x-plan` |
+| Any + research | `/x-research` (standalone) |
+
+> **Note**: Skill suggestions are informational. The user can always override by invoking any `/x-*` command directly.
+
+---
+
+### Phase 6: Refinement Offer
+
+After output and skill suggestions, offer iteration:
 
 ```json
 {
@@ -211,6 +283,8 @@ If refinement selected, loop back to relevant phase.
 - [ ] XML output well-formed
 - [ ] All relevant sections included
 - [ ] Output in fenced code block (copy-ready)
+- [ ] Skill suggestion presented (outside XML output)
+- [ ] Workflow chain recommended with quick start command
 - [ ] No files written during execution
 </success_criteria>
 

@@ -100,6 +100,7 @@ Show changes clearly:
 1. **Highlight modifications** - Use diff-style presentation when helpful
 2. **Explain rationale** - Brief note on why each change improves the prompt
 3. **Present full refined prompt** - In fenced code block
+4. **Refresh skill suggestions** - If the prompt's intent changed during refinement, update the suggested skills and workflow chain (see `mode-create.md` Phase 5 for routing logic)
 
 Example output:
 ````markdown
@@ -115,6 +116,14 @@ Example output:
 </purpose>
 ...
 ```
+
+**Suggested Execution** (updated):
+
+| Skill | Why |
+|-------|-----|
+| `/x-implement` | Prompt describes building a new feature |
+
+**Quick start**: `/x-implement` with your refined prompt above.
 ````
 
 ---
@@ -157,6 +166,7 @@ If "Try different approach" selected, switch to `mode-create.md`.
 - [ ] Targeted improvements applied
 - [ ] Changes clearly explained
 - [ ] Refined prompt in copy-ready format
+- [ ] Skill suggestions refreshed if intent changed
 - [ ] User satisfied or iteration offered
 </success_criteria>
 

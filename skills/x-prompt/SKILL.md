@@ -6,7 +6,7 @@ compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read AskUserQuestion
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "1.1.0"
   category: workflow
 ---
 
@@ -55,10 +55,45 @@ This workflow activates these behavioral skills:
 | Constraint specification | Always |
 | Output format definition | Always |
 | Success criteria | Always |
+| Skill suggestion | Always (after output) |
 | Context enrichment | When context unclear |
 | Chain-of-thought | Reasoning/analysis tasks |
 | Role/persona | When specificity helps |
 | Few-shot examples | User requests or complex patterns |
+
+## Skill Suggestion
+
+After generating the enhanced prompt, x-prompt analyzes the prompt's intent and suggests which x-workflow skills and slash command chains are best suited to **execute** the task described in the prompt.
+
+Suggestions appear **outside** the XML output (not inside the copied prompt) as workflow metadata for the user.
+
+### Intent-to-Skill Routing
+
+| Intent Signals | Primary Skill | Workflow |
+|----------------|---------------|----------|
+| build, create, implement, add feature, new | `/x-implement` | APEX |
+| fix, bug, error, typo, patch, broken | `/x-fix` | ONESHOT |
+| debug, diagnose, root cause, investigate error | `/x-troubleshoot` | DEBUG |
+| plan, break down, roadmap, estimate | `/x-plan` | APEX |
+| analyze, assess, evaluate, audit codebase | `/x-analyze` | APEX |
+| design, architect, system design, patterns | `/x-design` | BRAINSTORM |
+| research, investigate, compare, evaluate options | `/x-research` | BRAINSTORM |
+| brainstorm, ideas, requirements, explore | `/x-brainstorm` | BRAINSTORM |
+| refactor, restructure, clean up, reorganize | `/x-refactor` | APEX |
+| test, verify, lint, quality, coverage | `/x-verify` | APEX |
+| review, PR, code review, security review | `/x-review` | APEX |
+| document, docs, readme, API docs | `/x-docs` | UTILITY |
+| release, version, tag, changelog | `/x-release` | UTILITY |
+| setup, scaffold, initialize, bootstrap | `/x-setup` | UTILITY |
+
+### Workflow Chains
+
+| Workflow | Slash Command Chain |
+|----------|---------------------|
+| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/x-commit` |
+| **ONESHOT** | `/x-fix` → `/x-verify` (optional) → `/x-commit` |
+| **DEBUG** | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
+| **BRAINSTORM** | `/x-brainstorm` ↔ `/x-research` → `/x-design` → `/x-plan` |
 
 ## MCP Integration
 
@@ -74,4 +109,4 @@ This workflow activates these behavioral skills:
 
 ---
 
-**Version**: 1.0.0
+**Version**: 1.1.0
