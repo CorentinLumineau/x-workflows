@@ -163,12 +163,22 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When research complete:
+**Auto-chain**: research → design (within BRAINSTORM, no approval needed)
+
+After research complete with clear findings:
+1. Update `.claude/workflow-state.json` (mark research complete, set design in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-design"
+   - args: "{research findings and recommendations}"
+
+On incomplete or branching research (manual):
 "Research complete. What's next?"
-- Option 1: `/x-design` - Make architectural decisions
+- Option 1: `/x-design` (Recommended) - Make architectural decisions
 - Option 2: `/x-brainstorm` - Explore more options
-- Option 3: `/x-plan` - Start planning implementation (approval required)
+- Option 3: `/x-plan` - Start APEX workflow (requires approval)
 - Option 4: Done - Research complete
+
+**CRITICAL**: Direct transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and requires human approval.
 
 </chaining-instruction>
 

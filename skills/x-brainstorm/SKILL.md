@@ -156,11 +156,23 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When ready to chain, use Skill tool:
-- skill: "x-research" or "x-design"
-- args: "{derived requirements summary}"
+**Auto-chain**: brainstorm → research/design (within BRAINSTORM, no approval needed)
 
-**CRITICAL**: Transition to `/x-plan` (APEX workflow) requires human approval.
+After brainstorm session complete:
+1. Update `.claude/workflow-state.json` (mark brainstorm complete, set next in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-research" or "x-design"
+   - args: "{derived requirements summary}"
+
+**Human approval required**: brainstorm → plan (BRAINSTORM → APEX transition)
+
+If user wants to skip design and go directly to implementation:
+1. Present approval gate:
+   "Ready to start planning implementation?"
+   - Option 1: `/x-design` (Recommended) - Architecture decisions first
+   - Option 2: `/x-plan` - Start APEX workflow (requires approval)
+   - Option 3: `/x-research` - Deep investigation
+2. **CRITICAL**: Transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and always requires human approval.
 
 </chaining-instruction>
 

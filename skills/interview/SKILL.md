@@ -91,13 +91,78 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 4. **If confidence = 100%** - Proceed to Phase 1
 ```
 
-## State Persistence
+## State Persistence (3-Layer)
 
-Interview state is persisted to `.claude/interview-state.json` for:
+Interview state uses the 3-layer persistence model:
 
+### Write (after each interview completion)
+
+1. **L1: File** — Write to `.claude/interview-state.json`:
+   ```json
+   {
+     "version": "1.0",
+     "sessions": [
+       {
+         "skill": "x-plan",
+         "timestamp": "2026-02-10T14:00:00Z",
+         "confidence": {
+           "problem_understanding": 95,
+           "context_completeness": 90,
+           "technical_clarity": 100,
+           "scope_definition": 85,
+           "risk_awareness": 90,
+           "composite": 92
+         },
+         "questions_asked": 3,
+         "bypassed": false
+       }
+     ]
+   }
+   ```
+
+2. **L2: Auto-memory** — Update MEMORY.md only if a persistent user preference is discovered:
+   ```
+   ## Interview Patterns
+   - User prefers: {preference}
+   - Common clarification needed: {pattern}
+   ```
+
+3. **L3: MCP Memory** — Write to Memory MCP entity `"interview-state"`:
+   ```
+   add_observations:
+     entityName: "interview-state"
+     contents:
+       - "skill: {name}, confidence: {score}, questions: {count}, at: {timestamp}"
+   ```
+
+### Read (on interview activation)
+
+1. Check conversation context (same session)
+2. Read `.claude/interview-state.json`
+3. Search Memory MCP: `search_nodes("interview-state")`
+4. Use most recent data as baseline
+
+### Smart Bypass (Historical Confidence)
+
+When interview state exists for the **same skill + similar context**:
+
+```
+Previous interview: x-plan at 92% confidence (3 questions ago)
+Same context detected. Start at 80% baseline instead of 0%.
+```
+
+**Rules**:
+- Smart bypass raises the **starting baseline**, reducing questions needed
+- 100% confidence is **still required** to proceed (safety preserved)
+- Baseline formula: `min(80, previous_composite * 0.85)`
+- Only applies when: same skill AND context similarity > 70%
+- User can always request full re-interview
+
+Benefits:
 - Cross-session continuity
 - Audit trail of decisions
 - Preventing re-asking validated questions
+- Faster warmup for repeat contexts
 
 ## Example Flow
 

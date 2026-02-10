@@ -72,6 +72,15 @@ Activate `@skills/interview/` if:
 - Multiple implementation approaches
 - Technical constraints unknown
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected next phase is `implement`? → Proceed
+   - Skipping `plan`? → Warn: "Skipping plan phase. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → Create new APEX workflow state at `implement` phase
+
 ### Phase 1: Context Discovery
 
 Delegate to a **codebase explorer** agent (fast, read-only):
@@ -151,6 +160,18 @@ Update `.claude/initiative.json` checkpoint with latest progress.
 
 **Reference**: See `@skills/x-initiative/playbooks/README.md` for the full documentation update workflow.
 
+### Phase 6: Update Workflow State
+
+After completing implementation:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `implement` phase as `"completed"` with timestamp
+3. Set `verify` phase as `"in_progress"`
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: implement -> completed"`
+   - `"next: verify"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -193,11 +214,15 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When implementation complete:
-- skill: "x-verify"
-- args: "verify implementation changes"
+**Auto-chain**: implement → verify (no approval needed)
 
-If restructuring needed:
+After implementation complete:
+1. Update `.claude/workflow-state.json` (mark implement complete, set verify in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-verify"
+   - args: "verify implementation changes"
+
+If restructuring needed (manual):
 "Code is working but needs restructuring. Use /x-refactor?"
 - Option 1: `/x-refactor` - Restructure first
 - Option 2: `/x-verify` - Verify as-is

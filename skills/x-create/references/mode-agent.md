@@ -103,7 +103,7 @@ Delegate to a **x-{name}** agent ({model}):
 **Version**: 1.0.0
 ```
 
-Save to `ccsetup-plugin/agents/x-{name}.md`
+Save to `{scope.paths.agents}x-{name}.md`
 
 ### Phase 3: Validation
 
@@ -111,10 +111,10 @@ Check agent structure:
 
 ```bash
 # Verify file exists
-ls ccsetup-plugin/agents/x-{name}.md
+ls {scope.paths.agents}x-{name}.md
 
 # Check frontmatter
-head -15 ccsetup-plugin/agents/x-{name}.md
+head -15 {scope.paths.agents}x-{name}.md
 ```
 
 ### Phase 4: Completion

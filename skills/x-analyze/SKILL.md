@@ -61,6 +61,15 @@ Activate `@skills/interview/` if:
 - No comparison baseline
 - Analysis focus undefined
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected next phase is `analyze`? → Proceed
+   - Skipping a phase? → Warn: "Skipping {phase}. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → Create new APEX workflow state
+
 ### Phase 1: Scope Definition
 
 Determine analysis scope:
@@ -146,6 +155,18 @@ Generate analysis report:
 1. {Recommendation}
 ```
 
+### Phase 5: Update Workflow State
+
+After completing analysis:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `analyze` phase as `"completed"` with timestamp
+3. Set `plan` phase as `"in_progress"`
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: analyze -> completed"`
+   - `"next: plan"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -188,12 +209,18 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When analysis complete, present findings and chain:
-- skill: "x-plan"
-- args: "{analysis summary with prioritized issues}"
+**Auto-chain**: analyze → plan (no approval needed)
 
-If critical issues found, ask:
+After analysis complete:
+1. Update `.claude/workflow-state.json` (mark analyze complete, set plan in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-plan"
+   - args: "{analysis summary with prioritized issues}"
+
+If critical issues found requiring immediate fix (manual):
 "Found {count} critical issues. Fix now with /x-fix or plan with /x-plan?"
+- Option 1: `/x-fix` - Fix critical issues immediately
+- Option 2: `/x-plan` - Plan comprehensive fix
 
 </chaining-instruction>
 

@@ -53,7 +53,7 @@ Invoke the `x-{skill}` skill with mode `{mode}`.
 Prepend "{mode}" to user arguments before passing to the skill.
 ```
 
-Save to `ccsetup-plugin/commands/{command}.md`
+Save to `{scope.paths.commands}{command}.md`
 
 ### Phase 3: Validation
 
@@ -61,13 +61,13 @@ Check command structure:
 
 ```bash
 # Verify file exists
-ls ccsetup-plugin/commands/{command}.md
+ls {scope.paths.commands}{command}.md
 
 # Check frontmatter
-head -10 ccsetup-plugin/commands/{command}.md
+head -10 {scope.paths.commands}{command}.md
 
 # Verify skill invocation
-grep "Invoke the" ccsetup-plugin/commands/{command}.md
+grep "Invoke the" {scope.paths.commands}{command}.md
 ```
 
 ### Phase 4: Completion

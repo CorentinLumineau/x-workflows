@@ -303,6 +303,90 @@ Commands can include `agent_hint` for soft suggestions:
   agent_hint: x-reviewer  # Suggests delegation
 ```
 
+## Variant Escalation Rules
+
+When an agent delegation produces insufficient results, escalate to a more capable variant.
+
+### Escalation Table
+
+| Trigger Condition | From (current) | To (escalated) | Detection |
+|-------------------|----------------|----------------|-----------|
+| Tests still failing after fix attempt | x-tester-fast (haiku) | x-tester (sonnet) | Agent outcome: tests still red |
+| Analysis shallow, issues found but not diagnosed | x-reviewer-quick (haiku) | x-reviewer (sonnet) | Agent flagged issues but no root cause |
+| Complex codebase, need deeper exploration | x-explorer (haiku) | general-purpose (sonnet) | Agent returned insufficient context |
+| Root cause not found after 2 hypotheses | x-debugger (sonnet) | x-debugger-deep (opus) | Agent exhausted hypothesis list |
+
+### Escalation Protocol
+
+1. **Detect trigger condition** from agent delegation outcome
+2. **Log escalation** in delegation history (Memory MCP entity `"delegation-log"`):
+   ```
+   add_observations:
+     entityName: "delegation-log"
+     contents:
+       - "escalation: {from_agent} ({from_model}) -> {to_agent} ({to_model}), reason: {trigger}, task: {task_type} at {timestamp}"
+   ```
+3. **Suggest or auto-escalate**:
+   - If orchestration skill is active → auto-escalate (re-delegate to upgraded variant)
+   - If not orchestrated → suggest escalation to user
+4. **Max 1 escalation per delegation** — no recursive escalation loops
+   - If escalated agent also fails → report to user, do NOT escalate further
+
+### Escalation Decision Tree
+
+```
+Agent completes with insufficient result
+        ↓
+Check Escalation Table for matching trigger
+        ↓
+Match found? ────── No → Report result as-is
+        │
+        Yes
+        ↓
+Already escalated once? ── Yes → Report, suggest manual intervention
+        │
+        No
+        ↓
+Orchestration active? ── Yes → Auto-escalate (re-delegate)
+        │
+        No
+        ↓
+Suggest to user: "Escalate {from} to {to}?"
+```
+
+## Delegation History Tracking
+
+When agent-awareness suggests a delegation:
+
+### On Suggestion
+
+Record the suggestion in delegation log:
+```
+add_observations:
+  entityName: "delegation-log"
+  contents:
+    - "suggestion: {agent} ({model}) for {task_type} [{complexity}] at {timestamp}"
+```
+
+### On User Decision
+
+Track if user accepted or overrode the suggestion:
+```
+add_observations:
+  entityName: "delegation-log"
+  contents:
+    - "user_override: suggested {agent}, user chose {other_agent}"
+    # OR
+    - "user_accepted: {agent} for {task_type}"
+```
+
+### Acceptance Tracking
+
+Store acceptance rate per agent-task combination to inform future suggestions:
+- Track: `{agent} + {task_type} → accepted/overridden`
+- Pattern: If user consistently overrides a suggestion, adjust future recommendations
+- Data location: Memory MCP entity `"delegation-log"` (L3)
+
 ## Behavioral Rules
 
 <behavioral_rules>
@@ -314,6 +398,8 @@ Commands can include `agent_hint` for soft suggestions:
 6. **Model Awareness**: Use haiku for fast exploration, sonnet for analysis, opus for deep reasoning
 7. **Cost Consciousness**: Default to cheapest capable variant, escalate on failure
 8. **Variant Awareness**: Consider variant agents before defaulting to standard agents
+9. **Log Suggestions**: Record all delegation suggestions and user decisions
+10. **Max-1 Escalation**: Never escalate more than once per delegation — if upgraded agent also fails, report to user
 </behavioral_rules>
 
 ## References

@@ -22,6 +22,19 @@ metadata:
 | **Phase** | N/A |
 | **Position** | Entry point |
 
+## Modes
+
+| Mode | Description |
+|------|-------------|
+| commands (default) | Show command reference |
+| context | Display current session context state |
+
+## Mode Detection
+| Keywords | Mode |
+|----------|------|
+| "context", "loaded", "state", "session" | context |
+| (default) | commands |
+
 ## Intention
 
 **Topic**: $ARGUMENTS
@@ -176,6 +189,10 @@ For workflow documentation:
 ```
 See: skills/WORKFLOWS.md
 ```
+
+## When to Load References
+
+- **For context mode**: See `references/mode-context.md`
 
 ## Success Criteria
 

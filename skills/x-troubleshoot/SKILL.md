@@ -60,6 +60,14 @@ Activate `@skills/interview/` if:
 - No reproduction steps provided
 - Multiple systems potentially involved
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected workflow is DEBUG? → Proceed
+   - Active non-DEBUG workflow? → Warn: "Active {type} workflow at {phase}. Start DEBUG? [Y/n]"
+3. If no active workflow → Create new DEBUG workflow state
+
 ### Phase 1: Observe
 
 Gather symptoms and context:
@@ -112,6 +120,22 @@ Based on findings, route to appropriate action:
 | Needs architectural change | `/x-plan` |
 | Root cause still unclear | Continue investigation |
 
+### Phase 5: Update Workflow State
+
+After root cause resolution:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `troubleshoot` phase as `"completed"` with timestamp
+3. Set next phase based on resolution:
+   - Simple fix → Set `fix` as next
+   - Complex fix → Set `implement` as next
+   - Architecture issue → Set `plan` as next
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: troubleshoot -> completed"`
+   - `"root_cause: {summary}"`
+   - `"next: {fix|implement|plan}"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -156,15 +180,27 @@ When approval needed, structure question as:
 
 When root cause is found:
 
-**For simple fixes:**
-- skill: "x-fix"
-- args: "{root cause and fix description}"
+**Auto-chain**: troubleshoot → fix (simple root cause, no approval needed)
 
-**For complex fixes (requires approval):**
-"Investigation found {root cause}. This requires implementation changes. Proceed with /x-implement?"
-- Option 1: `/x-implement` - Full implementation
-- Option 2: `/x-fix` - Try simpler approach
-- Option 3: Continue investigating
+For simple, clear fixes:
+1. Update `.claude/workflow-state.json` (mark troubleshoot complete, set fix in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-fix"
+   - args: "{root cause and fix description}"
+
+**Human approval required**: troubleshoot → implement (complex root cause)
+
+For complex fixes requiring implementation:
+1. Update `.claude/workflow-state.json` (mark troubleshoot complete, set implement pending)
+2. Present approval gate:
+   "Investigation found {root cause}. This requires implementation changes. Proceed with /x-implement?"
+   - Option 1: `/x-implement` - Full implementation (APEX workflow)
+   - Option 2: `/x-fix` - Try simpler approach first
+   - Option 3: `/x-plan` - Plan before implementing
+   - Option 4: Continue investigating
+3. On approval, invoke via Skill tool:
+   - skill: "x-implement" or "x-fix" or "x-plan"
+   - args: "{root cause analysis and recommended approach}"
 
 </chaining-instruction>
 

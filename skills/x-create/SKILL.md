@@ -33,6 +33,46 @@ Generate best-practice-compliant plugin components through interactive wizards.
 - **Default mode**: skill
 - **No-args behavior**: Ask what to create
 
+## Scope Detection
+
+Before creating any component, detect the target scope:
+
+```yaml
+scopes:
+  plugin:
+    description: "Plugin development (directory with .claude-plugin/)"
+    detect: "Current directory contains .claude-plugin/"
+    paths:
+      agents: "{plugin_root}/agents/"
+      commands: "{plugin_root}/commands/"
+      skills: "{plugin_root}/skills/"
+      hooks: "{plugin_root}/hooks/"
+  project:
+    description: "Project-level configuration"
+    detect: "Current directory contains .claude/ directory"
+    paths:
+      agents: ".claude/agents/"
+      commands: ".claude/commands/"
+      skills: ".claude/skills/"
+  user:
+    description: "User-level (global)"
+    detect: "~/.claude/ exists"
+    paths:
+      agents: "~/.claude/agents/"
+      commands: "~/.claude/commands/"
+      skills: "~/.claude/skills/"
+```
+
+### Phase 0.5: Scope Detection (before any mode)
+
+1. **Auto-detect** current scope by checking (in order):
+   - `.claude-plugin/` exists in current/parent directory → **plugin** scope
+   - `.claude/` exists in current directory → **project** scope
+   - `~/.claude/` exists → **user** scope
+2. **Show** detected scope: "Detected scope: **{scope}** (`{root_path}`)"
+3. **Confirm** with user or allow override
+4. **Resolve** all `{scope.paths.*}` templates using confirmed scope
+
 ## Behavioral Skills
 
 This workflow activates these behavioral skills:

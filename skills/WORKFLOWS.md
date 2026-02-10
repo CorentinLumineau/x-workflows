@@ -210,9 +210,9 @@ If fix turns out to be more complex:
 
 | From | To | Trigger | Auto-Chain |
 |------|-----|---------|------------|
-| x-brainstorm | x-research | "dig deeper" | No (suggest) |
-| x-brainstorm | x-design | "ready to decide" | No (suggest) |
-| x-research | x-design | "found answer" | No (suggest) |
+| x-brainstorm | x-research | "dig deeper" | Yes (within BRAINSTORM) |
+| x-brainstorm | x-design | "ready to decide" | Yes (within BRAINSTORM) |
+| x-research | x-design | "found answer" | Yes (within BRAINSTORM) |
 | x-design | x-plan | **Ready to build** | **HUMAN APPROVAL** |
 
 ### Workflow Transitions
@@ -283,6 +283,130 @@ When approval is needed, use this structure:
 
 ---
 
+## Automatic Workflow Execution
+
+Verb skills auto-chain to their next phase using the Skill tool, reducing manual intervention while preserving human approval at critical gates.
+
+### How Auto-Chaining Works
+
+After each verb skill completes:
+1. Updates `.claude/workflow-state.json` (marks current phase complete, sets next in_progress)
+2. Checks chaining rules (auto-chain vs. human approval)
+3. If auto-chain: invokes next skill via Skill tool with workflow context
+4. If human approval: presents approval gate with options
+
+### Chaining Modes
+
+| Mode | Description | Used When |
+|------|-------------|-----------|
+| **Auto-chain** | Next skill invoked automatically | Low-risk transitions within a workflow |
+| **Human approval** | User must confirm before proceeding | Scope expansion, workflow boundary crossing, commits |
+| **Terminal** | Workflow ends, no auto-chain | Final phase (x-commit) |
+
+### Complete Chaining Map
+
+| From | To | Mode | Workflow |
+|------|-----|------|----------|
+| x-analyze | x-plan | Auto-chain | APEX |
+| x-plan | x-implement | **Human approval** | APEX |
+| x-implement | x-verify | Auto-chain | APEX |
+| x-verify | x-review | Auto-chain | APEX |
+| x-review | x-commit | Auto-chain (on approval) | APEX |
+| x-commit | — | Terminal | APEX |
+| x-refactor | x-verify | Auto-chain | APEX (sub-flow) |
+| x-fix | x-commit/x-verify | **Human approval** | ONESHOT |
+| x-troubleshoot | x-fix | Auto-chain (simple) | DEBUG |
+| x-troubleshoot | x-implement | **Human approval** (complex) | DEBUG |
+| x-brainstorm | x-research/x-design | Auto-chain | BRAINSTORM |
+| x-research | x-design | Auto-chain | BRAINSTORM |
+| x-design | x-plan | **Human approval** | BRAINSTORM→APEX |
+
+### Invocation Pattern
+
+Skills invoke the next phase using:
+```
+skill: "x-{next}"
+args: "{workflow context summary}"
+```
+
+---
+
+## Workflow State Tracking
+
+All workflows persist their state in `.claude/workflow-state.json` with 3-layer persistence:
+
+### State Layers
+
+| Layer | Location | Purpose |
+|-------|----------|---------|
+| **L1** | `.claude/workflow-state.json` | Primary file-based state (same-session) |
+| **L2** | MEMORY.md (auto-memory) | Cross-session summary |
+| **L3** | Memory MCP entity `"workflow-state"` | Cross-session structured data |
+
+### State Schema
+
+```json
+{
+  "active": {
+    "type": "APEX",
+    "started": "2026-02-10T14:30:00Z",
+    "phases": {
+      "analyze": { "status": "completed", "timestamp": "..." },
+      "plan": { "status": "completed", "timestamp": "...", "approved": true },
+      "implement": { "status": "completed", "timestamp": "..." },
+      "verify": { "status": "in_progress" },
+      "review": { "status": "pending" },
+      "commit": { "status": "pending" }
+    }
+  },
+  "history": []
+}
+```
+
+### Phase 0b: Pre-Flight Check
+
+Every verb skill includes a Phase 0b that:
+1. Reads `.claude/workflow-state.json`
+2. Verifies the expected phase matches
+3. Warns on phase skipping
+4. Creates new workflow state if none exists
+
+---
+
+## Interruption Recovery
+
+If a session ends mid-workflow, the state persists and can be resumed.
+
+### Recovery Flow
+
+```
+Session ends mid-workflow
+        ↓
+State saved in .claude/workflow-state.json (L1)
+Checkpoint in Memory MCP (L3)
+        ↓
+Next session starts
+        ↓
+context-awareness detects active workflow
+        ↓
+Offers: "Resume APEX workflow at phase 'verify' (4/6)? [Y/n]"
+        ↓
+Resume → Continues from last in_progress phase
+Start Fresh → Archives current workflow to history
+```
+
+### Staleness Warning
+
+If the active workflow is older than 24 hours, context-awareness warns:
+```
+Active workflow detected (stale — 36h old):
+  Type: APEX, Phase: verify (4/6)
+
+Resume anyway? State may be outdated.
+```
+
+---
+
 ## Verb Quick Reference
 
 ### BRAINSTORM Verbs
@@ -342,5 +466,6 @@ When approval is needed, use this structure:
 
 ## Version
 
-**Version**: 1.0.0 (x-workflows)
-**Compatibility**: ccsetup 6.2.0+
+**Version**: 2.0.0 (x-workflows)
+**Compatibility**: ccsetup 6.5.0+
+**Changes**: Added auto-chaining, workflow state tracking, interruption recovery

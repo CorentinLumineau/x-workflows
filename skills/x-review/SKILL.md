@@ -63,6 +63,15 @@ Activate `@skills/interview/` if:
 - Multiple review focuses possible
 - Security implications unknown
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected next phase is `review`? → Proceed
+   - Skipping `verify`? → Warn: "Skipping verify phase. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → Create new workflow state at `review` phase
+
 ### Phase 1: Documentation Pre-Check
 
 Before review starts, verify documentation sync:
@@ -150,6 +159,18 @@ Generate review summary:
 - [ ] Milestones hub current
 ```
 
+### Phase 5: Update Workflow State
+
+After completing review:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `review` phase as `"completed"` with timestamp and `"approved": true/false`
+3. Set `commit` phase as `"in_progress"` (only after review approval)
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: review -> completed (approved)"`
+   - `"next: commit"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -192,11 +213,15 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When review approved:
-- skill: "x-commit"
-- args: "commit reviewed changes"
+**Auto-chain**: review → commit (on approval, no additional gate)
 
-On changes requested:
+After review approved:
+1. Update `.claude/workflow-state.json` (mark review complete, set commit in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-commit"
+   - args: "commit reviewed changes"
+
+On changes requested (manual — loop back):
 "Review found issues to address. Return to /x-implement?"
 - Option 1: `/x-implement` - Fix issues
 - Option 2: Request exception (with justification)

@@ -191,6 +191,88 @@ When orchestration is active, display status:
 - Medium: 5
 ```
 
+## Delegation History Logging
+
+When orchestration spawns agents, record each delegation:
+
+### On Spawn
+
+Write to Memory MCP entity `"delegation-log"`:
+```
+add_observations:
+  entityName: "delegation-log"
+  contents:
+    - "delegation: {agent} ({model}) for {task_type} [{complexity}] -> pending at {timestamp}"
+```
+
+### On Completion
+
+Update the delegation record:
+```
+add_observations:
+  entityName: "delegation-log"
+  contents:
+    - "delegation: {agent} ({model}) for {task_type} [{complexity}] -> {outcome} ({duration_ms}ms) at {timestamp}"
+```
+
+Where `outcome` is: `success`, `failure`, `escalated`, or `timeout`.
+
+### Summary to Auto-Memory
+
+After delegation completes, write a summary line to MEMORY.md:
+```
+## Delegation Patterns
+- Delegation: {agent} ({model}) for {task_type} -> {outcome} ({duration_ms}ms)
+```
+
+Only write to MEMORY.md when the delegation reveals a **pattern** (e.g., same agent type succeeding/failing repeatedly).
+
+## Automated Variant Escalation
+
+When a spawned agent returns an insufficient result, orchestration auto-escalates using the agent-awareness escalation table.
+
+### Auto-Escalation Protocol
+
+```
+Spawned agent completes
+        ↓
+Outcome == "insufficient"? ── No → Continue normally
+        ↓ Yes
+Lookup escalation target from @skills/agent-awareness/ Escalation Table
+        ↓
+Target found? ── No → Log failure, continue with other agents
+        ↓ Yes
+Already escalated once for this task? ── Yes → Log, report to user
+        ↓ No
+1. Log escalation in delegation-log (Memory MCP)
+2. Re-delegate task to upgraded variant
+3. Continue orchestration with upgraded agent
+4. On upgraded agent completion → aggregate normally
+```
+
+### Escalation State Tracking
+
+Track escalations in orchestration state:
+
+```yaml
+orchestration_state:
+  escalations:
+    - original_agent: "x-tester-fast"
+      escalated_to: "x-tester"
+      reason: "tests still failing after fix attempt"
+      task_batch: 1
+      timestamp: "{ISO}"
+```
+
+### Insufficient Result Detection
+
+| Agent Type | Insufficient Signal |
+|------------|---------------------|
+| Test runners | Tests still failing (exit code != 0) |
+| Reviewers | Issues flagged but no actionable analysis |
+| Explorers | Returned "not found" or minimal context |
+| Debuggers | Exhausted hypotheses without root cause |
+
 ## Behavioral Rules
 
 1. **Auto-activate on batch detection** - No manual invocation needed
@@ -199,6 +281,8 @@ When orchestration is active, display status:
 4. **Aggregate results** - Combine findings from parallel work
 5. **Fail gracefully** - If agent fails, continue with others
 6. **Severity first** - Process critical issues immediately
+7. **Log all delegations** - Record every agent spawn and outcome
+8. **Auto-escalate on failure** - Use variant escalation table, max 1 per delegation
 
 ## When NOT to Activate
 

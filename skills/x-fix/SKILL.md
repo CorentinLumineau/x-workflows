@@ -64,6 +64,13 @@ Activate `@skills/interview/` if:
 - Multiple potential causes
 - No reproduction steps
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active APEX workflow exists with `troubleshoot` completed → This is a DEBUG→FIX transition, proceed
+3. If active ONESHOT workflow exists → Continue ONESHOT
+4. If no active workflow → Create new ONESHOT workflow state
+
 ### Phase 1: Error Analysis
 
 Parse the error:
@@ -102,6 +109,20 @@ pnpm test -- --testPathPattern="{affected_file}"
 Requirements:
 - All affected tests pass
 - No regressions introduced
+
+### Phase 4: Update Workflow State
+
+After fix applied and verified:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `fix` phase as `"completed"` with timestamp
+3. Set next phase based on workflow type:
+   - ONESHOT: Set `commit` as next (or `verify` if requested)
+   - DEBUG: Set `verify` or `commit` as next
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: fix -> completed"`
+   - `"next: {verify|commit}"`
 
 </instructions>
 
@@ -146,15 +167,24 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-After fix applied:
-"Fix applied and verified. What's next?"
-- Option 1: `/x-verify` - Full quality gates
-- Option 2: `/x-commit` - Quick commit (requires approval)
-- Option 3: Stop - Manual review first
+**Human approval required**: fix → commit (or verify)
+
+After fix applied and verified:
+1. Update `.claude/workflow-state.json` (mark fix complete, set next phase pending approval)
+2. Present options (requires human selection):
+   "Fix applied and verified. What's next?"
+   - Option 1: `/x-verify` - Full quality gates
+   - Option 2: `/x-commit` - Quick commit (requires approval)
+   - Option 3: Stop - Manual review first
+3. On selection, invoke via Skill tool:
+   - skill: "x-verify" or "x-commit"
+   - args: "{fix summary and affected files}"
 
 **Escalation**: If fix complexity increases, suggest:
-- skill: "x-troubleshoot"
-- args: "{error description and attempted fixes}"
+"Fix is more complex than expected. Escalate?"
+- Option 1: `/x-troubleshoot` - Deep investigation
+- Option 2: `/x-implement` - Full implementation
+- Option 3: Continue fixing
 
 </chaining-instruction>
 

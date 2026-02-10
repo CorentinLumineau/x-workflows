@@ -366,3 +366,70 @@ Delegate to a **quick reviewer** agent (haiku):
 - In-depth SOLID analysis (use x-reviewer)
 
 **Variant of**: x-reviewer (cost optimization — faster and cheaper for low-risk reviews)
+
+---
+
+## Escalation Rules
+
+When a delegation produces insufficient results, agents can be escalated to more capable variants.
+
+### Escalation Table
+
+| Trigger | From | To | Detection |
+|---------|------|-----|-----------|
+| Tests still failing after fix | x-tester-fast (haiku) | x-tester (sonnet) | Agent outcome: tests still red |
+| Shallow analysis | x-reviewer-quick (haiku) | x-reviewer (sonnet) | Issues flagged but not diagnosed |
+| Insufficient context | x-explorer (haiku) | general-purpose (sonnet) | Agent returned minimal results |
+| Hypotheses exhausted | x-debugger (sonnet) | x-debugger-deep (opus) | Root cause not found after 2 hypotheses |
+
+### Protocol
+
+1. Detect trigger from agent outcome
+2. Log escalation in delegation history (Memory MCP)
+3. Auto-escalate if orchestration is active, otherwise suggest to user
+4. **Max 1 escalation per delegation** — no recursive loops
+
+### Escalation Flow
+
+```
+Agent returns insufficient result
+        ↓
+Match in Escalation Table? ── No → Report as-is
+        ↓ Yes
+Already escalated? ── Yes → Report, suggest manual intervention
+        ↓ No
+Re-delegate to upgraded variant
+        ↓
+Log: "escalation: {from} -> {to}, reason: {trigger}"
+```
+
+---
+
+## Delegation History
+
+Agent delegation decisions are tracked across 3 layers for learning and optimization.
+
+### Storage Layers
+
+| Layer | Location | Content |
+|-------|----------|---------|
+| **L2** | MEMORY.md | Summary patterns (e.g., "x-tester succeeds 90% for test tasks") |
+| **L3** | Memory MCP entity `"delegation-log"` | Structured records per delegation |
+
+### Record Format (L3)
+
+```
+delegation: {agent} ({model}) for {task_type} [{complexity}] -> {outcome} ({duration}ms)
+escalation: {from} -> {to}, reason: {trigger}
+user_override: suggested {agent}, user chose {other}
+user_accepted: {agent} for {task_type}
+```
+
+### Acceptance Rate Tracking
+
+Over time, the delegation history reveals patterns:
+- Which agents succeed for which task types
+- Which suggestions users consistently override
+- Which escalations are most common
+
+This data informs future agent-awareness suggestions.

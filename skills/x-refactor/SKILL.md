@@ -63,7 +63,14 @@ Activate `@skills/interview/` if:
 - No performance baseline exists
 - Definition of "clean" unclear
 
-### Phase 0b: Scope Detection (CRITICAL)
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active APEX workflow exists with `implement` completed → This is a sub-flow, proceed
+3. If active workflow at different phase? → Confirm: "Active workflow at {phase}. Refactor as sub-flow? [Y/n]"
+4. If no active workflow → Create new workflow state for refactor sub-flow
+
+### Phase 0c: Scope Detection (CRITICAL)
 
 **Before any refactoring, assess scope.**
 
@@ -144,6 +151,18 @@ pnpm type-check  # No type errors
 pnpm build       # Builds successfully
 ```
 
+### Phase 5: Update Workflow State
+
+After refactoring verified:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `refactor` phase as `"completed"` with timestamp
+3. Set `verify` phase as `"in_progress"`
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: refactor -> completed"`
+   - `"next: verify"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -186,12 +205,19 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When refactoring complete:
-- skill: "x-verify"
-- args: "verify refactoring changes"
+**Auto-chain**: refactor → verify (no approval needed)
 
-On test failures:
-"Refactoring caused {count} test failures. Fix with /x-implement or rollback?"
+After refactoring complete with all tests passing:
+1. Update `.claude/workflow-state.json` (mark refactor complete, set verify in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-verify"
+   - args: "verify refactoring changes"
+
+On test failures (manual — stay in refactor/implement):
+"Refactoring caused {count} test failures. Fix or rollback?"
+- Option 1: Rollback last change and retry
+- Option 2: `/x-implement` - Fix the failing tests
+- Option 3: Continue refactoring (fix tests inline)
 
 </chaining-instruction>
 

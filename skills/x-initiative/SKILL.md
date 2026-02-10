@@ -103,9 +103,17 @@ Canonical references for persistence implementation:
 
 ### Write Order (All State Changes)
 
-1. **initiative.json** (REQUIRED) — Primary checkpoint
-2. **WORKFLOW-STATUS.yaml** (REQUIRED) — Rich context
-3. **Memory MCP** (OPTIONAL) — Cross-session, graceful degradation
+1. **initiative.json** (REQUIRED) — Primary checkpoint (L1: file)
+2. **WORKFLOW-STATUS.yaml** (REQUIRED) — Rich context (L1: file)
+3. **Memory MCP** (REQUIRED) — Cross-session structured storage (L3: MCP)
+4. **MEMORY.md** — Update if learning discovered (L2: auto-memory)
+
+**Memory MCP Integration**: REQUIRED
+
+If Memory MCP unavailable:
+- Log WARNING (not silent): "Memory MCP unavailable — operating in degraded mode"
+- Continue with file-based only (L1)
+- Flag in `/x-help context`: "MCP Memory: cross (degraded mode)"
 
 ### Session Start Recovery
 

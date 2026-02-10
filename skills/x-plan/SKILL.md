@@ -60,6 +60,15 @@ Activate `@skills/interview/` if:
 - Multiple valid approaches
 - Dependencies unknown
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected next phase is `plan`? → Proceed
+   - Skipping `analyze`? → Warn: "Skipping analyze phase. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → Create new APEX workflow state at `plan` phase
+
 ### Phase 1: Scope Assessment
 
 Analyze the task to estimate complexity:
@@ -120,6 +129,18 @@ Create story file:
 #### Enterprise Track
 Create initiative structure using `/x-initiative create`.
 
+### Phase 4: Update Workflow State
+
+After plan creation:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `plan` phase as `"completed"` with timestamp and `"approved": true/false`
+3. Set `implement` phase as `"in_progress"` (only after user approval)
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: plan -> completed (approved)"`
+   - `"next: implement"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -164,15 +185,18 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When plan is complete:
-"Plan created ({track} track). Ready to implement?"
-- Option 1: `/x-implement` (Recommended) - Start implementation
-- Option 2: `/x-design` - Design architecture first
-- Option 3: Stop - Review plan first
+**Human approval required**: plan → implement
 
-On approval, use Skill tool:
-- skill: "x-implement"
-- args: "{plan summary with task list}"
+After plan complete:
+1. Update `.claude/workflow-state.json` (mark plan complete, set implement pending)
+2. Present approval gate:
+   "Plan created ({track} track). Ready to implement?"
+   - Option 1: `/x-implement` (Recommended) - Start implementation
+   - Option 2: `/x-design` - Design architecture first
+   - Option 3: Stop - Review plan first
+3. On approval, invoke via Skill tool:
+   - skill: "x-implement"
+   - args: "{plan summary with task list}"
 
 </chaining-instruction>
 

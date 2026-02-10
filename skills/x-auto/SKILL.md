@@ -91,12 +91,23 @@ Present options:
 
 Wait for explicit user choice before continuing.
 
-### Phase 4: Invoke Recommended Skill
+### Phase 4: Auto-Invoke Recommended Skill
 
-After confirmation, suggest the user invoke the confirmed skill:
-```
-Suggested next step: /x-{skill} {original task description}
-```
+After user confirms the recommended workflow:
+
+1. **Validate confidence** — Reuse interview behavioral skill (Phase 0 gate)
+   - All confidence dimensions must be at 100% to auto-invoke
+   - If confidence < 100%: show manual commands instead (fallback)
+
+2. **On 100% confidence + user approval**:
+   - Auto-invoke the first skill in the confirmed chain using the Skill tool
+   - Pass context: `"{workflow_type} workflow for: {user request}. Complexity: {tier}."`
+
+3. **On rejection or low confidence**:
+   - Show manual invocation commands (current behavior):
+   ```
+   Suggested next step: /x-{skill} {original task description}
+   ```
 
 </instructions>
 
@@ -160,12 +171,19 @@ When approval needed, structure question as:
 <chaining-instruction>
 
 After user confirms a workflow:
-"Routing to {workflow}. Invoke the following to begin:"
-- Suggested command with arguments
 
-On approval, invoke the confirmed skill:
-- skill: "x-{confirmed-verb}"
-- args: "{original task description}"
+1. Display: "Routing to {workflow}. Auto-invoking first skill..."
+2. Use Skill tool to invoke the first verb in the chain:
+   - skill: "x-{confirmed-verb}"
+   - args: "{workflow_type} workflow for: {user request}. Complexity: {tier}."
+3. If user rejects or confidence < 100%: Show manual commands instead:
+   - "Suggested next step: /x-{skill} {original task description}"
+
+Example:
+```
+skill: "x-plan"
+args: "APEX workflow for: add OAuth2 authentication. Complexity: HIGH."
+```
 
 </chaining-instruction>
 

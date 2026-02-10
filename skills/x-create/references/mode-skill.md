@@ -54,7 +54,7 @@ Then ask for:
 Create skill directory:
 
 ```bash
-mkdir -p ccsetup-plugin/skills/{name}
+mkdir -p {scope.paths.skills}{name}
 ```
 
 ### Phase 3: Generate SKILL.md
@@ -135,10 +135,10 @@ Run validation:
 
 ```bash
 # Check frontmatter
-head -10 ccsetup-plugin/skills/{name}/SKILL.md
+head -10 {scope.paths.skills}{name}/SKILL.md
 
 # Verify structure
-ls -la ccsetup-plugin/skills/{name}/
+ls -la {scope.paths.skills}{name}/
 ```
 
 ### Phase 5: Completion

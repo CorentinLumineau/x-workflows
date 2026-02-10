@@ -54,6 +54,15 @@ Activate `@skills/interview/` if:
 - Multiple test strategies possible
 - Coverage targets undefined
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected next phase is `verify`? → Proceed
+   - Skipping `implement`? → Warn: "Skipping implement phase. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → Create new workflow state at `verify` phase
+
 ### Phase 1: Run Quality Gates
 
 Execute all gates:
@@ -143,6 +152,18 @@ If initiative documentation is stale or missing updates:
 - Chain back to `/x-implement` with initiative doc update instructions
 - Do NOT proceed to `/x-review` until initiative docs are current
 
+### Phase 6: Update Workflow State
+
+After completing verification:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `verify` phase as `"completed"` with timestamp
+3. Set `review` phase as `"in_progress"`
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: verify -> completed"`
+   - `"next: review"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -185,11 +206,15 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When verification passes:
-- skill: "x-review"
-- args: "review verified changes"
+**Auto-chain**: verify → review (no approval needed, on pass)
 
-On test failures:
+After verification passes:
+1. Update `.claude/workflow-state.json` (mark verify complete, set review in_progress)
+2. Auto-invoke next skill via Skill tool:
+   - skill: "x-review"
+   - args: "review verified changes"
+
+On test failures (manual — stay in verify/implement):
 "Verification found {count} failures. Fix with /x-implement or investigate?"
 - Option 1: `/x-implement` - Fix the issues
 - Option 2: `/x-troubleshoot` - Investigate deeper

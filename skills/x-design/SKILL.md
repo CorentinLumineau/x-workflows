@@ -61,6 +61,13 @@ Activate `@skills/interview/` if:
 - Unknown technical constraints
 - Breaking change potential
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active BRAINSTORM workflow exists → Proceed
+3. If active non-BRAINSTORM workflow? → Warn: "Active {type} workflow. Start BRAINSTORM? [Y/n]"
+4. If no active workflow → Create new BRAINSTORM workflow state at `design` phase
+
 ### Phase 1: Requirements Review
 
 Determine requirements source:
@@ -152,6 +159,20 @@ Validate design against all five SOLID principles:
 | **I**nterface Segregation | No fat interfaces | |
 | **D**ependency Inversion | Abstractions, not concretions | |
 
+### Phase 5: Update Workflow State
+
+After design validated:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `design` phase as `"completed"` with timestamp
+3. Set next based on decision:
+   - Transition to APEX → Mark BRAINSTORM completed, create new APEX at `plan`
+   - Continue brainstorming → Keep BRAINSTORM active
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: design -> completed"`
+   - `"transition: BRAINSTORM -> APEX (if approved)"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -194,14 +215,21 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-When ready to chain to APEX workflow:
-1. Summarize the design decisions made
-2. Ask user: "Ready to start planning implementation?"
-3. On approval, use Skill tool:
-   - skill: "x-plan"
-   - args: "{design summary for implementation}"
+**Human approval required**: design → plan (BRAINSTORM → APEX transition)
 
-**CRITICAL**: Transition to `/x-plan` commits to implementation and requires human approval.
+After design validated:
+1. Update `.claude/workflow-state.json` (mark design complete in BRAINSTORM, create pending APEX)
+2. Present approval gate:
+   "Design complete. Ready to start planning implementation?"
+   - Option 1: `/x-plan` (Recommended) - Start APEX workflow
+   - Option 2: `/x-research` - Need more information
+   - Option 3: `/x-brainstorm` - Reconsider requirements
+   - Option 4: Stop - Review design document first
+3. On approval, invoke via Skill tool:
+   - skill: "x-plan"
+   - args: "{design summary with components, trade-offs, and implementation order}"
+
+**CRITICAL**: Transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and commits to implementation. This always requires human approval.
 
 </chaining-instruction>
 

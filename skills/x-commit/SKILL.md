@@ -47,6 +47,15 @@ Activate `@skills/interview/` if:
 
 **Bypass allowed**: When changes are homogeneous and type is obvious.
 
+### Phase 0b: Workflow State Check
+
+1. Read `.claude/workflow-state.json` (if exists)
+2. If active workflow exists:
+   - Expected next phase is `commit`? → Proceed
+   - Skipping `review`? → Warn: "Skipping review phase. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → OK (x-commit can be standalone)
+
 ### Phase 1: Change Analysis
 
 Analyze staged and unstaged changes:
@@ -117,6 +126,18 @@ EOF
 git status
 ```
 
+### Phase 5: Update Workflow State
+
+After successful commit:
+
+1. Read `.claude/workflow-state.json`
+2. Mark `commit` phase as `"completed"` with timestamp
+3. Mark entire workflow as `"completed"` (move to `history` array)
+4. Write updated state to `.claude/workflow-state.json`
+5. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: commit -> completed"`
+   - `"workflow: completed"`
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -158,11 +179,14 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
+**Terminal phase**: commit ends the workflow
+
 After commit created:
-"Commit created. What's next?"
-- Option 1: `/x-review` - PR review
-- Option 2: `/x-release` - Create release
-- Option 3: Done
+1. Update `.claude/workflow-state.json` (mark workflow complete, move to history)
+2. Present options (no auto-chain — workflow is done):
+   "Commit created. What's next?"
+   - Option 1: `/x-release` - Create release
+   - Option 2: Done - Workflow complete
 
 </chaining-instruction>
 
