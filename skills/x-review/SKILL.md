@@ -75,8 +75,21 @@ Before review starts, verify documentation sync:
 │ Check examples are current                      │
 │ Check no broken internal links                  │
 │ Flag docs that may need attention               │
+├─────────────────────────────────────────────────┤
+│ Initiative Documentation (if active initiative) │
+│ Check milestone file updated with progress      │
+│ Check initiative README progress table current  │
+│ Check milestones hub reflects latest status     │
+│ Flag stale initiative docs as review finding    │
 └─────────────────────────────────────────────────┘
 ```
+
+Detect active initiative:
+1. Check `.claude/initiative.json` for `currentMilestone`
+2. If not found, check `documentation/milestones/_active/` for initiative directories
+3. If no initiative detected, skip initiative documentation checks
+
+Stale initiative documentation is classified as **Warning** severity (should fix before merge, or document reason for deferral).
 
 ### Phase 2: Code Review
 
@@ -129,6 +142,12 @@ Generate review summary:
 - Security: [Pass/Fail]
 - Tests: [Pass/Fail]
 - Docs: [Pass/Fail]
+- Initiative Docs: [Pass/Fail/N/A]
+
+### Initiative Documentation (if applicable)
+- [ ] Milestone file updated
+- [ ] Initiative README current
+- [ ] Milestones hub current
 ```
 
 </instructions>
@@ -193,6 +212,7 @@ On changes requested:
 | Tests | Adequate coverage |
 | Docs | Documentation updated |
 | Breaking | Breaking changes documented |
+| Initiative | Milestone docs updated (if active) |
 
 ## Severity Levels
 
@@ -208,6 +228,7 @@ On changes requested:
 2. **Document Trade-offs** - If skipping warnings, document why
 3. **Security First** - Security issues are always critical
 4. **Test Coverage** - New code must have tests
+5. **Initiative Docs** - Flag stale milestone documentation as a review finding
 
 ## Navigation
 
@@ -225,6 +246,7 @@ On changes requested:
 - [ ] Test coverage adequate
 - [ ] Documentation updated
 - [ ] No critical issues
+- [ ] Initiative documentation flagged if stale (if active initiative)
 
 ## When to Load References
 

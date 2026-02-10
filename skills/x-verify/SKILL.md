@@ -115,6 +115,34 @@ When all gates pass:
 - Build succeeds
 - Coverage targets met
 
+### Phase 5: Initiative Documentation Verification (Conditional)
+
+**Skip this phase if no active initiative exists.**
+
+Detect active initiative:
+1. Check `.claude/initiative.json` for `currentMilestone`
+2. If not found, check `documentation/milestones/_active/` for initiative directories
+3. If no initiative detected, proceed to workflow chaining
+
+When an active initiative is detected, verify documentation completeness:
+
+```
+┌─────────────────────────────────────────────────┐
+│ Initiative Documentation Verification           │
+├─────────────────────────────────────────────────┤
+│ Check milestone file has progress update        │
+│ Check initiative README progress table current  │
+│ Check milestones/README.md hub is current       │
+│ Check MASTER-PLAN.md reflects latest status     │
+│ Check .claude/initiative.json checkpoint valid  │
+└─────────────────────────────────────────────────┘
+```
+
+If initiative documentation is stale or missing updates:
+- Report which files need updating
+- Chain back to `/x-implement` with initiative doc update instructions
+- Do NOT proceed to `/x-review` until initiative docs are current
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -188,6 +216,7 @@ All must pass:
 2. **Auto-Fix First** - Attempt fixes before reporting
 3. **Coverage Matters** - Track and improve coverage
 4. **No Regressions** - Existing tests must still pass
+5. **Initiative Docs** - Verify milestone documentation is current before proceeding
 
 ## Navigation
 
@@ -204,6 +233,7 @@ All must pass:
 - [ ] All tests pass
 - [ ] Build succeeds
 - [ ] Coverage targets met
+- [ ] Initiative documentation current (if active initiative)
 
 ## When to Load References
 

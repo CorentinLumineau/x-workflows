@@ -2,11 +2,10 @@
 name: complexity-detection
 description: Intelligent routing for all workflows based on complexity and intent.
 license: Apache-2.0
-compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
+  version: "2.1.0"
   category: behavioral
   user-invocable: false
 ---
@@ -64,16 +63,19 @@ workflow_patterns:
 
 | Intent | Complexity | Route |
 |--------|------------|-------|
-| APEX + SIMPLE | Direct | x-implement |
-| APEX + MODERATE | Plan first | x-plan → x-implement |
-| APEX + COMPLEX | Initiative | **x-initiative** → full APEX flow |
-| ONESHOT | Always SIMPLE | x-implement (autonomous) |
-| DEBUG + SIMPLE | Direct | x-implement fix |
-| DEBUG + MODERATE | Investigate | x-troubleshoot debug |
-| DEBUG + COMPLEX | Initiative | **x-initiative** → x-troubleshoot |
-| BRAINSTORM + SIMPLE | Quick answer | x-research ask |
-| BRAINSTORM + MODERATE | Deep dive | x-research deep |
-| BRAINSTORM + COMPLEX | Initiative | **x-initiative** → x-plan brainstorm |
+| APEX + LOW | Direct | x-implement |
+| APEX + MEDIUM | Plan first | x-plan → x-implement |
+| APEX + HIGH | Initiative | **x-initiative** → full APEX flow |
+| APEX + CRITICAL | Initiative | **x-initiative** → full APEX flow + security review |
+| ONESHOT | Always LOW | x-implement (autonomous) |
+| DEBUG + LOW | Direct | x-implement fix |
+| DEBUG + MEDIUM | Investigate | x-troubleshoot debug |
+| DEBUG + HIGH | Initiative | **x-initiative** → x-troubleshoot |
+| DEBUG + CRITICAL | Initiative | **x-initiative** → x-troubleshoot + security review |
+| BRAINSTORM + LOW | Quick answer | x-research ask |
+| BRAINSTORM + MEDIUM | Deep dive | x-research deep |
+| BRAINSTORM + HIGH | Initiative | **x-initiative** → x-plan brainstorm |
+| BRAINSTORM + CRITICAL | Initiative | **x-initiative** → x-plan brainstorm + security review |
 
 ---
 
@@ -85,7 +87,7 @@ x-initiative is **automatically suggested** when ANY of these conditions are met
 
 ```yaml
 initiative_triggers:
-  complexity_tier: 3  # COMPLEX tier always triggers
+  complexity_tier: 3  # HIGH/CRITICAL tier always triggers
 
   keywords:
     - "migrate", "migration"
@@ -111,45 +113,66 @@ When routing is determined, output:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ Detected: [WORKFLOW] | Complexity: [TIER]       │
-│ → Recommended: /x-[skill] [mode]                │
-│ → Multi-session: [Yes/No]                       │
+│ Complexity: [TIER] | Mental Model: [MODEL]      │
 │                                                 │
+│ Agent: [recommended-agent] (model: [tier])      │
+│ Variant: [alternative-agent] (model: [tier])    │
+│ Chain: [skill1] → [skill2] → [skill3]           │
+│                                                 │
+│ Multi-session: [Yes/No]                         │
 │ Override: use explicit /x-* command             │
 └─────────────────────────────────────────────────┘
 ```
 
+### Advisory Output Fields
+
+| Field | Values | Purpose |
+|-------|--------|---------|
+| `Complexity` | LOW / MEDIUM / HIGH / CRITICAL | Tier assessment driving model and agent selection |
+| `Mental Model` | APEX / ONESHOT / DEBUG / BRAINSTORM | Workflow intent determining skill chain |
+| `Agent` | Primary agent recommendation | Best-fit agent from agent-awareness catalog |
+| `Variant` | Alternative agent (cheaper or deeper) | Cost optimization or capability escalation |
+| `Chain` | Skill sequence (→ separated) | Recommended workflow skill execution order |
+| `Multi-session` | Yes / No | Whether x-initiative tracking is needed |
+| `Override` | /x-* command | User can bypass auto-routing with explicit command |
+
 ### Examples
 
-**Example: Complex migration**
+**Example: Critical migration**
 ```
 Input: "Migrate from Express to Fastify"
-Detected: APEX | Complexity: COMPLEX
-→ Recommended: /x-initiative → /x-implement migrate
-→ Multi-session: Yes (major framework change)
+Complexity: CRITICAL | Mental Model: APEX
+Agent: x-refactorer (sonnet)
+Variant: x-designer (opus)
+Chain: x-plan → x-implement → x-verify
+Multi-session: Yes (major framework change)
 ```
 
-**Example: Simple fix**
+**Example: Low fix**
 ```
 Input: "Fix typo in README"
-Detected: ONESHOT | Complexity: SIMPLE
-→ Recommended: /x-implement (autonomous)
-→ Multi-session: No
+Complexity: LOW | Mental Model: ONESHOT
+Agent: main agent
+Variant: none
+Chain: x-implement
+Multi-session: No
 ```
 
-**Example: Intermittent bug**
+**Example: High intermittent bug**
 ```
 Input: "Login crashes randomly on production"
-Detected: DEBUG | Complexity: COMPLEX
-→ Recommended: /x-initiative → /x-troubleshoot
-→ Multi-session: Yes (intermittent + environment-specific)
+Complexity: HIGH | Mental Model: DEBUG
+Agent: x-debugger (sonnet)
+Variant: x-debugger-deep (opus)
+Chain: x-troubleshoot → x-fix
+Multi-session: Yes (intermittent + environment-specific)
 ```
 
 ---
 
 ## Complexity Tiers
 
-### Tier 1: Simple (→ fix mode)
+### Tier 1: LOW (→ fix mode)
 
 **Characteristics:**
 - Clear error message with obvious solution
@@ -167,7 +190,7 @@ Detected: DEBUG | Complexity: COMPLEX
 
 **Time Estimate:** <30 minutes
 
-### Tier 2: Moderate (→ debug mode)
+### Tier 2: MEDIUM (→ debug mode)
 
 **Characteristics:**
 - Traceable error through known paths
@@ -185,7 +208,7 @@ Detected: DEBUG | Complexity: COMPLEX
 
 **Time Estimate:** 30 min - 2 hours
 
-### Tier 3: Complex (→ troubleshoot mode)
+### Tier 3: HIGH (→ troubleshoot mode)
 
 **Characteristics:**
 - Root cause unclear
@@ -205,36 +228,64 @@ Detected: DEBUG | Complexity: COMPLEX
 
 **Time Estimate:** 2+ hours
 
+### Tier 4: CRITICAL (→ initiative + security review)
+
+**Characteristics:**
+- Multi-system, breaking-change, or security-critical tasks
+- Requires coordinated changes across multiple services
+- Breaking API contracts or data migrations
+- Security vulnerabilities with active exploitation risk
+- Compliance-critical changes (GDPR, SOC2, HIPAA)
+
+**Detection Patterns:**
+- "breaking change", "migration", "deprecation"
+- "security vulnerability", "CVE", "exploit"
+- "compliance", "audit", "regulatory"
+- "production outage", "data loss risk"
+- Multiple teams or services affected
+- Rollback requires coordinated effort
+
+**Time Estimate:** Multi-day, multi-session
+
 ## Assessment Algorithm
 
 ```
-1. Check Tier 1 (Simple):
-   - Has obvious solution? → SIMPLE
-   - Single file error? → SIMPLE
-   - Syntax/type error? → SIMPLE
+1. Check Tier 4 (CRITICAL):
+   - Breaking change? → CRITICAL
+   - Security vulnerability? → CRITICAL
+   - Compliance-critical? → CRITICAL
+   - Multi-system coordination? → CRITICAL
 
-2. Check Tier 3 (Complex):
-   - Intermittent keywords? → COMPLEX
-   - No error message? → COMPLEX
-   - Environment-specific? → COMPLEX
-   - Performance-related? → COMPLEX
-   - Multiple services? → COMPLEX
+2. Check Tier 1 (LOW):
+   - Has obvious solution? → LOW
+   - Single file error? → LOW
+   - Syntax/type error? → LOW
 
-3. Default to Tier 2 (Moderate)
+3. Check Tier 3 (HIGH):
+   - Intermittent keywords? → HIGH
+   - No error message? → HIGH
+   - Environment-specific? → HIGH
+   - Performance-related? → HIGH
+   - Multiple services? → HIGH
+
+4. Default to Tier 2 (MEDIUM)
 ```
 
 ## Decision Table
 
 | Signal | Weight | Tier |
 |--------|--------|------|
-| Clear error + line number | Strong | Simple |
-| "typo", "import", "undefined" | Strong | Simple |
-| "how does", "trace", "understand" | Strong | Moderate |
-| Error with stack trace | Medium | Moderate |
-| "intermittent", "random" | Strong | Complex |
-| "no error", "silent" | Strong | Complex |
-| "performance", "slow", "memory" | Strong | Complex |
-| Environment-specific | Strong | Complex |
+| "breaking change", "migration" | Strong | CRITICAL |
+| "security vulnerability", "CVE" | Strong | CRITICAL |
+| "compliance", "regulatory" | Strong | CRITICAL |
+| Clear error + line number | Strong | LOW |
+| "typo", "import", "undefined" | Strong | LOW |
+| "how does", "trace", "understand" | Strong | MEDIUM |
+| Error with stack trace | Medium | MEDIUM |
+| "intermittent", "random" | Strong | HIGH |
+| "no error", "silent" | Strong | HIGH |
+| "performance", "slow", "memory" | Strong | HIGH |
+| Environment-specific | Strong | HIGH |
 
 ## Confidence Scoring
 
@@ -247,46 +298,63 @@ When assessment is ambiguous (confidence < 70%), ask user:
 ## Escalation Paths
 
 ```
-fix (Tier 1)
+fix (LOW)
 ├─ Complexity > expected → Recommend debug
 └─ Still stuck → Recommend troubleshoot
 
-debug (Tier 2)
+debug (MEDIUM)
 ├─ Simpler than expected → Can delegate to fix
 └─ More complex → Recommend troubleshoot
 
-troubleshoot (Tier 3)
+troubleshoot (HIGH)
 └─ Once root cause found → Delegate to fix or debug
+
+critical (CRITICAL)
+└─ Always requires initiative tracking + security review
 ```
 
 ## Examples
 
-### Example 1: Simple (→ fix)
+### Example 1: LOW (→ fix)
 ```
 Input: "TypeError: Cannot read property 'name' of undefined at UserService.ts:45"
-Assessment: SIMPLE
+Assessment: LOW
 - Clear error type (TypeError)
 - Exact file and line
 - Single point of failure
 Route: fix mode
 ```
 
-### Example 2: Moderate (→ debug)
+### Example 2: MEDIUM (→ debug)
 ```
 Input: "User registration is failing but I don't understand why the validation rejects"
-Assessment: MODERATE
+Assessment: MEDIUM
 - Has error (validation failure)
 - Needs code flow understanding
 - Single feature, clear entry point
 Route: debug mode
 ```
 
-### Example 3: Complex (→ troubleshoot)
+### Example 3: HIGH (→ troubleshoot)
 ```
 Input: "Sometimes orders don't process. No error in logs. Works fine locally."
-Assessment: COMPLEX
+Assessment: HIGH
 - Intermittent ("sometimes")
 - No error message
 - Environment-specific
 Route: troubleshoot mode
 ```
+
+### Example 4: CRITICAL (→ initiative + security review)
+```
+Input: "We need to migrate the auth system from sessions to JWT and update all 12 microservices"
+Assessment: CRITICAL
+- Breaking change across multiple services
+- Security-critical (authentication)
+- Multi-team coordination needed
+Route: initiative mode + security review
+```
+
+## References
+
+- @skills/agent-awareness/ - Agent delegation awareness and selection patterns

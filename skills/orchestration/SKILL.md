@@ -2,8 +2,7 @@
 name: orchestration
 description: Parallel workflow coordination for batch operations. Auto-triggered when batch detection identifies >5 similar items.
 license: Apache-2.0
-compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Task, TaskOutput, Read, Grep, Glob
+allowed-tools: Read, Grep, Glob
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
@@ -50,7 +49,7 @@ When creating multiple items, spawn reviewer in background:
 2. Delegate to a **code reviewer** agent (quality analysis) in background:
    > "Review items 1-3 for quality and security"
 3. Continue creating items 4-6
-4. Check reviewer status via TaskOutput
+4. Collect agent responses
 5. Aggregate review findings
 6. Apply fixes before next batch
 ```
@@ -75,12 +74,9 @@ For very large batches, spawn parallel workers:
 ```
 1. Split items into batches of 3-5
 2. For each batch (up to 3 parallel):
-   Task(
-     subagent_type: "appropriate-agent",
-     run_in_background: true,
-     prompt: "Process batch {n}: {items}"
-   )
-3. Monitor all workers via TaskOutput
+   Delegate to a **batch worker** agent in background:
+   > "Process batch {n}: {items}"
+3. Monitor agent progress
 4. Checkpoint completed batches to Memory MCP
 5. Aggregate results when all complete
 ```
@@ -95,11 +91,11 @@ Track all spawned agents:
 orchestration_state:
   main_task: "{description}"
   spawned_agents:
-    - id: "{task_id_1}"
+    - id: "{agent_1}"
       type: "x-reviewer"
       status: "running|completed|failed"
       batch: 1
-    - id: "{task_id_2}"
+    - id: "{agent_2}"
       type: "x-tester"
       status: "running"
       batch: 2
@@ -111,28 +107,25 @@ orchestration_state:
 
 Save orchestration state to Memory MCP:
 
-```
-mcp__memory__create_entities({
-  entities: [{
-    name: "orchestration-{timestamp}",
-    entityType: "OrchestrationCheckpoint",
-    observations: [
-      "task: {main_task}",
-      "total_batches: {count}",
-      "completed_batches: [{list}]",
-      "active_agents: [{agent_ids}]",
-      "pending_work: [{items}]",
-      "status: in_progress"
-    ]
-  }]
-})
+```yaml
+# Save to Memory MCP (or equivalent persistence)
+entity:
+  name: "orchestration-{timestamp}"
+  type: "OrchestrationCheckpoint"
+  observations:
+    - "task: {main_task}"
+    - "total_batches: {count}"
+    - "completed_batches: [{list}]"
+    - "active_agents: [{agent_ids}]"
+    - "pending_work: [{items}]"
+    - "status: in_progress"
 ```
 
 ### Result Aggregation
 
 When background agents complete:
 
-1. Read results via `TaskOutput(task_id: "{id}", block: false)`
+1. Read agent results (non-blocking check)
 2. Aggregate findings across all agents
 3. Prioritize issues by severity (CRITICAL first)
 4. Apply fixes in severity order
@@ -184,8 +177,8 @@ When orchestration is active, display status:
 ### Spawned Agents
 | Agent | Type | Batch | Status |
 |-------|------|-------|--------|
-| task-123 | x-reviewer | 1-3 | ✓ Complete |
-| task-456 | x-tester | 1-3 | Running... |
+| agent-1 | x-reviewer | 1-3 | ✓ Complete |
+| agent-2 | x-tester | 1-3 | Running... |
 
 ### Progress
 - Batches: 1/4 complete

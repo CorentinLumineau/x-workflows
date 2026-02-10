@@ -128,6 +128,29 @@ pnpm build       # Build succeeds
 
 **All gates must pass before proceeding.**
 
+### Phase 5: Initiative Documentation Update (Conditional)
+
+**Skip this phase if no active initiative exists.**
+
+Detect active initiative:
+1. Check `.claude/initiative.json` for `currentMilestone`
+2. If not found, check `documentation/milestones/_active/` for initiative directories
+3. If no initiative detected, proceed to workflow chaining
+
+When an active initiative is detected, update documentation following the mandatory 5-step protocol:
+
+| Step | File | Update |
+|------|------|--------|
+| 1 | `_active/{initiative}/milestone-N.md` | Add progress update with completed tasks and metrics |
+| 2 | `_active/{initiative}/README.md` | Update progress table (status, percentage, dates) |
+| 3 | `documentation/milestones/README.md` | Update hub progress summary (if file exists) |
+| 4 | `documentation/milestones/MASTER-PLAN.md` | Update orchestration status (if file exists) |
+| 5 | `CLAUDE.md` | Update only for major milestone completions |
+
+Update `.claude/initiative.json` checkpoint with latest progress.
+
+**Reference**: See `@skills/x-initiative/playbooks/README.md` for the full documentation update workflow.
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -218,10 +241,14 @@ After x-implement completes, documentation is automatically checked:
 ```
 x-implement completes
         ↓
-documentation skill activates (auto)
+code documentation sync (auto)
         ↓
 x-docs sync (if drift detected)
+        ↓
+initiative documentation updated (if active initiative)
 ```
+
+Initiative documentation updates are handled in Phase 5 (inside instructions) when an active initiative is detected via `.claude/initiative.json` or `documentation/milestones/_active/`.
 
 ## Critical Rules
 
@@ -230,6 +257,7 @@ x-docs sync (if drift detected)
 3. **SOLID Principles** - Apply consistently
 4. **Pattern Matching** - Follow existing conventions
 5. **No Regressions** - All existing tests must pass
+6. **Initiative Docs** - Update milestone documentation when active initiative exists
 
 ## Navigation
 
@@ -252,6 +280,7 @@ For specific needs:
 - [ ] No regressions introduced
 - [ ] Code follows SOLID principles
 - [ ] Documentation updated if needed
+- [ ] Initiative documentation updated (if active initiative)
 
 ## When to Load References
 

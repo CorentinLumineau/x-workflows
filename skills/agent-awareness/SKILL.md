@@ -1,0 +1,325 @@
+---
+name: agent-awareness
+description: |
+  Behavioral skill for agent delegation awareness. Provides agent catalog, decision matrix, and delegation patterns.
+  Auto-triggered at session start via context-awareness integration.
+  NOT user-invoked - this is a behavioral skill that enhances agent selection capabilities.
+license: Apache-2.0
+allowed-tools:
+  - Read
+mcp:
+  preferred:
+    - memory
+  triggers:
+    memory: "recalling previous agent delegation decisions"
+metadata:
+  author: ccsetup contributors
+  version: "2.0.0"
+  category: behavioral
+  user-invocable: false
+---
+
+# Agent Awareness v2.0.0
+
+<purpose>
+Behavioral skill providing awareness of available specialized agents and delegation patterns.
+This skill is auto-loaded at session start and influences agent delegation decisions throughout the session.
+
+**This is a behavioral skill** - it should NOT be added to commands-registry.yml.
+</purpose>
+
+<activation_triggers>
+This skill auto-activates via context-awareness at session start.
+Agent suggestions appear when task complexity matches agent specialization.
+</activation_triggers>
+
+## Agent Catalog
+
+### Available Specialized Agents
+
+| Agent | Specialization | Model | Use When |
+|-------|----------------|-------|----------|
+| `x-reviewer` | Code review, SOLID analysis | sonnet | Code modifications complete, pre-merge |
+| `x-security-reviewer` | Security audit, OWASP | sonnet | Security-sensitive code, auth flows |
+| `x-deployer` | Deployment verification | sonnet | Release, deployment, infrastructure |
+| `x-debugger` | Root cause analysis | sonnet | Complex bugs, race conditions |
+| `x-tester` | Test execution | sonnet | Test failures, coverage gaps |
+| `x-doc-writer` | Documentation generation | sonnet | Generating/updating docs |
+| `x-explorer` | Fast codebase exploration | haiku | Quick searches, understanding structure |
+| `x-refactorer` | Safe refactoring | sonnet | SOLID improvements, cleanup |
+| `x-designer` | Architecture design, system modeling | opus | Complex architecture decisions, system design |
+| `x-debugger-deep` | Deep root cause analysis | opus | Elusive bugs, cross-service, performance |
+| `x-tester-fast` | Quick test validation | haiku | Fast smoke tests, quick verification |
+| `x-reviewer-quick` | Rapid code scan | haiku | Quick sanity check, low-risk changes |
+
+### Agent Capabilities Matrix
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                      AGENT CAPABILITY MATRIX                                            │
+├─────────────────────┬─────┬──────┬───────┬──────┬──────┬──────┬─────┬──────┬──────┬───────┬──────┬──────┤
+│ Capability          │ Rev │ Sec  │ Deploy│ Debug│ Test │ Doc  │ Exp │ Refac│ Desgn│ DbgDp │ TstFt│ RevQk│
+├─────────────────────┼─────┼──────┼───────┼──────┼──────┼──────┼─────┼──────┼──────┼───────┼──────┼──────┤
+│ Read code           │ ✅  │ ✅   │ ✅    │ ✅   │ ✅   │ ✅   │ ✅  │ ✅   │ ✅   │ ✅    │ ✅   │ ✅   │
+│ Write code          │ ❌  │ ❌   │ ❌    │ ✅   │ ✅   │ ✅   │ ❌  │ ✅   │ ✅   │ ✅    │ ✅   │ ❌   │
+│ Run tests           │ ✅  │ ❌   │ ✅    │ ✅   │ ✅   │ ❌   │ ❌  │ ✅   │ ❌   │ ✅    │ ✅   │ ✅   │
+│ Execute bash        │ ✅  │ ✅   │ ✅    │ ✅   │ ✅   │ ❌   │ ❌  │ ✅   │ ✅   │ ✅    │ ✅   │ ✅   │
+│ Security analysis   │ ⚡  │ ✅   │ ❌    │ ❌   │ ❌   │ ❌   │ ❌  │ ❌   │ ⚡   │ ❌    │ ❌   │ ❌   │
+│ SOLID enforcement   │ ✅  │ ❌   │ ❌    │ ❌   │ ❌   │ ❌   │ ❌  │ ✅   │ ✅   │ ❌    │ ❌   │ ⚡   │
+│ Deploy verification │ ❌  │ ❌   │ ✅    │ ❌   │ ❌   │ ❌   │ ❌  │ ❌   │ ❌   │ ❌    │ ❌   │ ❌   │
+│ Architecture design │ ❌  │ ❌   │ ❌    │ ❌   │ ❌   │ ❌   │ ❌  │ ⚡   │ ✅   │ ❌    │ ❌   │ ❌   │
+└─────────────────────┴─────┴──────┴───────┴──────┴──────┴──────┴─────┴──────┴──────┴───────┴──────┴──────┘
+Legend: ✅ = Primary, ⚡ = Basic, ❌ = Not available
+```
+
+## Role Resolution Table
+
+When skills reference generic roles, resolve to concrete agents using this table:
+
+| Generic Role | Agent | Model | Capabilities |
+|-------------|-------|-------|--------------|
+| codebase explorer | x-explorer | haiku | Fast read-only file discovery and pattern search |
+| test runner | x-tester | sonnet | Test execution, failure diagnosis, coverage improvement |
+| fast test runner | x-tester-fast | haiku | Quick smoke tests, fast validation |
+| code reviewer | x-reviewer | sonnet | Read-only quality analysis, best practices audit |
+| quick reviewer | x-reviewer-quick | haiku | Rapid code scan, sanity check |
+| security auditor | x-security-reviewer | sonnet | OWASP vulnerability detection, security compliance |
+| documentation writer | x-doc-writer | sonnet | Documentation generation, update, and sync |
+| debugger | x-debugger | sonnet | Runtime error investigation, integration debugging |
+| deep debugger | x-debugger-deep | opus | Elusive bugs, cross-service issues, performance analysis |
+| deployment verifier | x-deployer | sonnet | Deployment verification, rollback assessment |
+| refactoring agent | x-refactorer | sonnet | Safe code restructuring with zero-regression guarantee |
+| architect | x-designer | opus | Architecture design, system modeling, trade-off analysis |
+
+### Resolution Rules
+
+1. Skills use **generic role names** (left column) in their body text
+2. This table resolves roles to **concrete agents** at runtime
+3. The LLM reads this table at session start and applies it to delegation requests
+4. If a skill says "delegate to a **codebase explorer**", use `x-explorer`
+5. If no matching role exists, use the main agent or a general-purpose agent
+
+## Reading Complexity Assessment
+
+When complexity-detection produces its advisory output, read the structured fields:
+
+1. **Complexity + Mental Model** → Determines workflow chain
+2. **Agent recommendation** → Primary delegation target
+3. **Variant** → Cost optimization alternative
+4. **Chain** → Workflow sequence to follow
+
+### Model Tier Mapping
+
+| Complexity | Default Model | Rationale |
+|------------|---------------|-----------|
+| LOW | haiku | Fast, cheap, sufficient |
+| MEDIUM | sonnet | Balanced capability/cost |
+| HIGH | opus | Maximum reasoning depth |
+| CRITICAL | opus | Maximum reasoning depth + security review |
+
+### Example: Reading Advisory Output
+
+```
+┌─────────────────────────────────────────────────┐
+│ Complexity: HIGH | Mental Model: APEX            │
+│                                                 │
+│ Agent: x-refactorer (sonnet)                    │
+│ Variant: x-designer (opus)                      │
+│ Chain: x-plan → x-implement → x-verify          │
+│                                                 │
+│ Multi-session: Yes                              │
+│ Override: use explicit /x-* command             │
+└─────────────────────────────────────────────────┘
+```
+
+**Interpretation:**
+- Primary agent: delegate refactoring work to a **refactoring agent** (sonnet)
+- If architecture decisions are needed: escalate to an **architect** (opus)
+- Follow chain: plan first, then implement, then verify
+- Track via x-initiative (multi-session)
+
+## Variant Selection Criteria
+
+| Condition | Choose | Over |
+|-----------|--------|------|
+| Low-risk, quick validation | x-reviewer-quick (haiku) | x-reviewer (sonnet) |
+| High-risk, security-critical | x-security-reviewer (sonnet) | x-reviewer-quick (haiku) |
+| Quick smoke test | x-tester-fast (haiku) | x-tester (sonnet) |
+| Complex test failures | x-tester (sonnet) | x-tester-fast (haiku) |
+| Simple bug, clear error | x-debugger (sonnet) | x-debugger-deep (opus) |
+| Elusive, cross-service bug | x-debugger-deep (opus) | x-debugger (sonnet) |
+| Standard implementation | x-refactorer (sonnet) | x-designer (opus) |
+| Architectural decisions | x-designer (opus) | x-refactorer (sonnet) |
+
+### Cost Optimization Rules
+
+1. **Default to cheapest capable model** — Use haiku variants when task is low-risk
+2. **Escalate on failure** — If haiku variant produces insufficient results, retry with sonnet
+3. **Never under-resource critical paths** — Security, architecture, and deep debugging always use sonnet or opus
+4. **Parallel cost savings** — Use haiku variants for parallel batch workers to reduce total cost
+
+## Decision Matrix
+
+### When to Delegate
+
+| Task Type | Complexity | Recommended Agent | Variant | Rationale |
+|-----------|------------|-------------------|---------|-----------|
+| Code review | Low | x-reviewer-quick | x-reviewer | Quick scan sufficient for low-risk |
+| Code review | Medium-High | x-reviewer | x-security-reviewer | Full analysis, escalate if security |
+| Security review | Any | x-security-reviewer | — | Always full security analysis |
+| Deployment | Any | x-deployer | — | Rollback planning, health checks |
+| Bug fix (simple) | Low | main agent | — | Direct fix more efficient |
+| Bug fix (complex) | High | x-debugger | x-debugger-deep | Hypothesis testing, isolation |
+| Test failures | Low | x-tester-fast | x-tester | Quick validation first |
+| Test failures | Medium-High | x-tester | — | Owns test execution, knows patterns |
+| Documentation | Any | x-doc-writer | — | Consistent style, JSDoc expertise |
+| Quick search | Low | x-explorer | — | Fast, uses haiku, read-only |
+| Refactoring | Medium | x-refactorer | — | SOLID enforcement, safe changes |
+| Architecture | High | x-designer | x-refactorer | System modeling, trade-offs |
+
+### Complexity Indicators
+
+**Low Complexity** (handle directly):
+- Single file change
+- Clear error message
+- Known pattern fix
+- < 30 minutes estimated
+
+**Medium Complexity** (consider delegation):
+- 2-5 files affected
+- Requires investigation
+- Pattern unclear
+- 30 min - 2 hours estimated
+
+**High Complexity** (delegate recommended):
+- 5+ files affected
+- Cross-cutting concerns
+- Architecture impact
+- > 2 hours estimated
+
+## Delegation Patterns
+
+### Pattern 1: Sequential Delegation
+
+```markdown
+User: "Fix the auth bug and then review the changes"
+
+1. Delegate to a **debugger** agent (sonnet):
+   > "Investigate and fix the authentication bug"
+2. After fix committed, delegate to a **code reviewer** agent (sonnet):
+   > "Review the auth changes for quality and SOLID compliance"
+3. If security concerns, escalate to a **security auditor** agent (sonnet):
+   > "Audit the auth flow changes for vulnerabilities"
+```
+
+### Pattern 2: Parallel Delegation
+
+```markdown
+User: "Review this PR for quality and security"
+
+Parallel delegation:
+- **code reviewer** agent (sonnet):
+  > "Review for code quality, SOLID, maintainability"
+- **security auditor** agent (sonnet):
+  > "Review for security vulnerabilities, auth issues"
+
+Merge findings in response.
+```
+
+### Pattern 3: Conditional Delegation
+
+```markdown
+User: "Fix the tests"
+
+Decision tree:
+1. Are tests failing? → Delegate to **test runner** agent
+2. Is it a runtime bug? → Delegate to **debugger** agent
+3. Is coverage issue? → Delegate to **test runner** agent
+4. Is it architecture issue? → Main agent + planning
+```
+
+### Pattern 4: Cost-Optimized Delegation
+
+```markdown
+User: "Quick check on the changes before I push"
+
+Low-risk path:
+1. Delegate to **quick reviewer** agent (haiku):
+   > "Rapid scan of staged changes for obvious issues"
+2. If issues found, escalate to **code reviewer** agent (sonnet):
+   > "Full review of flagged areas"
+```
+
+## Invocation Format
+
+Skills request delegation using **generic roles**. The LLM resolves them via the Role Resolution Table above.
+
+**In skill body** (agent-agnostic):
+```markdown
+Delegate to a **code reviewer** agent (sonnet):
+> "Review the changes in src/auth/ for quality and SOLID compliance"
+```
+
+**The LLM resolves generic roles** to platform-specific agent invocations at runtime using whatever delegation mechanism the host platform provides (e.g., Task tool in Claude Code, agent spawning in other platforms).
+
+## Integration Points
+
+### With context-awareness
+
+This skill is loaded by context-awareness at session start:
+
+```markdown
+Integration:
+  - Load agent-awareness for agent catalog
+  - Provide agent suggestions based on task type
+```
+
+### With complexity-detection
+
+Agent-awareness reads the enriched advisory output from complexity-detection:
+
+```markdown
+complexity-detection outputs:
+  Complexity: HIGH | Mental Model: APEX
+  Agent: x-refactorer (sonnet)
+  Variant: x-designer (opus)
+  Chain: x-plan → x-implement → x-verify
+
+agent-awareness interprets:
+  → Resolve "x-refactorer" via Role Resolution Table
+  → Apply Variant Selection Criteria if conditions change
+  → Follow Chain for workflow execution order
+```
+
+### With commands
+
+Commands can include `agent_hint` for soft suggestions:
+
+```yaml
+# In commands-registry
+- name: review
+  skill: x-review
+  mode: review
+  agent_hint: x-reviewer  # Suggests delegation
+```
+
+## Behavioral Rules
+
+<behavioral_rules>
+1. **Suggest, Don't Force**: Agent hints are suggestions, not requirements
+2. **Match Complexity**: Only delegate when task matches agent specialization
+3. **Prefer Parallel**: When reviewing both quality and security, use parallel agents
+4. **Escalate Appropriately**: Security findings always go to x-security-reviewer
+5. **Read-Only Awareness**: Know which agents cannot write (x-reviewer, x-explorer, x-reviewer-quick)
+6. **Model Awareness**: Use haiku for fast exploration, sonnet for analysis, opus for deep reasoning
+7. **Cost Consciousness**: Default to cheapest capable variant, escalate on failure
+8. **Variant Awareness**: Consider variant agents before defaulting to standard agents
+</behavioral_rules>
+
+## References
+
+- @skills/complexity-detection/ - Shared complexity and intent detection logic
+
+## When to Load References
+
+- **For agent details**: See `references/agent-catalog.md`

@@ -80,16 +80,7 @@ Define research scope:
 
 ### Phase 3: Analysis
 
-Use Sequential Thinking for structured analysis:
-
-```javascript
-mcp__sequential_thinking__sequentialthinking({
-  thought: "Analyzing {topic}...",
-  thoughtNumber: 1,
-  totalThoughts: 5,
-  nextThoughtNeeded: true
-})
-```
+Use structured step-by-step reasoning to analyze the topic. Break the analysis into sequential thoughts, building on each step and revising as understanding deepens. Target ~5 reasoning steps, adjusting as needed.
 
 ### Phase 4: Document Generation
 

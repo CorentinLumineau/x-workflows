@@ -168,12 +168,8 @@ Keep it **under 80 lines**. This is a reference document, not a copy of the init
    ```
 
 4. **Clear Memory MCP checkpoint** (OPTIONAL — graceful degradation):
-   ```typescript
-   mcp__plugin_ccsetup_memory__delete_entities({
-     entityNames: ["initiative-checkpoint"]
-   })
-   ```
-   If Memory MCP is unavailable, skip — file is the primary SSoT.
+   Delete the `initiative-checkpoint` entity from persistent cross-session storage.
+   If persistent storage is unavailable, skip — file is the primary SSoT.
 
 ### Phase 5: Workflow Transition
 

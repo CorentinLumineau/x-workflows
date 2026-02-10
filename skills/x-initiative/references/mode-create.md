@@ -132,26 +132,17 @@ Write all persistence layers in order:
 
 Already created in Phase 4. Verify it reflects the same state as initiative.json.
 
-**3. Memory MCP** (OPTIONAL — graceful degradation):
+**3. Persistent cross-session storage** (OPTIONAL — graceful degradation):
 
-```typescript
-mcp__plugin_ccsetup_memory__create_entities({
-  entities: [{
-    name: "initiative-checkpoint",
-    entityType: "checkpoint",
-    observations: [
-      "initiative:{name}",
-      "milestone:M1",
-      "phase:planning",
-      "last_action:Initiative created with {n} milestones",
-      "next_action:Begin M1 implementation",
-      "timestamp:{ISO8601}"
-    ]
-  }]
-})
-```
+Save an `initiative-checkpoint` entity to persistent cross-session storage with these observations:
+- `initiative:{name}`
+- `milestone:M1`
+- `phase:planning`
+- `last_action:Initiative created with {n} milestones`
+- `next_action:Begin M1 implementation`
+- `timestamp:{ISO8601}`
 
-If Memory MCP is unavailable, log warning and continue — file-based persistence is sufficient.
+If persistent storage is unavailable, log warning and continue — file-based persistence is sufficient.
 
 ### Phase 6: Workflow Transition
 
