@@ -31,7 +31,7 @@ For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://
 | **DEBUG** | Error resolution | troubleshoot → fix/implement |
 | **BRAINSTORM** | Exploration/research | brainstorm ↔ research → design |
 
-### Workflow Skills (21)
+### Workflow Skills (22)
 
 | Skill | Workflow | Description |
 |-------|----------|-------------|

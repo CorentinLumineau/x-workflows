@@ -110,7 +110,7 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 No build required - pure markdown documentation.
 
 ```bash
-# Validate skill structure (should be 19 x-* + 2 behavioral = 21)
+# Validate skill structure (should be 22 x-* + 3 behavioral = 25)
 find skills -name "SKILL.md" | wc -l
 
 # Verify new verb skills exist
