@@ -98,7 +98,6 @@ Generate conventional commit message:
 [optional body - what and why]
 
 [optional footer]
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Examples**:
@@ -117,8 +116,6 @@ git commit -m "$(cat <<'EOF'
 <type>(<scope>): <description>
 
 <body>
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 
@@ -227,21 +224,22 @@ After commit created:
 - Commit secrets or credentials
 - Commit without verification
 - Use `git add -A` (always add specific files)
+- Commit code with unresolved BLOCK-level violations
 
 **ALWAYS:**
 - Use conventional commit format
-- Include Co-Authored-By footer
 - Verify with git status after commit
 - Run verification before committing
+- Confirm x-verify enforcement summary shows no failures before staging
 
 ## Critical Rules
 
-1. **Verify First** - Run `/x-verify` before staging
-2. **Conventional Format** - ALWAYS follow type(scope): description
-3. **Include Co-Author** - Every commit must include Co-Authored-By
-4. **Atomic Commits** - One logical change per commit
-5. **No Secrets** - Never commit credentials, keys, or sensitive data
-6. **No Force Push** - Never force push to main/master
+1. **Verify First** — Run `/x-verify` before staging
+2. **Conventional Format** — ALWAYS follow type(scope): description
+3. **Atomic Commits** — One logical change per commit
+4. **No Secrets** — Never commit credentials, keys, or sensitive data
+5. **No Force Push** — Never force push to main/master
+6. **Enforcement gate** — x-verify enforcement summary MUST show all ✅ before staging
 
 ## Output Format
 

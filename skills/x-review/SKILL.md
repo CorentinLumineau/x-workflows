@@ -100,35 +100,59 @@ Detect active initiative:
 
 Stale initiative documentation is classified as **Warning** severity (should fix before merge, or document reason for deferral).
 
-### Phase 2: Code Review
+### Phase 2: Code Review — BLOCKING AUDIT
 
-For each changed file:
+For each changed file, audit against enforcement violation definitions.
 
-1. **SOLID Compliance**
-   - Single Responsibility
-   - Open/Closed
-   - Liskov Substitution
-   - Interface Segregation
-   - Dependency Inversion
+#### SOLID Audit (BLOCKING)
 
-2. **Security Issues**
-   - Input validation
-   - Authentication/Authorization
-   - Data exposure
-   - OWASP Top 10
+Check against @skills/code-code-quality/ violations:
+- [ ] SRP (V-SOLID-01: CRITICAL → BLOCK)
+- [ ] OCP (V-SOLID-02: HIGH → BLOCK)
+- [ ] LSP (V-SOLID-03: CRITICAL → BLOCK)
+- [ ] ISP (V-SOLID-04: HIGH → BLOCK)
+- [ ] DIP (V-SOLID-05: HIGH → BLOCK)
 
-3. **Test Coverage**
-   - New code has tests
-   - Edge cases covered
-   - Integration tests if needed
+#### DRY Audit (BLOCKING)
 
-### Phase 3: Severity Classification
+- [ ] No >10 line duplication (V-DRY-01: HIGH → BLOCK)
+- [ ] Flag 3-10 line duplication (V-DRY-02: MEDIUM → WARN)
+- [ ] No repeated magic values (V-DRY-03: MEDIUM → WARN)
 
-| Level | Action |
-|-------|--------|
-| Critical | Must fix before merge |
-| Warning | Should fix, or document reason |
-| Info | Suggestion for improvement |
+#### Design Pattern Review
+
+- [ ] No God Objects (V-PAT-01: CRITICAL → BLOCK)
+- [ ] No circular dependencies (V-PAT-02: HIGH → BLOCK)
+- [ ] Flag missing obvious patterns (V-PAT-03: MEDIUM → WARN)
+- [ ] No pattern misuse (V-PAT-04: HIGH → BLOCK)
+
+#### Security Review
+
+- [ ] Input validation
+- [ ] Authentication/Authorization
+- [ ] Data exposure
+- [ ] OWASP Top 10
+
+#### Test Coverage
+
+- [ ] All new code has tests (V-TEST-01: CRITICAL → BLOCK)
+- [ ] Meaningful assertions (V-TEST-05: CRITICAL → BLOCK)
+- [ ] Edge cases covered
+- [ ] Integration tests if needed
+
+### Phase 3: Severity Classification — STRICT
+
+**CRITICAL (BLOCK):** V-SOLID-01, V-SOLID-03, V-TEST-01, V-TEST-05, V-TEST-06, V-DOC-02, V-PAT-01
+→ MUST fix before approval. No exceptions.
+
+**HIGH (BLOCK):** V-SOLID-02, V-SOLID-04, V-SOLID-05, V-DRY-01, V-TEST-02, V-TEST-03, V-DOC-01, V-DOC-04, V-PAT-02, V-PAT-04, V-KISS-02, V-YAGNI-01
+→ MUST fix OR escalate to user with justification.
+
+**MEDIUM (WARN):** V-DRY-02, V-DRY-03, V-KISS-01, V-YAGNI-02, V-TEST-04, V-TEST-07, V-DOC-03, V-PAT-03
+→ Flag to user. Document if deferring.
+
+**LOW (INFO):** Style, minor improvements.
+→ Note for awareness.
 
 ### Phase 4: Review Summary
 
@@ -241,19 +265,22 @@ On changes requested (manual — loop back):
 
 ## Severity Levels
 
-| Level | Action |
-|-------|--------|
-| Critical | Must fix before merge |
-| Warning | Should fix, or document reason |
-| Info | Suggestion for improvement |
+| Level | Action | Violation IDs |
+|-------|--------|---------------|
+| CRITICAL (BLOCK) | Must fix before approval | V-SOLID-01/03, V-TEST-01/05/06, V-DOC-02, V-PAT-01 |
+| HIGH (BLOCK) | Must fix or escalate with justification | V-SOLID-02/04/05, V-DRY-01, V-TEST-02/03, V-DOC-01/04, V-PAT-02/04 |
+| MEDIUM (WARN) | Flag to user, document if deferring | V-DRY-02/03, V-KISS-01, V-TEST-04/07, V-DOC-03, V-PAT-03 |
+| LOW (INFO) | Note for awareness | Style, minor improvements |
 
 ## Critical Rules
 
-1. **No Critical Issues** - Block merge if critical issues exist
-2. **Document Trade-offs** - If skipping warnings, document why
-3. **Security First** - Security issues are always critical
-4. **Test Coverage** - New code must have tests
-5. **Initiative Docs** - Flag stale milestone documentation as a review finding
+1. **No BLOCK violations** — NEVER approve with unresolved CRITICAL/HIGH violations
+2. **SOLID is mandatory** — Full audit using V-SOLID-* definitions
+3. **DRY is enforced** — V-DRY-01 blocks merge
+4. **Security First** — Security issues always CRITICAL
+5. **Test Coverage** — New code MUST have tests (V-TEST-01)
+6. **Documentation** — Stale docs block merge (V-DOC-01, V-DOC-04)
+7. **Initiative Docs** — Flag stale milestone documentation as a review finding
 
 ## Navigation
 

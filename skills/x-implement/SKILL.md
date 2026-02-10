@@ -92,7 +92,9 @@ Identify:
 - Test patterns
 - Import structures
 
-### Phase 2: TDD Implementation
+### Phase 2: TDD Implementation — MANDATORY
+
+**This phase CANNOT be skipped. TDD is non-negotiable.**
 
 Follow Red-Green-Refactor cycle:
 
@@ -107,6 +109,14 @@ Follow Red-Green-Refactor cycle:
 - 70% Unit tests
 - 20% Integration tests
 - 10% E2E tests
+
+**Phase 2 Exit Gate:**
+- [ ] Tests exist for all new production code (V-TEST-01)
+- [ ] Tests written before production code (V-TEST-02)
+- [ ] All tests pass
+- [ ] No CRITICAL SOLID violations introduced (V-SOLID-01, V-SOLID-03)
+
+**BLOCK if any exit gate fails.**
 
 ### Phase 3: Code Quality
 
@@ -137,7 +147,23 @@ pnpm build       # Build succeeds
 
 **All gates must pass before proceeding.**
 
-### Phase 5: Initiative Documentation Update (Conditional)
+### Phase 5: Documentation Sync — MANDATORY
+
+**This phase CANNOT be skipped.**
+
+1. Did public API signatures change? → Update API docs (V-DOC-01 BLOCK if skipped)
+2. Were new public functions/classes created? → Add docs (V-DOC-02 BLOCK if skipped)
+3. Did behavior change? → Update relevant docs (V-DOC-04 BLOCK if skipped)
+4. Are internal doc references valid? → Verify (V-DOC-03)
+
+**Phase 5 Exit Gate:**
+- [ ] All public API docs match current signatures
+- [ ] New public APIs documented
+- [ ] Behavioral changes reflected in docs
+
+**BLOCK if any exit gate fails.**
+
+### Phase 6: Initiative Documentation Update (Conditional)
 
 **Skip this phase if no active initiative exists.**
 
@@ -160,7 +186,7 @@ Update `.claude/initiative.json` checkpoint with latest progress.
 
 **Reference**: See `@skills/x-initiative/playbooks/README.md` for the full documentation update workflow.
 
-### Phase 6: Update Workflow State
+### Phase 7: Update Workflow State
 
 After completing implementation:
 
@@ -273,16 +299,18 @@ x-docs sync (if drift detected)
 initiative documentation updated (if active initiative)
 ```
 
-Initiative documentation updates are handled in Phase 5 (inside instructions) when an active initiative is detected via `.claude/initiative.json` or `documentation/milestones/_active/`.
+Initiative documentation updates are handled in Phase 6 (inside instructions) when an active initiative is detected via `.claude/initiative.json` or `documentation/milestones/_active/`.
 
 ## Critical Rules
 
-1. **TDD Required** - Write tests first
-2. **Quality Gates** - All must pass
-3. **SOLID Principles** - Apply consistently
-4. **Pattern Matching** - Follow existing conventions
-5. **No Regressions** - All existing tests must pass
-6. **Initiative Docs** - Update milestone documentation when active initiative exists
+1. **TDD is MANDATORY** — NEVER write production code before its test (V-TEST-02)
+2. **All gates MUST pass** — NEVER proceed with failing tests
+3. **SOLID at all times** — Apply during coding, not after (V-SOLID-*)
+4. **Documentation sync is MANDATORY** — NEVER skip Phase 5 (V-DOC-*)
+5. **Follow existing conventions** — Match codebase patterns
+6. **No regressions** — All existing tests MUST pass
+7. **Enforcement summary** — Output compliance table after Phase 4
+8. **Initiative Docs** — Update milestone documentation when active initiative exists
 
 ## Navigation
 
@@ -300,11 +328,12 @@ For specific needs:
 
 ## Success Criteria
 
-- [ ] Tests written first (TDD)
+- [ ] Tests written first (TDD) — V-TEST-02
 - [ ] All quality gates pass
 - [ ] No regressions introduced
-- [ ] Code follows SOLID principles
-- [ ] Documentation updated if needed
+- [ ] Code follows SOLID principles — V-SOLID-*
+- [ ] Documentation synced (MANDATORY) — V-DOC-*
+- [ ] Enforcement summary produced
 - [ ] Initiative documentation updated (if active initiative)
 
 ## When to Load References

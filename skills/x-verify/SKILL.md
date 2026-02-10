@@ -103,17 +103,22 @@ Passing → Continue
 - Test failures: Analyze and suggest fixes
 - Build errors: Report with context
 
-### Phase 3: Coverage Analysis
+### Phase 3: Coverage & Compliance Analysis — BLOCKING
 
-Check test coverage targets:
+Coverage thresholds are enforced. Violations BLOCK progression.
 
-| Type | Target |
-|------|--------|
-| Unit | 70% |
-| Integration | 20% |
-| E2E | 10% |
+| Check | Threshold | Violation | Action |
+|-------|-----------|-----------|--------|
+| Line coverage on changed files | ≥80% | V-TEST-03 (HIGH) | BLOCK |
+| Unit test ratio of new tests | ≥60% | V-TEST-04 (MEDIUM) | WARN |
+| Tests have assertions | 100% | V-TEST-05 (CRITICAL) | BLOCK |
+| No flaky tests | 0 flaky | V-TEST-06 (CRITICAL) | BLOCK |
 
-If coverage is below target, suggest tests to add.
+Additional checks:
+1. **SOLID spot-check**: Flag obvious V-SOLID-01/V-SOLID-03 in new code
+2. **Doc completeness**: BLOCK if V-DOC-01 or V-DOC-02 detected
+
+If coverage is below target, suggest specific tests to add before proceeding.
 
 ### Phase 4: Verification Complete
 
@@ -123,6 +128,21 @@ When all gates pass:
 - All tests pass
 - Build succeeds
 - Coverage targets met
+
+### Phase 4b: Enforcement Summary — MANDATORY
+
+**This phase CANNOT be skipped.** Output compliance report:
+
+```
+| Practice       | Status | Violations   | Action           |
+|----------------|--------|--------------|------------------|
+| Testing        | ✅/❌  | V-TEST-XX    | Pass / Fix needed |
+| Coverage       | ✅/❌  | V-TEST-03/04 | Pass / Fix needed |
+| SOLID          | ✅/⚠️  | V-SOLID-XX   | Pass / Flagged    |
+| Documentation  | ✅/❌  | V-DOC-XX     | Pass / Fix needed |
+```
+
+**ANY ❌ = cannot proceed to /x-review.**
 
 ### Phase 5: Initiative Documentation Verification (Conditional)
 
@@ -237,11 +257,13 @@ All must pass:
 
 ## Critical Rules
 
-1. **Zero Tolerance** - All gates must pass
-2. **Auto-Fix First** - Attempt fixes before reporting
-3. **Coverage Matters** - Track and improve coverage
-4. **No Regressions** - Existing tests must still pass
-5. **Initiative Docs** - Verify milestone documentation is current before proceeding
+1. **Zero Tolerance** — All gates MUST pass, no exceptions
+2. **Auto-Fix First** — Attempt fixes before reporting failures
+3. **Coverage BLOCKS** — Below threshold = cannot proceed (V-TEST-03)
+4. **No Regressions** — Existing tests MUST still pass
+5. **Documentation verified** — Docs MUST be current (V-DOC-*)
+6. **Enforcement summary required** — MUST output compliance table (Phase 4b)
+7. **Initiative Docs** — Verify milestone documentation is current before proceeding
 
 ## Navigation
 
@@ -258,6 +280,7 @@ All must pass:
 - [ ] All tests pass
 - [ ] Build succeeds
 - [ ] Coverage targets met
+- [ ] Enforcement summary produced (Phase 4b)
 - [ ] Initiative documentation current (if active initiative)
 
 ## When to Load References
