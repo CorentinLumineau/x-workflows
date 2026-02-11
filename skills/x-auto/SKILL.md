@@ -99,6 +99,22 @@ Present options:
 
 Wait for explicit user choice before continuing.
 
+### Phase 3b: Routing Correction Tracking
+
+If user selects a DIFFERENT workflow than recommended (option 2: "Different workflow" or option 3: "Modify"):
+
+<state-checkpoint entity="delegation-log" trigger="user-override">
+Write routing correction to Memory MCP:
+  add_observations:
+    entityName: "delegation-log"
+    contents:
+      - "routing_correction: suggested {recommended_workflow}, user chose {user_choice} for {intent_type} at {timestamp}"
+</state-checkpoint>
+
+Log: "Routing preference recorded for future sessions"
+
+**Note**: Only record when user actively changes the recommendation, not when they accept it.
+
 ### Phase 4: Auto-Invoke Recommended Skill
 
 After user confirms the recommended workflow:

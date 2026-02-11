@@ -47,6 +47,45 @@ State Change Event
 - L2 writes are **conditional** — only when a learning/pattern is discovered
 - L3 writes are **best-effort** — warn if unavailable, never block on failure
 
+### Workflow Completion Write Protocol
+
+When a workflow reaches a TERMINAL phase (x-commit, x-archive), ALL 3 layers
+receive a mandatory completion write:
+
+| Layer | Write | Content | Mandatory? |
+|-------|-------|---------|------------|
+| L1 | UPDATE workflow-state.json | `"status": "completed", "completedAt": "{ISO_timestamp}"` | YES |
+| L2 | WRITE to MEMORY.md | `"Completed {workflow_type} for {context_summary}: {outcome}"` | **YES** (not conditional) |
+| L3 | UPDATE workflow-state entity | `"status: completed at {timestamp}"` | YES (warn on fail) |
+
+**Note**: L2 writes at workflow completion are MANDATORY, unlike per-checkpoint L2 writes which remain conditional. This ensures cross-session awareness. Write 1-2 lines only. For detailed history, use L3 entities.
+
+### Workflow State TTL
+
+workflow-state.json includes a TTL field for automatic expiry:
+
+```json
+{
+  "type": "APEX",
+  "phase": "implement",
+  "lastUpdated": "2026-02-11T14:00:00Z",
+  "ttl": "24h",
+  "context": "..."
+}
+```
+
+**TTL Expiry Protocol** (checked by context-awareness at Phase 0):
+
+1. Read workflow-state.json
+2. Parse `lastUpdated` + `ttl` (default: 24h if field missing)
+3. If expired (`now > lastUpdated + ttl`):
+   a. Write summary to MEMORY.md: `"Expired workflow: {type} at {phase} for {context}"`
+   b. Clear workflow-state.json (reset to `{}`)
+   c. Log: `"Workflow state expired (inactive > {ttl})"`
+4. If NOT expired → proceed normally
+
+**Constraint**: Feedback writes (R4) require foreground context — Memory MCP is unavailable in background agents.
+
 ---
 
 ## Read Protocol
@@ -148,6 +187,49 @@ Session Start / Resume
 - `"delegation: {agent} ({model}) for {task_type} [{complexity}] -> {outcome} ({duration_ms}ms) at {timestamp}"`
 - `"escalated: {from_agent} -> {to_agent}, reason: {trigger}"`
 - `"user_override: suggested {agent}, user chose {other_agent}"`
+
+**Additional observation types (Feedback Loop)**:
+- `"routing_correction: suggested {workflow}, user chose {workflow} for {intent_type} at {timestamp}"`
+- `"escalation_outcome: {from} -> {to}, resolved: {true|false}, reason: {trigger} at {timestamp}"`
+- `"interview_skip: {skill}, user said: {reason} at {timestamp}"`
+
+**Note**: Memory MCP chosen over agent `memory:` field for structured entity storage.
+MEMORY.md summaries naturally age out past 200-line window — use L3 entities for historical data.
+
+---
+
+## Initiative Sync Protocol
+
+### Sync Trigger Table
+
+| Event | initiative.json | WORKFLOW-STATUS.yaml | Memory MCP |
+|-------|----------------|---------------------|------------|
+| Milestone started | UPDATE | UPDATE | UPDATE |
+| Task completed | UPDATE (progress) | NO-OP | NO-OP |
+| Milestone completed | UPDATE (next) | UPDATE (status) | UPDATE |
+| Status change | UPDATE | UPDATE | UPDATE |
+| Session resume | READ (primary) | READ (secondary) | READ (tertiary) |
+
+### Conflict Resolution Protocol
+
+When sources disagree on session resume:
+1. Compare `lastUpdated` timestamps across all sources
+2. Most recent timestamp wins (authoritative source)
+3. If timestamps differ by > 5 minutes: WARN user ("Initiative state may be stale — last updated {time_ago}")
+4. If file state unclear: Memory MCP as tiebreaker
+5. Update stale sources to match authoritative source
+
+### Status State Machine
+
+Valid transitions (enforced before writing state):
+
+```
+created → in_progress → blocked → in_progress → completed → archived
+```
+
+Invalid transitions (REJECT with warning):
+- completed → in_progress (must create new initiative)
+- archived → any (archived is terminal)
 
 ---
 

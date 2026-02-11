@@ -116,7 +116,10 @@ Canonical references for persistence implementation:
 ### Write Order (All State Changes)
 
 <state-checkpoint phase="initiative" status="milestone-progress">
-Cross-session initiative persistence via multi-layer write order: file checkpoint (L1), WORKFLOW-STATUS.yaml (L1), Memory MCP (L3), MEMORY.md (L2).
+Cross-session initiative persistence via multi-layer write order with sync validation:
+file checkpoint (L1), WORKFLOW-STATUS.yaml (L1), Memory MCP (L3), MEMORY.md (L2).
+**Sync Protocol**: After writes, validate initiative.json matches WORKFLOW-STATUS.yaml.
+See @skills/initiative/references/persistence-architecture.md for sync trigger table and conflict resolution.
 </state-checkpoint>
 
 1. **initiative.json** (REQUIRED) — Primary checkpoint (L1: file)

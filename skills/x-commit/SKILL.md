@@ -148,6 +148,17 @@ After successful commit:
   <history-prune max-entries="5" />
 </state-cleanup>
 
+### Workflow Completion Summary (MANDATORY)
+
+After successful commit, write a 1-line summary to MEMORY.md (L2):
+```
+## Recent Completions
+- Completed {workflow_type} for {context_summary}: committed as {commit_hash_short}
+```
+
+This is a MANDATORY L2 write per the Workflow Completion Write Protocol
+(see @skills/initiative/references/persistence-architecture.md).
+
 </instructions>
 
 ## Human-in-Loop Gates

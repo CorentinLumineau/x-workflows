@@ -430,6 +430,20 @@ Store acceptance rate per agent-task combination to inform future suggestions:
 - Pattern: If user consistently overrides a suggestion, adjust future recommendations
 - Data location: Memory MCP entity `"delegation-log"` (L3)
 
+## Feedback-Informed Selection
+
+At session start, after loading agent catalog:
+
+1. **Read feedback data**: `open_nodes(["delegation-log"])`
+2. **Parse correction observations**: Extract `routing_correction` and `user_override` entries
+3. **Build frequency table**: Count `{intent_type → preferred_workflow/agent}` pairs
+4. **If count ≥ 3 for same pattern**: Add advisory signal to routing recommendations:
+   ```
+   User preference detected: {intent_type} → {preferred} (overridden {count} times)
+   ```
+5. **Advisory is ADDITIVE** — never overrides explicit complexity-detection routing
+6. **If Memory MCP unavailable**: Skip feedback read silently (graceful degradation)
+
 ## Behavioral Rules
 
 <behavioral_rules>
@@ -443,6 +457,7 @@ Store acceptance rate per agent-task combination to inform future suggestions:
 8. **Variant Awareness**: Consider variant agents before defaulting to standard agents
 9. **Log Suggestions**: Record all delegation suggestions and user decisions
 10. **Max-1 Escalation**: Never escalate more than once per delegation — if upgraded agent also fails, report to user
+11. **Feedback-Informed**: Consider user correction history when suggesting agents (advisory only, ≥3 corrections required)
 </behavioral_rules>
 
 ## References

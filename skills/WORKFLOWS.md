@@ -395,6 +395,16 @@ Resume → Continues from last in_progress phase
 Start Fresh → Archives current workflow to history
 ```
 
+### Workflow State TTL
+
+Workflow state in `.claude/workflow-state.json` expires after 24 hours (configurable via `ttl` field).
+Expired state is summarized to MEMORY.md and cleared. See persistence-architecture.md for protocol.
+
+### Completion Write Protocol
+
+Terminal workflow phases (x-commit, x-archive) trigger a MANDATORY 3-layer write including
+a L2 MEMORY.md summary. This ensures cross-session awareness of completed work.
+
 ### Staleness Warning
 
 If the active workflow is older than 24 hours, context-awareness warns:

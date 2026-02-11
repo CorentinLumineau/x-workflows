@@ -72,6 +72,23 @@ Interview can be bypassed (with warning logged) when:
 
 See [bypass-conditions.md](references/bypass-conditions.md) for details.
 
+### Skip Tracking (Feedback Loop)
+
+When interview is bypassed via "explicit skip" (condition 1):
+
+<state-checkpoint entity="interview-state" trigger="interview-skip">
+Write skip event to Memory MCP:
+  add_observations:
+    entityName: "interview-state"
+    contents:
+      - "interview_skip: {skill}, user said: {reason} at {timestamp}"
+</state-checkpoint>
+
+**Adaptive Behavior**: On future invocations for the same skill:
+- If ≥ 3 skips recorded for same skill → reduce interview aggressiveness (ask 1 question max)
+- Log: "Interview adapted: {skill} marked as user-preferred-skip ({count} skips)"
+- User can always request full re-interview by saying "full interview"
+
 ## Integration Pattern
 
 All workflow modes include Phase 0:

@@ -72,6 +72,17 @@ Example MEMORY.md entry:
    - Offer to create fresh checkpoint
 ```
 
+### Step 4: Sync Validation (after any checkpoint write)
+
+After writing initiative state to any layer:
+1. Read initiative.json → extract milestone + status + timestamp
+2. Read WORKFLOW-STATUS.yaml → extract milestone + status + timestamp
+3. If MISMATCH detected (milestone or status differ):
+   a. Determine authoritative source (most recent timestamp)
+   b. Update the stale source to match
+   c. Log: "Sync corrected: {stale_source} updated to match {authoritative_source}"
+4. If both match → no action needed
+
 ---
 
 ## Checkpoint Lifecycle
