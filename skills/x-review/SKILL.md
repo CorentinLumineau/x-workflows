@@ -51,7 +51,8 @@ This skill activates:
 
 | Role | When | Characteristics |
 |------|------|-----------------|
-| **code reviewer** | Systematic code analysis | Read-only analysis |
+| **code reviewer (quick)** | Initial code scan | Fast read-only, escalates on complex issues |
+| **code reviewer** | Escalation from quick scanner | Deep SOLID/security analysis |
 | **codebase explorer** | Pattern analysis | Fast, read-only |
 
 <instructions>
@@ -102,9 +103,10 @@ Stale initiative documentation is classified as **Warning** severity (should fix
 
 ### Phase 2: Code Review — BLOCKING AUDIT
 
-<agent-delegate role="code reviewer" subagent="x-reviewer" model="sonnet">
+<agent-delegate role="code reviewer" subagent="x-reviewer-quick" model="haiku">
   <prompt>Review all changed files against SOLID, DRY, security, and test coverage enforcement rules</prompt>
   <context>APEX workflow examine phase — systematic code review with blocking audit</context>
+  <escalate to="x-reviewer" model="sonnet" trigger="complex SOLID analysis needed, architecture concerns, or large changeset (>10 files)" />
 </agent-delegate>
 
 <agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
@@ -193,6 +195,23 @@ Generate review summary:
 - [ ] Milestones hub current
 ```
 
+### Phase 4b: Enforcement Summary — MANDATORY
+
+**This phase CANNOT be skipped.** Output compliance report:
+
+```
+| Practice       | Status | Violations   | Action           |
+|----------------|--------|--------------|------------------|
+| SOLID          | ✅/❌  | V-SOLID-XX   | Pass / Fix needed |
+| DRY            | ✅/❌  | V-DRY-XX     | Pass / Fix needed |
+| Security       | ✅/❌  | OWASP        | Pass / Fix needed |
+| Testing        | ✅/⚠️  | V-TEST-XX    | Pass / Flagged    |
+| Documentation  | ✅/❌  | V-DOC-XX     | Pass / Fix needed |
+| Patterns       | ✅/⚠️  | V-PAT-XX     | Pass / Flagged    |
+```
+
+**ANY ❌ = cannot proceed to /x-commit.**
+
 ### Phase 5: Update Workflow State
 
 After completing review:
@@ -233,12 +252,13 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: **code reviewer** (quality analysis)
+**Recommended Agent**: **code reviewer (quick)** → escalates to **code reviewer** on complex issues
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|
-| Large changeset | Small changes |
-| Security-sensitive | Simple refactors |
+| Large changeset (escalate) | Small changes |
+| Security-sensitive (escalate) | Simple refactors |
+| Standard review | Trivial changes |
 
 ## Workflow Chaining
 
@@ -312,6 +332,7 @@ On changes requested (manual — loop back):
 5. **Test Coverage** — New code MUST have tests (V-TEST-01)
 6. **Documentation** — Stale docs block merge (V-DOC-01, V-DOC-04)
 7. **Initiative Docs** — Flag stale milestone documentation as a review finding
+8. **Enforcement summary required** — MUST output compliance table (Phase 4b)
 
 ## Navigation
 
@@ -329,6 +350,7 @@ On changes requested (manual — loop back):
 - [ ] Test coverage adequate
 - [ ] Documentation updated
 - [ ] No critical issues
+- [ ] Enforcement summary produced (Phase 4b)
 - [ ] Initiative documentation flagged if stale (if active initiative)
 
 ## When to Load References

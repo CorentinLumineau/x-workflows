@@ -160,12 +160,29 @@ pnpm test        # All tests
 pnpm build       # Build succeeds
 ```
 
-<agent-delegate role="test runner" subagent="x-tester" model="sonnet">
+<agent-delegate role="test runner" subagent="x-tester-fast" model="haiku">
   <prompt>Run full quality gates: lint, type-check, test, build — report pass/fail for each</prompt>
   <context>Post-implementation quality gate verification in APEX workflow</context>
+  <escalate to="x-tester" model="sonnet" trigger="persistent test failures (>3), flaky test patterns, or coverage analysis needed" />
 </agent-delegate>
 
 **All gates must pass before proceeding.**
+
+### Phase 4b: Enforcement Summary — MANDATORY
+
+**This phase CANNOT be skipped.** Output compliance report:
+
+```
+| Practice       | Status | Violations   | Action           |
+|----------------|--------|--------------|------------------|
+| TDD            | ✅/❌  | V-TEST-01/02 | Pass / Fix needed |
+| Testing        | ✅/❌  | V-TEST-XX    | Pass / Fix needed |
+| SOLID          | ✅/⚠️  | V-SOLID-XX   | Pass / Flagged    |
+| DRY/KISS/YAGNI | ✅/⚠️  | V-DRY/KISS/YAGNI | Pass / Flagged |
+| Documentation  | ✅/❌  | V-DOC-XX     | Pass / Fix needed |
+```
+
+**ANY ❌ = cannot proceed to Phase 5.**
 
 ### Phase 5: Documentation Sync — MANDATORY
 

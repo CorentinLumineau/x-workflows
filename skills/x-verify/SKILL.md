@@ -43,7 +43,8 @@ This skill activates:
 
 | Role | When | Characteristics |
 |------|------|-----------------|
-| **test runner** | Test execution, coverage | Can edit and run commands |
+| **test runner (fast)** | Initial test execution | Fast validation, escalates on failure |
+| **test runner** | Escalation from fast runner | Full test suite, coverage analysis |
 
 <instructions>
 
@@ -65,9 +66,10 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Run Quality Gates
 
-<agent-delegate role="test runner" subagent="x-tester" model="sonnet">
+<agent-delegate role="test runner" subagent="x-tester-fast" model="haiku">
   <prompt>Run full quality gates: lint, type-check, test, build — report pass/fail with details for each gate</prompt>
   <context>APEX workflow verify phase — running all quality gates before code review</context>
+  <escalate to="x-tester" model="sonnet" trigger="persistent test failures (>3), flaky test patterns, or coverage analysis needed" />
 </agent-delegate>
 
 Execute all gates:
@@ -217,12 +219,13 @@ When approval needed, structure question as:
 
 ## Agent Delegation
 
-**Recommended Agent**: **test runner** (test execution)
+**Recommended Agent**: **test runner (fast)** → escalates to **test runner** on failure
 
 | Delegate When | Keep Inline When |
 |---------------|------------------|
 | Large test suite | Quick verification |
 | Coverage analysis | Simple lint/type check |
+| Complex test failures (escalate) | Standard gate passing |
 
 ## Workflow Chaining
 
