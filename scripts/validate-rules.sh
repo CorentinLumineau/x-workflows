@@ -34,12 +34,17 @@ echo "x-workflows Repository Validation"
 echo "=========================================="
 echo ""
 
-# Check 1: .claude/rules.md exists
-echo "Checking .claude/rules.md..."
-if [[ -f "$REPO_ROOT/.claude/rules.md" ]]; then
-    log_success ".claude/rules.md exists"
+# Check 1: .claude/rules/ directory exists (modular rules)
+echo "Checking .claude/rules/..."
+if [[ -d "$REPO_ROOT/.claude/rules" ]]; then
+    rule_count=$(find "$REPO_ROOT/.claude/rules" -name "*.md" | wc -l)
+    if [[ $rule_count -gt 0 ]]; then
+        log_success ".claude/rules/ directory exists with $rule_count rule file(s)"
+    else
+        log_error ".claude/rules/ directory exists but has no .md files"
+    fi
 else
-    log_error ".claude/rules.md is missing"
+    log_error ".claude/rules/ directory is missing"
 fi
 
 # Check 2: Every skill directory has SKILL.md
@@ -86,6 +91,72 @@ for skill_dir in "$REPO_ROOT/skills"/*/; do
             if [[ $mode_count -gt 0 ]]; then
                 log_success "skills/$skill_name has $mode_count mode reference(s)"
             fi
+        fi
+    fi
+done
+
+# Check 5: Frontmatter contract for x-* workflow skills
+echo ""
+echo "Checking frontmatter contract for workflow skills..."
+for skill_dir in "$REPO_ROOT/skills"/x-*/; do
+    if [[ -d "$skill_dir" ]]; then
+        skill_name=$(basename "$skill_dir")
+        skill_file="${skill_dir}SKILL.md"
+
+        if [[ ! -f "$skill_file" ]]; then
+            continue  # Already caught by Check 2
+        fi
+
+        # Extract frontmatter (content between first two --- lines)
+        frontmatter=$(sed -n '/^---$/,/^---$/p' "$skill_file" | sed '1d;$d')
+
+        if [[ -z "$frontmatter" ]]; then
+            log_error "skills/$skill_name/SKILL.md has no YAML frontmatter"
+            continue
+        fi
+
+        # Check: name field matches directory name
+        fm_name=$(echo "$frontmatter" | grep -E '^name:' | head -1 | sed 's/^name:[[:space:]]*//')
+        if [[ "$fm_name" == "$skill_name" ]]; then
+            log_success "skills/$skill_name frontmatter name matches directory"
+        else
+            log_error "skills/$skill_name frontmatter name '$fm_name' does not match directory name '$skill_name'"
+        fi
+
+        # Check: category is workflow
+        fm_category=$(echo "$frontmatter" | grep -E '^[[:space:]]*category:' | head -1 | sed 's/^[[:space:]]*category:[[:space:]]*//')
+        if [[ "$fm_category" == "workflow" ]]; then
+            log_success "skills/$skill_name has category: workflow"
+        else
+            log_error "skills/$skill_name missing or incorrect category (expected 'workflow', got '$fm_category')"
+        fi
+
+        # Check: description exists and is single-line (no | or > YAML multiline)
+        fm_desc_line=$(echo "$frontmatter" | grep -E '^description:' | head -1)
+        if [[ -n "$fm_desc_line" ]]; then
+            fm_desc_value=$(echo "$fm_desc_line" | sed 's/^description:[[:space:]]*//')
+            if [[ "$fm_desc_value" == "|" || "$fm_desc_value" == ">" || "$fm_desc_value" == "|+" || "$fm_desc_value" == ">-" ]]; then
+                log_error "skills/$skill_name description must be single-line (found YAML multiline indicator)"
+            else
+                log_success "skills/$skill_name has single-line description"
+            fi
+        else
+            log_error "skills/$skill_name is missing description field"
+        fi
+
+        # Check: allowed-tools is present
+        if echo "$frontmatter" | grep -qE '^allowed-tools:'; then
+            log_success "skills/$skill_name has allowed-tools"
+        else
+            log_error "skills/$skill_name is missing allowed-tools field"
+        fi
+
+        # Check: license is Apache-2.0
+        fm_license=$(echo "$frontmatter" | grep -E '^license:' | head -1 | sed 's/^license:[[:space:]]*//')
+        if [[ "$fm_license" == "Apache-2.0" ]]; then
+            log_success "skills/$skill_name has license: Apache-2.0"
+        else
+            log_error "skills/$skill_name missing or incorrect license (expected 'Apache-2.0', got '$fm_license')"
         fi
     fi
 done
