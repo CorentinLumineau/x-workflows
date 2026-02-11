@@ -46,7 +46,7 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ---
 
-> **Tip**: For comprehensive holistic analysis with health scores, consider using `/x-improve` instead. This mode focuses on targeted improvements to specific code.
+> **Tip**: For comprehensive holistic analysis with health scores, consider using `/x-implement` instead. This mode focuses on targeted improvements to specific code.
 
 ### Phase 1: Quality Assessment
 
@@ -103,7 +103,7 @@ Present next step:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
-      {"label": "/x-git commit", "description": "Commit improvements"},
+      {"label": "/x-commit", "description": "Commit improvements"},
       {"label": "Stop", "description": "Review manually"}
     ],
     "multiSelect": false

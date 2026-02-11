@@ -1,6 +1,6 @@
 # Skills Navigation
 
-> ccsetup v6.2 - Verb-based workflow skills with 4 canonical workflows
+> ccsetup v6.6 - Verb-based workflow skills with 4 canonical workflows
 
 ## Workflows Overview
 
@@ -40,13 +40,14 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 20 verb skills | `x-{verb}/` |
-| **x-devsecops** | WHAT to know | 37 knowledge skills | `{category}-{skill}/` |
-| **local** | Behavioral | 3 | initiative, interview, documentation |
+| **x-workflows** | HOW to work | 23 verb skills | `x-{verb}/` |
+| **x-devsecops** | WHAT to know | 39 knowledge skills | `{category}-{skill}/` |
+| **local** | Project-specific | 4 | documentation, initiative, interview, orchestration |
+| **behavioral** | Auto-triggered | 3 | agent-awareness, complexity-detection, context-awareness |
 
-**Total: ~60 skills**
+**Total: 69 skills**
 
-## Verb Skills by Workflow (20)
+## Verb Skills by Workflow (23)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -75,27 +76,31 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |------|---------|----------|
 | `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
 
-### UTILITY (9)
+### UTILITY (12)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
 | `/x-archive` | Archive completed initiatives | archive, complete initiative |
+| `/x-ask` | Zero-friction Q&A | ask, question, how |
+| `/x-auto` | Auto-routing command | auto, route |
 | `/x-commit` | Conventional commits | commit, git commit |
-| `/x-release` | Release workflow | release, tag, version |
+| `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
-| `/x-setup` | Project initialization | setup, scaffold |
-| `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
+| `/x-release` | Release workflow | release, tag, version |
+| `/x-setup` | Project initialization | setup, scaffold |
+| `/x-team` | Team orchestration | team, parallel, swarm |
 
-## Behavioral Skills (2)
+## Behavioral Skills (3)
 
 | Skill | Purpose |
 |-------|---------|
-| `interview` | Confidence gate (auto-triggered) |
+| `agent-awareness` | Agent delegation catalog (auto-triggered) |
 | `complexity-detection` | Routing logic (auto-triggered) |
+| `context-awareness` | Context loading (auto-triggered) |
 
-## Knowledge Skills (37)
+## Knowledge Skills (39)
 
 Skills are prefixed by category for organization:
 
@@ -108,16 +113,15 @@ Skills are prefixed by category for organization:
 | **meta-** | 3 | analysis, architecture-patterns, decision-making |
 | **data-** | 4 | caching, database, message-queues, nosql |
 | **operations-** | 4 | disaster-recovery, incident-response, monitoring, sre-practices |
-| **agent-** | 1 | awareness |
-| **context-** | 1 | awareness |
 
-## Local Skills (3)
+## Local Skills (4)
 
 | Skill | Purpose |
 |-------|---------|
 | documentation | Doc sync patterns |
 | initiative | Cross-session tracking |
 | interview | Confidence gate |
+| orchestration | Batch operation coordination |
 
 ## Quick Reference
 
@@ -171,5 +175,5 @@ make sync-skills
 
 ## Version
 
-**Version**: 6.2.0
+**Version**: 6.6.0
 **x-workflows**: 1.0.0 (verb-first refactoring)

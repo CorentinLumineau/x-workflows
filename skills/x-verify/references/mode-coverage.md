@@ -113,7 +113,7 @@ Present next step:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
-      {"label": "/x-git commit", "description": "Commit tests"},
+      {"label": "/x-commit", "description": "Commit tests"},
       {"label": "Continue improving", "description": "Add more tests"}
     ],
     "multiSelect": false

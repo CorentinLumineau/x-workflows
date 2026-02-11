@@ -94,7 +94,7 @@ Present next step:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
-      {"label": "/x-git commit", "description": "Commit the fix"},
+      {"label": "/x-commit", "description": "Commit the fix"},
       {"label": "Stop", "description": "Manual review first"}
     ],
     "multiSelect": false
