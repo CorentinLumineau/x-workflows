@@ -120,6 +120,7 @@ When routing is determined, output:
 │ Chain: [skill1] → [skill2] → [skill3]           │
 │                                                 │
 │ Multi-session: [Yes/No]                         │
+│ Team: [pattern] ([size] agents) | none          │
 │ Override: use explicit /x-* command             │
 └─────────────────────────────────────────────────┘
 ```
@@ -134,7 +135,22 @@ When routing is determined, output:
 | `Variant` | Alternative agent (cheaper or deeper) | Cost optimization or capability escalation |
 | `Chain` | Skill sequence (→ separated) | Recommended workflow skill execution order |
 | `Multi-session` | Yes / No | Whether x-initiative tracking is needed |
+| `Team` | Pattern (N agents) / none | Agent Team advisory from team triggers below |
 | `Override` | /x-* command | User can bypass auto-routing with explicit command |
+
+### Team Triggers
+
+The Team field is advisory — it suggests when Agent Teams would benefit the task.
+
+| Condition | Team Pattern | Size |
+|-----------|-------------|------|
+| HIGH complexity + multi-domain scope | Review Team or Feature Team | 2-4 |
+| HIGH complexity + 10+ files affected | Refactor Team | 2-3 |
+| HIGH complexity + 3+ hypotheses needed | Debug Team | 2-3 |
+| Any complexity + research-heavy task | Research Team | 2-3 |
+| LOW/MEDIUM + single domain | none | — |
+
+Team is `none` by default. Only populated when parallelism or inter-agent coordination provides clear value over subagent delegation.
 
 ### Examples
 
@@ -146,6 +162,7 @@ Agent: x-refactorer (sonnet)
 Variant: x-designer (opus)
 Chain: x-plan → x-implement → x-verify
 Multi-session: Yes (major framework change)
+Team: Refactor Team (3 agents)
 ```
 
 **Example: Low fix**
@@ -156,6 +173,7 @@ Agent: main agent
 Variant: none
 Chain: x-implement
 Multi-session: No
+Team: none
 ```
 
 **Example: High intermittent bug**
@@ -166,6 +184,7 @@ Agent: x-debugger (sonnet)
 Variant: x-debugger-deep (opus)
 Chain: x-troubleshoot → x-fix
 Multi-session: Yes (intermittent + environment-specific)
+Team: Debug Team (3 agents)
 ```
 
 ---

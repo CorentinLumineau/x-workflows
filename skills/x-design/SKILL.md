@@ -83,6 +83,11 @@ Review:
 
 ### Phase 2: Architecture Discovery
 
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Find architecture patterns, design patterns, integration patterns, and data flow patterns in the codebase</prompt>
+  <context>Discovering existing conventions to inform design decisions</context>
+</agent-delegate>
+
 Delegate to a **codebase explorer** agent (fast, read-only):
 > "Find architecture patterns in codebase"
 
@@ -92,7 +97,17 @@ Discover:
 - Integration patterns
 - Data flow patterns
 
+<doc-query trigger="design-patterns">
+  <purpose>Look up reference implementations and best practices for the architecture being designed</purpose>
+  <context>Finding authoritative patterns to inform design decisions</context>
+</doc-query>
+
 ### Phase 3: Design Creation
+
+<deep-think purpose="architecture decisions" context="Evaluating design trade-offs, pattern selection, and SOLID compliance">
+  <purpose>Evaluate architectural trade-offs and component design decisions</purpose>
+  <context>Multiple valid approaches exist; need systematic analysis of trade-offs, SOLID compliance, and risk assessment</context>
+</deep-think>
 
 Create design document:
 
@@ -163,15 +178,10 @@ Validate design against all five SOLID principles:
 
 After design validated:
 
-1. Read `.claude/workflow-state.json`
-2. Mark `design` phase as `"completed"` with timestamp
-3. Set next based on decision:
-   - Transition to APEX → Mark BRAINSTORM completed, create new APEX at `plan`
-   - Continue brainstorming → Keep BRAINSTORM active
-4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: design -> completed"`
-   - `"transition: BRAINSTORM -> APEX (if approved)"`
+<state-checkpoint phase="design" status="completed">
+  <file path=".claude/workflow-state.json">Mark design complete; if transitioning to APEX, create new APEX workflow at plan phase</file>
+  <memory entity="workflow-state">phase: design -> completed; transition: BRAINSTORM -> APEX (if approved)</memory>
+</state-checkpoint>
 
 </instructions>
 
@@ -217,17 +227,31 @@ When approval needed, structure question as:
 
 **Human approval required**: design → plan (BRAINSTORM → APEX transition)
 
-After design validated:
-1. Update `.claude/workflow-state.json` (mark design complete in BRAINSTORM, create pending APEX)
-2. Present approval gate:
-   "Design complete. Ready to start planning implementation?"
-   - Option 1: `/x-plan` (Recommended) - Start APEX workflow
-   - Option 2: `/x-research` - Need more information
-   - Option 3: `/x-brainstorm` - Reconsider requirements
-   - Option 4: Stop - Review design document first
-3. On approval, invoke via Skill tool:
-   - skill: "x-plan"
-   - args: "{design summary with components, trade-offs, and implementation order}"
+<workflow-gate type="choice" id="design-exit">
+  <question>Design complete. Ready to start planning implementation?</question>
+  <header>Next step</header>
+  <option key="plan" recommended="true" approval="required">
+    <label>Start Planning</label>
+    <description>Begin APEX workflow — commits to implementation</description>
+  </option>
+  <option key="research">
+    <label>More Research</label>
+    <description>Need more information before deciding</description>
+  </option>
+  <option key="brainstorm">
+    <label>Reconsider</label>
+    <description>Go back to requirements discovery</description>
+  </option>
+  <option key="stop">
+    <label>Review First</label>
+    <description>Review design document before proceeding</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="plan" skill="x-plan" args="{design summary with components, trade-offs, and implementation order}" />
+<workflow-chain on="research" skill="x-research" args="{topics needing investigation}" />
+<workflow-chain on="brainstorm" skill="x-brainstorm" args="{requirements to reconsider}" />
+<workflow-chain on="stop" action="end" />
 
 **CRITICAL**: Transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and commits to implementation. This always requires human approval.
 

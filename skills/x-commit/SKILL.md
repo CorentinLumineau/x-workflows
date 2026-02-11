@@ -142,6 +142,12 @@ After successful commit:
    - Search for `delegation-log` → remove observations older than 7 days via `delete_observations`
    - Search for `interview-state` → remove expired observations via `delete_observations`
 
+<state-cleanup phase="terminal">
+  <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
+  <memory-prune entities="orchestration-*" older-than="7d" />
+  <history-prune max-entries="5" />
+</state-cleanup>
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -190,8 +196,22 @@ After commit created:
 2. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
 3. Present options (no auto-chain — workflow is done):
    "Commit created. What's next?"
-   - Option 1: `/x-release` - Create release
-   - Option 2: Done - Workflow complete
+
+<workflow-gate type="choice" id="commit-next">
+  <question>Commit created. What's next?</question>
+  <header>After commit</header>
+  <option key="release">
+    <label>Create release</label>
+    <description>Start release workflow for versioning and publishing</description>
+  </option>
+  <option key="done" recommended="true">
+    <label>Done</label>
+    <description>Workflow complete — no further action needed</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="release" skill="x-release" args="{commit summary}" />
+<workflow-chain on="done" action="end" />
 
 </chaining-instruction>
 

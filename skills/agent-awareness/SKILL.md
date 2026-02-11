@@ -72,6 +72,49 @@ Agent suggestions appear when task complexity matches agent specialization.
 Legend: ✅ = Primary, ⚡ = Basic, ❌ = Not available
 ```
 
+## Team Composition
+
+### Team vs Subagent Decision Matrix
+
+| Factor | Subagent | Agent Team |
+|--------|----------|------------|
+| Task independence | Independent, no coordination | Interdependent, need discussion |
+| Communication | Result-only (return value) | Inter-agent messaging (SendMessage) |
+| Parallelism | Sequential or fire-and-forget | True parallel with shared state |
+| Cost model | 1 agent at a time | N agents simultaneously |
+| Coordination | None needed | Shared task list, blocking dependencies |
+| Best for | Focused single-domain work | Multi-domain, cross-cutting concerns |
+
+**Rule of thumb**: If agents need to talk to each other, use a team. If they just return results, use subagents.
+
+### Team Composition Patterns
+
+| Pattern | Size | Agents | Use When |
+|---------|------|--------|----------|
+| **Research Team** | 2-3 | x-explorer (haiku) + general-purpose (sonnet) | Multi-perspective exploration, evidence gathering |
+| **Feature Team** | 3-4 | x-refactorer (sonnet) + x-tester (sonnet) + x-reviewer (sonnet) | Multi-layer feature implementation with parallel testing |
+| **Review Team** | 2-3 | x-reviewer (sonnet) + x-security-reviewer (sonnet) | Parallel quality + security analysis on large PRs |
+| **Debug Team** | 2-3 | x-debugger (sonnet) + x-explorer (haiku) + x-tester (sonnet) | Parallel hypothesis testing with context gathering |
+| **Refactor Team** | 2-3 | x-refactorer (sonnet) + x-tester (sonnet) + x-reviewer (sonnet) | Large-scale restructuring with continuous verification |
+
+### Model Selection for Teammates
+
+| Model | Role in Team | Use For |
+|-------|-------------|---------|
+| **Haiku** | Read-only workers | Exploration, scanning, pattern search |
+| **Sonnet** | Implementation workers | Code changes, testing, reviewing, debugging |
+| **Opus** | Never for teammates | Too expensive for parallel agents; use as lead only |
+
+### Cost Awareness
+
+- **Subagent**: 1 agent runs at a time; cost = sum of sequential runs
+- **Team**: N agents run simultaneously; cost = N x parallel token usage
+- Teams are 2-5x more expensive than subagents for equivalent work
+- Use teams only when parallelism or coordination provides clear value
+- Default to subagents; escalate to teams via complexity-detection advisory
+
+See @skills/x-team/references/team-patterns.md for spawn templates and lifecycle details.
+
 ## Role Resolution Table
 
 When skills reference generic roles, resolve to concrete agents using this table:

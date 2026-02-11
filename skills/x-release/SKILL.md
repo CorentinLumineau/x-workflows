@@ -41,6 +41,10 @@ This skill activates:
 
 ### Phase 0: Confidence Check (REQUIRED - HIGH RISK)
 
+<workflow-gate options="proceed,review-changes,cancel" default="proceed">
+Release approval gate — always requires human confirmation before any release action.
+</workflow-gate>
+
 **Release mode has 40% risk weight** - always interview unless version is explicitly specified.
 
 Activate `@skills/interview/` if:
@@ -112,6 +116,10 @@ Generate release notes from commits:
 ```
 
 ### Phase 4: Create Release
+
+<state-checkpoint phase="release" status="tag-created">
+Track release progress: pre-checks passed, version determined, notes generated, tag created, release published.
+</state-checkpoint>
 
 ```bash
 # Create and push tag

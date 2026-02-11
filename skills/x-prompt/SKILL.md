@@ -46,6 +46,10 @@ This workflow activates these behavioral skills:
 | Persistence | None (text output only, copy-ready) |
 | Target | Universal (LLM-agnostic) |
 
+<deep-think purpose="prompt optimization" context="Analyzing raw prompt to determine structure, constraints, and enhancement techniques">
+Reason about: intent extraction, optimal XML structure, constraint specification, output format, success criteria, and chain-of-thought applicability.
+</deep-think>
+
 ## Enhancement Techniques
 
 | Technique | Applied When |

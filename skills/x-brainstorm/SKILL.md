@@ -69,12 +69,22 @@ Explore in parallel:
 1. **Existing Patterns** - Search codebase for similar implementations
 2. **Best Practices** - Look up recommended approaches via Context7
 
+<doc-query trigger="requirements-discovery">
+  <purpose>Look up recommended approaches and patterns for the problem domain</purpose>
+  <context>Gathering best practices to inform requirements discovery</context>
+</doc-query>
+
 Gather:
 - **Functional Requirements** - What should it do?
 - **Non-Functional Requirements** - What qualities matter?
 - **Constraints** - What limitations exist?
 
 ### Phase 3: Prioritization (Pareto 80/20)
+
+<deep-think purpose="prioritization" context="Evaluating brainstormed ideas by feasibility, impact, and alignment">
+  <purpose>Apply Pareto 80/20 analysis to prioritize requirements by impact</purpose>
+  <context>Multiple requirements gathered; need structured reasoning to identify the 20% that delivers 80% value</context>
+</deep-think>
 
 Apply Pareto principle to prioritize:
 
@@ -159,20 +169,39 @@ When approval needed, structure question as:
 **Auto-chain**: brainstorm → research/design (within BRAINSTORM, no approval needed)
 
 After brainstorm session complete:
-1. Update `.claude/workflow-state.json` (mark brainstorm complete, set next in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "x-research" or "x-design"
-   - args: "{derived requirements summary}"
 
-**Human approval required**: brainstorm → plan (BRAINSTORM → APEX transition)
+<state-checkpoint phase="brainstorm" status="completed">
+  <file path=".claude/workflow-state.json">Mark brainstorm complete, set next phase in_progress</file>
+  <memory entity="workflow-state">phase: brainstorm -> completed; next: design or research</memory>
+</state-checkpoint>
 
-If user wants to skip design and go directly to implementation:
-1. Present approval gate:
-   "Ready to start planning implementation?"
-   - Option 1: `/x-design` (Recommended) - Architecture decisions first
-   - Option 2: `/x-plan` - Start APEX workflow (requires approval)
-   - Option 3: `/x-research` - Deep investigation
-2. **CRITICAL**: Transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and always requires human approval.
+<workflow-gate type="choice" id="brainstorm-next">
+  <question>Brainstorming complete. What would you like to do next?</question>
+  <header>Next step</header>
+  <option key="design" recommended="true">
+    <label>Continue to Design</label>
+    <description>Make architectural decisions before implementation</description>
+  </option>
+  <option key="research">
+    <label>Deep Research</label>
+    <description>Investigate further before deciding</description>
+  </option>
+  <option key="plan" approval="required">
+    <label>Skip to Planning</label>
+    <description>Start APEX workflow — commits to implementation</description>
+  </option>
+  <option key="stop">
+    <label>Stop here</label>
+    <description>Review brainstorm output first</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="design" skill="x-design" args="{requirements summary}" />
+<workflow-chain on="research" skill="x-research" args="{topics to investigate}" />
+<workflow-chain on="plan" skill="x-plan" args="{requirements summary}" />
+<workflow-chain on="stop" action="end" />
+
+**CRITICAL**: Transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and always requires human approval.
 
 </chaining-instruction>
 

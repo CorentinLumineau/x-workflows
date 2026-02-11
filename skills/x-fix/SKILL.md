@@ -73,6 +73,11 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Error Analysis
 
+<doc-query trigger="error-lookup">
+  <purpose>Look up library API documentation relevant to the error type and affected code</purpose>
+  <context>Quick API lookup to inform fix approach — ONESHOT workflow needs fast resolution</context>
+</doc-query>
+
 Parse the error:
 1. **Identify error type** - Compile, runtime, test failure
 2. **Locate source** - File, line, stack trace
@@ -101,6 +106,11 @@ Parse the error:
 
 ### Phase 3: Verification
 
+<agent-delegate role="test runner" subagent="x-tester" model="sonnet">
+  <prompt>Run affected tests for {affected_file} — verify fix works and no regressions introduced</prompt>
+  <context>Post-fix verification in ONESHOT workflow — quick targeted test run</context>
+</agent-delegate>
+
 Run affected tests immediately:
 ```bash
 pnpm test -- --testPathPattern="{affected_file}"
@@ -123,6 +133,11 @@ After fix applied and verified:
 5. Write to Memory MCP entity `"workflow-state"`:
    - `"phase: fix -> completed"`
    - `"next: {verify|commit}"`
+
+<state-checkpoint phase="fix" status="completed">
+  <file path=".claude/workflow-state.json">Mark fix complete, set next phase (verify or commit) pending approval</file>
+  <memory entity="workflow-state">phase: fix -> completed; next: verify or commit</memory>
+</state-checkpoint>
 
 </instructions>
 
@@ -173,12 +188,30 @@ After fix applied and verified:
 1. Update `.claude/workflow-state.json` (mark fix complete, set next phase pending approval)
 2. Present options (requires human selection):
    "Fix applied and verified. What's next?"
-   - Option 1: `/x-verify` - Full quality gates
-   - Option 2: `/x-commit` - Quick commit (requires approval)
-   - Option 3: Stop - Manual review first
 3. On selection, invoke via Skill tool:
    - skill: "x-verify" or "x-commit"
    - args: "{fix summary and affected files}"
+
+<workflow-gate type="choice" id="fix-next">
+  <question>Fix applied and verified. What's next?</question>
+  <header>After fix</header>
+  <option key="verify">
+    <label>Full verification</label>
+    <description>Run all quality gates before committing</description>
+  </option>
+  <option key="commit" recommended="true" approval="required">
+    <label>Quick commit</label>
+    <description>Commit the fix directly (requires approval)</description>
+  </option>
+  <option key="stop">
+    <label>Stop here</label>
+    <description>Manual review first</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="verify" skill="x-verify" args="{fix summary and affected files}" />
+<workflow-chain on="commit" skill="x-commit" args="{fix summary and affected files}" />
+<workflow-chain on="stop" action="end" />
 
 **Escalation**: If fix complexity increases, suggest:
 "Fix is more complex than expected. Escalate?"

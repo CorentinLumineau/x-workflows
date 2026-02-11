@@ -82,12 +82,20 @@ Classify the question to select the right tool:
 
 #### For Codebase Questions
 
+<agent-delegate subagent="codebase explorer" context="Codebase questions requiring file search and pattern discovery">
+Delegate to a codebase explorer agent for fast, read-only codebase investigation.
+</agent-delegate>
+
 Delegate to a **codebase explorer** agent (fast, read-only):
 > "Find code related to {topic}. Report file paths, key functions, and patterns."
 
 Then synthesize the explorer's findings into a direct answer.
 
 #### For Library Questions
+
+<doc-query library="$DETECTED_LIBRARY" topic="$QUESTION">
+Use Context7 MCP for authoritative library documentation: resolve-library-id then query-docs.
+</doc-query>
 
 Use Context7 for authoritative documentation:
 
@@ -98,6 +106,10 @@ Use Context7 for authoritative documentation:
 ```
 
 #### For External Information
+
+<web-research query="$QUESTION" sources="WebSearch,WebFetch">
+Use WebSearch for current information, then WebFetch for detail extraction with source attribution.
+</web-research>
 
 Use WebSearch for current information, then WebFetch for detail:
 

@@ -86,6 +86,11 @@ Activate `@skills/interview/` if:
 Delegate to a **codebase explorer** agent (fast, read-only):
 > "Find patterns for {feature type} in codebase"
 
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Find patterns for {feature type} in codebase — similar implementations, conventions, test patterns, import structures</prompt>
+  <context>Context discovery for implementation phase of APEX workflow</context>
+</agent-delegate>
+
 Identify:
 - Similar implementations
 - Project conventions
@@ -95,6 +100,16 @@ Identify:
 ### Phase 2: TDD Implementation — MANDATORY
 
 **This phase CANNOT be skipped. TDD is non-negotiable.**
+
+<doc-query trigger="implementation-start">
+  <purpose>Look up library APIs and patterns relevant to the implementation task</purpose>
+  <context>Starting TDD implementation — need current API docs for libraries being used</context>
+</doc-query>
+
+<deep-think purpose="implementation approach" context="Determining TDD strategy, file changes, and integration points">
+  <purpose>Determine optimal implementation approach considering SOLID principles, existing patterns, and TDD strategy</purpose>
+  <context>Multiple requirements to implement with TDD; need structured reasoning for implementation order and design decisions</context>
+</deep-think>
 
 Follow Red-Green-Refactor cycle:
 
@@ -144,6 +159,11 @@ pnpm type-check  # Type safety
 pnpm test        # All tests
 pnpm build       # Build succeeds
 ```
+
+<agent-delegate role="test runner" subagent="x-tester" model="sonnet">
+  <prompt>Run full quality gates: lint, type-check, test, build — report pass/fail for each</prompt>
+  <context>Post-implementation quality gate verification in APEX workflow</context>
+</agent-delegate>
 
 **All gates must pass before proceeding.**
 
@@ -198,6 +218,11 @@ After completing implementation:
    - `"phase: implement -> completed"`
    - `"next: verify"`
 
+<state-checkpoint phase="implement" status="completed">
+  <file path=".claude/workflow-state.json">Mark implement complete, set verify in_progress</file>
+  <memory entity="workflow-state">phase: implement -> completed; next: verify</memory>
+</state-checkpoint>
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -247,6 +272,8 @@ After implementation complete:
 2. Auto-invoke next skill via Skill tool:
    - skill: "x-verify"
    - args: "verify implementation changes"
+
+<workflow-chain on="auto" skill="x-verify" args="verify implementation changes" />
 
 If restructuring needed (manual):
 "Code is working but needs restructuring. Use /x-refactor?"

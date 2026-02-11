@@ -70,6 +70,21 @@ Determine research depth:
 
 ### Phase 2: Information Gathering
 
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Search codebase for patterns and implementations related to {research topic}</prompt>
+  <context>Gathering evidence from existing codebase for research synthesis</context>
+</agent-delegate>
+
+<doc-query trigger="library-research">
+  <purpose>Look up library documentation and API patterns for {research topic}</purpose>
+  <context>Gathering authoritative documentation as research evidence</context>
+</doc-query>
+
+<web-research trigger="external-info-needed">
+  <purpose>Search for current best practices and external resources on {research topic}</purpose>
+  <strategy>WebSearch for overview and trends, WebFetch for specific articles and documentation</strategy>
+</web-research>
+
 **For deep research:**
 ```
 1. Define research scope
@@ -165,18 +180,38 @@ When approval needed, structure question as:
 
 **Auto-chain**: research → design (within BRAINSTORM, no approval needed)
 
-After research complete with clear findings:
-1. Update `.claude/workflow-state.json` (mark research complete, set design in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "x-design"
-   - args: "{research findings and recommendations}"
+After research complete:
 
-On incomplete or branching research (manual):
-"Research complete. What's next?"
-- Option 1: `/x-design` (Recommended) - Make architectural decisions
-- Option 2: `/x-brainstorm` - Explore more options
-- Option 3: `/x-plan` - Start APEX workflow (requires approval)
-- Option 4: Done - Research complete
+<state-checkpoint phase="research" status="completed">
+  <file path=".claude/workflow-state.json">Mark research complete, set design in_progress</file>
+  <memory entity="workflow-state">phase: research -> completed; next: design</memory>
+</state-checkpoint>
+
+<workflow-gate type="choice" id="research-next">
+  <question>Research complete. What would you like to do next?</question>
+  <header>Next step</header>
+  <option key="design" recommended="true">
+    <label>Continue to Design</label>
+    <description>Make architectural decisions based on findings</description>
+  </option>
+  <option key="brainstorm">
+    <label>Explore More</label>
+    <description>Return to brainstorming with new insights</description>
+  </option>
+  <option key="plan" approval="required">
+    <label>Skip to Planning</label>
+    <description>Start APEX workflow — commits to implementation</description>
+  </option>
+  <option key="stop">
+    <label>Done</label>
+    <description>Research complete, review findings</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="design" skill="x-design" args="{research findings and recommendations}" />
+<workflow-chain on="brainstorm" skill="x-brainstorm" args="{new topics to explore}" />
+<workflow-chain on="plan" skill="x-plan" args="{research findings summary}" />
+<workflow-chain on="stop" action="end" />
 
 **CRITICAL**: Direct transition to `/x-plan` crosses the BRAINSTORM → APEX boundary and requires human approval.
 

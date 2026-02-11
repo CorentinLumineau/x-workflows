@@ -65,6 +65,11 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Run Quality Gates
 
+<agent-delegate role="test runner" subagent="x-tester" model="sonnet">
+  <prompt>Run full quality gates: lint, type-check, test, build — report pass/fail with details for each gate</prompt>
+  <context>APEX workflow verify phase — running all quality gates before code review</context>
+</agent-delegate>
+
 Execute all gates:
 
 ```bash
@@ -184,6 +189,11 @@ After completing verification:
    - `"phase: verify -> completed"`
    - `"next: review"`
 
+<state-checkpoint phase="verify" status="completed">
+  <file path=".claude/workflow-state.json">Mark verify complete, set review in_progress</file>
+  <memory entity="workflow-state">phase: verify -> completed; next: review</memory>
+</state-checkpoint>
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -233,6 +243,8 @@ After verification passes:
 2. Auto-invoke next skill via Skill tool:
    - skill: "x-review"
    - args: "review verified changes"
+
+<workflow-chain on="auto" skill="x-review" args="review verified changes" />
 
 On test failures (manual — stay in verify/implement):
 "Verification found {count} failures. Fix with /x-implement or investigate?"

@@ -70,6 +70,11 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Observe
 
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Search codebase for code related to the reported issue — trace dependencies, find error sources, gather context</prompt>
+  <context>Observation phase of DEBUG workflow — gathering symptoms and related code paths</context>
+</agent-delegate>
+
 Gather symptoms and context:
 
 1. **Error Messages** - Exact text, stack traces
@@ -78,6 +83,11 @@ Gather symptoms and context:
 4. **Recent Changes** - What changed before the issue appeared?
 
 ### Phase 2: Hypothesize
+
+<deep-think purpose="hypothesis formation" context="Generating and ranking diagnostic hypotheses from symptoms and evidence">
+  <purpose>Form and prioritize 2-3 hypotheses for root cause based on observed symptoms</purpose>
+  <context>Symptoms gathered in Phase 1; need structured reasoning to evaluate likelihood, testability, and potential impact of each hypothesis</context>
+</deep-think>
 
 Form 2-3 potential causes:
 
@@ -97,6 +107,11 @@ Evidence against: [What contradicts this]
 - Potential impact
 
 ### Phase 3: Test
+
+<agent-delegate role="debugger" subagent="x-debugger" model="sonnet">
+  <prompt>Validate hypotheses systematically — test most likely hypothesis first, design minimal reproduction, record results</prompt>
+  <context>Hypothesis testing phase of DEBUG workflow — need runtime investigation to confirm or refute root cause</context>
+</agent-delegate>
 
 Validate hypotheses systematically:
 
@@ -135,6 +150,11 @@ After root cause resolution:
    - `"phase: troubleshoot -> completed"`
    - `"root_cause: {summary}"`
    - `"next: {fix|implement|plan}"`
+
+<state-checkpoint phase="troubleshoot" status="completed">
+  <file path=".claude/workflow-state.json">Mark troubleshoot complete, set next phase based on resolution (fix/implement/plan)</file>
+  <memory entity="workflow-state">phase: troubleshoot -> completed; root_cause: {summary}; next: fix or implement or plan</memory>
+</state-checkpoint>
 
 </instructions>
 
@@ -188,19 +208,40 @@ For simple, clear fixes:
    - skill: "x-fix"
    - args: "{root cause and fix description}"
 
+<workflow-chain on="auto" skill="x-fix" args="{root cause and fix description}" />
+
 **Human approval required**: troubleshoot → implement (complex root cause)
 
 For complex fixes requiring implementation:
 1. Update `.claude/workflow-state.json` (mark troubleshoot complete, set implement pending)
 2. Present approval gate:
-   "Investigation found {root cause}. This requires implementation changes. Proceed with /x-implement?"
-   - Option 1: `/x-implement` - Full implementation (APEX workflow)
-   - Option 2: `/x-fix` - Try simpler approach first
-   - Option 3: `/x-plan` - Plan before implementing
-   - Option 4: Continue investigating
-3. On approval, invoke via Skill tool:
-   - skill: "x-implement" or "x-fix" or "x-plan"
-   - args: "{root cause analysis and recommended approach}"
+   "Investigation found {root cause}. This requires implementation changes."
+
+<workflow-gate type="choice" id="troubleshoot-resolve">
+  <question>Investigation found the root cause. This requires implementation changes. How would you like to proceed?</question>
+  <header>Resolution</header>
+  <option key="implement" recommended="true" approval="required">
+    <label>Full implementation</label>
+    <description>Start APEX workflow for comprehensive fix (scope expansion)</description>
+  </option>
+  <option key="fix">
+    <label>Try simpler fix</label>
+    <description>Attempt a targeted fix first</description>
+  </option>
+  <option key="plan">
+    <label>Plan first</label>
+    <description>Create implementation plan before coding</description>
+  </option>
+  <option key="continue">
+    <label>Continue investigating</label>
+    <description>Keep debugging for more clarity</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="implement" skill="x-implement" args="{root cause analysis and recommended approach}" />
+<workflow-chain on="fix" skill="x-fix" args="{root cause analysis and recommended approach}" />
+<workflow-chain on="plan" skill="x-plan" args="{root cause analysis and recommended approach}" />
+<workflow-chain on="continue" action="end" />
 
 </chaining-instruction>
 

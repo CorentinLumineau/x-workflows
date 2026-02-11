@@ -69,6 +69,10 @@ This skill activates:
 
 ### Phase 0: Confidence Check
 
+<workflow-gate options="use-teams,use-subagents,cancel" default="use-teams">
+Determine if task benefits from Agent Teams (multi-agent coordination) or if subagents suffice.
+</workflow-gate>
+
 Activate `@skills/interview/` if:
 - Task scope is unclear
 - Unsure if task benefits from parallelism
@@ -88,6 +92,10 @@ Activate `@skills/interview/` if:
 If subagents are better, suggest using `/x-implement` or `/x-analyze` with their built-in agent delegation instead.
 
 ### Phase 1: Task Analysis
+
+<deep-think purpose="team composition" context="Analyzing task for parallelizability, team size, coordination needs, and risk level">
+Reason about: independent work streams, optimal team size (2-5), coordination requirements, teammate model selection, and file ownership boundaries.
+</deep-think>
 
 Analyze the prompt to determine:
 

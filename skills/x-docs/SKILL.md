@@ -37,6 +37,10 @@ Analyze documentation state.
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
+<agent-delegate subagent="documentation writer" context="Large documentation generation or API documentation">
+Delegate to a documentation writer agent for comprehensive doc generation.
+</agent-delegate>
+
 ## Agent Delegation
 
 | Role | When | Characteristics |
@@ -54,6 +58,10 @@ Activate `@skills/interview/` if:
 - Breaking changes need documenting
 
 ### Phase 1: Documentation Analysis
+
+<workflow-gate options="generate,sync,verify,cleanup" default="sync">
+Determine documentation action based on user intent and detected drift.
+</workflow-gate>
 
 Determine what's needed:
 

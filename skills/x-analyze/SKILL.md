@@ -86,6 +86,16 @@ Determine analysis scope:
 Delegate to a **code reviewer** agent (read-only analysis):
 > "Analyze {scope} across all domains"
 
+<agent-delegate role="code reviewer" subagent="x-reviewer" model="sonnet">
+  <prompt>Analyze {scope} across quality, security, performance, and architecture domains</prompt>
+  <context>Full multi-domain code analysis for APEX workflow analyze phase</context>
+</agent-delegate>
+
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Search codebase for patterns and conventions related to {scope}</prompt>
+  <context>Pattern discovery to support multi-domain analysis</context>
+</agent-delegate>
+
 #### Quality Domain
 - [ ] SOLID adherence
 - [ ] DRY violations
@@ -111,6 +121,11 @@ Delegate to a **code reviewer** agent (read-only analysis):
 - [ ] Abstraction levels
 
 ### Phase 3: Issue Prioritization (Pareto)
+
+<deep-think purpose="prioritization" context="Analyzing codebase to prioritize findings by impact and risk">
+  <purpose>Apply Pareto 80/20 analysis to prioritize findings by severity and impact</purpose>
+  <context>Multiple issues identified across quality, security, performance, and architecture domains; need structured reasoning to classify and prioritize</context>
+</deep-think>
 
 Prioritize findings:
 
@@ -167,6 +182,11 @@ After completing analysis:
    - `"phase: analyze -> completed"`
    - `"next: plan"`
 
+<state-checkpoint phase="analyze" status="completed">
+  <file path=".claude/workflow-state.json">Mark analyze complete, set plan in_progress</file>
+  <memory entity="workflow-state">phase: analyze -> completed; next: plan</memory>
+</state-checkpoint>
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -216,6 +236,8 @@ After analysis complete:
 2. Auto-invoke next skill via Skill tool:
    - skill: "x-plan"
    - args: "{analysis summary with prioritized issues}"
+
+<workflow-chain on="auto" skill="x-plan" args="{analysis summary with prioritized issues}" />
 
 If critical issues found requiring immediate fix (manual):
 "Found {count} critical issues. Fix now with /x-fix or plan with /x-plan?"

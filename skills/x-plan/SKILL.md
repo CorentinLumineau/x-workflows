@@ -69,7 +69,23 @@ Activate `@skills/interview/` if:
    - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
 3. If no active workflow → Create new APEX workflow state at `plan` phase
 
+<plan-mode phase="exploration" trigger="after-interview">
+  <enter>After confidence gate passes and workflow state is checked, enter read-only exploration mode</enter>
+  <scope>Phases 1-3: scope assessment, track selection, plan design (read-only: Glob, Grep, Read only)</scope>
+  <exit trigger="plan-complete">Present plan for user approval via ExitPlanMode before any writes</exit>
+</plan-mode>
+
 ### Phase 1: Scope Assessment
+
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Analyze codebase for task scope: count affected files, identify layers, map dependencies for {task description}</prompt>
+  <context>Gathering scope signals for complexity assessment and track selection</context>
+</agent-delegate>
+
+<deep-think purpose="scope assessment" context="Breaking down task scope, dependencies, and risk for implementation planning">
+  <purpose>Assess task complexity to select the appropriate planning track (Quick/Standard/Enterprise)</purpose>
+  <context>Need to evaluate files affected, layers involved, dependencies, and breaking change potential</context>
+</deep-think>
 
 Analyze the task to estimate complexity:
 
@@ -129,17 +145,16 @@ Create story file:
 #### Enterprise Track
 Create initiative structure using `/x-initiative create`.
 
-### Phase 4: Update Workflow State
+### Phase 4: Plan Approval & Deferred Writes
 
-After plan creation:
+**Plan mode exits here** — ExitPlanMode presents the plan for user approval. All writes are deferred to after approval.
 
-1. Read `.claude/workflow-state.json`
-2. Mark `plan` phase as `"completed"` with timestamp and `"approved": true/false`
-3. Set `implement` phase as `"in_progress"` (only after user approval)
-4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: plan -> completed (approved)"`
-   - `"next: implement"`
+After user approves the plan:
+
+<state-checkpoint phase="plan" status="completed">
+  <file path=".claude/workflow-state.json">Mark plan complete with approved: true/false, set implement in_progress after approval</file>
+  <memory entity="workflow-state">phase: plan -> completed (approved); next: implement</memory>
+</state-checkpoint>
 
 </instructions>
 
@@ -187,16 +202,26 @@ When approval needed, structure question as:
 
 **Human approval required**: plan → implement
 
-After plan complete:
-1. Update `.claude/workflow-state.json` (mark plan complete, set implement pending)
-2. Present approval gate:
-   "Plan created ({track} track). Ready to implement?"
-   - Option 1: `/x-implement` (Recommended) - Start implementation
-   - Option 2: `/x-design` - Design architecture first
-   - Option 3: Stop - Review plan first
-3. On approval, invoke via Skill tool:
-   - skill: "x-implement"
-   - args: "{plan summary with task list}"
+<workflow-gate type="approval" id="plan-approval">
+  <question>Plan created. Ready to start implementation?</question>
+  <header>Approve plan</header>
+  <option key="implement" recommended="true" approval="required">
+    <label>Start Implementing</label>
+    <description>Begin TDD implementation of the plan</description>
+  </option>
+  <option key="design">
+    <label>Design First</label>
+    <description>Need architecture decisions before implementing</description>
+  </option>
+  <option key="stop">
+    <label>Review Plan</label>
+    <description>Review the plan before proceeding</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="implement" skill="x-implement" args="{plan summary with task list}" />
+<workflow-chain on="design" skill="x-design" args="{areas needing architecture decisions}" />
+<workflow-chain on="stop" action="end" />
 
 </chaining-instruction>
 

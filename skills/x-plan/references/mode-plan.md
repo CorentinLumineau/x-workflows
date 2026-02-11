@@ -45,6 +45,26 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ---
 
+### Plan Mode (Claude Code Native)
+
+After interview completes, **enter read-only plan mode** for safe exploration:
+
+| Phase | Inside Plan Mode | Available Tools |
+|-------|-----------------|-----------------|
+| Phase 1-3 | Yes (read-only sandbox) | Read, Glob, Grep, WebSearch, Task (explore) |
+| Phase 4 | No (exits plan mode) | All tools (write after approval) |
+
+**Track-specific behavior:**
+| Track | Plan Mode Usage |
+|-------|----------------|
+| Quick | EnterPlanMode → quick exploration → ExitPlanMode → chain to implement |
+| Standard | EnterPlanMode → deep exploration → ExitPlanMode → write story file → chain |
+| Enterprise | EnterPlanMode → initial scoping → ExitPlanMode → delegate to x-initiative |
+
+**Non-Claude Code platforms**: Plan mode is a no-op; existing exploration behavior is preserved.
+
+---
+
 ### Phase 1: Scope Assessment
 
 Analyze the task to estimate complexity:
@@ -105,7 +125,15 @@ Create story file:
 #### Enterprise Track
 Create initiative structure using `/x-initiative create`.
 
-### Phase 4: Workflow Transition
+### Phase 4: Plan Approval & Deferred Writes
+
+**Plan mode exits here** — `ExitPlanMode` presents the plan for user approval. All writes are deferred to after approval:
+
+1. ExitPlanMode (plan presented to user)
+2. User approves → story file written (Standard track) or initiative created (Enterprise track)
+3. workflow-state.json updated
+4. Memory MCP checkpoint saved
+5. Chain to x-implement
 
 Present next step:
 ```json

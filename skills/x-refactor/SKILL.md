@@ -75,6 +75,12 @@ Activate `@skills/interview/` if:
 **Before any refactoring, assess scope.**
 
 Use x-explorer agent to analyze:
+
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Analyze refactoring scope for: {user description} — count files that need changes, identify architectural impact, estimate complexity (small/medium/large)</prompt>
+  <context>Scope detection before refactoring — need file count, layers affected, complexity assessment</context>
+</agent-delegate>
+
 ```
 Task prompt: "Analyze refactoring scope for: {user description}
 - Count files that need changes
@@ -114,6 +120,11 @@ pnpm type-check
 
 ### Phase 2: Analysis
 
+<deep-think purpose="refactoring analysis" context="Identifying SOLID violations, code smells, and safe restructuring approach">
+  <purpose>Analyze code smells and determine optimal refactoring strategy with minimal risk</purpose>
+  <context>Need structured reasoning to identify refactoring opportunities, assess risk, and plan incremental steps</context>
+</deep-think>
+
 Analyze code for refactoring opportunities:
 
 | Smell | Refactoring |
@@ -128,6 +139,11 @@ Analyze code for refactoring opportunities:
 ### Phase 3: Incremental Refactoring
 
 **CRITICAL**: Small steps, verify after each.
+
+<agent-delegate role="refactoring agent" subagent="x-refactorer" model="sonnet">
+  <prompt>Apply incremental refactoring for {target} — one change at a time, run tests after each step, rollback on failure</prompt>
+  <context>Safe restructuring with zero regression guarantee — atomic commits per refactoring step</context>
+</agent-delegate>
 
 For each refactoring:
 1. **Make ONE change** - Single responsibility
@@ -162,6 +178,11 @@ After refactoring verified:
 5. Write to Memory MCP entity `"workflow-state"`:
    - `"phase: refactor -> completed"`
    - `"next: verify"`
+
+<state-checkpoint phase="refactor" status="completed">
+  <file path=".claude/workflow-state.json">Mark refactor complete, set verify in_progress</file>
+  <memory entity="workflow-state">phase: refactor -> completed; next: verify</memory>
+</state-checkpoint>
 
 </instructions>
 
@@ -212,6 +233,8 @@ After refactoring complete with all tests passing:
 2. Auto-invoke next skill via Skill tool:
    - skill: "x-verify"
    - args: "verify refactoring changes"
+
+<workflow-chain on="auto" skill="x-verify" args="verify refactoring changes" />
 
 On test failures (manual — stay in refactor/implement):
 "Refactoring caused {count} test failures. Fix or rollback?"

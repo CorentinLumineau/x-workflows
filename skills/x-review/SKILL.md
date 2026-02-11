@@ -102,6 +102,16 @@ Stale initiative documentation is classified as **Warning** severity (should fix
 
 ### Phase 2: Code Review — BLOCKING AUDIT
 
+<agent-delegate role="code reviewer" subagent="x-reviewer" model="sonnet">
+  <prompt>Review all changed files against SOLID, DRY, security, and test coverage enforcement rules</prompt>
+  <context>APEX workflow examine phase — systematic code review with blocking audit</context>
+</agent-delegate>
+
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Analyze patterns in changed files — check for convention violations and architectural consistency</prompt>
+  <context>Pattern analysis to support code review</context>
+</agent-delegate>
+
 For each changed file, audit against enforcement violation definitions.
 
 #### SOLID Audit (BLOCKING)
@@ -195,6 +205,11 @@ After completing review:
    - `"phase: review -> completed (approved)"`
    - `"next: commit"`
 
+<state-checkpoint phase="review" status="completed">
+  <file path=".claude/workflow-state.json">Mark review complete (approved: true/false), set commit in_progress on approval</file>
+  <memory entity="workflow-state">phase: review -> completed (approved); next: commit</memory>
+</state-checkpoint>
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -245,10 +260,26 @@ After review approved:
    - skill: "x-commit"
    - args: "commit reviewed changes"
 
+<workflow-chain on="auto" skill="x-commit" args="commit reviewed changes" />
+
 On changes requested (manual — loop back):
 "Review found issues to address. Return to /x-implement?"
-- Option 1: `/x-implement` - Fix issues
-- Option 2: Request exception (with justification)
+
+<workflow-gate type="choice" id="review-changes-requested">
+  <question>Review found issues to address. How would you like to proceed?</question>
+  <header>Review issues</header>
+  <option key="fix" recommended="true">
+    <label>Fix issues</label>
+    <description>Return to implementation to address review findings</description>
+  </option>
+  <option key="exception">
+    <label>Request exception</label>
+    <description>Proceed with justification for deferring fixes</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="fix" skill="x-implement" args="{review findings and issues to address}" />
+<workflow-chain on="exception" action="end" />
 
 </chaining-instruction>
 

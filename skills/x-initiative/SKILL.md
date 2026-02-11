@@ -14,6 +14,18 @@ metadata:
 
 Multi-phase project tracking across sessions using file-based persistence.
 
+## Plan Mode Integration
+
+In `create` mode, x-initiative uses plan mode for initial scoping:
+
+<plan-mode phase="initiative-scoping" trigger="create-mode">
+  <enter>Enter read-only mode for initial file discovery and scope assessment</enter>
+  <scope>Explore codebase to determine initiative structure (milestones, estimated effort)</scope>
+  <exit trigger="scoping-complete">Present initiative structure proposal for user approval before writing files</exit>
+</plan-mode>
+
+After approval, initiative files (README.md, milestone-*.md) are written.
+
 ## Modes
 
 | Mode | Description |
@@ -102,6 +114,10 @@ Canonical references for persistence implementation:
 - @skills/initiative/references/memory.md - Entity naming and Memory MCP operations
 
 ### Write Order (All State Changes)
+
+<state-checkpoint phase="initiative" status="milestone-progress">
+Cross-session initiative persistence via multi-layer write order: file checkpoint (L1), WORKFLOW-STATUS.yaml (L1), Memory MCP (L3), MEMORY.md (L2).
+</state-checkpoint>
 
 1. **initiative.json** (REQUIRED) — Primary checkpoint (L1: file)
 2. **WORKFLOW-STATUS.yaml** (REQUIRED) — Rich context (L1: file)

@@ -53,6 +53,10 @@ This skill activates:
 
 Activate `@skills/complexity-detection/` on the user's task description.
 
+<deep-think purpose="complexity assessment" context="Classifying user task for optimal workflow routing">
+Think step-by-step about: workflow intent (APEX/ONESHOT/DEBUG/BRAINSTORM), complexity tier (LOW/MEDIUM/HIGH/CRITICAL), recommended agent, variant selection, and suggested chain ordering.
+</deep-think>
+
 Determine:
 1. **Workflow intent** - APEX / ONESHOT / DEBUG / BRAINSTORM
 2. **Complexity tier** - LOW / MEDIUM / HIGH / CRITICAL
@@ -82,6 +86,10 @@ Present the assessment in a structured format:
 ### Phase 3: User Confirmation
 
 **CRITICAL: NEVER auto-invoke a workflow without explicit user confirmation.**
+
+<workflow-gate options="proceed,different-workflow,modify,cancel" default="proceed">
+Present routing assessment and wait for explicit user choice before continuing.
+</workflow-gate>
 
 Present options:
 1. **Proceed** - Execute the recommended workflow
@@ -167,6 +175,9 @@ When approval needed, structure question as:
 | User confirms ONESHOT | `/x-fix` | **HUMAN APPROVAL REQUIRED** |
 | User confirms DEBUG | `/x-troubleshoot` | **HUMAN APPROVAL REQUIRED** |
 | User confirms BRAINSTORM | `/x-brainstorm` | **HUMAN APPROVAL REQUIRED** |
+
+<workflow-chain on="proceed" skill="x-{confirmed-verb}" args="{workflow_type} workflow for: {user request}. Complexity: {tier}." />
+<workflow-chain on="cancel" action="end" />
 
 <chaining-instruction>
 

@@ -63,6 +63,10 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Completion Verification
 
+<workflow-gate options="archive,defer,cancel" default="archive">
+Confirm initiative is ready for archival — verify all milestones complete, tests passing, documentation updated.
+</workflow-gate>
+
 Verify initiative is ready for archival:
 
 ```markdown
@@ -150,6 +154,10 @@ Write `documentation/milestones/_archived/{name}.md`:
 Keep it **under 80 lines**. This is a reference document, not a copy of the initiative.
 
 ### Phase 4: Archive Operations
+
+<state-cleanup targets="initiative.json,WORKFLOW-STATUS.yaml,Memory-MCP-checkpoint">
+Remove initiative checkpoint, WORKFLOW-STATUS, and Memory MCP entity after successful archive.
+</state-cleanup>
 
 1. **Write executive summary**:
    ```bash

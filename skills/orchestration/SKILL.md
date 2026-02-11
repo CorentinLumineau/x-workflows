@@ -309,7 +309,36 @@ orchestration_state:
 | Dependent items | Must be sequential |
 | Quick fixes | Overhead not worth it |
 
+## When to Escalate to Agent Teams
+
+Orchestration uses subagents by default. Escalate to Agent Teams when subagent delegation is insufficient.
+
+### Escalation Triggers
+
+| Condition | Action | Team Pattern |
+|-----------|--------|-------------|
+| Batch >5 items AND items have cross-dependencies | Suggest team | Feature Team or Refactor Team |
+| Subagents would benefit from inter-agent communication | Suggest team | Based on complexity-detection Team field |
+| Multiple subagents need shared intermediate results | Suggest team | Debug Team or Research Team |
+
+### Subagents vs Teams
+
+| Characteristic | Subagents (default) | Agent Teams (escalated) |
+|---------------|---------------------|------------------------|
+| Task coupling | Independent, no shared state | Interdependent, shared task list |
+| Communication | Result-only (TaskOutput) | Bidirectional (SendMessage) |
+| Coordination | Fire-and-forget or sequential | Task dependencies, blocking |
+| Best for | Batch processing, parallel review | Multi-domain features, debugging |
+
+### Escalation Protocol
+
+1. **Read complexity-detection Team field** — if `Team: none`, use subagents
+2. **If Team pattern suggested** — advisory only, present option to user
+3. **Never auto-spawn teams** — teams require explicit user confirmation or command invocation (e.g., `/x-team`)
+4. **Fallback** — if team tools unavailable (no `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), continue with subagent delegation
+
 ## References
 
 - @skills/complexity-detection/ - Batch detection patterns
 - @skills/interview/ - Batch question integration
+- @skills/agent-awareness/ - Team composition patterns and model selection
