@@ -131,6 +131,22 @@ When background agents complete:
 4. Apply fixes in severity order
 5. Update checkpoint with aggregated state
 
+### Checkpoint Cleanup
+
+After orchestration completes (all batches done or workflow ends):
+
+1. **Delete orchestration checkpoint**: Remove the `orchestration-{timestamp}` entity from Memory MCP via `delete_entities`
+2. **Prune delegation-log**: Remove detailed batch observations, keep only the summary line (task, total agents, outcome, duration)
+3. **Update status**: Final checkpoint update with `"status: completed"` before deletion
+
+```yaml
+# Cleanup call
+delete_entities:
+  entityNames: ["orchestration-{timestamp}"]
+```
+
+**Graceful degradation**: If Memory MCP is unavailable, skip cleanup — entities will be pruned by x-commit's Phase 5 cleanup sweep.
+
 ## Integration with Workflow Skills
 
 ### With complexity-detection

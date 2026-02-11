@@ -29,6 +29,34 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ---
 
+### Phase 0b: Existing Initiative Guard (REQUIRED)
+
+Before creating a new initiative, check for an active one:
+
+1. Check if `.claude/initiative.json` exists
+2. Check if `documentation/milestones/_active/` contains any directories
+3. **If active initiative found**:
+   ```json
+   {
+     "questions": [{
+       "question": "Active initiative '{name}' exists ({progress}%). How to proceed?",
+       "header": "Conflict",
+       "options": [
+         {"label": "Archive first (Recommended)", "description": "Run /x-archive, then create new"},
+         {"label": "Continue existing", "description": "Resume the active initiative instead"},
+         {"label": "Force new", "description": "Create anyway (orphan risk: active files will remain)"}
+       ],
+       "multiSelect": false
+     }]
+   }
+   ```
+   - **Archive first** → Auto-chain to `/x-archive`, then return to create
+   - **Continue existing** → Switch to `/x-initiative continue` mode
+   - **Force new** → Warn about orphan risk, then proceed to Phase 1
+4. **If no active initiative** → Proceed to Phase 1
+
+---
+
 ### Phase 1: Initiative Scope
 
 Gather initiative details:

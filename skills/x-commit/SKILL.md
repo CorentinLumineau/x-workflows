@@ -130,10 +130,17 @@ After successful commit:
 1. Read `.claude/workflow-state.json`
 2. Mark `commit` phase as `"completed"` with timestamp
 3. Mark entire workflow as `"completed"` (move to `history` array)
-4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
+4. **Prune history**: Keep only the last 5 entries in the `history` array, remove older entries
+5. **Cleanup check**: If no active workflow remains (only completed history):
+   - Delete `.claude/workflow-state.json` entirely (prevents orphan accumulation)
+6. If active workflow remains, write updated state to `.claude/workflow-state.json`
+7. Write to Memory MCP entity `"workflow-state"`:
    - `"phase: commit -> completed"`
    - `"workflow: completed"`
+8. **Memory MCP cleanup** (best-effort):
+   - Search for `orchestration-*` entities → delete all related to this workflow
+   - Search for `delegation-log` → remove observations older than 7 days via `delete_observations`
+   - Search for `interview-state` → remove expired observations via `delete_observations`
 
 </instructions>
 
@@ -179,8 +186,9 @@ When approval needed, structure question as:
 **Terminal phase**: commit ends the workflow
 
 After commit created:
-1. Update `.claude/workflow-state.json` (mark workflow complete, move to history)
-2. Present options (no auto-chain — workflow is done):
+1. Update `.claude/workflow-state.json` (mark workflow complete, move to history, prune to max 5, delete file if no active workflow)
+2. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
+3. Present options (no auto-chain — workflow is done):
    "Commit created. What's next?"
    - Option 1: `/x-release` - Create release
    - Option 2: Done - Workflow complete

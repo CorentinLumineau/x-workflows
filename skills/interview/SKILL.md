@@ -105,6 +105,7 @@ Interview state uses the 3-layer persistence model:
        {
          "skill": "x-plan",
          "timestamp": "2026-02-10T14:00:00Z",
+         "expiresAt": "2026-02-11T14:00:00Z",
          "confidence": {
            "problem_understanding": 95,
            "context_completeness": 90,
@@ -119,6 +120,8 @@ Interview state uses the 3-layer persistence model:
      ]
    }
    ```
+
+   **TTL Rule**: Always set `expiresAt` to `timestamp + 24 hours` on each session entry.
 
 2. **L2: Auto-memory** — Update MEMORY.md only if a persistent user preference is discovered:
    ```
@@ -139,8 +142,13 @@ Interview state uses the 3-layer persistence model:
 
 1. Check conversation context (same session)
 2. Read `.claude/interview-state.json`
+   a. **TTL enforcement**: Check `expiresAt` on each session entry
+   b. Remove expired entries (where `expiresAt < now`)
+   c. If all entries expired → delete the file entirely
+   d. If valid entries remain → write back pruned file, use as baseline
 3. Search Memory MCP: `search_nodes("interview-state")`
-4. Use most recent data as baseline
+   a. Remove observations older than 24 hours via `delete_observations`
+4. Use most recent valid data as baseline
 
 ### Smart Bypass (Historical Confidence)
 
