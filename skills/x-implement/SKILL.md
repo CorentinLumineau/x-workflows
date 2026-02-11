@@ -149,6 +149,7 @@ Also enforce:
 - **DRY** - Don't Repeat Yourself
 - **KISS** - Keep It Simple
 - **YAGNI** - You Ain't Gonna Need It
+- **Patterns** - No God Objects (V-PAT-01), No circular dependencies (V-PAT-02)
 
 ### Phase 4: Quality Gates
 
@@ -179,6 +180,8 @@ pnpm build       # Build succeeds
 | Testing        | ✅/❌  | V-TEST-XX    | Pass / Fix needed |
 | SOLID          | ✅/⚠️  | V-SOLID-XX   | Pass / Flagged    |
 | DRY/KISS/YAGNI | ✅/⚠️  | V-DRY/KISS/YAGNI | Pass / Flagged |
+| Patterns       | ✅/⚠️  | V-PAT-XX     | Pass / Flagged    |
+| Pareto         | ✅/⚠️  | V-PARETO-XX  | Pass / Flagged    |
 | Documentation  | ✅/❌  | V-DOC-XX     | Pass / Fix needed |
 ```
 

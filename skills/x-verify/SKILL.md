@@ -123,7 +123,8 @@ Coverage thresholds are enforced. Violations BLOCK progression.
 
 Additional checks:
 1. **SOLID spot-check**: Flag obvious V-SOLID-01/V-SOLID-03 in new code
-2. **Doc completeness**: BLOCK if V-DOC-01 or V-DOC-02 detected
+2. **Pattern spot-check**: Flag obvious V-PAT-01 (God Objects) in new code
+3. **Doc completeness**: BLOCK if V-DOC-01 or V-DOC-02 detected
 
 If coverage is below target, suggest specific tests to add before proceeding.
 

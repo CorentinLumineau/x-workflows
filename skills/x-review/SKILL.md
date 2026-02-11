@@ -152,15 +152,21 @@ Check against @skills/code-code-quality/ violations:
 - [ ] Edge cases covered
 - [ ] Integration tests if needed
 
+#### Pareto Audit
+
+- [ ] No over-engineered solutions (V-PARETO-01: HIGH → BLOCK)
+- [ ] Check for simpler alternatives that deliver comparable value
+- [ ] Flag >3x complexity for marginal improvement
+
 ### Phase 3: Severity Classification — STRICT
 
 **CRITICAL (BLOCK):** V-SOLID-01, V-SOLID-03, V-TEST-01, V-TEST-05, V-TEST-06, V-DOC-02, V-PAT-01
 → MUST fix before approval. No exceptions.
 
-**HIGH (BLOCK):** V-SOLID-02, V-SOLID-04, V-SOLID-05, V-DRY-01, V-TEST-02, V-TEST-03, V-DOC-01, V-DOC-04, V-PAT-02, V-PAT-04, V-KISS-02, V-YAGNI-01
+**HIGH (BLOCK):** V-SOLID-02, V-SOLID-04, V-SOLID-05, V-DRY-01, V-TEST-02, V-TEST-03, V-DOC-01, V-DOC-04, V-PAT-02, V-PAT-04, V-KISS-02, V-YAGNI-01, V-PARETO-01
 → MUST fix OR escalate to user with justification.
 
-**MEDIUM (WARN):** V-DRY-02, V-DRY-03, V-KISS-01, V-YAGNI-02, V-TEST-04, V-TEST-07, V-DOC-03, V-PAT-03
+**MEDIUM (WARN):** V-DRY-02, V-DRY-03, V-KISS-01, V-YAGNI-02, V-TEST-04, V-TEST-07, V-DOC-03, V-PAT-03, V-PARETO-02, V-PARETO-03
 → Flag to user. Document if deferring.
 
 **LOW (INFO):** Style, minor improvements.
@@ -208,6 +214,7 @@ Generate review summary:
 | Testing        | ✅/⚠️  | V-TEST-XX    | Pass / Flagged    |
 | Documentation  | ✅/❌  | V-DOC-XX     | Pass / Fix needed |
 | Patterns       | ✅/⚠️  | V-PAT-XX     | Pass / Flagged    |
+| Pareto         | ✅/⚠️  | V-PARETO-XX  | Pass / Flagged    |
 ```
 
 **ANY ❌ = cannot proceed to /x-commit.**
@@ -319,8 +326,8 @@ On changes requested (manual — loop back):
 | Level | Action | Violation IDs |
 |-------|--------|---------------|
 | CRITICAL (BLOCK) | Must fix before approval | V-SOLID-01/03, V-TEST-01/05/06, V-DOC-02, V-PAT-01 |
-| HIGH (BLOCK) | Must fix or escalate with justification | V-SOLID-02/04/05, V-DRY-01, V-TEST-02/03, V-DOC-01/04, V-PAT-02/04 |
-| MEDIUM (WARN) | Flag to user, document if deferring | V-DRY-02/03, V-KISS-01, V-TEST-04/07, V-DOC-03, V-PAT-03 |
+| HIGH (BLOCK) | Must fix or escalate with justification | V-SOLID-02/04/05, V-DRY-01, V-TEST-02/03, V-DOC-01/04, V-PAT-02/04, V-PARETO-01 |
+| MEDIUM (WARN) | Flag to user, document if deferring | V-DRY-02/03, V-KISS-01, V-TEST-04/07, V-DOC-03, V-PAT-03, V-PARETO-02/03 |
 | LOW (INFO) | Note for awareness | Style, minor improvements |
 
 ## Critical Rules

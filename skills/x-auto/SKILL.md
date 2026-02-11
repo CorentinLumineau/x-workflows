@@ -103,13 +103,8 @@ Wait for explicit user choice before continuing.
 
 If user selects a DIFFERENT workflow than recommended (option 2: "Different workflow" or option 3: "Modify"):
 
-<state-checkpoint entity="delegation-log" trigger="user-override">
-Write routing correction to Memory MCP:
-  add_observations:
-    entityName: "delegation-log"
-    contents:
-      - "routing_correction: suggested {recommended_workflow}, user chose {user_choice} for {intent_type} at {timestamp}"
-</state-checkpoint>
+Write routing correction to Memory MCP entity `"delegation-log"`:
+- `"routing_correction: suggested {recommended_workflow}, user chose {user_choice} for {intent_type} at {timestamp}"`
 
 Log: "Routing preference recorded for future sessions"
 
