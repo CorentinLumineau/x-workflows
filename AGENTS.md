@@ -18,7 +18,7 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 | **DEBUG** | Error resolution | troubleshoot → fix/implement |
 | **BRAINSTORM** | Exploration/research | brainstorm ↔ research → design |
 
-## Verb Skills by Workflow (19)
+## Verb Skills by Workflow (23)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -47,24 +47,30 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 |------|---------|----------|
 | `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
 
-### UTILITY (8)
+### UTILITY (12)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
+| `/x-archive` | Initiative archival | archive, close initiative |
+| `/x-ask` | Zero-friction Q&A | ask, question |
+| `/x-auto` | Workflow auto-routing | auto, route |
 | `/x-commit` | Conventional commits | commit, git commit |
-| `/x-release` | Release workflow | release, tag, version |
+| `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
-| `/x-setup` | Project initialization | setup, scaffold |
-| `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
+| `/x-release` | Release workflow | release, tag, version |
+| `/x-setup` | Project initialization | setup, scaffold |
+| `/x-team` | Team orchestration | team, swarm, parallel |
 
-## Behavioral Skills (2)
+## Behavioral Skills (4)
 
 | Skill | Purpose |
 |-------|---------|
-| `interview` | Confidence gate (auto-triggered) |
+| `agent-awareness` | Agent delegation catalog (auto-triggered) |
 | `complexity-detection` | Routing logic (auto-triggered) |
+| `interview` | Confidence gate (auto-triggered) |
+| `orchestration` | Parallel coordination (auto-triggered) |
 
 ## Workflow Patterns
 
@@ -110,7 +116,7 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 No build required - pure markdown documentation.
 
 ```bash
-# Validate skill structure (should be 22 x-* + 3 behavioral = 25)
+# Validate skill structure (should be 23 x-* + 4 behavioral = 27)
 find skills -name "SKILL.md" | wc -l
 
 # Verify new verb skills exist
@@ -219,5 +225,5 @@ When modifying skills:
 
 ---
 
-**Version**: 1.0.0
+**Version**: 1.6.1
 **Compatibility**: skills.sh, Claude Code, Cursor, Copilot, Cline, Devin
