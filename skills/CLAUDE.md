@@ -40,14 +40,14 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 23 verb skills | `x-{verb}/` |
+| **x-workflows** | HOW to work | 24 verb skills | `x-{verb}/` |
 | **x-devsecops** | WHAT to know | 39 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 4 | documentation, initiative, interview, orchestration |
 | **behavioral** | Auto-triggered | 3 | agent-awareness, complexity-detection, context-awareness |
 
-**Total: 69 skills**
+**Total: 70 skills**
 
-## Verb Skills by Workflow (23)
+## Verb Skills by Workflow (24)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -76,7 +76,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |------|---------|----------|
 | `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
 
-### UTILITY (12)
+### UTILITY (13)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
 | `/x-archive` | Archive completed initiatives | archive, complete initiative |
@@ -86,6 +86,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
+| `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
 | `/x-release` | Release workflow | release, tag, version |

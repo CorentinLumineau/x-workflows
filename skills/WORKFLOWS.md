@@ -449,6 +449,7 @@ Resume anyway? State may be outdated.
 | `/x-release` | Release workflow |
 | `/x-docs` | Documentation management |
 | `/x-help` | Command reference |
+| `/x-quickwins` | Pareto-scored quick wins |
 
 ### UNCHANGED Skills
 
