@@ -139,6 +139,17 @@ for skill_dir in "$REPO_ROOT/skills"/x-*/; do
                 log_error "skills/$skill_name description must be single-line (found YAML multiline indicator)"
             else
                 log_success "skills/$skill_name has single-line description"
+
+                # Check: Description length (budget optimization)
+                desc_len=${#fm_desc_value}
+                if [[ $desc_len -gt 120 ]]; then
+                    log_warning "skills/$skill_name description is $desc_len chars (recommended: ≤120)"
+                fi
+
+                # Check: Description is YAML-safe (no unquoted colon-space that breaks parsing)
+                if echo "$fm_desc_value" | grep -qE ': [a-z]' && ! echo "$fm_desc_line" | grep -qE "^description: [\"']"; then
+                    log_warning "skills/$skill_name description contains ': ' — should be quoted to avoid YAML parse errors"
+                fi
             fi
         else
             log_error "skills/$skill_name is missing description field"
@@ -157,6 +168,56 @@ for skill_dir in "$REPO_ROOT/skills"/x-*/; do
             log_success "skills/$skill_name has license: Apache-2.0"
         else
             log_error "skills/$skill_name missing or incorrect license (expected 'Apache-2.0', got '$fm_license')"
+        fi
+    fi
+done
+
+# Check 6: Frontmatter description checks for behavioral skills (non x-* skills)
+echo ""
+echo "Checking frontmatter descriptions for behavioral skills..."
+for skill_dir in "$REPO_ROOT/skills"/*/; do
+    if [[ -d "$skill_dir" ]]; then
+        skill_name=$(basename "$skill_dir")
+
+        # Skip x-* workflow skills (already checked above)
+        if [[ "$skill_name" == x-* ]]; then
+            continue
+        fi
+
+        skill_file="${skill_dir}SKILL.md"
+        if [[ ! -f "$skill_file" ]]; then
+            continue  # Already caught by Check 2
+        fi
+
+        # Extract frontmatter (content between first two --- lines)
+        frontmatter=$(sed -n '/^---$/,/^---$/p' "$skill_file" | sed '1d;$d')
+
+        if [[ -z "$frontmatter" ]]; then
+            continue
+        fi
+
+        # Check: description exists
+        fm_desc_line=$(echo "$frontmatter" | grep -E '^description:' | head -1)
+        if [[ -n "$fm_desc_line" ]]; then
+            fm_desc_value=$(echo "$fm_desc_line" | sed 's/^description:[[:space:]]*//')
+
+            # Check: Description is single-line (no | or > YAML multiline)
+            if [[ "$fm_desc_value" == "|" || "$fm_desc_value" == ">" || "$fm_desc_value" == "|+" || "$fm_desc_value" == ">-" ]]; then
+                log_error "skills/$skill_name description must be single-line (found YAML multiline indicator)"
+            else
+                log_success "skills/$skill_name has single-line description"
+
+                # Check: Description length (budget optimization)
+                desc_len=${#fm_desc_value}
+                if [[ $desc_len -gt 120 ]]; then
+                    log_warning "skills/$skill_name description is $desc_len chars (recommended: ≤120)"
+                fi
+
+                # Check: Description is YAML-safe (no unquoted colon-space that breaks parsing)
+                if echo "$fm_desc_value" | grep -qE ': [a-z]' && ! echo "$fm_desc_line" | grep -qE "^description: [\"']"; then
+                    log_warning "skills/$skill_name description contains ': ' — should be quoted to avoid YAML parse errors"
+                fi
+            fi
         fi
     fi
 done

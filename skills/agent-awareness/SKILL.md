@@ -1,9 +1,6 @@
 ---
 name: agent-awareness
-description: |
-  Behavioral skill for agent delegation awareness. Provides agent catalog, decision matrix, and delegation patterns.
-  Auto-triggered at session start via context-awareness integration.
-  NOT user-invoked - this is a behavioral skill that enhances agent selection capabilities.
+description: Agent delegation awareness with catalog, decision matrix, and patterns. Auto-triggered.
 license: Apache-2.0
 allowed-tools:
   - Read
