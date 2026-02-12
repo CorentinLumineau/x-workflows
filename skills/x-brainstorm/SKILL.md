@@ -4,6 +4,7 @@ description: Transform vague ideas into structured requirements through guided d
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
+user-invocable: true
 metadata:
   author: ccsetup contributors
   version: "1.0.0"

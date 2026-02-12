@@ -4,6 +4,7 @@ description: Transform raw prompts into well-structured, XML-tagged prompts opti
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read AskUserQuestion
+user-invocable: true
 metadata:
   author: ccsetup contributors
   version: "1.1.0"

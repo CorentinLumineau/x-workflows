@@ -4,6 +4,7 @@ description: Generate best-practice-compliant plugin components through interact
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob
+user-invocable: true
 metadata:
   author: ccsetup contributors
   version: "1.0.0"

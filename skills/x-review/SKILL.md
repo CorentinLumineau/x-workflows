@@ -4,6 +4,7 @@ description: Pre-merge validation with quality checks and code review.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
+user-invocable: true
 metadata:
   author: ccsetup contributors
   version: "2.0.0"

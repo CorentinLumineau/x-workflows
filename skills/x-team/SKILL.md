@@ -4,6 +4,7 @@ description: Orchestrate teams of Claude Code sessions for parallel collaborativ
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent. Claude Code Agent Teams provides the richest multi-agent experience.
 allowed-tools: Read Grep Glob Bash
+user-invocable: true
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
