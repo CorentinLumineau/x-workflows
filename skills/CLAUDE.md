@@ -40,14 +40,13 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 24 verb skills | `x-{verb}/` |
-| **x-devsecops** | WHAT to know | 39 knowledge skills | `{category}-{skill}/` |
+| **x-workflows** | HOW to work | 25 workflow skills | `x-{verb}/` |
+| **x-devsecops** | WHAT to know | 42 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 4 | documentation, initiative, interview, orchestration |
-| **behavioral** | Auto-triggered | 3 | agent-awareness, complexity-detection, context-awareness |
 
-**Total: 70 skills**
+**Total: 71 skills**
 
-## Verb Skills by Workflow (24)
+## Verb Skills by Workflow (25)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -86,6 +85,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
+| `/x-issue` | Issue-driven development | issue, gitea issue |
 | `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
