@@ -1,25 +1,25 @@
 ---
 name: x-create
-description: Generate best-practice-compliant plugin components through interactive wizards.
+description: Ecosystem-aware creation wizard. Scans for duplicates, routes to correct repo, consults best practices.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob
 user-invocable: true
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 ---
 
 # x-create
 
-Generate best-practice-compliant plugin components through interactive wizards.
+Ecosystem-aware creation wizard for plugin components. Scans the existing ecosystem before generating to prevent duplicates, enforce routing rules, and apply current best practices.
 
 ## Modes
 
 | Mode | Description |
 |------|-------------|
-| skill (default) | Create behavioral skill |
+| skill (default) | Create behavioral or workflow skill |
 | command | Create slash command |
 | agent | Create subagent |
 
@@ -30,9 +30,30 @@ Generate best-practice-compliant plugin components through interactive wizards.
 | "agent", "subagent", "worker" | agent |
 | (default) | skill |
 
+## Agent Delegation
+
+| Role | Model | Purpose |
+|------|-------|---------|
+| claude code guide | haiku | Query current Claude Code best practices for component creation |
+
+## MCP Servers
+
+| Server | Tool | Purpose |
+|--------|------|---------|
+| sequential-thinking | sequentialthinking | Structured reasoning for routing decisions |
+
 ## Execution
-- **Default mode**: skill
-- **No-args behavior**: Ask what to create
+
+Pipeline: **0.5 → 0.6 → 0.7 → 0.8 → mode file**
+
+- **0.5** Scope Detection (existing — unchanged)
+- **0.6** Ecosystem Scan (NEW — dedup, related components)
+- **0.7** Smart Routing (NEW — correct repo + path)
+- **0.8** Guide Consultation (NEW — current best practices)
+- **mode** Mode-specific wizard (skill/command/agent)
+
+**Default mode**: skill
+**No-args behavior**: Ask what to create
 
 ## Scope Detection
 
@@ -73,6 +94,62 @@ scopes:
 2. **Show** detected scope: "Detected scope: **{scope}** (`{root_path}`)"
 3. **Confirm** with user or allow override
 4. **Resolve** all `{scope.paths.*}` templates using confirmed scope
+
+### Phase 0.6: Ecosystem Scan
+
+Scan the existing ecosystem to prevent duplicates and show context.
+
+**Protocol**: See `references/ecosystem-catalog.md` for full scan protocol.
+
+1. **Glob** all existing components in detected scope:
+   - `{plugin_root}/skills/*/SKILL.md` → Skills
+   - `{plugin_root}/agents/*.md` → Agents
+   - `{plugin_root}/commands/*.md` → Commands
+2. **Parse** frontmatter from each (name, description, category)
+3. **Duplicate check**:
+   - Exact name match → **BLOCK** (show existing, confirm intent)
+   - Similar name (edit distance < 3) → **WARN** (show similar, suggest review)
+4. **Show related** components in same category/scope
+5. **Summary**: "{total} skills, {n} in {category}, {duplicates} potential conflicts"
+
+If scan finds 0 components, report "Empty ecosystem" and proceed.
+
+### Phase 0.7: Smart Routing
+
+Determine the correct repository and path for the new component.
+
+<deep-think trigger="routing-decision">
+<purpose>Analyze the component being created and determine the correct target repository and path based on routing rules. Consider: Is this a workflow skill (x-*), behavioral skill, knowledge skill, agent, or command? Does the source repo exist locally?</purpose>
+<context>Reference routing-rules.md for the complete decision tree. Check if ../x-workflows or ../x-devsecops exists relative to the current workspace.</context>
+</deep-think>
+
+**Protocol**: See `references/routing-rules.md` for full decision tree.
+
+1. **Classify** the component:
+   - Workflow skill (x-*) → target: x-workflows
+   - Behavioral skill → target: x-workflows
+   - Knowledge skill → target: x-devsecops
+   - Agent/Command → target: current scope (plugin/project/user)
+2. **Smart detection**: Check if target source repo exists locally
+   - Look for `../x-workflows` or `../x-devsecops` relative to workspace
+   - If found → create directly in source repo
+   - If not found → create locally + add `<!-- TODO: migrate to {repo} -->` note
+3. **Resolve path**: Apply routing rules to determine exact file path
+4. **Show routing**: "Will create at: `{resolved_path}` ({reason})"
+
+### Phase 0.8: Guide Consultation
+
+Query current Claude Code best practices for the component type being created.
+
+<agent-delegate role="claude code guide" model="haiku">
+<prompt>What are current Claude Code best practices for creating a {component_type}? Include: recommended file structure, frontmatter fields, naming conventions, and any recent changes to the command/skill/agent format. Focus on practical patterns, not theory.</prompt>
+<context>Creating a {component_type} named "{name}" in {scope} scope. Purpose: {description}</context>
+</agent-delegate>
+
+1. **Query** the Claude Code guide for current patterns
+2. **Extract** actionable recommendations (file structure, frontmatter, naming)
+3. **Carry forward** recommendations into the mode-specific wizard phases
+4. **Fallback**: If delegation is unavailable, use the static boilerplates in mode files
 
 ## Behavioral Skills
 
@@ -150,6 +227,8 @@ All created components must pass:
 
 ## When to Load References
 
+- **For ecosystem scan protocol**: See `references/ecosystem-catalog.md`
+- **For routing decisions**: See `references/routing-rules.md`
 - **For skill mode**: See `references/mode-skill.md`
 - **For command mode**: See `references/mode-command.md`
 - **For agent mode**: See `references/mode-agent.md`
