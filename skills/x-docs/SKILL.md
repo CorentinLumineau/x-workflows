@@ -146,7 +146,7 @@ x-docs is automatically triggered after implementation:
 
 ```
 APEX Flow:
-x-plan → x-implement → x-verify → [x-docs sync] → x-review → x-commit
+x-plan → x-implement → x-verify → [x-docs sync] → x-review → git-create-commit
                                        ↑
                                  AUTO-TRIGGERED
 ```
@@ -157,7 +157,7 @@ x-plan → x-implement → x-verify → [x-docs sync] → x-review → x-commit
 |-------|------|
 | x-implement completes | sync |
 | Before x-review | verify |
-| Before x-commit | verify |
+| Before git-create-commit | verify |
 
 ## Documentation Principles
 

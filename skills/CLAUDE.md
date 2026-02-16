@@ -81,15 +81,15 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-archive` | Archive completed initiatives | archive, complete initiative |
 | `/x-ask` | Zero-friction Q&A | ask, question, how |
 | `/x-auto` | Auto-routing command | auto, route |
-| `/x-commit` | Conventional commits | commit, git commit |
+| `/git-create-commit` | Conventional commits | commit, git commit |
 | `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
-| `/x-issue` | Issue-driven development | issue, gitea issue |
+| `/git-implement-issue` | Issue-driven development | issue, gitea issue |
 | `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
-| `/x-release` | Release workflow | release, tag, version |
+| `/git-create-release` | Release workflow | release, tag, version |
 | `/x-setup` | Project initialization | setup, scaffold |
 | `/x-team` | Team orchestration | team, parallel, swarm |
 
@@ -128,12 +128,12 @@ Skills are prefixed by category for organization:
 
 ### Feature Development (APEX)
 ```
-/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /x-commit
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-create-commit
 ```
 
 ### Quick Bug Fix (ONESHOT)
 ```
-/x-fix → /x-verify (optional) → /x-commit
+/x-fix → /x-verify (optional) → /git-create-commit
 ```
 
 ### Investigation (DEBUG)

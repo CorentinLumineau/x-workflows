@@ -145,7 +145,7 @@ Present next step based on review:
     "question": "Review passed. Ready to merge?",
     "header": "Next",
     "options": [
-      {"label": "/x-commit (Recommended)", "description": "Create merge commit"},
+      {"label": "/git-create-commit (Recommended)", "description": "Create merge commit"},
       {"label": "Stop", "description": "Manual merge"}
     ],
     "multiSelect": false

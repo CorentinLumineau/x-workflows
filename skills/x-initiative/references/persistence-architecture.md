@@ -49,7 +49,7 @@ State Change Event
 
 ### Workflow Completion Write Protocol
 
-When a workflow reaches a TERMINAL phase (x-commit, x-archive), ALL 3 layers
+When a workflow reaches a TERMINAL phase (git-create-commit, x-archive), ALL 3 layers
 receive a mandatory completion write:
 
 | Layer | Write | Content | Mandatory? |

@@ -9,6 +9,15 @@ metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
+chains-to:
+  - skill: x-plan
+    condition: "ready to build"
+    auto: false
+chains-from:
+  - skill: x-brainstorm
+    auto: true
+  - skill: x-research
+    auto: true
 ---
 
 # /x-design

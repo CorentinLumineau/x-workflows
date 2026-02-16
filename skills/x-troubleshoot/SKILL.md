@@ -9,6 +9,14 @@ metadata:
   author: ccsetup contributors
   version: "2.0.0"
   category: workflow
+chains-to:
+  - skill: x-fix
+    condition: "simple fix found"
+    auto: true
+  - skill: x-implement
+    condition: "complex fix needed"
+    auto: false
+chains-from: []
 ---
 
 # /x-troubleshoot

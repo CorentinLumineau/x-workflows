@@ -9,6 +9,16 @@ metadata:
   author: ccsetup contributors
   version: "2.0.0"
   category: workflow
+chains-to:
+  - skill: git-create-commit
+    condition: "review approved"
+    auto: true
+  - skill: x-implement
+    condition: "changes requested"
+    auto: false
+chains-from:
+  - skill: x-verify
+    auto: true
 ---
 
 # /x-review
@@ -23,7 +33,7 @@ metadata:
 | **Phase** | examine (X) |
 | **Position** | 5 of 6 in workflow |
 
-**Flow**: `x-verify` → **`x-review`** → `x-commit`
+**Flow**: `x-verify` → **`x-review`** → `git-create-commit`
 
 ## Intention
 
@@ -108,7 +118,7 @@ Stale initiative documentation is classified as **Warning** severity (should fix
 
 Compare implementation against the plan, issue, or user request:
 
-1. **Identify the spec source**: plan from `/x-plan`, issue from `/x-issue`, or user request from conversation
+1. **Identify the spec source**: plan from `/x-plan`, issue from `/git-implement-issue`, or user request from conversation
 2. **Check implementation completeness**:
    - [ ] All requirements from spec are implemented
    - [ ] No scope creep (code not in requirements)
@@ -280,7 +290,7 @@ Generate review summary:
 | Pareto         | ✅/⚠️  | V-PARETO-XX  | Pass / Flagged    |
 ```
 
-**ANY ❌ = cannot proceed to /x-commit.**
+**ANY ❌ = cannot proceed to /git-create-commit.**
 
 ### Phase 5: Update Workflow State
 
@@ -332,11 +342,11 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verb**: `/x-commit`
+**Next Verb**: `/git-create-commit`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
-| Review approved | `/x-commit` | Yes |
+| Review approved | `/git-create-commit` | Yes |
 | Changes requested | `/x-implement` | No (show feedback) |
 | Critical issues | Block | No (require fix) |
 
@@ -347,10 +357,10 @@ When approval needed, structure question as:
 After review approved:
 1. Update `.claude/workflow-state.json` (mark review complete, set commit in_progress)
 2. Auto-invoke next skill via Skill tool:
-   - skill: "x-commit"
+   - skill: "git-create-commit"
    - args: "commit reviewed changes"
 
-<workflow-chain on="auto" skill="x-commit" args="commit reviewed changes" />
+<workflow-chain on="auto" skill="git-create-commit" args="commit reviewed changes" />
 
 On changes requested (manual — loop back):
 "Review found issues to address. Return to /x-implement?"
@@ -411,7 +421,7 @@ On changes requested (manual — loop back):
 |-----------|------|------|
 | Previous | `/x-verify` | Need more verification |
 | Previous | `/x-implement` | Need to fix issues |
-| Next | `/x-commit` | Review approved |
+| Next | `/git-create-commit` | Review approved |
 
 ## Success Criteria
 

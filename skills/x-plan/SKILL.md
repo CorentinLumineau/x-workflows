@@ -9,6 +9,17 @@ metadata:
   author: ccsetup contributors
   version: "2.0.0"
   category: workflow
+chains-to:
+  - skill: x-implement
+    condition: "plan approved"
+    auto: false
+chains-from:
+  - skill: x-analyze
+    auto: true
+  - skill: git-implement-issue
+    auto: true
+  - skill: x-design
+    auto: false
 ---
 
 # /x-plan

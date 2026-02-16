@@ -23,7 +23,7 @@ metadata:
 | **Phase** | N/A |
 | **Position** | End of any workflow |
 
-**Flow**: `[any workflow]` → **`x-commit`** → `[optional: x-release]`
+**Flow**: `[any workflow]` → **`x-commit`** → `[optional: git-create-release]`
 
 ## Intention
 
@@ -309,12 +309,12 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verbs**: `/x-review`, `/x-release`
+**Next Verbs**: `/x-review`, `/git-create-release`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
 | "create PR", "review" | `/x-review` | No (suggest) |
-| "release", "tag" | `/x-release` | No (suggest) |
+| "release", "tag" | `/git-create-release` | No (suggest) |
 | "done" | Stop | Yes |
 
 <chaining-instruction>
@@ -339,7 +339,7 @@ After all commits created:
   </option>
 </workflow-gate>
 
-<workflow-chain on="release" skill="x-release" args="{commit summary}" />
+<workflow-chain on="release" skill="git-create-release" args="{commit summary}" />
 <workflow-chain on="done" action="end" />
 
 </chaining-instruction>
@@ -467,7 +467,7 @@ Verification: All checks passed
 | Direction | Verb | When |
 |-----------|------|------|
 | Next (review) | `/x-review` | Want PR review |
-| Next (release) | `/x-release` | Ready for release |
+| Next (release) | `/git-create-release` | Ready for release |
 | Done | Stop | Commit(s) complete |
 
 ## Success Criteria

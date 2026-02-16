@@ -101,7 +101,7 @@ For each stale doc:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
-      {"label": "/x-commit", "description": "Commit doc updates"},
+      {"label": "/git-create-commit", "description": "Commit doc updates"},
       {"label": "Stop", "description": "Review updates first"}
     ],
     "multiSelect": false

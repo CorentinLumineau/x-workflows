@@ -11,6 +11,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.0.0] - 2026-02-16
+
+### Added
+- **11 new git-* workflow skills** (git-forge-layer initiative):
+  - `git-create-issue` - Create issues on GitHub/Gitea
+  - `git-implement-issue` - Issue-driven development orchestrator
+  - `git-check-ci` - Monitor CI pipeline status
+  - `git-review-pr` - Structured code review
+  - `git-merge-pr` - PR merge with strategy selection
+  - `git-resolve-conflict` - Interactive merge conflict resolution
+  - `git-cleanup-branches` - Safe stale branch cleanup
+  - `git-create-pr` - Cross-forge PR creation
+  - `git-create-commit` - Renamed from x-commit (breaking)
+  - `git-create-release` - Renamed from x-release (breaking)
+  - `git-sync-remotes` - Renamed from sync-remotes (breaking)
+- **4 new behavioral skills**:
+  - `forge-awareness` - Auto-detect GitHub/Gitea forge type
+  - `ci-awareness` - CI pipeline detection and status monitoring
+  - `permission-awareness` - Safe operation boundary enforcement
+  - `error-recovery` - Graceful error handling with chain suggestions
+- **2 enhanced behavioral skills**:
+  - `context-awareness` - Added forge/CI context loading
+  - `orchestration` - Added git-* skill coordination patterns
+- **Workflow chaining frontmatter** (`chains-to`/`chains-from`) added to all 23 workflow skills
+
+### Changed
+- **BREAKING**: `x-commit` renamed to `git-create-commit`
+- **BREAKING**: `x-release` renamed to `git-create-release`
+- **BREAKING**: `x-issue` renamed to `git-implement-issue`
+- **BREAKING**: `sync-remotes` moved from ccsetup to `git-sync-remotes`
+- Updated 39 files with cross-reference renames
+- All skill frontmatter now includes declarative chaining metadata
+
+---
+
 ## [1.0.1] - 2026-02-04
 
 ### Changed
@@ -117,7 +152,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/CorentinLumineau/x-workflows/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/CorentinLumineau/x-workflows/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/CorentinLumineau/x-workflows/compare/v1.14.0...v2.0.0
 [1.0.1]: https://github.com/CorentinLumineau/x-workflows/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/CorentinLumineau/x-workflows/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/CorentinLumineau/x-workflows/compare/v0.3.2...v0.4.0

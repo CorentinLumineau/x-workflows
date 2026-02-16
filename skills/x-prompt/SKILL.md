@@ -88,15 +88,15 @@ Suggestions appear **outside** the XML output (not inside the copied prompt) as 
 | test, verify, lint, quality, coverage | `/x-verify` | APEX |
 | review, PR, code review, security review | `/x-review` | APEX |
 | document, docs, readme, API docs | `/x-docs` | UTILITY |
-| release, version, tag, changelog | `/x-release` | UTILITY |
+| release, version, tag, changelog | `/git-create-release` | UTILITY |
 | setup, scaffold, initialize, bootstrap | `/x-setup` | UTILITY |
 
 ### Workflow Chains
 
 | Workflow | Slash Command Chain |
 |----------|---------------------|
-| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/x-commit` |
-| **ONESHOT** | `/x-fix` → `/x-verify` (optional) → `/x-commit` |
+| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-create-commit` |
+| **ONESHOT** | `/x-fix` → `/x-verify` (optional) → `/git-create-commit` |
 | **DEBUG** | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
 | **BRAINSTORM** | `/x-brainstorm` ↔ `/x-research` → `/x-design` → `/x-plan` |
 

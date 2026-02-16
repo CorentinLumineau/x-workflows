@@ -9,6 +9,16 @@ metadata:
   author: ccsetup contributors
   version: "2.0.0"
   category: workflow
+chains-to:
+  - skill: x-design
+    condition: "found answer"
+    auto: true
+  - skill: x-brainstorm
+    condition: "more exploration needed"
+    auto: true
+chains-from:
+  - skill: x-brainstorm
+    auto: true
 ---
 
 # /x-research

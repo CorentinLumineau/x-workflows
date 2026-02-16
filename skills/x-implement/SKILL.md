@@ -9,6 +9,23 @@ metadata:
   author: ccsetup contributors
   version: "3.0.0"
   category: workflow
+chains-to:
+  - skill: x-verify
+    condition: "after implementation"
+    auto: true
+  - skill: x-refactor
+    condition: "restructure needed"
+    auto: false
+  - skill: git-resolve-conflict
+    condition: "conflict during dev"
+    auto: false
+chains-from:
+  - skill: x-plan
+    auto: false
+  - skill: x-troubleshoot
+    auto: false
+  - skill: git-implement-issue
+    auto: true
 ---
 
 # /x-implement

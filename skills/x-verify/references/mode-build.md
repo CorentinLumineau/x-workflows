@@ -106,7 +106,7 @@ Present next step:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Run full quality gates"},
-      {"label": "/x-commit", "description": "Commit build changes"},
+      {"label": "/git-create-commit", "description": "Commit build changes"},
       {"label": "Stop", "description": "Build complete"}
     ],
     "multiSelect": false

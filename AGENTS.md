@@ -53,13 +53,13 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 | `/x-archive` | Initiative archival | archive, close initiative |
 | `/x-ask` | Zero-friction Q&A | ask, question |
 | `/x-auto` | Workflow auto-routing | auto, route |
-| `/x-commit` | Conventional commits | commit, git commit |
+| `/git-create-commit` | Conventional commits | commit, git commit |
 | `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
-| `/x-release` | Release workflow | release, tag, version |
+| `/git-create-release` | Release workflow | release, tag, version |
 | `/x-setup` | Project initialization | setup, scaffold |
 | `/x-team` | Team orchestration | team, swarm, parallel |
 
@@ -76,12 +76,12 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 
 **APEX - Feature Development:**
 ```
-/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /x-commit
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-create-commit
 ```
 
 **ONESHOT - Quick Bug Fix:**
 ```
-/x-fix → [optional: /x-verify] → /x-commit
+/x-fix → [optional: /x-verify] → /git-create-commit
 ```
 
 **DEBUG - Investigation:**
@@ -120,7 +120,7 @@ No build required - pure markdown documentation.
 find skills -name "SKILL.md" | wc -l
 
 # Verify new verb skills exist
-for skill in x-brainstorm x-design x-analyze x-refactor x-fix x-commit x-release; do
+for skill in x-brainstorm x-design x-analyze x-refactor x-fix git-create-commit git-create-release; do
   [ -f "skills/$skill/SKILL.md" ] || echo "MISSING: skills/$skill/SKILL.md"
 done
 

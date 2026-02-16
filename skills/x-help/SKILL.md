@@ -80,8 +80,8 @@ Display available verb commands organized by workflow:
 **UTILITY:**
 | Verb | Purpose |
 |------|---------|
-| `/x-commit` | Conventional commits |
-| `/x-release` | Release workflow |
+| `/git-create-commit` | Conventional commits |
+| `/git-create-release` | Release workflow |
 | `/x-docs` | Documentation management |
 | `/x-help` | Command reference (this) |
 | `/x-initiative` | Multi-session tracking |
@@ -93,12 +93,12 @@ Display available verb commands organized by workflow:
 
 **Feature Development (APEX):**
 ```
-/x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /x-commit
+/x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /git-create-commit
 ```
 
 **Quick Bug Fix (ONESHOT):**
 ```
-/x-fix → /x-verify (optional) → /x-commit
+/x-fix → /x-verify (optional) → /git-create-commit
 ```
 
 **Investigation (DEBUG):**
@@ -128,7 +128,7 @@ Display available verb commands organized by workflow:
 
 ### APEX Full Flow
 ```
-/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /x-commit
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-create-commit
 ```
 **Note:** Plan approval required before implementation.
 

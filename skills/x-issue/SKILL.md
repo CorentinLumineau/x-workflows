@@ -269,7 +269,7 @@ EOF
 6. **Update workflow state**:
    - Mark `pr` phase as `"completed"`
    - Mark workflow as `"completed"`
-   - Clean up `.claude/workflow-state.json` per x-commit cleanup protocol
+   - Clean up `.claude/workflow-state.json` per git-create-commit cleanup protocol
 
 </instructions>
 
@@ -390,5 +390,5 @@ Detects existing `feature-branch.42` → asks user to switch or recreate → con
 ## References
 
 - @skills/x-auto/ - Task routing and complexity assessment
-- @skills/x-commit/ - Workflow state management patterns
+- @skills/git-create-commit/ - Workflow state management patterns
 - @skills/complexity-detection/ - Shared complexity detection logic

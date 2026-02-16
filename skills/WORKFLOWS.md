@@ -23,7 +23,7 @@ All verb skills operate within one of 4 canonical workflows. Each workflow repre
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           APEX WORKFLOW                                  │
 │                                                                          │
-│   /x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /x-commit│
+│   /x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /git-create-commit│
 │       (A)        (P)         (E)           (X)        (X)                │
 │                                                                          │
 │                     ↓ (restructure needed)                               │
@@ -40,7 +40,7 @@ All verb skills operate within one of 4 canonical workflows. Each workflow repre
 | **E**xecute | `/x-implement` | Write code with TDD | Plan approved |
 | **X** (Verify) | `/x-verify` | Run quality gates | Code written |
 | **X** (Examine) | `/x-review` | Code review, audits | Tests pass |
-| Commit | `/x-commit` | Conventional commit | Review approved |
+| Commit | `/git-create-commit` | Conventional commit | Review approved |
 
 ### Sub-flow: Refactoring
 
@@ -61,7 +61,7 @@ When restructuring is needed during implementation:
 | x-refactor | x-verify | Refactor complete | Yes |
 | x-verify | x-review | Tests pass | Yes |
 | x-verify | x-implement | Tests fail | No (show failures) |
-| x-review | x-commit | Review approved | Yes |
+| x-review | git-create-commit | Review approved | Yes |
 | x-review | x-implement | Changes requested | No (show feedback) |
 
 ### Complexity Triggers
@@ -82,7 +82,7 @@ When restructuring is needed during implementation:
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         ONESHOT WORKFLOW                                 │
 │                                                                          │
-│                    /x-fix → [/x-verify] → /x-commit                      │
+│                    /x-fix → [/x-verify] → /git-create-commit                      │
 │                                                                          │
 │   Characteristics:                                                       │
 │   - Single file/component                                                │
@@ -97,14 +97,14 @@ When restructuring is needed during implementation:
 |-------|------|-------------|------------------|
 | Fix | `/x-fix` | Apply targeted fix | Clear error identified |
 | Verify (optional) | `/x-verify` | Quick sanity check | User requests |
-| Commit | `/x-commit` | Quick commit | Fix applied |
+| Commit | `/git-create-commit` | Quick commit | Fix applied |
 
 ### Chaining Rules
 
 | From | To | Trigger | Auto-Chain |
 |------|-----|---------|------------|
 | x-fix | x-verify | "verify first" | No (ask) |
-| x-fix | x-commit | **Quick commit** | **HUMAN APPROVAL** |
+| x-fix | git-create-commit | **Quick commit** | **HUMAN APPROVAL** |
 
 ### Detection Patterns
 
@@ -140,7 +140,7 @@ If fix turns out to be more complex:
 │                    │                 │                                   │
 │                /x-fix          /x-implement                              │
 │                    │                 │                                   │
-│              /x-commit         (APEX flow)                               │
+│              /git-create-commit         (APEX flow)                               │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -235,7 +235,7 @@ Some situations require switching between workflows.
 |------|-----|-------------------|--------|
 | x-design (BRAINSTORM) | x-plan (APEX) | **YES** | Commits to implementation |
 | x-troubleshoot (DEBUG) | x-implement (APEX) | **YES** | Expands scope |
-| x-review (APEX) | x-release (UTILITY) | **YES** | Production deployment |
+| x-review (APEX) | git-create-release (UTILITY) | **YES** | Production deployment |
 | x-fix (ONESHOT) | x-troubleshoot (DEBUG) | No | Escalation |
 | x-fix (ONESHOT) | x-implement (APEX) | No | Escalation |
 
@@ -301,7 +301,7 @@ After each verb skill completes:
 |------|-------------|-----------|
 | **Auto-chain** | Next skill invoked automatically | Low-risk transitions within a workflow |
 | **Human approval** | User must confirm before proceeding | Scope expansion, workflow boundary crossing, commits |
-| **Terminal** | Workflow ends, no auto-chain | Final phase (x-commit) |
+| **Terminal** | Workflow ends, no auto-chain | Final phase (git-create-commit) |
 
 ### Complete Chaining Map
 
@@ -311,10 +311,10 @@ After each verb skill completes:
 | x-plan | x-implement | **Human approval** | APEX |
 | x-implement | x-verify | Auto-chain | APEX |
 | x-verify | x-review | Auto-chain | APEX |
-| x-review | x-commit | Auto-chain (on approval) | APEX |
-| x-commit | — | Terminal | APEX |
+| x-review | git-create-commit | Auto-chain (on approval) | APEX |
+| git-create-commit | — | Terminal | APEX |
 | x-refactor | x-verify | Auto-chain | APEX (sub-flow) |
-| x-fix | x-commit/x-verify | **Human approval** | ONESHOT |
+| x-fix | git-create-commit/x-verify | **Human approval** | ONESHOT |
 | x-troubleshoot | x-fix | Auto-chain (simple) | DEBUG |
 | x-troubleshoot | x-implement | **Human approval** (complex) | DEBUG |
 | x-brainstorm | x-research/x-design | Auto-chain | BRAINSTORM |
@@ -402,7 +402,7 @@ Expired state is summarized to MEMORY.md and cleared. See persistence-architectu
 
 ### Completion Write Protocol
 
-Terminal workflow phases (x-commit, x-archive) trigger a MANDATORY 3-layer write including
+Terminal workflow phases (git-create-commit, x-archive) trigger a MANDATORY 3-layer write including
 a L2 MEMORY.md summary. This ensures cross-session awareness of completed work.
 
 ### Staleness Warning
@@ -455,8 +455,8 @@ Resume anyway? State may be outdated.
 | Verb | Purpose |
 |------|---------|
 | `/x-ask` | Zero-friction Q&A |
-| `/x-commit` | Conventional commits |
-| `/x-release` | Release workflow |
+| `/git-create-commit` | Conventional commits |
+| `/git-create-release` | Release workflow |
 | `/x-docs` | Documentation management |
 | `/x-help` | Command reference |
 | `/x-quickwins` | Pareto-scored quick wins |

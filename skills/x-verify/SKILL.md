@@ -9,6 +9,20 @@ metadata:
   author: ccsetup contributors
   version: "2.0.0"
   category: workflow
+chains-to:
+  - skill: x-review
+    condition: "non-trivial change"
+    auto: true
+  - skill: git-create-commit
+    condition: "trivial fix shortcut"
+    auto: false
+chains-from:
+  - skill: x-implement
+    auto: true
+  - skill: x-refactor
+    auto: true
+  - skill: x-fix
+    auto: false
 ---
 
 # /x-verify

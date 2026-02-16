@@ -9,6 +9,13 @@ metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
+chains-to:
+  - skill: x-verify
+    condition: "refactor complete"
+    auto: true
+chains-from:
+  - skill: x-implement
+    auto: false
 ---
 
 # /x-refactor

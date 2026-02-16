@@ -22,7 +22,7 @@ x-workflows contains two types of skills:
 | **Claude trigger** | ✅ Yes, auto-triggered when relevant |
 | **File location** | `skills/x-{verb}/SKILL.md` |
 
-**Examples**: `x-implement`, `x-fix`, `x-plan`, `x-verify`, `x-commit`, `x-troubleshoot`
+**Examples**: `x-implement`, `x-fix`, `x-plan`, `x-verify`, `git-create-commit`, `x-troubleshoot`
 
 **Use for**: Workflow verbs that users explicitly invoke to perform actions.
 

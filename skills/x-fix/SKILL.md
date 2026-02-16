@@ -9,6 +9,18 @@ metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
+chains-to:
+  - skill: git-create-commit
+    condition: "quick commit"
+    auto: false
+  - skill: x-verify
+    condition: "verify first"
+    auto: false
+chains-from:
+  - skill: git-check-ci
+    auto: false
+  - skill: x-troubleshoot
+    auto: true
 ---
 
 # /x-fix
@@ -23,7 +35,7 @@ metadata:
 | **Phase** | complete |
 | **Position** | 1 of 1 (self-contained) |
 
-**Flow**: **`x-fix`** → `[optional: x-verify]` → `x-commit`
+**Flow**: **`x-fix`** → `[optional: x-verify]` → `git-create-commit`
 
 ## Intention
 
@@ -172,12 +184,12 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verbs**: `/x-verify` (optional), `/x-commit`
+**Next Verbs**: `/x-verify` (optional), `/git-create-commit`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
 | "verify first" | `/x-verify` | No (ask) |
-| "quick commit" | `/x-commit` | **HUMAN APPROVAL** |
+| "quick commit" | `/git-create-commit` | **HUMAN APPROVAL** |
 | Complex issue | `/x-troubleshoot` | No (escalate) |
 | Needs implementation | `/x-implement` | No (escalate) |
 
@@ -190,7 +202,7 @@ After fix applied and verified:
 2. Present options (requires human selection):
    "Fix applied and verified. What's next?"
 3. On selection, invoke via Skill tool:
-   - skill: "x-verify" or "x-commit"
+   - skill: "x-verify" or "git-create-commit"
    - args: "{fix summary and affected files}"
 
 <workflow-gate type="choice" id="fix-next">
@@ -211,7 +223,7 @@ After fix applied and verified:
 </workflow-gate>
 
 <workflow-chain on="verify" skill="x-verify" args="{fix summary and affected files}" />
-<workflow-chain on="commit" skill="x-commit" args="{fix summary and affected files}" />
+<workflow-chain on="commit" skill="git-create-commit" args="{fix summary and affected files}" />
 <workflow-chain on="stop" action="end" />
 
 **Escalation**: If fix complexity increases, suggest:
@@ -244,7 +256,7 @@ After fix applied and verified:
 | Direction | Verb | When |
 |-----------|------|------|
 | Next (verify) | `/x-verify` | Want full quality gates |
-| Next (commit) | `/x-commit` | Ready to commit (approval) |
+| Next (commit) | `/git-create-commit` | Ready to commit (approval) |
 | Escalate | `/x-troubleshoot` | Issue is more complex |
 | Escalate | `/x-implement` | Needs real implementation |
 

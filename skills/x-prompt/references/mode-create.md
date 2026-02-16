@@ -195,7 +195,7 @@ Scan the enhanced prompt's purpose, instructions, and context for intent signals
 | test, verify, lint, quality, coverage | `/x-verify` | APEX |
 | review, PR, code review, security review | `/x-review` | APEX |
 | document, docs, readme, API docs | `/x-docs` | UTILITY |
-| release, version, tag, changelog | `/x-release` | UTILITY |
+| release, version, tag, changelog | `/git-create-release` | UTILITY |
 | setup, scaffold, initialize, bootstrap | `/x-setup` | UTILITY |
 
 **Step 2: Determine complexity**
@@ -232,11 +232,11 @@ Based on your prompt's intent:
 
 | Complexity | Chain |
 |------------|-------|
-| Simple + build | `/x-implement` → `/x-verify` → `/x-commit` |
-| Moderate + build | `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/x-commit` |
-| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/x-commit` |
-| Simple + fix | `/x-fix` → `/x-commit` |
-| Moderate + fix | `/x-fix` → `/x-verify` → `/x-commit` |
+| Simple + build | `/x-implement` → `/x-verify` → `/git-create-commit` |
+| Moderate + build | `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-create-commit` |
+| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-create-commit` |
+| Simple + fix | `/x-fix` → `/git-create-commit` |
+| Moderate + fix | `/x-fix` → `/x-verify` → `/git-create-commit` |
 | Any + debug | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
 | Any + explore | `/x-brainstorm` → `/x-research` → `/x-design` → `/x-plan` |
 | Any + research | `/x-research` (standalone) |

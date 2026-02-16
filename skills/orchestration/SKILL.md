@@ -145,7 +145,7 @@ delete_entities:
   entityNames: ["orchestration-{timestamp}"]
 ```
 
-**Graceful degradation**: If Memory MCP is unavailable, skip cleanup — entities will be pruned by x-commit's Phase 5 cleanup sweep.
+**Graceful degradation**: If Memory MCP is unavailable, skip cleanup — entities will be pruned by git-create-commit's Phase 5 cleanup sweep.
 
 ## Integration with Workflow Skills
 
