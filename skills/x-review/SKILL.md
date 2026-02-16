@@ -115,6 +115,19 @@ Stale initiative documentation is classified as **Warning** severity (should fix
   <context>Pattern analysis to support code review</context>
 </agent-delegate>
 
+**Parallel review** (when changeset spans 5+ files or multiple domains):
+
+<parallel-delegate strategy="concurrent">
+  <agent role="code reviewer" subagent="x-reviewer" model="sonnet">
+    <prompt>Review all changed files for code quality — SOLID violations, DRY, complexity, test coverage</prompt>
+    <context>Quality domain review for APEX examine phase</context>
+  </agent>
+  <agent role="security reviewer" subagent="x-security-reviewer" model="sonnet">
+    <prompt>Review all changed files for security — OWASP Top 10, input validation, auth, data exposure</prompt>
+    <context>Security domain review for APEX examine phase</context>
+  </agent>
+</parallel-delegate>
+
 For each changed file, audit against enforcement violation definitions.
 
 #### SOLID Audit (BLOCKING)

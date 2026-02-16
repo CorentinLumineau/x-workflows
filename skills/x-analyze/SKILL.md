@@ -71,6 +71,12 @@ Activate `@skills/interview/` if:
    - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
 3. If no active workflow → Create new APEX workflow state
 
+<plan-mode phase="exploration" trigger="after-interview">
+  <enter>After confidence gate passes, enter read-only exploration mode for codebase analysis</enter>
+  <scope>Phases 1-3: scope definition, multi-domain analysis, issue prioritization (read-only: Glob, Grep, Read only)</scope>
+  <exit trigger="analysis-complete">Present analysis report and prioritized findings for user approval before proceeding to plan</exit>
+</plan-mode>
+
 ### Phase 1: Scope Definition
 
 Determine analysis scope:

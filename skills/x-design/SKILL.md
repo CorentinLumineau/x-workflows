@@ -69,6 +69,12 @@ Activate `@skills/interview/` if:
 3. If active non-BRAINSTORM workflow? → Warn: "Active {type} workflow. Start BRAINSTORM? [Y/n]"
 4. If no active workflow → Create new BRAINSTORM workflow state at `design` phase
 
+<plan-mode phase="exploration" trigger="after-interview">
+  <enter>After confidence gate passes, enter read-only exploration mode for architecture discovery</enter>
+  <scope>Phases 1-2: requirements review and architecture discovery (read-only: Glob, Grep, Read only)</scope>
+  <exit trigger="design-decisions-ready">Present design decisions and trade-offs for user approval before committing to architecture</exit>
+</plan-mode>
+
 ### Phase 1: Requirements Review
 
 Determine requirements source:

@@ -112,6 +112,15 @@ Identify:
   <context>Multiple requirements to implement with TDD; need structured reasoning for implementation order and design decisions</context>
 </deep-think>
 
+<team name="impl-team" pattern="feature">
+  <lead role="implementer" model="sonnet" />
+  <teammate role="test runner" subagent="x-tester" model="sonnet" />
+  <task-template>
+    <task owner="test runner" subject="Run tests after each implementation cycle and report coverage" />
+  </task-template>
+  <activation>When implementation spans 3+ files across multiple modules and continuous test feedback would accelerate TDD cycles</activation>
+</team>
+
 Follow Red-Green-Refactor cycle:
 
 ```

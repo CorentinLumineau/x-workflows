@@ -76,6 +76,15 @@ Activate `@skills/interview/` if:
   <exit trigger="plan-complete">Present plan for user approval via ExitPlanMode before any writes</exit>
 </plan-mode>
 
+<team name="plan-team" pattern="research">
+  <lead role="planner" model="sonnet" />
+  <teammate role="codebase explorer" subagent="x-explorer" model="haiku" />
+  <task-template>
+    <task owner="codebase explorer" subject="Explore codebase structure, dependencies, and patterns for planning context" />
+  </task-template>
+  <activation>When planning scope is Enterprise-level (10+ files, 4+ layers) and parallel exploration would accelerate scope assessment</activation>
+</team>
+
 ### Phase 1: Scope Assessment
 
 <agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">

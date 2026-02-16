@@ -55,6 +55,12 @@ Activate `@skills/interview/` if:
 - No success criteria exist
 - Multiple stakeholders unspecified
 
+<plan-mode phase="exploration" trigger="after-interview">
+  <enter>After confidence gate passes, enter read-only exploration mode for discovery</enter>
+  <scope>Phases 1-2: idea capture and requirements discovery (read-only: Glob, Grep, Read only)</scope>
+  <exit trigger="requirements-gathered">Present structured requirements and priorities for user approval before committing to direction</exit>
+</plan-mode>
+
 ### Phase 1: Idea Capture
 
 Start with open exploration:

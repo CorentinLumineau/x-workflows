@@ -73,6 +73,19 @@ Activate `@skills/interview/` if:
   <escalate to="x-tester" model="sonnet" trigger="persistent test failures (>3), flaky test patterns, or coverage analysis needed" />
 </agent-delegate>
 
+**Parallel verification** (when project has multiple test suites or separate build targets):
+
+<parallel-delegate strategy="concurrent">
+  <agent role="test runner" subagent="x-tester" model="sonnet">
+    <prompt>Run full test suite with coverage analysis — report failures, coverage gaps, and flaky tests</prompt>
+    <context>Comprehensive test execution for APEX verify phase</context>
+  </agent>
+  <agent role="fast tester" subagent="x-tester-fast" model="haiku">
+    <prompt>Run lint, type-check, and build gates — report pass/fail quickly</prompt>
+    <context>Fast quality gates for APEX verify phase</context>
+  </agent>
+</parallel-delegate>
+
 Execute all gates:
 
 ```bash
