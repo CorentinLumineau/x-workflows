@@ -1,6 +1,6 @@
 ---
 name: x-initiative
-description: Multi-phase project tracking across sessions with file-based persistence.
+description: Use when starting, continuing, or archiving a multi-session project initiative.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

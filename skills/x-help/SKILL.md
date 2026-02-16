@@ -1,6 +1,6 @@
 ---
 name: x-help
-description: Quick reference for workflow commands and navigation.
+description: Use when you need help finding the right command or understanding available workflows.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob

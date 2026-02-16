@@ -1,6 +1,6 @@
 ---
 name: x-prompt
-description: Transform raw prompts into well-structured, XML-tagged prompts optimized for LLM execution.
+description: Use when a prompt needs structuring and optimization for LLM execution.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read AskUserQuestion

@@ -1,6 +1,6 @@
 ---
 name: x-implement
-description: Context-aware implementation with TDD and quality gates.
+description: Use when you have a plan and need to write code following TDD methodology.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -142,6 +142,28 @@ Follow Red-Green-Refactor cycle:
 - [ ] No CRITICAL SOLID violations introduced (V-SOLID-01, V-SOLID-03)
 
 **BLOCK if any exit gate fails.**
+
+#### STOP — TDD Hard Gate
+
+> **You MUST stop here and verify before writing any production code.**
+
+**Checklist** (ALL must be true to proceed):
+- [ ] A failing test exists for the new behavior
+- [ ] The test was written BEFORE the production code
+- [ ] All tests currently pass (run them, read the output — not "should pass")
+
+**Common Rationalizations** (if you're thinking any of these, STOP):
+
+| Excuse | Reality |
+|--------|---------|
+| "The code is trivial" | Trivial code gets trivial tests. Still mandatory. (V-TEST-02) |
+| "I will add tests after" | TDD means tests FIRST. "After" is not TDD. (V-TEST-02) |
+| "Running low on context" | Stop coding. Write the test. Resume after. (V-TEST-01) |
+| "This is just a refactor" | Refactors need tests to prove behavior unchanged. (V-TEST-01) |
+
+> **Foundational principle**: Violating the letter of this gate IS violating its spirit. There is no "technically compliant" shortcut.
+
+See `@skills/code-code-quality/references/anti-rationalization.md` for the full excuse/reality reference.
 
 ### Phase 3: Code Quality
 
@@ -368,6 +390,7 @@ Initiative documentation updates are handled in Phase 6 (inside instructions) wh
 6. **No regressions** — All existing tests MUST pass
 7. **Enforcement summary** — Output compliance table after Phase 4
 8. **Initiative Docs** — Update milestone documentation when active initiative exists
+9. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
 
 ## Navigation
 

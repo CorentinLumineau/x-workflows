@@ -1,6 +1,6 @@
 ---
 name: x-create
-description: Ecosystem-aware creation wizard. Scans for duplicates, routes to correct repo, consults best practices.
+description: Use when you need to create a new skill, agent, hook, or component in the ecosystem.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob

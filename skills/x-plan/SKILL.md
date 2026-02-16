@@ -1,6 +1,6 @@
 ---
 name: x-plan
-description: Scale-adaptive implementation planning with automatic complexity detection.
+description: Use when a task needs an implementation plan before coding begins.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

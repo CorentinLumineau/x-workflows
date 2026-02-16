@@ -1,6 +1,6 @@
 ---
 name: x-fix
-description: Rapid bug fixing for clear errors with obvious solutions.
+description: Use when you have a clear bug with an obvious fix that doesn't need full planning.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

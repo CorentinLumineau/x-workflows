@@ -1,6 +1,6 @@
 ---
 name: x-brainstorm
-description: Transform vague ideas into structured requirements through guided discovery.
+description: Use when starting from a vague idea that needs structured exploration.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

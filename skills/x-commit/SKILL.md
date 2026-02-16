@@ -1,6 +1,6 @@
 ---
 name: x-commit
-description: Interactively commit all changes grouped by area with auto-generated conventional messages.
+description: Use when code changes are complete and verified, ready to commit to git.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

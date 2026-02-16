@@ -1,6 +1,6 @@
 ---
 name: x-verify
-description: Quality verification with auto-fix enforcement.
+description: Use after implementation to run all quality gates and verify tests pass.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
@@ -102,6 +102,42 @@ pnpm test
 pnpm build
 ```
 
+### Phase 1b: Verification Evidence Protocol — MANDATORY
+
+**This phase CANNOT be skipped. Every quality claim MUST have execution evidence.**
+
+> **Foundational principle**: "Tests should pass" is a PREDICTION. "Tests pass" after reading output is a VERIFICATION. Only verifications are accepted.
+
+For EACH quality gate, follow this 5-step sequence:
+
+| Step | Action | What You Do |
+|------|--------|-------------|
+| 1. IDENTIFY | Name the gate | "Running lint gate" |
+| 2. RUN | Execute the command | `pnpm lint` (actual execution, not prediction) |
+| 3. READ | Read full output | Read the complete command output |
+| 4. VERIFY | State pass/fail with evidence | "Lint passed: 0 errors, 0 warnings" (quote output) |
+| 5. CLAIM | Make status claim | Only NOW can you say "lint gate passes" |
+
+**Prohibited Language** (using these phrases = V-TEST-07 CRITICAL violation):
+
+| Prohibited Phrase | Why It's Wrong | Correct Alternative |
+|-------------------|---------------|---------------------|
+| "Tests should pass" | Prediction, not verification | Run tests, read output, report result |
+| "This probably works" | Speculation, not evidence | Execute and verify |
+| "Based on the code, tests will pass" | Code reading ≠ test execution | Run the tests |
+| "I believe all gates pass" | Belief ≠ verification | Show gate output |
+| Any claim without output evidence | Skipped steps 2-4 | Complete all 5 steps |
+
+**Evidence Format** — each gate result MUST include:
+```
+Gate: {gate name}
+Command: {exact command run}
+Result: {PASS/FAIL}
+Evidence: {quoted output excerpt}
+```
+
+See `references/verification-protocol.md` for anti-pattern examples and integration with V-TEST violations.
+
 ### Phase 2: Handle Failures
 
 If any gate fails:
@@ -141,6 +177,27 @@ Additional checks:
 3. **Doc completeness**: BLOCK if V-DOC-01 or V-DOC-02 detected
 
 If coverage is below target, suggest specific tests to add before proceeding.
+
+#### STOP — Coverage Hard Gate
+
+> **You MUST stop here and verify coverage numbers before proceeding.**
+
+**Checklist** (ALL must be true to proceed):
+- [ ] Line coverage on changed files ≥ 80% (MEASURED, not estimated)
+- [ ] All tests have assertions (no empty test bodies)
+- [ ] Zero flaky tests (run twice if unsure)
+
+**Common Rationalizations** (if you're thinking any of these, STOP):
+
+| Excuse | Reality |
+|--------|---------|
+| "Coverage is probably fine" | Measure it. "Probably" is not a number. (V-TEST-03) |
+| "The important paths are covered" | 80% threshold on changed files. Measure it. (V-TEST-03) |
+| "Adding more tests would be diminishing returns" | You haven't measured yet. Measure first, then argue. (V-TEST-03) |
+
+> **Foundational principle**: Violating the letter of this gate IS violating its spirit. There is no "technically compliant" shortcut.
+
+See `@skills/code-code-quality/references/anti-rationalization.md` for the full excuse/reality reference.
 
 ### Phase 4: Verification Complete
 
@@ -294,6 +351,7 @@ All must pass:
 5. **Documentation verified** — Docs MUST be current (V-DOC-*)
 6. **Enforcement summary required** — MUST output compliance table (Phase 4b)
 7. **Initiative Docs** — Verify milestone documentation is current before proceeding
+8. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
 
 ## Navigation
 

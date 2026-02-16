@@ -1,6 +1,6 @@
 ---
 name: x-review
-description: Pre-merge validation with quality checks and code review.
+description: Use after verification passes to perform code review before merge.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
@@ -102,7 +102,34 @@ Detect active initiative:
 
 Stale initiative documentation is classified as **Warning** severity (should fix before merge, or document reason for deferral).
 
-### Phase 2: Code Review — BLOCKING AUDIT
+### Phase 2a: Spec Compliance Review — BLOCKING
+
+> **This phase runs FIRST. Code quality review (Phase 2b) ONLY runs after spec compliance passes.**
+
+Compare implementation against the plan, issue, or user request:
+
+1. **Identify the spec source**: plan from `/x-plan`, issue from `/x-issue`, or user request from conversation
+2. **Check implementation completeness**:
+   - [ ] All requirements from spec are implemented
+   - [ ] No scope creep (code not in requirements)
+   - [ ] No missing requirements (requirements not in code)
+   - [ ] Correct requirement implemented (not a different interpretation)
+
+**Spec Violation Severity:**
+
+| Violation | Severity | Action |
+|-----------|----------|--------|
+| Scope creep (extra code not in requirements) | MEDIUM | WARN (HIGH if introduces security risk) |
+| Missing requirement (functional gap) | HIGH | BLOCK |
+| Wrong requirement implemented | CRITICAL | BLOCK |
+
+**Output**: "Spec compliance: PASS" or "Spec compliance: FAIL — {list of violations}"
+
+**If FAIL → BLOCK.** Return to `/x-implement` with spec violation details. Do NOT proceed to Phase 2b.
+
+### Phase 2b: Code Quality Review — BLOCKING AUDIT
+
+> **Only runs AFTER Phase 2a passes.**
 
 <agent-delegate role="code reviewer" subagent="x-reviewer-quick" model="haiku">
   <prompt>Review all changed files against SOLID, DRY, security, and test coverage enforcement rules</prompt>
@@ -185,6 +212,28 @@ Check against @skills/code-code-quality/ violations:
 
 **LOW (INFO):** Style, minor improvements.
 → Note for awareness.
+
+#### STOP — Review Approval Hard Gate
+
+> **You MUST stop here and verify violations before generating the review summary.**
+
+**Checklist** (ALL must be true to proceed):
+- [ ] Zero CRITICAL violations (V-SOLID-01, V-SOLID-03, V-TEST-01, V-TEST-05, V-TEST-06, V-DOC-02, V-PAT-01)
+- [ ] Zero HIGH violations without documented user-approved exception
+- [ ] All MEDIUM violations flagged in review summary
+
+**Common Rationalizations** (if you're thinking any of these, STOP):
+
+| Excuse | Reality |
+|--------|---------|
+| "Overall the code looks good" | Review is checklist-driven, not impression-driven. Run the checklist. |
+| "These issues are cosmetic" | Check the severity table. CRITICAL/HIGH are never cosmetic. |
+| "The user seems in a hurry" | Quality gates protect users from their own urgency. Hold the line. |
+| "It's just a small change" | Small changes with CRITICAL violations are still CRITICAL. |
+
+> **Foundational principle**: Violating the letter of this gate IS violating its spirit. There is no "technically compliant" shortcut.
+
+See `@skills/code-code-quality/references/anti-rationalization.md` for the full excuse/reality reference.
 
 ### Phase 4: Review Summary
 
@@ -354,6 +403,7 @@ On changes requested (manual — loop back):
 6. **Documentation** — Stale docs block merge (V-DOC-01, V-DOC-04)
 7. **Initiative Docs** — Flag stale milestone documentation as a review finding
 8. **Enforcement summary required** — MUST output compliance table (Phase 4b)
+9. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
 
 ## Navigation
 

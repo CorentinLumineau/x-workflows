@@ -1,6 +1,6 @@
 ---
 name: x-archive
-description: Archive completed initiatives with lessons learned capture and documentation updates.
+description: Use when an initiative is fully complete and needs to be archived.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

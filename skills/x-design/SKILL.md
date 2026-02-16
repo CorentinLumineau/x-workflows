@@ -1,6 +1,6 @@
 ---
 name: x-design
-description: Technical architecture and system design with SOLID validation.
+description: Use when an architectural decision is needed before implementation begins.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

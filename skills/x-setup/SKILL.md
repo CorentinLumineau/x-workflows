@@ -1,6 +1,6 @@
 ---
 name: x-setup
-description: Project documentation setup with intelligent stack detection and structure creation.
+description: Use when initializing a new project or setting up documentation for the first time.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash

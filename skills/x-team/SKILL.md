@@ -1,6 +1,6 @@
 ---
 name: x-team
-description: Orchestrate teams of Claude Code sessions for parallel collaborative work.
+description: Use when a task is large enough to benefit from multiple agents working in parallel.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent. Claude Code Agent Teams provides the richest multi-agent experience.
 allowed-tools: Read Grep Glob Bash

@@ -1,6 +1,6 @@
 ---
 name: x-research
-description: Intelligent Q&A and comprehensive research with evidence-based methodology.
+description: Use when a topic needs in-depth investigation with evidence gathering.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash WebFetch WebSearch

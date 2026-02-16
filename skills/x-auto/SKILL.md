@@ -1,6 +1,6 @@
 ---
 name: x-auto
-description: Auto-routing command that assesses task complexity and recommends the optimal workflow and agent.
+description: Use when you have a task but are unsure which workflow or command to use.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob

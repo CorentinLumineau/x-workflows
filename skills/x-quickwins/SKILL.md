@@ -1,6 +1,6 @@
 ---
 name: x-quickwins
-description: Scan codebase and surface Pareto-scored quick wins for immediate improvement.
+description: Use when looking for low-effort high-impact improvements in a codebase.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

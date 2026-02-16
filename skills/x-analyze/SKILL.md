@@ -1,6 +1,6 @@
 ---
 name: x-analyze
-description: Comprehensive code analysis across quality, security, performance, and architecture.
+description: Use when you need to assess a codebase before planning changes.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

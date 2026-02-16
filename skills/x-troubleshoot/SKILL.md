@@ -1,6 +1,6 @@
 ---
 name: x-troubleshoot
-description: Deep diagnostic analysis with hypothesis testing methodology.
+description: Use when facing an error with unclear root cause requiring investigation.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

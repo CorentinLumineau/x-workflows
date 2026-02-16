@@ -1,6 +1,6 @@
 ---
 name: x-ask
-description: Zero-friction Q&A with intelligent routing to codebase, library docs, web, and knowledge.
+description: Use when you have a question about the codebase, a library, or need quick factual answers.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob WebFetch WebSearch

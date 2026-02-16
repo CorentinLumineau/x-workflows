@@ -1,6 +1,6 @@
 ---
 name: x-issue
-description: Issue-driven development. Fetches a Gitea issue, creates branch, implements via x-auto, and creates PR.
+description: Use when implementing a feature or fix tracked by a Gitea issue.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
