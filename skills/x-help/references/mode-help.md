@@ -59,7 +59,7 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 | Command | Skill | Description |
 |---------|-------|-------------|
 | `/x:plan` | x-plan | Implementation planning |
-| `/x:brainstorm` | x-plan brainstorm | Requirements discovery |
+| `/x-brainstorm` | x-brainstorm | Requirements discovery |
 | `/x:design` | x-plan design | Architecture design |
 | `/x:analyze` | x-plan analyze | Code analysis |
 

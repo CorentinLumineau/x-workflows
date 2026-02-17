@@ -207,8 +207,8 @@ If fix turns out to be more complex:
 
 | From | To | Trigger | Auto-Chain |
 |------|-----|---------|------------|
-| x-brainstorm | x-research | "dig deeper" | Yes (within BRAINSTORM) |
-| x-brainstorm | x-design | "ready to decide" | Yes (within BRAINSTORM) |
+| x-brainstorm | x-research | "dig deeper" | **User selects** (via gate) |
+| x-brainstorm | x-design | "ready to decide" | **User selects** (via gate) |
 | x-research | x-design | "found answer" | Yes (within BRAINSTORM) |
 | x-design | x-plan | **Ready to build** | **HUMAN APPROVAL** |
 
@@ -313,7 +313,7 @@ After each verb skill completes:
 | x-fix | git-commit/x-review | **Human approval** | ONESHOT |
 | x-troubleshoot | x-fix | Auto-chain (simple) | DEBUG |
 | x-troubleshoot | x-implement | **Human approval** (complex) | DEBUG |
-| x-brainstorm | x-research/x-design | Auto-chain | BRAINSTORM |
+| x-brainstorm | x-research/x-design | **User selects** | BRAINSTORM |
 | x-research | x-design | Auto-chain | BRAINSTORM |
 | x-design | x-plan | **Human approval** | BRAINSTORM→APEX |
 

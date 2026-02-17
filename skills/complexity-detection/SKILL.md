@@ -84,8 +84,8 @@ workflow_patterns:
 | DEBUG + CRITICAL | Initiative | **x-initiative** → x-troubleshoot + security review |
 | BRAINSTORM + LOW | Quick answer | x-research ask |
 | BRAINSTORM + MEDIUM | Deep dive | x-research deep |
-| BRAINSTORM + HIGH | Initiative | **x-initiative** → x-plan brainstorm |
-| BRAINSTORM + CRITICAL | Initiative | **x-initiative** → x-plan brainstorm + security review |
+| BRAINSTORM + HIGH | Initiative | **x-initiative** → x-brainstorm |
+| BRAINSTORM + CRITICAL | Initiative | **x-initiative** → x-brainstorm + security review |
 | GIT + "pr" (create) | Direct | git-create-pr |
 | GIT + "pr" (review) | Direct | git-review-pr |
 | GIT + "pr" (merge) | Direct | git-merge-pr |

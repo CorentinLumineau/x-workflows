@@ -156,6 +156,11 @@ These scenarios always require interview regardless of other factors:
 - User asks for options ("should I...")
 - Request contains contradictions
 
+### Exploratory Workflows
+
+- **x-brainstorm is never bypassable** — brainstorming is inherently exploratory and always requires user interaction
+- Exception: explicit user skip with logged warning (bypass category 1 applies, but a warning is always emitted)
+
 ## Bypass Decision Flow
 
 ```

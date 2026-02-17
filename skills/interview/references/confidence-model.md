@@ -22,7 +22,7 @@ Different workflows prioritize different dimensions:
 
 | Workflow | Problem | Context | Technical | Scope | Risk |
 |----------|---------|---------|-----------|-------|------|
-| **x-plan brainstorm** | 40% | 30% | 10% | 15% | 5% |
+| **x-brainstorm** | 40% | 30% | 10% | 15% | 5% |
 | **x-plan design** | 20% | 15% | 40% | 10% | 15% |
 | **x-plan analyze** | 25% | 35% | 20% | 15% | 5% |
 | **x-implement** | 25% | 20% | 30% | 15% | 10% |

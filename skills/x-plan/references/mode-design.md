@@ -54,7 +54,7 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 | Option | Description |
 |--------|-------------|
-| From brainstorm | Requirements from /x-plan brainstorm session |
+| From brainstorm | Requirements from /x-brainstorm session |
 | Direct input | User will provide requirements now |
 | Existing document | Requirements in project documentation |
 | Code analysis | Infer requirements from existing code |

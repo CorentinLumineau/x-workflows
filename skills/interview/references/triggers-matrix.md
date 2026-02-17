@@ -17,13 +17,20 @@ Each workflow has specific scenarios that should activate the interview behavior
 
 ## Per-Workflow Triggers
 
+### x-brainstorm
+
+| Trigger | Category | Example |
+|---------|----------|---------|
+| Any brainstorm invocation | **ALWAYS** | Brainstorming is inherently exploratory — always interview |
+| Undefined problem space | Ambiguity | "Help me plan something" |
+| No success criteria | Missing | "Make it better" |
+| Vague topic with no constraints | Ambiguity | "Improve the login flow" |
+| Multiple stakeholders unspecified | Missing | "The team needs..." |
+
 ### x-plan
 
 | Mode | Trigger | Category | Example |
 |------|---------|----------|---------|
-| brainstorm | Undefined problem space | Ambiguity | "Help me plan something" |
-| brainstorm | No success criteria | Missing | "Make it better" |
-| brainstorm | Multiple stakeholders unspecified | Missing | "The team needs..." |
 | design | Multiple architectural approaches | Ambiguity | "Add authentication" |
 | design | Unknown technical constraints | Missing | No stack specified |
 | design | Breaking change potential | Risk | Affects existing APIs |
