@@ -355,6 +355,7 @@ When an agent delegation produces insufficient results, escalate to a more capab
 | Analysis shallow, issues found but not diagnosed | x-reviewer-quick (haiku) | x-reviewer (sonnet) | Agent flagged issues but no root cause |
 | Complex codebase, need deeper exploration | x-explorer (haiku) | general-purpose (sonnet) | Agent returned insufficient context |
 | Root cause not found after 2 hypotheses | x-debugger (sonnet) | x-debugger-deep (opus) | Agent exhausted hypothesis list |
+| Architectural scope during refactoring | x-refactorer (sonnet) | x-designer (opus) | Task requires cross-service/system-level decisions |
 
 ### Escalation Protocol
 

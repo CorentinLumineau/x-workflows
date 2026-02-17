@@ -371,37 +371,7 @@ Delegate to a **quick reviewer** agent (haiku):
 
 ## Escalation Rules
 
-When a delegation produces insufficient results, agents can be escalated to more capable variants.
-
-### Escalation Table
-
-| Trigger | From | To | Detection |
-|---------|------|-----|-----------|
-| Tests still failing after fix | x-tester-fast (haiku) | x-tester (sonnet) | Agent outcome: tests still red |
-| Shallow analysis | x-reviewer-quick (haiku) | x-reviewer (sonnet) | Issues flagged but not diagnosed |
-| Insufficient context | x-explorer (haiku) | general-purpose (sonnet) | Agent returned minimal results |
-| Hypotheses exhausted | x-debugger (sonnet) | x-debugger-deep (opus) | Root cause not found after 2 hypotheses |
-
-### Protocol
-
-1. Detect trigger from agent outcome
-2. Log escalation in delegation history (Memory MCP)
-3. Auto-escalate if orchestration is active, otherwise suggest to user
-4. **Max 1 escalation per delegation** — no recursive loops
-
-### Escalation Flow
-
-```
-Agent returns insufficient result
-        ↓
-Match in Escalation Table? ── No → Report as-is
-        ↓ Yes
-Already escalated? ── Yes → Report, suggest manual intervention
-        ↓ No
-Re-delegate to upgraded variant
-        ↓
-Log: "escalation: {from} -> {to}, reason: {trigger}"
-```
+For escalation rules between agent variants, see the canonical Escalation Table in the parent SKILL.md (@skills/agent-awareness/).
 
 ---
 

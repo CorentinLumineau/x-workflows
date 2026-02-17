@@ -245,7 +245,7 @@ Only write to MEMORY.md when the delegation reveals a **pattern** (e.g., same ag
 
 ## Automated Variant Escalation
 
-When a spawned agent returns an insufficient result, orchestration auto-escalates using the agent-awareness escalation table.
+When a spawned agent returns an insufficient result, orchestration auto-escalates using the agent-awareness escalation table. For escalation rules between agent variants, see the canonical Escalation Table in @skills/agent-awareness/.
 
 ### Auto-Escalation Protocol
 
