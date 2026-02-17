@@ -269,4 +269,4 @@ After research complete:
 
 ## References
 
-- @skills/meta/analysis-architecture/ - Analysis and prioritization
+- @skills/meta-analysis-architecture/ - Analysis and prioritization

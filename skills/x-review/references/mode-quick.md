@@ -85,4 +85,4 @@ See `references/verification-protocol.md` for anti-pattern examples.
 - `references/mode-coverage.md` - Coverage improvement guide
 - `references/mode-build.md` - Build system guide
 - @skills/quality-testing/ - Testing pyramid
-- @skills/quality-quality-gates/ - CI quality checks
+- @skills/quality-testing/ - CI quality checks

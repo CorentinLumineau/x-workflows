@@ -156,7 +156,7 @@ Present next step:
 
 ## References
 
-- @skills/meta/analysis-architecture/ - Pareto 80/20 principle
+- @skills/meta-analysis-architecture/ - Pareto 80/20 principle
 - @skills/code-code-quality/ - SOLID, DRY, KISS principles
 
 <success_criteria>

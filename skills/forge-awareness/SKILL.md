@@ -360,4 +360,4 @@ interface ForgeContext {
 
 - @skills/vcs-forge-operations/ - CLI equivalences and forge-specific operations
 - @skills/vcs-git-workflows/ - Git workflow patterns
-- @skills/delivery-ci-cd/ - CI/CD integration patterns
+- @skills/delivery-ci-cd-delivery/ - CI/CD integration patterns

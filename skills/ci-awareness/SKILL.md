@@ -467,6 +467,6 @@ Else:
 
 ## References
 
-- @skills/delivery-ci-cd/ - CI/CD pipeline patterns
+- @skills/delivery-ci-cd-delivery/ - CI/CD pipeline patterns
 - @skills/vcs-forge-operations/ - Forge-specific CI commands
 - @skills/quality-testing/ - Test failure diagnosis patterns

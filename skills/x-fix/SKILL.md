@@ -266,4 +266,4 @@ After fix applied and verified:
 
 ## References
 
-- @skills/quality/debugging-performance/ - Debugging strategies and methodology
+- @skills/quality-debugging-performance/ - Debugging strategies and methodology

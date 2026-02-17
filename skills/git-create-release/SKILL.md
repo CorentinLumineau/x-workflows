@@ -317,4 +317,4 @@ Verification: All checks passed, release live
 ## References
 
 - @core-docs/RULES.md - Git workflow rules
-- @skills/delivery-release-management/ - Safe release operations
+- @skills/delivery-release-git/ - Safe release operations

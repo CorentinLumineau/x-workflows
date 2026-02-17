@@ -230,4 +230,4 @@ documentation/
 
 ## References
 
-- @skills/documentation/ - Doc sync behavioral skill
+

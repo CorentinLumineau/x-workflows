@@ -223,7 +223,7 @@ Present next step based on review:
 ## References
 
 - @core-docs/PRINCIPLES_ENFORCEMENT.md - SOLID principles
-- @skills/security-owasp/ - Security checklist
+- @skills/security-secure-coding/ - Security checklist
 - @skills/code-code-quality/ - Quality standards
 
 <success_criteria>

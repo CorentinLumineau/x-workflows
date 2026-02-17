@@ -290,4 +290,4 @@ Apply these principles:
 ## References
 
 - @skills/code-code-quality/ - SOLID, DRY, KISS, YAGNI principles
-- @skills/code-refactoring-patterns/ - Refactoring patterns
+- @skills/code-code-quality/ - Refactoring patterns

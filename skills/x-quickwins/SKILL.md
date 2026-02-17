@@ -284,6 +284,6 @@ When approval needed, structure question as:
 
 ## References
 
-- @skills/meta/analysis-architecture/ - Pareto 80/20 prioritization
+- @skills/meta-analysis-architecture/ - Pareto 80/20 prioritization
 - @skills/code-code-quality/ - SOLID, DRY, KISS principles
 - @skills/quality-testing/ - Test coverage patterns

@@ -336,4 +336,4 @@ Goal → Actors → Impacts → Deliverables
 
 ## References
 
-- @skills/meta/analysis-architecture/ - Pareto prioritization and analysis patterns
+- @skills/meta-analysis-architecture/ - Pareto prioritization and analysis patterns

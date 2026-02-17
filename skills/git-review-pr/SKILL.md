@@ -425,7 +425,7 @@ When approval needed, structure question as:
 
 - Behavioral skill: `@skills/forge-awareness/` (forge detection and command adaptation)
 - Behavioral skill: `@skills/interview/` (interactive confirmation)
-- Knowledge skill: `@skills/security-owasp/` (security review guidelines)
+- Knowledge skill: `@skills/security-secure-coding/` (security review guidelines)
 - Knowledge skill: `@skills/quality-testing/` (test execution patterns)
 - Knowledge skill: `@skills/code-code-quality/` (SOLID principles and design patterns)
 

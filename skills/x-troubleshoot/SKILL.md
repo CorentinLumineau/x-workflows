@@ -293,4 +293,4 @@ Use `complexity-detection` skill to route appropriately:
 
 ## References
 
-- @skills/quality/debugging-performance/ - Debugging strategies and methodology
+- @skills/quality-debugging-performance/ - Debugging strategies and methodology

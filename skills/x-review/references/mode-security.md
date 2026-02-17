@@ -235,10 +235,10 @@ Systematically check each category:
 
 ## References
 
-- @skills/security-owasp/ - OWASP Top 10 details
-- @skills/security-input-validation/ - Injection prevention
-- @skills/security-authentication/ - Auth patterns
-- @skills/security-authorization/ - Access control
+- @skills/security-secure-coding/ - OWASP Top 10 details
+- @skills/security-secure-coding/ - Injection prevention
+- @skills/security-identity-access/ - Auth patterns
+- @skills/security-identity-access/ - Access control
 
 <success_criteria>
 

@@ -260,4 +260,4 @@ Escalate to `/x-troubleshoot` when:
 
 ## References
 
-- @skills/quality/debugging-performance/ - Debugging techniques and methodology
+- @skills/quality-debugging-performance/ - Debugging techniques and methodology

@@ -495,4 +495,4 @@ Verification: All checks passed
 ## References
 
 - @core-docs/RULES.md - Git workflow rules
-- @skills/delivery-release-management/ - Safe release operations
+- @skills/delivery-release-git/ - Safe release operations

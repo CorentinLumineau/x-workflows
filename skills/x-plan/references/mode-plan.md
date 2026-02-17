@@ -194,7 +194,7 @@ Present next step:
 
 ## References
 
-- @skills/meta/analysis-architecture/ - Pareto prioritization and analysis patterns
+- @skills/meta-analysis-architecture/ - Pareto prioritization and analysis patterns
 - @skills/x-initiative/ - Initiative methodology
 
 <success_criteria>

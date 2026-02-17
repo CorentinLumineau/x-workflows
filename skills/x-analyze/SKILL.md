@@ -300,4 +300,4 @@ After analysis complete:
 ## References
 
 - @skills/code-code-quality/ - SOLID principles
-- @skills/security-owasp/ - Security checklist
+- @skills/security-secure-coding/ - Security checklist

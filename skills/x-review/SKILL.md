@@ -616,6 +616,5 @@ After review complete:
 ## References
 
 - @skills/code-code-quality/ - SOLID principles, anti-rationalization
-- @skills/security-owasp/ - Security checklist
-- @skills/quality-testing/ - Testing pyramid
-- @skills/quality-quality-gates/ - CI quality checks
+- @skills/security-secure-coding/ - Security checklist
+- @skills/quality-testing/ - Testing pyramid and CI quality checks

@@ -218,4 +218,4 @@ Use these markers for thinking transparency:
 
 ## References
 
-- @skills/quality/debugging-performance/ - Debugging patterns and methodology
+- @skills/quality-debugging-performance/ - Debugging patterns and methodology

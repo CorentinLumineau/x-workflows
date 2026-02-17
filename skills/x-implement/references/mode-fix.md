@@ -138,7 +138,7 @@ Present next step:
 
 ## References
 
-- @skills/quality/debugging-performance/ - Debugging strategies and methodology
+- @skills/quality-debugging-performance/ - Debugging strategies and methodology
 
 <success_criteria>
 - [ ] Error cause identified
