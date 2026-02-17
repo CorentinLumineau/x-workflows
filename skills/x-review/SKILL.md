@@ -10,7 +10,7 @@ metadata:
   version: "2.0.0"
   category: workflow
 chains-to:
-  - skill: git-create-commit
+  - skill: git-commit
     condition: "review approved"
     auto: true
   - skill: x-implement
@@ -33,7 +33,7 @@ chains-from:
 | **Phase** | examine (X) |
 | **Position** | 5 of 6 in workflow |
 
-**Flow**: `x-verify` → **`x-review`** → `git-create-commit`
+**Flow**: `x-verify` → **`x-review`** → `git-commit`
 
 ## Intention
 
@@ -290,7 +290,7 @@ Generate review summary:
 | Pareto         | ✅/⚠️  | V-PARETO-XX  | Pass / Flagged    |
 ```
 
-**ANY ❌ = cannot proceed to /git-create-commit.**
+**ANY ❌ = cannot proceed to /git-commit.**
 
 ### Phase 5: Update Workflow State
 
@@ -342,11 +342,11 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verb**: `/git-create-commit`
+**Next Verb**: `/git-commit`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
-| Review approved | `/git-create-commit` | Yes |
+| Review approved | `/git-commit` | Yes |
 | Changes requested | `/x-implement` | No (show feedback) |
 | Critical issues | Block | No (require fix) |
 
@@ -357,10 +357,10 @@ When approval needed, structure question as:
 After review approved:
 1. Update `.claude/workflow-state.json` (mark review complete, set commit in_progress)
 2. Auto-invoke next skill via Skill tool:
-   - skill: "git-create-commit"
+   - skill: "git-commit"
    - args: "commit reviewed changes"
 
-<workflow-chain on="auto" skill="git-create-commit" args="commit reviewed changes" />
+<workflow-chain on="auto" skill="git-commit" args="commit reviewed changes" />
 
 On changes requested (manual — loop back):
 "Review found issues to address. Return to /x-implement?"
@@ -421,7 +421,7 @@ On changes requested (manual — loop back):
 |-----------|------|------|
 | Previous | `/x-verify` | Need more verification |
 | Previous | `/x-implement` | Need to fix issues |
-| Next | `/git-create-commit` | Review approved |
+| Next | `/git-commit` | Review approved |
 
 ## Success Criteria
 

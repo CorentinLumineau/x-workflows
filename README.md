@@ -42,7 +42,7 @@ For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://
 | `x-review` | APEX | Code review, auditing, security checks |
 | `x-refactor` | APEX | Safe code restructuring with zero regression |
 | `x-fix` | ONESHOT | Rapid bug fixing for clear errors |
-| `git-create-commit` | All | Intelligent conventional commit messages |
+| `git-commit` | All | Intelligent conventional commit messages |
 | `git-create-release` | All | Automated release with semantic versioning |
 | `x-troubleshoot` | DEBUG | Deep diagnostic analysis |
 | `x-brainstorm` | BRAINSTORM | Transform ideas into structured requirements |
@@ -99,22 +99,22 @@ Skills activate automatically based on context triggers defined in each skill's 
 
 **Feature Development (APEX):**
 ```
-x-analyze → x-plan → x-implement → x-verify → x-review → git-create-commit
+x-analyze → x-plan → x-implement → x-verify → x-review → git-commit
 ```
 
 **Bug Fix (ONESHOT):**
 ```
-x-fix → x-verify → git-create-commit
+x-fix → x-verify → git-commit
 ```
 
 **Investigation (DEBUG):**
 ```
-x-troubleshoot → x-fix/x-implement → x-verify → git-create-commit
+x-troubleshoot → x-fix/x-implement → x-verify → git-commit
 ```
 
 **Release:**
 ```
-x-verify → git-create-commit → git-create-release
+x-verify → git-commit → git-create-release
 ```
 
 **Multi-Session Project:**
@@ -133,7 +133,7 @@ Workflow skills reference knowledge skills from x-devsecops for domain expertise
 | x-implement | code-quality, testing |
 | x-verify | testing, quality-gates |
 | x-review | code-quality, owasp |
-| git-create-commit | release-management |
+| git-commit | release-management |
 | x-troubleshoot | debugging |
 
 ## Structure
@@ -150,7 +150,7 @@ x-workflows/
 │   ├── x-review/
 │   ├── x-refactor/
 │   ├── x-fix/
-│   ├── git-create-commit/
+│   ├── git-commit/
 │   ├── git-create-release/
 │   ├── x-troubleshoot/
 │   ├── x-brainstorm/

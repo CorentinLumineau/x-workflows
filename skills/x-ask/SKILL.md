@@ -25,7 +25,7 @@ metadata:
 
 **Flow**: **`x-ask`** → `[optional: x-research deep | x-troubleshoot | x-implement]`
 
-> **Why UTILITY?** Unlike x-research (BRAINSTORM workflow, multi-phase investigation), x-ask is self-contained and instant — no sequential flow, no PRD output, no story files. It parallels x-help and git-create-commit: ask a question, get an answer, done.
+> **Why UTILITY?** Unlike x-research (BRAINSTORM workflow, multi-phase investigation), x-ask is self-contained and instant — no sequential flow, no PRD output, no story files. It parallels x-help and git-commit: ask a question, get an answer, done.
 
 ## Intention
 

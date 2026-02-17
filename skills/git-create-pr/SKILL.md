@@ -18,7 +18,7 @@ chains-to:
     condition: "PR needs local review"
     auto: false
 chains-from:
-  - skill: git-create-commit
+  - skill: git-commit
     auto: true
 ---
 
@@ -32,7 +32,7 @@ Create a pull request from the current or specified branch to the base branch, w
 |-----------|-------|
 | **Type** | UTILITY |
 | **Position** | After commit/review |
-| **Typical Flow** | `git-create-commit` or `x-review` → **`git-create-pr`** → `git-check-ci` or `git-review-pr` |
+| **Typical Flow** | `git-commit` or `x-review` → **`git-create-pr`** → `git-check-ci` or `git-review-pr` |
 | **Human Gates** | PR creation (Critical), title/description review (Medium) |
 | **State Tracking** | Updates workflow state with PR number and URL |
 
@@ -150,7 +150,7 @@ This workflow activates:
 ## Workflow Chaining
 
 <chaining-instruction>
-**Chains from**: `git-create-commit`, `x-review`
+**Chains from**: `git-commit`, `x-review`
 **Chains to**: `git-check-ci`, `git-review-pr`
 
 **Forward chaining**:
@@ -160,7 +160,7 @@ This workflow activates:
 
 **Backward compatibility**:
 - Accepts PR creation after any commit workflow
-- Works with manual commits (not just git-create-commit)
+- Works with manual commits (not just git-commit)
 </chaining-instruction>
 
 ## Safety Rules

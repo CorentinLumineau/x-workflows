@@ -95,8 +95,8 @@ Suggestions appear **outside** the XML output (not inside the copied prompt) as 
 
 | Workflow | Slash Command Chain |
 |----------|---------------------|
-| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-create-commit` |
-| **ONESHOT** | `/x-fix` → `/x-verify` (optional) → `/git-create-commit` |
+| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-commit` |
+| **ONESHOT** | `/x-fix` → `/x-verify` (optional) → `/git-commit` |
 | **DEBUG** | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
 | **BRAINSTORM** | `/x-brainstorm` ↔ `/x-research` → `/x-design` → `/x-plan` |
 

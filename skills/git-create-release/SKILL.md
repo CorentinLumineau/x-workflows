@@ -14,7 +14,7 @@ chains-to:
     condition: "multi-remote"
     auto: true
 chains-from:
-  - skill: git-create-commit
+  - skill: git-commit
     auto: false
   - skill: git-merge-pr
     auto: false

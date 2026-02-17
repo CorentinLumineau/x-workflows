@@ -81,7 +81,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-archive` | Archive completed initiatives | archive, complete initiative |
 | `/x-ask` | Zero-friction Q&A | ask, question, how |
 | `/x-auto` | Auto-routing command | auto, route |
-| `/git-create-commit` | Conventional commits | commit, git commit |
+| `/git-commit` | Conventional commits | commit, git commit |
 | `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
@@ -128,12 +128,12 @@ Skills are prefixed by category for organization:
 
 ### Feature Development (APEX)
 ```
-/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-create-commit
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-commit
 ```
 
 ### Quick Bug Fix (ONESHOT)
 ```
-/x-fix → /x-verify (optional) → /git-create-commit
+/x-fix → /x-verify (optional) → /git-commit
 ```
 
 ### Investigation (DEBUG)

@@ -106,7 +106,7 @@ For each issue:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Verify changes"},
-      {"label": "/git-create-commit", "description": "Commit cleanup"},
+      {"label": "/git-commit", "description": "Commit cleanup"},
       {"label": "Stop", "description": "Review first"}
     ],
     "multiSelect": false

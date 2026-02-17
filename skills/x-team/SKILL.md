@@ -208,7 +208,7 @@ When approval needed, structure question as:
 |---------|----------|-------|
 | Team produces code | `/x-verify` | No (suggest) |
 | Team produces plan | `/x-implement` | No (suggest) |
-| Team produces review | `/git-create-commit` | No (suggest) |
+| Team produces review | `/git-commit` | No (suggest) |
 | Team cleanup done | (end) | Yes |
 
 <chaining-instruction>
@@ -216,7 +216,7 @@ When approval needed, structure question as:
 When team work is complete:
 "Agent team has completed. Results synthesized."
 - Option 1: `/x-verify` - Verify the team's output
-- Option 2: `/git-create-commit` - Commit the changes
+- Option 2: `/git-commit` - Commit the changes
 - Option 3: Stop - Review results first
 
 </chaining-instruction>
@@ -261,7 +261,7 @@ Choose the cheapest model that fits the task. **Never use Opus for teammates** â
 | Alternative | `/x-implement` | Task doesn't need parallelism |
 | Alternative | `/x-analyze` | Need analysis before teaming |
 | After | `/x-verify` | Verify team output |
-| After | `/git-create-commit` | Commit team changes |
+| After | `/git-commit` | Commit team changes |
 
 ## Related Verbs
 

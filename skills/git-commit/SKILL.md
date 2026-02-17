@@ -1,5 +1,5 @@
 ---
-name: git-create-commit
+name: git-commit
 description: Use when code changes are complete and verified, ready to commit to git.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
@@ -25,7 +25,7 @@ chains-from:
     auto: true
 ---
 
-# /git-create-commit
+# /git-commit
 
 > Interactively commit all changes grouped by area with auto-generated conventional commit messages.
 
@@ -37,7 +37,7 @@ chains-from:
 | **Phase** | N/A |
 | **Position** | End of any workflow |
 
-**Flow**: `[any workflow]` → **`git-create-commit`** → `[optional: git-create-release]`
+**Flow**: `[any workflow]` → **`git-commit`** → `[optional: git-create-release]`
 
 ## Intention
 
@@ -70,7 +70,7 @@ Activate `@skills/interview/` if:
    - Expected next phase is `commit`? → Proceed
    - Skipping `review`? → Warn: "Skipping review phase. Continue? [Y/n]"
    - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
-3. If no active workflow → OK (git-create-commit can be standalone)
+3. If no active workflow → OK (git-commit can be standalone)
 
 ### Phase 1: Change Detection
 
@@ -119,7 +119,7 @@ Group all non-excluded changes by area using path analysis.
    - Matches: `package.json`, `package-lock.json`, `tsconfig*.json`, `Makefile`, `.github/*`, `.claude/*`, `.gitignore`, `*.config.js`, `*.config.ts`, `*.config.mjs`, `.eslintrc*`, `.prettierrc*`, `docker-compose*.yml`, `Dockerfile*`
 2. **Root files** (no `/` in path) → `root` group
 3. **Collection directories** (skills, agents, hooks, commands, src, lib, test, tests, components, pages, routes) with 2+ path segments → `{dir1}/{dir2}` group
-   - Example: `skills/git-create-commit/SKILL.md` → group `skills/git-create-commit`
+   - Example: `skills/git-commit/SKILL.md` → group `skills/git-commit`
    - Example: `src/utils/helpers.ts` → group `src/utils`
 4. **Other** → first directory segment as group name
    - Example: `docs/README.md` → group `docs`
@@ -135,7 +135,7 @@ Group all non-excluded changes by area using path analysis.
 | All files in test/tests directories | `test` |
 | Mixed or other | `chore` (conservative default) |
 
-- **Scope**: Last path segment of the group name (e.g., `skills/git-create-commit` → `git-create-commit`, `config` → `config`, `root` → project name)
+- **Scope**: Last path segment of the group name (e.g., `skills/git-commit` → `git-commit`, `config` → `config`, `root` → project name)
 
 Present groups table to user:
 
@@ -144,7 +144,7 @@ Present groups table to user:
 
 | # | Group | Files | Suggested Type | Scope |
 |---|-------|-------|----------------|-------|
-| 1 | skills/git-create-commit | 2 | docs | git-create-commit |
+| 1 | skills/git-commit | 2 | docs | git-commit |
 | 2 | config | 3 | chore | config |
 | 3 | src/utils | 1 | feat | utils |
 ```
@@ -384,7 +384,7 @@ Files matching these patterns are **excluded from all groups** with a warning:
 
 ### Collection Directory Patterns
 
-Directories that group at the second level (e.g., `skills/git-create-commit`):
+Directories that group at the second level (e.g., `skills/git-commit`):
 - `skills`, `agents`, `hooks`, `commands`
 - `src`, `lib`, `pkg`, `internal`
 - `test`, `tests`, `__tests__`, `spec`

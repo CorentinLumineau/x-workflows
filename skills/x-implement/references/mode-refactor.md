@@ -157,7 +157,7 @@ Present next step:
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
       {"label": "/x-review", "description": "Code review"},
-      {"label": "/git-create-commit", "description": "Commit changes"}
+      {"label": "/git-commit", "description": "Commit changes"}
     ],
     "multiSelect": false
   }]

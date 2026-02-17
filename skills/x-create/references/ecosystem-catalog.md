@@ -41,7 +41,7 @@ catalog:
   commands:
     - name: "commit"
       description: "Interactive commit"
-      delegates_to: "git-create-commit"
+      delegates_to: "git-commit"
     # ... all discovered commands
 ```
 

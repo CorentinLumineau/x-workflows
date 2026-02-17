@@ -13,7 +13,7 @@ chains-to:
   - skill: x-review
     condition: "non-trivial change"
     auto: true
-  - skill: git-create-commit
+  - skill: git-commit
     condition: "trivial fix shortcut"
     auto: false
 chains-from:

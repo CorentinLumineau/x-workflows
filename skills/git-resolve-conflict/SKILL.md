@@ -13,7 +13,7 @@ chains-to:
   - skill: git-merge-pr
     condition: "conflict resolved"
     auto: true
-  - skill: git-create-commit
+  - skill: git-commit
     condition: "conflict during rebase/impl"
     auto: true
 chains-from:
@@ -31,7 +31,7 @@ chains-from:
 |-----------|-------|
 | Type | UTILITY |
 | Position | During merge/rebase operations |
-| Flow | `git-merge-pr` or `x-implement` → **`git-resolve-conflict`** → `git-merge-pr` or `git-create-commit` |
+| Flow | `git-merge-pr` or `x-implement` → **`git-resolve-conflict`** → `git-merge-pr` or `git-commit` |
 
 ---
 
@@ -352,7 +352,7 @@ Determine caller workflow based on operation:
 
 **If merge conflict**:
 <workflow-chain id="return-to-merge">
-Chain to: `git-merge-pr` (if PR-related) or `git-create-commit`
+Chain to: `git-merge-pr` (if PR-related) or `git-commit`
 Context: Conflicts resolved, ready to complete merge
 Message: "Conflicts resolved. Resuming merge operation."
 </workflow-chain>
@@ -370,7 +370,7 @@ If more conflicts appear, re-enter this skill (recursive).
 git cherry-pick --continue
 ```
 
-Chain to `git-create-commit` to finalize cherry-pick.
+Chain to `git-commit` to finalize cherry-pick.
 
 <state-cleanup id="resolution-complete">
 Clear checkpoints: conflict-init, conflict-inventory, conflict-*-analyzed, conflicts-resolved, resolution-finalized
@@ -395,7 +395,7 @@ Retain resolution summary for audit
 | Relationship | Target Skill | Condition |
 |--------------|--------------|-----------|
 | chains-to | `git-merge-pr` | Merge conflict resolved, ready to complete merge |
-| chains-to | `git-create-commit` | Rebase/cherry-pick conflict resolved, ready to commit |
+| chains-to | `git-commit` | Rebase/cherry-pick conflict resolved, ready to commit |
 | chains-from | `git-merge-pr` | Merge operation encountered conflicts |
 | chains-from | `x-implement` | Implementation changes caused merge conflict |
 

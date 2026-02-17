@@ -232,11 +232,11 @@ Based on your prompt's intent:
 
 | Complexity | Chain |
 |------------|-------|
-| Simple + build | `/x-implement` → `/x-verify` → `/git-create-commit` |
-| Moderate + build | `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-create-commit` |
-| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-create-commit` |
-| Simple + fix | `/x-fix` → `/git-create-commit` |
-| Moderate + fix | `/x-fix` → `/x-verify` → `/git-create-commit` |
+| Simple + build | `/x-implement` → `/x-verify` → `/git-commit` |
+| Moderate + build | `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-commit` |
+| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-commit` |
+| Simple + fix | `/x-fix` → `/git-commit` |
+| Moderate + fix | `/x-fix` → `/x-verify` → `/git-commit` |
 | Any + debug | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
 | Any + explore | `/x-brainstorm` → `/x-research` → `/x-design` → `/x-plan` |
 | Any + research | `/x-research` (standalone) |

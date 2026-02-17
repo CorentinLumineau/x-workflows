@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.0.0] - 2026-02-16
+## [1.15.0] - 2026-02-16
 
 ### Added
 - **11 new git-* workflow skills** (git-forge-layer initiative):
@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `git-resolve-conflict` - Interactive merge conflict resolution
   - `git-cleanup-branches` - Safe stale branch cleanup
   - `git-create-pr` - Cross-forge PR creation
-  - `git-create-commit` - Renamed from x-commit (breaking)
+  - `git-commit` - Renamed from x-commit (breaking)
   - `git-create-release` - Renamed from x-release (breaking)
   - `git-sync-remotes` - Renamed from sync-remotes (breaking)
 - **4 new behavioral skills**:
@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Workflow chaining frontmatter** (`chains-to`/`chains-from`) added to all 23 workflow skills
 
 ### Changed
-- **BREAKING**: `x-commit` renamed to `git-create-commit`
+- **BREAKING**: `x-commit` renamed to `git-commit`
 - **BREAKING**: `x-release` renamed to `git-create-release`
 - **BREAKING**: `x-issue` renamed to `git-implement-issue`
 - **BREAKING**: `sync-remotes` moved from ccsetup to `git-sync-remotes`
@@ -152,8 +152,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/CorentinLumineau/x-workflows/compare/v2.0.0...HEAD
-[2.0.0]: https://github.com/CorentinLumineau/x-workflows/compare/v1.14.0...v2.0.0
+[Unreleased]: https://github.com/CorentinLumineau/x-workflows/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/CorentinLumineau/x-workflows/compare/v1.14.0...v1.15.0
 [1.0.1]: https://github.com/CorentinLumineau/x-workflows/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/CorentinLumineau/x-workflows/compare/v0.4.0...v1.0.0
 [0.4.0]: https://github.com/CorentinLumineau/x-workflows/compare/v0.3.2...v0.4.0

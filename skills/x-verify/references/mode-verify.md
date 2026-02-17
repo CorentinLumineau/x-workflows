@@ -114,7 +114,7 @@ Present next step based on result:
     "question": "All quality gates passed. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/git-create-commit (Recommended)", "description": "Commit verified changes"},
+      {"label": "/git-commit (Recommended)", "description": "Commit verified changes"},
       {"label": "/x-review", "description": "Code review before commit"},
       {"label": "Stop", "description": "Done for now"}
     ],

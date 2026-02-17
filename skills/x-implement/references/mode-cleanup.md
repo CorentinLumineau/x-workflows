@@ -104,7 +104,7 @@ Present next step:
     "header": "Next",
     "options": [
       {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
-      {"label": "/git-create-commit", "description": "Commit cleanup"},
+      {"label": "/git-commit", "description": "Commit cleanup"},
       {"label": "Stop", "description": "Review manually"}
     ],
     "multiSelect": false
