@@ -8,7 +8,7 @@ All verb skills operate within one of 4 canonical workflows:
 
 | Workflow | Purpose | Key Verbs |
 |----------|---------|-----------|
-| **APEX** | Systematic build/create | analyze → plan → implement → verify → review → commit |
+| **APEX** | Systematic build/create | analyze → plan → implement → review → commit |
 | **ONESHOT** | Quick fixes | fix → [verify] → commit |
 | **DEBUG** | Error resolution | troubleshoot → fix/implement |
 | **BRAINSTORM** | Exploration/research | brainstorm ↔ research → design |
@@ -42,11 +42,11 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |--------|---------|--------|--------|
 | **x-workflows** | HOW to work | 21 workflow skills | `x-{verb}/` |
 | x-workflows | Git operations | 10 git skills | `git-{verb}-{type}/` |
-| x-workflows | Auto-triggered | 9 behavioral skills | `{name}/` |
-| **x-devsecops** | WHAT to know | 25 knowledge skills | `{category}-{skill}/` |
+| x-workflows | Auto-triggered | 9 behavioral skills | `{name}/` (includes interview, orchestration) |
+| **x-devsecops** | WHAT to know | 21 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 1 | initiative |
 
-**Total: 66 skills**
+**Total: 62 skills**
 
 ## Verb Skills by Workflow (21)
 
@@ -106,7 +106,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/git-resolve-conflict` | Resolve merge conflicts | resolve conflict, merge conflict |
 | `/git-review-pr` | Review pull request | review pr, code review |
 
-## Behavioral Skills (7)
+## Behavioral Skills (9)
 
 | Skill | Purpose |
 |-------|---------|
@@ -116,31 +116,30 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `context-awareness` | Context loading (auto-triggered) |
 | `error-recovery` | Error recovery patterns (auto-triggered) |
 | `forge-awareness` | Git forge detection — GitHub/Gitea/GitLab (auto-triggered) |
+| `interview` | Zero-doubt confidence gate (auto-triggered) |
+| `orchestration` | Batch operation coordination (auto-triggered) |
 | `permission-awareness` | Permission escalation patterns (auto-triggered) |
 
-## Knowledge Skills (53)
+## Knowledge Skills (21)
 
 Skills are prefixed by category for organization:
 
 | Category | Count | Skills |
 |----------|-------|--------|
-| **code-** | 7 | api-design, code-quality, design-patterns, error-handling, llm-optimization, refactoring-patterns, sdk-design |
-| **data-** | 6 | caching, database, data-persistence, message-queues, messaging, nosql |
-| **delivery-** | 7 | ci-cd, ci-cd-delivery, deployment-strategies, feature-flags, infrastructure, release-git, release-management |
-| **meta-** | 4 | analysis, analysis-architecture, architecture-patterns, decision-making |
-| **operations-** | 5 | disaster-recovery, incident-response, monitoring, sre-operations, sre-practices |
-| **quality-** | 8 | accessibility-wcag, debugging, debugging-performance, load-testing, observability, performance, quality-gates, testing |
-| **security-** | 13 | api-security, authentication, authorization, compliance, container-security, git, identity-access, input-validation, owasp, secrets, secrets-supply-chain, secure-coding, supply-chain |
+| **code-** | 4 | api-design, code-quality, design-patterns, error-handling |
+| **data-** | 2 | data-persistence, messaging |
+| **delivery-** | 3 | ci-cd-delivery, infrastructure, release-git |
+| **meta-** | 1 | analysis-architecture |
+| **operations-** | 1 | sre-operations |
+| **quality-** | 3 | debugging-performance, observability, testing |
+| **security-** | 4 | git, identity-access, secrets-supply-chain, secure-coding |
 | **vcs-** | 3 | conventional-commits, forge-operations, git-workflows |
 
-## Local Skills (4)
+## Local Skills (1)
 
 | Skill | Purpose |
 |-------|---------|
-| documentation | Doc sync patterns |
 | initiative | Cross-session tracking |
-| interview | Confidence gate |
-| orchestration | Batch operation coordination |
 
 ## Quick Reference
 

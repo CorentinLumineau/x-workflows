@@ -140,7 +140,7 @@ This document defines the canonical boilerplate text used across all 33 commands
 | SOLID | @skills/code-code-quality/ |
 | Testing | @skills/quality-testing/ |
 | Patterns | @skills/code-design-patterns/ |
-| Debugging | @skills/quality-debugging/ |
+| Debugging | @skills/quality/debugging-performance/ |
 | Error Handling | @skills/code-error-handling/ |
 
 ---

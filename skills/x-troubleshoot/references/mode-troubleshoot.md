@@ -10,7 +10,7 @@ Deep diagnostic analysis for complex, intermittent, or multi-layer issues. Syste
 ## Behavioral Skills
 
 This mode activates:
-- `debugging` - Hypothesis testing methodology
+- `debugging-performance` - Hypothesis testing methodology
 - `context-awareness` - System understanding
 
 ## Agent Delegation
@@ -218,4 +218,4 @@ Use these markers for thinking transparency:
 
 ## References
 
-- @skills/quality-debugging/ - Debugging patterns and methodology
+- @skills/quality/debugging-performance/ - Debugging patterns and methodology

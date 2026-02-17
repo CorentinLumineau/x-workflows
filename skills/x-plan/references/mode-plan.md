@@ -10,7 +10,7 @@ Scale-adaptive implementation planning with automatic complexity detection. Rout
 ## Behavioral Skills
 
 This mode activates:
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 - `context-awareness` - Project context
 
 ## Agent Delegation
@@ -194,7 +194,7 @@ Present next step:
 
 ## References
 
-- @skills/meta-analysis/ - Pareto prioritization and analysis patterns
+- @skills/meta/analysis-architecture/ - Pareto prioritization and analysis patterns
 - @skills/x-initiative/ - Initiative methodology
 
 <success_criteria>

@@ -10,7 +10,7 @@ Intermediate debugging to understand code flow, trace execution, and debug moder
 ## Behavioral Skills
 
 This mode activates:
-- `debugging` - Debug methodology
+- `debugging-performance` - Debug methodology
 - `context-awareness` - Code understanding
 
 ## Agent Delegation
@@ -260,4 +260,4 @@ Escalate to `/x-troubleshoot` when:
 
 ## References
 
-- @skills/quality-debugging/ - Debugging techniques and methodology
+- @skills/quality/debugging-performance/ - Debugging techniques and methodology

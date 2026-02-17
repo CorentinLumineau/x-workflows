@@ -13,7 +13,7 @@ Test coverage improvement using Pareto prioritization. Analyze coverage gaps, id
 
 This mode activates:
 - `testing` - Testing pyramid enforcement
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 - `code-quality` - Quality targets
 
 ## Agent Delegation

@@ -10,7 +10,7 @@ Comprehensive code analysis across quality, security, performance, and architect
 ## Behavioral Skills
 
 This mode activates:
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 - `code-quality` - Quality assessment
 - `context-awareness` - Pattern awareness
 

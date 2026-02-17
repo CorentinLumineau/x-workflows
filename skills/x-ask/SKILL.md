@@ -294,4 +294,4 @@ On escalation, use Skill tool:
 ## References
 
 - @skills/context-awareness/ - Project context loading
-- @skills/meta-analysis/ - Analysis and prioritization
+- @skills/meta/analysis-architecture/ - Analysis and prioritization

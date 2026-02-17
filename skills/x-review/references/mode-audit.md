@@ -30,7 +30,7 @@ Phase 1 output determines audit focus:
 
 This mode activates:
 - `code-quality` - Quality enforcement
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 
 ## Agent Delegation
 

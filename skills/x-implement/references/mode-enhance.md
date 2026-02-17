@@ -10,7 +10,7 @@ Targeted code quality improvements with Pareto focus. Identify the 20% of change
 
 This mode activates:
 - `code-quality` - Quality enforcement
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 - `context-awareness` - Pattern awareness
 
 ## Agent Delegation
@@ -156,7 +156,7 @@ Present next step:
 
 ## References
 
-- @skills/meta-analysis/ - Pareto 80/20 principle
+- @skills/meta/analysis-architecture/ - Pareto 80/20 principle
 - @skills/code-code-quality/ - SOLID, DRY, KISS principles
 
 <success_criteria>

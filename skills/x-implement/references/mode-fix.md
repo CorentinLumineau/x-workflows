@@ -10,7 +10,7 @@ Rapid bug fixing for clear errors with obvious solutions. Parse error, identify 
 ## Behavioral Skills
 
 This mode activates:
-- `debugging` - Debug methodology
+- `debugging-performance` - Debug methodology
 - `context-awareness` - Project context
 
 ## Agent Delegation
@@ -138,7 +138,7 @@ Present next step:
 
 ## References
 
-- @skills/quality-debugging/ - Debugging strategies and methodology
+- @skills/quality/debugging-performance/ - Debugging strategies and methodology
 
 <success_criteria>
 - [ ] Error cause identified
