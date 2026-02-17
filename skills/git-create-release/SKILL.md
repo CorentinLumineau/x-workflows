@@ -51,9 +51,24 @@ This skill activates:
 
 ### Phase 0: Confidence Check (REQUIRED - HIGH RISK)
 
-<workflow-gate options="proceed,review-changes,cancel" default="proceed">
-Release approval gate — always requires human confirmation before any release action.
+<workflow-gate type="choice" id="release-approval">
+  <question>Ready to start release process. How would you like to proceed?</question>
+  <header>Release approval</header>
+  <option key="proceed" recommended="true">
+    <label>Proceed with release</label>
+    <description>Run pre-checks, determine version, and create release</description>
+  </option>
+  <option key="review-changes">
+    <label>Review changes first</label>
+    <description>Inspect unreleased changes before deciding on release</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort release process</description>
+  </option>
 </workflow-gate>
+
+<workflow-chain on="cancel" action="end" />
 
 **Release mode has 40% risk weight** - always interview unless version is explicitly specified.
 
@@ -190,10 +205,39 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-After release complete:
-"Release v{version} published. What's next?"
-- Option 1: Done - Release complete
-- Option 2: Start next feature - Continue development
+**Terminal phase**: release ends the workflow
+
+After release published:
+1. Update `.claude/workflow-state.json` (mark workflow complete, move to history, prune to max 5, delete file if no active workflow)
+2. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
+3. Present options (no auto-chain — workflow is done):
+
+<workflow-gate type="choice" id="release-next">
+  <question>Release v{version} published. What's next?</question>
+  <header>After release</header>
+  <option key="sync">
+    <label>Sync remotes</label>
+    <description>Push release tag and changes to mirror remotes</description>
+  </option>
+  <option key="next-feature">
+    <label>Start next feature</label>
+    <description>Continue development with a new planning cycle</description>
+  </option>
+  <option key="done" recommended="true">
+    <label>Done</label>
+    <description>Release complete — no further action needed</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="sync" skill="git-sync-remotes" args="v{version}" />
+<workflow-chain on="next-feature" skill="x-plan" args="{next feature context}" />
+<workflow-chain on="done" action="end" />
+
+<state-cleanup phase="terminal">
+  <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
+  <memory-prune entities="orchestration-*" older-than="7d" />
+  <history-prune max-entries="5" />
+</state-cleanup>
 
 </chaining-instruction>
 

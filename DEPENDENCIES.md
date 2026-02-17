@@ -15,7 +15,7 @@ This document maps how x-workflows skills depend on x-devsecops knowledge skills
 │                     x-workflows                              │
 │                 (HOW to work - 25 skills)                   │
 │                                                             │
-│  x-implement → x-verify → x-review → x-git                  │
+│  x-implement → x-verify → x-review → x-git                 │
 │       │            │          │         │         │         │
 │       ▼            ▼          ▼         ▼         ▼         │
 ├─────────────────────────────────────────────────────────────┤

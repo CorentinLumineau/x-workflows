@@ -57,8 +57,8 @@ Perform comprehensive local code review of a pull request including:
 
 ## Phase 0: Forge Detection and Validation
 
-<state-checkpoint id="review-init">
-Checkpoint captures: PR number, forge type, repository context, review scope
+<state-checkpoint phase="review-init" status="captured">
+PR number, forge type, repository context, review scope
 </state-checkpoint>
 
 **Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea/GitLab).
@@ -75,15 +75,28 @@ Verify PR exists via forge CLI:
 
 If PR not found, exit with error message.
 
-<workflow-gate id="confirm-review-scope" severity="medium">
-Present PR details to user:
+<workflow-gate type="choice" id="confirm-review-scope">
+  <question>Proceed with comprehensive review of PR #{number} (code quality, security, tests)?</question>
+  <header>Review scope confirmation</header>
+  <option key="proceed" recommended="true">
+    <label>Full review</label>
+    <description>Code quality + security analysis + test execution</description>
+  </option>
+  <option key="quick">
+    <label>Quick review</label>
+    <description>Code quality only, skip security and tests</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort review</description>
+  </option>
+</workflow-gate>
+
+Present PR details to user before gate:
 - Title and description
 - Author and branch
 - File change count
 - Review scope (full review with security + tests)
-
-Ask: "Proceed with comprehensive review (code quality, security, tests)?"
-</workflow-gate>
 
 ---
 
@@ -118,46 +131,27 @@ Capture base branch (usually main/master):
 git merge-base HEAD origin/main  # or origin/master
 ```
 
-<state-checkpoint id="pr-fetched">
-Checkpoint captures: PR branch name, base commit SHA, working directory state
+<state-checkpoint phase="pr-fetched" status="captured">
+PR branch name, base commit SHA, working directory state
 </state-checkpoint>
 
 ---
 
 ## Phase 2: Parallel Code and Security Review
 
-<parallel-delegate id="dual-review">
-Delegate to TWO agents in parallel:
-
-**Agent 1: Code Quality Reviewer**
-- Agent: `ccsetup:x-reviewer`
-- Model: sonnet
-- Task: Review code changes for:
-  - Design patterns and SOLID principles
-  - Code maintainability and readability
-  - Performance concerns
-  - Test coverage gaps
-  - Documentation completeness
-- Scope: `git diff origin/main...HEAD`
-- Output: Structured findings with severity (Critical/Warning/Suggestion)
-
-**Agent 2: Security Reviewer**
-- Agent: `ccsetup:x-security-reviewer`
-- Model: sonnet
-- Task: Review code changes for:
-  - OWASP Top 10 vulnerabilities
-  - Authentication/authorization flaws
-  - Input validation issues
-  - Secrets exposure (hardcoded credentials, API keys)
-  - Dependency vulnerabilities
-- Scope: `git diff origin/main...HEAD`
-- Output: Structured security findings with CVE references where applicable
-
-Wait for BOTH agents to complete before proceeding.
+<parallel-delegate strategy="concurrent">
+  <agent role="code quality reviewer" subagent="x-reviewer" model="sonnet">
+    <prompt>Review code changes for design patterns, SOLID principles, maintainability, readability, performance concerns, test coverage gaps, and documentation completeness. Scope: `git diff origin/main...HEAD`. Output structured findings with severity (Critical/Warning/Suggestion).</prompt>
+    <context>PR code quality review — SOLID, DRY, performance, test coverage, documentation</context>
+  </agent>
+  <agent role="security reviewer" subagent="x-security-reviewer" model="sonnet">
+    <prompt>Review code changes for OWASP Top 10 vulnerabilities, authentication/authorization flaws, input validation issues, secrets exposure (hardcoded credentials, API keys), and dependency vulnerabilities. Scope: `git diff origin/main...HEAD`. Output structured security findings with CVE references where applicable.</prompt>
+    <context>PR security review — OWASP, auth, input validation, secrets, dependencies</context>
+  </agent>
 </parallel-delegate>
 
-<state-checkpoint id="review-findings">
-Checkpoint captures: Code review findings, security review findings, agent execution logs
+<state-checkpoint phase="review-findings" status="captured">
+Code review findings, security review findings, agent execution logs
 </state-checkpoint>
 
 **Aggregate findings**:
@@ -170,24 +164,13 @@ Checkpoint captures: Code review findings, security review findings, agent execu
 
 ## Phase 3: Local Test Execution
 
-<agent-delegate id="test-execution">
-Delegate to: `ccsetup:x-tester`
-Model: sonnet
-Task: Execute full test suite on PR branch
-Instructions:
-- Detect test framework (pytest, jest, go test, cargo test, etc.)
-- Run all tests with coverage report
-- Capture failures, errors, and coverage metrics
-- Compare coverage vs. base branch if possible
-
-Expected output:
-- Test summary (passed/failed/skipped counts)
-- Coverage percentage (overall and diff)
-- Failed test details with stack traces
+<agent-delegate role="test runner" subagent="x-tester" model="sonnet">
+  <prompt>Execute full test suite on PR branch. Detect test framework (pytest, jest, go test, cargo test, etc.). Run all tests with coverage report. Capture failures, errors, and coverage metrics. Compare coverage vs. base branch if possible. Return test summary (passed/failed/skipped counts), coverage percentage (overall and diff), and failed test details with stack traces.</prompt>
+  <context>PR test execution phase — run all tests and report results with coverage</context>
 </agent-delegate>
 
-<state-checkpoint id="test-results">
-Checkpoint captures: Test execution summary, coverage metrics, failure details
+<state-checkpoint phase="test-results" status="captured">
+Test execution summary, coverage metrics, failure details
 </state-checkpoint>
 
 If tests fail, flag as blocking issue in review findings (severity: Critical).
@@ -243,36 +226,52 @@ Determine verdict based on:
   - Only Suggestions exist
   - User wants to approve with minor comments
 
-<state-checkpoint id="review-compiled">
-Checkpoint captures: Complete review report, verdict, structured findings JSON
+<state-checkpoint phase="review-compiled" status="captured">
+Complete review report, verdict, structured findings JSON
 </state-checkpoint>
 
 ---
 
 ## Phase 5: Submit Review to Forge
 
-<workflow-gate id="submit-review" severity="critical">
-Present full review report to user.
-
-Ask: "Submit this review to PR #{number} with verdict: {APPROVE/REQUEST_CHANGES/COMMENT}?"
-
-Options:
-1. Submit as shown
-2. Modify verdict (e.g., approve despite warnings)
-3. Edit review comments before submission
-4. Cancel (save draft locally)
+<workflow-gate type="choice" id="submit-review">
+  <question>Submit this review to PR #{number} with verdict: {APPROVE/REQUEST_CHANGES/COMMENT}?</question>
+  <header>Submit review</header>
+  <option key="submit" recommended="true">
+    <label>Submit as shown</label>
+    <description>Post review with current verdict and findings</description>
+  </option>
+  <option key="modify-verdict">
+    <label>Modify verdict</label>
+    <description>Change verdict (e.g., approve despite warnings)</description>
+  </option>
+  <option key="edit-comments">
+    <label>Edit comments</label>
+    <description>Edit review comments before submission</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Save draft locally without submitting</description>
+  </option>
 </workflow-gate>
+
+Present full review report to user before this gate.
 
 If user chooses option 2 (force approve with issues):
-<workflow-gate id="force-approve" severity="critical">
-CRITICAL WARNING: Review found {count} blocking issues but user wants to approve.
-
-List blocking issues again.
-
-Ask: "Are you CERTAIN you want to APPROVE despite these issues? Type 'APPROVE ANYWAY' to confirm."
-
-Require exact match of confirmation phrase.
+<workflow-gate type="choice" id="force-approve">
+  <question>CRITICAL WARNING: Review found {count} blocking issues. Are you CERTAIN you want to APPROVE despite these issues?</question>
+  <header>Force approve confirmation</header>
+  <option key="force-approve">
+    <label>APPROVE ANYWAY</label>
+    <description>Override blocking issues and approve (requires exact confirmation phrase)</description>
+  </option>
+  <option key="back" recommended="true">
+    <label>Go back</label>
+    <description>Return to review submission options</description>
+  </option>
 </workflow-gate>
+
+List blocking issues again before this gate. Require exact match of "APPROVE ANYWAY" confirmation phrase.
 
 **Submit review via forge CLI**:
 
@@ -302,8 +301,8 @@ Verify submission:
 - Fetch PR again to confirm review appears
 - Display review URL to user
 
-<state-checkpoint id="review-submitted">
-Checkpoint captures: Submission timestamp, review URL, final verdict
+<state-checkpoint phase="review-submitted" status="captured">
+Submission timestamp, review URL, final verdict
 </state-checkpoint>
 
 ---
@@ -314,20 +313,40 @@ Checkpoint captures: Submission timestamp, review URL, final verdict
 - Return to original branch: `git checkout -`
 - Optionally delete PR branch locally (if merged): `git branch -d pr-{number}`
 
+<chaining-instruction>
+
 **Workflow chaining**:
+
 If verdict is APPROVE and user wants to proceed with merge:
-<workflow-chain id="proceed-to-merge">
-Chain to: `git-merge-pr`
-Arguments: PR number
-Context: Review approved, ready to merge
-</workflow-chain>
+
+<workflow-gate type="choice" id="post-review-action">
+  <question>Review approved. How would you like to proceed?</question>
+  <header>Post-review action</header>
+  <option key="merge" recommended="true">
+    <label>Proceed to merge</label>
+    <description>Chain to git-merge-pr to merge the approved PR</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Review submitted, no further action needed</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="merge" skill="git-merge-pr" args="{pr-number}" />
+<workflow-chain on="done" action="end" />
 
 If verdict is REQUEST_CHANGES:
 - Inform user: "Review submitted requesting changes. Use /git-review-pr {number} again after author addresses feedback."
 
-<state-cleanup id="review-complete">
-Clear checkpoints: review-init, pr-fetched, review-findings, test-results, review-compiled, review-submitted
-Retain session log for audit trail
+</chaining-instruction>
+
+<state-cleanup phase="terminal">
+  <delete path=".claude/checkpoints/review-init" condition="always" />
+  <delete path=".claude/checkpoints/pr-fetched" condition="always" />
+  <delete path=".claude/checkpoints/review-findings" condition="always" />
+  <delete path=".claude/checkpoints/test-results" condition="always" />
+  <delete path=".claude/checkpoints/review-compiled" condition="always" />
+  <delete path=".claude/checkpoints/review-submitted" condition="always" />
 </state-cleanup>
 
 </instructions>
@@ -341,6 +360,16 @@ Retain session log for audit trail
 | `confirm-review-scope` | Medium | Before fetching PR | Confirm review scope and PR number |
 | `submit-review` | Critical | Before submitting review | Approve review submission with chosen verdict |
 | `force-approve` | Critical | User wants to approve despite blocking issues | Explicit confirmation with phrase match |
+
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: Review findings summary with verdict and blocking issues
+2. **Options**: Submit as-is, modify verdict, edit comments, or cancel
+3. **Recommendation**: Submit with auto-determined verdict based on findings
+4. **Escape**: "Cancel and save draft locally" option
+
+</human-approval-framework>
 
 ---
 
