@@ -10,7 +10,7 @@ metadata:
   version: "1.0.0"
   category: workflow
 chains-to:
-  - skill: x-verify
+  - skill: x-review
     condition: "refactor complete"
     auto: true
 chains-from:
@@ -30,7 +30,7 @@ chains-from:
 | **Phase** | restructure |
 | **Position** | Sub-flow of execute phase |
 
-**Flow**: `x-implement` → (needs restructure) → **`x-refactor`** → `x-verify`
+**Flow**: `x-implement` → (needs restructure) → **`x-refactor`** → `x-review`
 
 ## Intention
 
@@ -181,15 +181,15 @@ After refactoring verified:
 
 1. Read `.claude/workflow-state.json`
 2. Mark `refactor` phase as `"completed"` with timestamp
-3. Set `verify` phase as `"in_progress"`
+3. Set `review` phase as `"in_progress"`
 4. Write updated state to `.claude/workflow-state.json`
 5. Write to Memory MCP entity `"workflow-state"`:
    - `"phase: refactor -> completed"`
-   - `"next: verify"`
+   - `"next: review"`
 
 <state-checkpoint phase="refactor" status="completed">
-  <file path=".claude/workflow-state.json">Mark refactor complete, set verify in_progress</file>
-  <memory entity="workflow-state">phase: refactor -> completed; next: verify</memory>
+  <file path=".claude/workflow-state.json">Mark refactor complete, set review in_progress</file>
+  <memory entity="workflow-state">phase: refactor -> completed; next: review</memory>
 </state-checkpoint>
 
 </instructions>
@@ -224,25 +224,25 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verb**: `/x-verify`
+**Next Verb**: `/x-review`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
-| Refactoring complete | `/x-verify` | Yes |
+| Refactoring complete | `/x-review` | Yes |
 | Tests failing | `/x-implement` | No (show failures) |
 | Large scope | `/x-initiative` | No (ask) |
 
 <chaining-instruction>
 
-**Auto-chain**: refactor → verify (no approval needed)
+**Auto-chain**: refactor → review (no approval needed)
 
 After refactoring complete with all tests passing:
-1. Update `.claude/workflow-state.json` (mark refactor complete, set verify in_progress)
+1. Update `.claude/workflow-state.json` (mark refactor complete, set review in_progress)
 2. Auto-invoke next skill via Skill tool:
-   - skill: "x-verify"
-   - args: "verify refactoring changes"
+   - skill: "x-review"
+   - args: "review refactoring changes"
 
-<workflow-chain on="auto" skill="x-verify" args="verify refactoring changes" />
+<workflow-chain on="auto" skill="x-review" args="review refactoring changes" />
 
 On test failures (manual — stay in refactor/implement):
 "Refactoring caused {count} test failures. Fix or rollback?"
@@ -274,7 +274,7 @@ Apply these principles:
 | Direction | Verb | When |
 |-----------|------|------|
 | Previous | `/x-implement` | Return to implementation |
-| Next | `/x-verify` | Refactoring complete |
+| Next | `/x-review` | Refactoring complete |
 | Escalate | `/x-initiative` | Large scope detected |
 
 ## Success Criteria

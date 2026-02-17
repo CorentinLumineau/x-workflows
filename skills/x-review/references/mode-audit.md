@@ -1,11 +1,30 @@
 # Mode: audit
 
-> **Invocation**: `/x-review audit` or `/x-review audit "scope"`
+> **Invocation**: `/x-review audit` or `/x-review security` or `/x-review deep`
 > **Legacy Command**: `/x:best-practices`
 
 <purpose>
-Systematic audit of codebase adherence to SOLID, DRY, KISS, and YAGNI principles. Comprehensive best practices assessment.
+Deep code and security audit. Runs Phase 1 scoping, Phase 3 code review, and Phase 6 readiness report — skipping quality gates and docs to focus on code quality analysis. Systematic audit of codebase adherence to SOLID, DRY, KISS, and YAGNI principles.
 </purpose>
+
+## Phases (from x-review)
+
+Audit mode runs phases: **0 → 1 → 3 → 6 → 7**
+
+| Phase | Name | What Happens |
+|-------|------|-------------|
+| 0 | Confidence + State | Interview gate, workflow state check |
+| 1 | **Change Scoping** | git diff analysis, scope determination |
+| 3 | Code Review | Full spec compliance + SOLID/security audit |
+| 6 | Readiness Report | Pass/warn/block synthesis |
+| 7 | Workflow State | Update state, chain to next |
+
+## Phase 1 Scoping for Audit
+
+Phase 1 output determines audit focus:
+- File categories → which SOLID principles to prioritize
+- Domain detection → whether security review is parallel
+- Complexity estimate → whether to use haiku or sonnet reviewers
 
 ## Behavioral Skills
 

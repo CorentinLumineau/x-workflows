@@ -93,7 +93,7 @@ Present next step:
     "question": "Fix applied and verified. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-review (Recommended)", "description": "Full quality gates"},
       {"label": "/git-commit", "description": "Commit the fix"},
       {"label": "Stop", "description": "Manual review first"}
     ],

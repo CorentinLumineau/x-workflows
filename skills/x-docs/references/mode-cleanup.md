@@ -105,7 +105,7 @@ For each issue:
     "question": "Cleanup complete. Removed {removed}, fixed {fixed}. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Verify changes"},
+      {"label": "/x-review quick (Recommended)", "description": "Verify changes"},
       {"label": "/git-commit", "description": "Commit cleanup"},
       {"label": "Stop", "description": "Review first"}
     ],

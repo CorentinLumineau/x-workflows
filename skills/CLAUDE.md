@@ -40,15 +40,15 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 22 workflow skills | `x-{verb}/` |
+| **x-workflows** | HOW to work | 21 workflow skills | `x-{verb}/` |
 | x-workflows | Git operations | 10 git skills | `git-{verb}-{type}/` |
-| x-workflows | Auto-triggered | 7 behavioral skills | `{name}/` |
-| **x-devsecops** | WHAT to know | 53 knowledge skills | `{category}-{skill}/` |
-| **local** | Project-specific | 4 | documentation, initiative, interview, orchestration |
+| x-workflows | Auto-triggered | 9 behavioral skills | `{name}/` |
+| **x-devsecops** | WHAT to know | 25 knowledge skills | `{category}-{skill}/` |
+| **local** | Project-specific | 1 | initiative |
 
-**Total: 96 skills**
+**Total: 66 skills**
 
-## Verb Skills by Workflow (22)
+## Verb Skills by Workflow (21)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -57,15 +57,14 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-research` | Deep investigation, evidence gathering | research, ask, investigate |
 | `/x-design` | Architectural decisions | design, architecture |
 
-### APEX Workflow (6)
+### APEX Workflow (5)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
 | `/x-analyze` | Codebase assessment | analyze, assess, evaluate |
 | `/x-plan` | Implementation planning | plan, task breakdown |
 | `/x-implement` | TDD implementation | implement, build, create |
 | `/x-refactor` | Safe restructuring | refactor, restructure |
-| `/x-verify` | Quality gates | verify, test, lint |
-| `/x-review` | Code review, audits | review, PR, audit |
+| `/x-review` | Quality gates, code review, audits | review, verify, test, lint, audit |
 
 ### ONESHOT Workflow (1)
 | Verb | Purpose | Triggers |
@@ -147,12 +146,12 @@ Skills are prefixed by category for organization:
 
 ### Feature Development (APEX)
 ```
-/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-commit
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-review → /git-commit
 ```
 
 ### Quick Bug Fix (ONESHOT)
 ```
-/x-fix → /x-verify (optional) → /git-commit
+/x-fix → /x-review quick (optional) → /git-commit
 ```
 
 ### Investigation (DEBUG)

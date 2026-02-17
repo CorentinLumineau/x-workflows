@@ -1,6 +1,6 @@
 # Verification Evidence Protocol — Reference
 
-> Loaded on demand by x-verify Phase 1b. Provides anti-pattern examples and violation definitions.
+> Loaded on demand by x-review quick Phase 1b. Provides anti-pattern examples and violation definitions.
 
 ## Why This Protocol Exists
 
@@ -120,7 +120,7 @@ When a gate has no standard command (e.g., custom project):
 | "I'll verify after the next change" | Deferred verification = skipped verification. Verify NOW. |
 | "Running tests would take too long" | Skipping tests costs more than running them. Run the gates. |
 
-## Integration with x-verify Phases
+## Integration with x-review Phases
 
 ```
 Phase 1: Run Quality Gates (execute commands)

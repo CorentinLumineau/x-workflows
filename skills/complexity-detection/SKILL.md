@@ -179,7 +179,7 @@ Input: "Migrate from Express to Fastify"
 Complexity: CRITICAL | Mental Model: APEX
 Agent: x-refactorer (sonnet)
 Variant: x-designer (opus)
-Chain: x-plan → x-implement → x-verify
+Chain: x-plan → x-implement → x-review
 Multi-session: Yes (major framework change)
 Team: Refactor Team (3 agents)
 ```
@@ -418,7 +418,7 @@ Resolve valid next-step workflows by reading chain metadata from skill frontmatt
 ---
 name: x-implement
 chains-to:
-  - x-verify
+  - x-review
   - x-test
   - git-create-pr
 chains-from:
@@ -434,22 +434,22 @@ Reference `WORKFLOW_CHAINS.md` for pre-defined workflow sequences:
 
 | Path Name | Chain | Use Case |
 |-----------|-------|----------|
-| apex-full | x-analyze → x-plan → x-implement → x-verify | Complete feature workflow |
-| debug-flow | x-troubleshoot → x-fix → x-verify | Error resolution workflow |
-| quick-fix | x-implement → x-verify | Fast iteration for simple changes |
+| apex-full | x-analyze → x-plan → x-implement → x-review | Complete feature workflow |
+| debug-flow | x-troubleshoot → x-fix → x-review | Error resolution workflow |
+| quick-fix | x-implement → x-review | Fast iteration for simple changes |
 | research-to-build | x-research → x-plan → x-implement | Exploration → implementation |
 | git-pr-flow | x-implement → git-create-pr → git-merge-pr | PR creation workflow |
-| git-issue-flow | git-implement-issue → x-verify → git-create-pr | Issue implementation workflow |
+| git-issue-flow | git-implement-issue → x-review → git-create-pr | Issue implementation workflow |
 
 ### Next Step Resolution
 
 ```
 Given: User completed x-implement
 Current skill: x-implement
-chains-to: [x-verify, x-test, git-create-pr]
+chains-to: [x-review, x-test, git-create-pr]
 
 Recommendations:
-1. Primary: x-verify (validate implementation)
+1. Primary: x-review (validate implementation)
 2. Alternative: x-test (run test suite)
 3. Finalize: git-create-pr (create PR for review)
 
@@ -457,7 +457,7 @@ Output:
 ┌─────────────────────────────────────────────┐
 │ Next Steps                                  │
 │                                             │
-│ 1. x-verify (recommended)                   │
+│ 1. x-review (recommended)                   │
 │    → Validate implementation correctness    │
 │                                             │
 │ 2. x-test (optional)                        │
@@ -478,8 +478,8 @@ Before suggesting next step:
 4. If chain is invalid → log warning, skip suggestion
 
 Example validation:
-  x-implement chains-to: x-verify ✓
-  x-verify chains-from: x-implement ✓
+  x-implement chains-to: x-review ✓
+  x-review chains-from: x-implement ✓
   Bidirectional: VALID
 ```
 
@@ -494,7 +494,7 @@ Example: APEX + MEDIUM complexity
 3. Resolve initial chain: x-plan → x-implement
 4. After x-implement completes:
    - Read x-implement chains-to
-   - Recommend: x-verify (from chains-to)
+   - Recommend: x-review (from chains-to)
    - User can override with explicit command
 
 Example: GIT intent + "pr"
@@ -510,7 +510,7 @@ Example: GIT intent + "pr"
 ```
 If chain metadata is missing or incomplete:
 1. Fall back to complexity-based routing
-2. Use mental model defaults (APEX → plan → implement → verify)
+2. Use mental model defaults (APEX → plan → implement → review)
 3. Log: "Chain metadata unavailable, using default routing"
 4. Continue workflow with degraded guidance
 

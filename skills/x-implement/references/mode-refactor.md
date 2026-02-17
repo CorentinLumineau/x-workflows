@@ -155,7 +155,7 @@ Present next step:
     "question": "Refactoring complete. All tests passing. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-review (Recommended)", "description": "Full quality gates"},
       {"label": "/x-review", "description": "Code review"},
       {"label": "/git-commit", "description": "Commit changes"}
     ],

@@ -44,9 +44,9 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 ### Verification Commands
 | Command | Skill | Description |
 |---------|-------|-------------|
-| `/x:verify` | x-verify | Quality gates |
-| `/x:build` | x-verify build | Build management |
-| `/x:improve-coverage` | x-verify coverage | Coverage improvement |
+| `/x:verify` | x-review quick | Quality gates |
+| `/x:build` | x-review quick "build" | Build management |
+| `/x:improve-coverage` | x-review quick "coverage" | Coverage improvement |
 
 ### Review Commands
 | Command | Skill | Description |

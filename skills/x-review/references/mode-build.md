@@ -1,6 +1,6 @@
 # Mode: build
 
-> **Invocation**: `/x-verify build` or `/x-verify build "description"`
+> **Invocation**: `/x-review quick "build"` or `/x-review build`
 > **Legacy Command**: `/x:build`
 
 ## Purpose
@@ -105,7 +105,7 @@ Present next step:
     "question": "Build successful. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Run full quality gates"},
+      {"label": "/x-review quick (Recommended)", "description": "Run full quality gates"},
       {"label": "/git-commit", "description": "Commit build changes"},
       {"label": "Stop", "description": "Build complete"}
     ],

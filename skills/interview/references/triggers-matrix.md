@@ -67,13 +67,13 @@ Each workflow has specific scenarios that should activate the interview behavior
 | release | Tag already exists | Risk | Would overwrite |
 | release | Breaking changes present | Risk | Needs migration guide |
 
-### x-verify
+### x-review (quick mode)
 
 | Mode | Trigger | Category | Example |
 |------|---------|----------|---------|
-| verify | Test scope unclear | Ambiguity | "Run tests" (which?) |
-| verify | Test failure interpretation | Ambiguity | Is this expected? |
-| verify | Fix strategy for failures | Ambiguity | Fix code or fix test? |
+| quick | Test scope unclear | Ambiguity | "Run tests" (which?) |
+| quick | Test failure interpretation | Ambiguity | Is this expected? |
+| quick | Fix strategy for failures | Ambiguity | Fix code or fix test? |
 | build | Build target unclear | Missing | "Build it" (what config?) |
 | coverage | Coverage threshold undefined | Missing | "Check coverage" (target?) |
 

@@ -213,7 +213,7 @@ This mode activates:
 
 | Type | Pattern | Example |
 |------|---------|---------|
-| User-invocable skill | `x-{verb}` | `x-implement`, `x-verify` |
+| User-invocable skill | `x-{verb}` | `x-implement`, `x-review` |
 | Behavioral skill | `{noun}` or `{noun}-{modifier}` | `code-quality`, `context-awareness` |
 | Mode file | `mode-{mode}.md` | `mode-fix.md`, `mode-create.md` |
 

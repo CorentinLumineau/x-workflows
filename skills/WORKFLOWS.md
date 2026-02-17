@@ -8,8 +8,8 @@ All verb skills operate within one of 4 canonical workflows. Each workflow repre
 
 | Workflow | Purpose | Verbs | Flow |
 |----------|---------|-------|------|
-| **APEX** | Systematic build/create | analyze → plan → implement → verify → review → commit | Full development cycle |
-| **ONESHOT** | Quick fixes | fix → [verify] → commit | Minimal overhead |
+| **APEX** | Systematic build/create | analyze → plan → implement → review → commit | Full development cycle |
+| **ONESHOT** | Quick fixes | fix → [review quick] → commit | Minimal overhead |
 | **DEBUG** | Error resolution | troubleshoot → fix/implement | Investigation-first |
 | **BRAINSTORM** | Exploration/research | brainstorm ↔ research → design | Discovery-focused |
 
@@ -23,11 +23,11 @@ All verb skills operate within one of 4 canonical workflows. Each workflow repre
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           APEX WORKFLOW                                  │
 │                                                                          │
-│   /x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /git-commit│
-│       (A)        (P)         (E)           (X)        (X)                │
+│   /x-analyze → /x-plan → /x-implement → /x-review → /git-commit        │
+│       (A)        (P)         (E)           (X)                           │
 │                                                                          │
 │                     ↓ (restructure needed)                               │
-│              /x-refactor → /x-verify                                     │
+│              /x-refactor → /x-review                                     │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -38,8 +38,7 @@ All verb skills operate within one of 4 canonical workflows. Each workflow repre
 | **A**nalyze | `/x-analyze` | Assess codebase, identify patterns | Start of APEX flow |
 | **P**lan | `/x-plan` | Create implementation plan | Analysis complete |
 | **E**xecute | `/x-implement` | Write code with TDD | Plan approved |
-| **X** (Verify) | `/x-verify` | Run quality gates | Code written |
-| **X** (Examine) | `/x-review` | Code review, audits | Tests pass |
+| e**X**amine | `/x-review` | Quality gates, code review, audits | Code written |
 | Commit | `/git-commit` | Conventional commit | Review approved |
 
 ### Sub-flow: Refactoring
@@ -47,7 +46,7 @@ All verb skills operate within one of 4 canonical workflows. Each workflow repre
 When restructuring is needed during implementation:
 
 ```
-/x-implement → (needs restructure) → /x-refactor → /x-verify → (continue)
+/x-implement → (needs restructure) → /x-refactor → /x-review → (continue)
 ```
 
 ### Chaining Rules
@@ -56,11 +55,9 @@ When restructuring is needed during implementation:
 |------|-----|---------|------------|
 | x-analyze | x-plan | Analysis complete | Yes |
 | x-plan | x-implement | **Plan approved** | **HUMAN APPROVAL** |
-| x-implement | x-verify | Code written | Yes |
+| x-implement | x-review | Code written | Yes |
 | x-implement | x-refactor | "restructure needed" | No (ask) |
-| x-refactor | x-verify | Refactor complete | Yes |
-| x-verify | x-review | Tests pass | Yes |
-| x-verify | x-implement | Tests fail | No (show failures) |
+| x-refactor | x-review | Refactor complete | Yes |
 | x-review | git-commit | Review approved | Yes |
 | x-review | x-implement | Changes requested | No (show feedback) |
 
@@ -82,7 +79,7 @@ When restructuring is needed during implementation:
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         ONESHOT WORKFLOW                                 │
 │                                                                          │
-│                    /x-fix → [/x-verify] → /git-commit                      │
+│                    /x-fix → [/x-review quick] → /git-commit                 │
 │                                                                          │
 │   Characteristics:                                                       │
 │   - Single file/component                                                │
@@ -96,14 +93,14 @@ When restructuring is needed during implementation:
 | Phase | Verb | Description | Entry Conditions |
 |-------|------|-------------|------------------|
 | Fix | `/x-fix` | Apply targeted fix | Clear error identified |
-| Verify (optional) | `/x-verify` | Quick sanity check | User requests |
+| Review (optional) | `/x-review quick` | Quick quality gates | User requests |
 | Commit | `/git-commit` | Quick commit | Fix applied |
 
 ### Chaining Rules
 
 | From | To | Trigger | Auto-Chain |
 |------|-----|---------|------------|
-| x-fix | x-verify | "verify first" | No (ask) |
+| x-fix | x-review | "verify first" | No (ask) |
 | x-fix | git-commit | **Quick commit** | **HUMAN APPROVAL** |
 
 ### Detection Patterns
@@ -309,12 +306,11 @@ After each verb skill completes:
 |------|-----|------|----------|
 | x-analyze | x-plan | Auto-chain | APEX |
 | x-plan | x-implement | **Human approval** | APEX |
-| x-implement | x-verify | Auto-chain | APEX |
-| x-verify | x-review | Auto-chain | APEX |
+| x-implement | x-review | Auto-chain | APEX |
 | x-review | git-commit | Auto-chain (on approval) | APEX |
 | git-commit | — | Terminal | APEX |
-| x-refactor | x-verify | Auto-chain | APEX (sub-flow) |
-| x-fix | git-commit/x-verify | **Human approval** | ONESHOT |
+| x-refactor | x-review | Auto-chain | APEX (sub-flow) |
+| x-fix | git-commit/x-review | **Human approval** | ONESHOT |
 | x-troubleshoot | x-fix | Auto-chain (simple) | DEBUG |
 | x-troubleshoot | x-implement | **Human approval** (complex) | DEBUG |
 | x-brainstorm | x-research/x-design | Auto-chain | BRAINSTORM |
@@ -354,8 +350,7 @@ All workflows persist their state in `.claude/workflow-state.json` with 3-layer 
       "analyze": { "status": "completed", "timestamp": "..." },
       "plan": { "status": "completed", "timestamp": "...", "approved": true },
       "implement": { "status": "completed", "timestamp": "..." },
-      "verify": { "status": "in_progress" },
-      "review": { "status": "pending" },
+      "review": { "status": "in_progress" },
       "commit": { "status": "pending" }
     }
   },
@@ -389,7 +384,7 @@ Next session starts
         ↓
 context-awareness detects active workflow
         ↓
-Offers: "Resume APEX workflow at phase 'verify' (4/6)? [Y/n]"
+Offers: "Resume APEX workflow at phase 'review' (4/5)? [Y/n]"
         ↓
 Resume → Continues from last in_progress phase
 Start Fresh → Archives current workflow to history
@@ -435,8 +430,7 @@ Resume anyway? State may be outdated.
 | `/x-plan` | APEX.plan | Implementation planning |
 | `/x-implement` | APEX.execute | TDD implementation |
 | `/x-refactor` | APEX.restructure | Safe restructuring |
-| `/x-verify` | APEX.test | Quality gates |
-| `/x-review` | APEX.examine | Code review, audits |
+| `/x-review` | APEX.examine | Quality gates, code review, audits |
 
 ### ONESHOT Verbs
 

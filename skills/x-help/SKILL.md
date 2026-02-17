@@ -64,8 +64,7 @@ Display available verb commands organized by workflow:
 | `/x-plan` | Implementation planning |
 | `/x-implement` | TDD implementation |
 | `/x-refactor` | Safe restructuring |
-| `/x-verify` | Quality gates |
-| `/x-review` | Code review, audits |
+| `/x-review` | Quality gates, code review, audits |
 
 **ONESHOT Workflow:**
 | Verb | Purpose |
@@ -93,12 +92,12 @@ Display available verb commands organized by workflow:
 
 **Feature Development (APEX):**
 ```
-/x-analyze → /x-plan → /x-implement → /x-verify → /x-review → /git-commit
+/x-analyze → /x-plan → /x-implement → /x-review → /git-commit
 ```
 
 **Quick Bug Fix (ONESHOT):**
 ```
-/x-fix → /x-verify (optional) → /git-commit
+/x-fix → /x-review quick (optional) → /git-commit
 ```
 
 **Investigation (DEBUG):**
@@ -128,7 +127,7 @@ Display available verb commands organized by workflow:
 
 ### APEX Full Flow
 ```
-/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-verify → /x-review → /git-commit
+/x-analyze → /x-plan → [APPROVAL] → /x-implement → /x-review → /git-commit
 ```
 **Note:** Plan approval required before implementation.
 

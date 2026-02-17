@@ -10,10 +10,8 @@ OWASP Top 10 security assessment with comprehensive vulnerability scanning. Focu
 ## Behavioral Skills
 
 This mode activates:
-- `owasp` - OWASP Top 10 vulnerability check
-- `input-validation` - Injection prevention
-- `authentication` - Auth pattern review
-- `authorization` - Access control check
+- `secure-coding` - OWASP Top 10 vulnerability check and injection prevention
+- `identity-access` - Auth pattern review and access control check
 
 ## Agent Delegation
 

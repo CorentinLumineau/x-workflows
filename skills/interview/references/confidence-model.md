@@ -31,7 +31,7 @@ Different workflows prioritize different dimensions:
 | **x-troubleshoot** | 30% | 30% | 25% | 5% | 10% |
 | **x-git commit** | 20% | 25% | 20% | 25% | 10% |
 | **x-git release** | 15% | 10% | 20% | 15% | **40%** |
-| **x-verify** | 25% | 20% | 30% | 15% | 10% |
+| **x-review quick** | 25% | 20% | 30% | 15% | 10% |
 | **x-review** | 20% | 25% | 30% | 15% | 10% |
 | **x-improve** | 25% | 25% | 25% | 15% | 10% |
 | **x-initiative create** | 35% | 25% | 15% | 20% | 5% |

@@ -1,6 +1,6 @@
 # Mode: coverage
 
-> **Invocation**: `/x-verify coverage` or `/x-verify coverage "description"`
+> **Invocation**: `/x-review quick "coverage"` or `/x-review coverage`
 > **Legacy Command**: `/x:improve-coverage`
 
 ## Purpose
@@ -112,7 +112,7 @@ Present next step:
     "question": "Coverage improved to {new_coverage}% (from {old_coverage}%). Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-review quick (Recommended)", "description": "Full quality gates"},
       {"label": "/git-commit", "description": "Commit tests"},
       {"label": "Continue improving", "description": "Add more tests"}
     ],

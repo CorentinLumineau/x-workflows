@@ -19,7 +19,7 @@ chains-to:
 chains-from:
   - skill: x-review
     auto: true
-  - skill: x-verify
+  - skill: x-fix
     auto: false
   - skill: git-resolve-conflict
     auto: true
@@ -435,18 +435,18 @@ Directories that group at the second level (e.g., `skills/git-commit`):
 - Use conventional commit format
 - Verify with git status after each commit
 - Run verification before committing
-- Confirm x-verify enforcement summary shows no failures before staging
+- Confirm x-review enforcement summary shows no failures before staging
 - Scan for sensitive files before grouping
 - Create atomic commits (one logical change per commit)
 
 ## Critical Rules
 
-1. **Verify First** — Run `/x-verify` before staging
+1. **Verify First** — Run `/x-review quick` before staging
 2. **Conventional Format** — ALWAYS follow type(scope): description
 3. **Atomic Commits** — One logical change per commit (per group)
 4. **No Secrets** — Never commit credentials, keys, or sensitive data (auto-excluded)
 5. **No Force Push** — Never force push to main/master
-6. **Enforcement gate** — x-verify enforcement summary MUST show all pass before staging
+6. **Enforcement gate** — x-review enforcement summary MUST show all pass before staging
 7. **Sensitive Scan** — Always scan for sensitive files and auto-exclude before grouping
 8. **Atomic Per Group** — Each group gets its own commit; never mix groups in one commit (unless user selects "single" strategy)
 

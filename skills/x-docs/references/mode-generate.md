@@ -119,7 +119,7 @@ Place documentation correctly:
     "question": "Documentation generated for {target}. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify", "description": "Verify build"},
+      {"label": "/x-review quick", "description": "Verify build"},
       {"label": "/x-docs sync", "description": "Sync other docs"},
       {"label": "Stop", "description": "Review docs first"}
     ],

@@ -13,7 +13,7 @@ chains-to:
   - skill: git-commit
     condition: "quick commit"
     auto: false
-  - skill: x-verify
+  - skill: x-review
     condition: "verify first"
     auto: false
 chains-from:
@@ -35,7 +35,7 @@ chains-from:
 | **Phase** | complete |
 | **Position** | 1 of 1 (self-contained) |
 
-**Flow**: **`x-fix`** → `[optional: x-verify]` → `git-commit`
+**Flow**: **`x-fix`** → `[optional: x-review quick]` → `git-commit`
 
 ## Intention
 
@@ -184,11 +184,11 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verbs**: `/x-verify` (optional), `/git-commit`
+**Next Verbs**: `/x-review` (optional), `/git-commit`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
-| "verify first" | `/x-verify` | No (ask) |
+| "verify first" | `/x-review` | No (ask) |
 | "quick commit" | `/git-commit` | **HUMAN APPROVAL** |
 | Complex issue | `/x-troubleshoot` | No (escalate) |
 | Needs implementation | `/x-implement` | No (escalate) |
@@ -202,7 +202,7 @@ After fix applied and verified:
 2. Present options (requires human selection):
    "Fix applied and verified. What's next?"
 3. On selection, invoke via Skill tool:
-   - skill: "x-verify" or "git-commit"
+   - skill: "x-review" or "git-commit"
    - args: "{fix summary and affected files}"
 
 <workflow-gate type="choice" id="fix-next">
@@ -222,7 +222,7 @@ After fix applied and verified:
   </option>
 </workflow-gate>
 
-<workflow-chain on="verify" skill="x-verify" args="{fix summary and affected files}" />
+<workflow-chain on="verify" skill="x-review" args="{fix summary and affected files}" />
 <workflow-chain on="commit" skill="git-commit" args="{fix summary and affected files}" />
 <workflow-chain on="stop" action="end" />
 
@@ -255,7 +255,7 @@ After fix applied and verified:
 
 | Direction | Verb | When |
 |-----------|------|------|
-| Next (verify) | `/x-verify` | Want full quality gates |
+| Next (verify) | `/x-review` | Want full quality gates |
 | Next (commit) | `/git-commit` | Ready to commit (approval) |
 | Escalate | `/x-troubleshoot` | Issue is more complex |
 | Escalate | `/x-implement` | Needs real implementation |

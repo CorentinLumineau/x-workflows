@@ -192,7 +192,7 @@ Scan the enhanced prompt's purpose, instructions, and context for intent signals
 | research, investigate, compare, evaluate options | `/x-research` | BRAINSTORM |
 | brainstorm, ideas, requirements, explore | `/x-brainstorm` | BRAINSTORM |
 | refactor, restructure, clean up, reorganize | `/x-refactor` | APEX |
-| test, verify, lint, quality, coverage | `/x-verify` | APEX |
+| test, verify, lint, quality, coverage | `/x-review quick` | APEX |
 | review, PR, code review, security review | `/x-review` | APEX |
 | document, docs, readme, API docs | `/x-docs` | UTILITY |
 | release, version, tag, changelog | `/git-create-release` | UTILITY |
@@ -232,11 +232,11 @@ Based on your prompt's intent:
 
 | Complexity | Chain |
 |------------|-------|
-| Simple + build | `/x-implement` → `/x-verify` → `/git-commit` |
-| Moderate + build | `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-commit` |
-| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-commit` |
+| Simple + build | `/x-implement` → `/x-review quick` → `/git-commit` |
+| Moderate + build | `/x-plan` → `/x-implement` → `/x-review` → `/git-commit` |
+| Complex + build | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-review` → `/git-commit` |
 | Simple + fix | `/x-fix` → `/git-commit` |
-| Moderate + fix | `/x-fix` → `/x-verify` → `/git-commit` |
+| Moderate + fix | `/x-fix` → `/x-review quick` → `/git-commit` |
 | Any + debug | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
 | Any + explore | `/x-brainstorm` → `/x-research` → `/x-design` → `/x-plan` |
 | Any + research | `/x-research` (standalone) |

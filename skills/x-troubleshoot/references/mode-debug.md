@@ -178,7 +178,7 @@ Once issue found:
 | Option | Description |
 |--------|-------------|
 | /x-implement fix (Recommended) | Apply the fix |
-| /x-verify | Run tests to verify |
+| /x-review | Run tests to verify |
 | Stop | Review first |
 
 **Multi-select**: No

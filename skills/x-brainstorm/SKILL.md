@@ -16,7 +16,9 @@ chains-to:
   - skill: x-design
     condition: "ready to decide"
     auto: true
-chains-from: []
+chains-from:
+  - skill: x-research
+    auto: true
 ---
 
 # /x-brainstorm

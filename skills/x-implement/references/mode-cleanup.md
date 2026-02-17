@@ -103,7 +103,7 @@ Present next step:
     "question": "Cleanup complete. {removed_count} items removed. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-review quick (Recommended)", "description": "Full quality gates"},
       {"label": "/git-commit", "description": "Commit cleanup"},
       {"label": "Stop", "description": "Review manually"}
     ],
@@ -124,7 +124,7 @@ Present next step:
 
 ### Dependency Cleanup
 - Unused npm packages
-- Outdated dependencies (with /x-verify)
+- Outdated dependencies (with /x-review)
 - Duplicate dependencies
 
 ### Code Organization

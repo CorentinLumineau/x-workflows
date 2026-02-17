@@ -100,7 +100,7 @@ For each stale doc:
     "question": "Documentation synced. {count} files updated. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-review quick (Recommended)", "description": "Full quality gates"},
       {"label": "/git-commit", "description": "Commit doc updates"},
       {"label": "Stop", "description": "Review updates first"}
     ],

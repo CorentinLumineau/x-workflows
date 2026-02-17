@@ -138,10 +138,10 @@ After user confirms the recommended workflow:
 
 | Intent | Complexity | Recommended Chain |
 |--------|-----------|-------------------|
-| APEX (Build) | HIGH / CRITICAL | `/x-analyze` -> `/x-plan` -> [APPROVAL] -> `/x-implement` -> `/x-verify` -> `/x-review` -> `/git-commit` |
-| APEX (Build) | LOW / MEDIUM | `/x-plan` -> `/x-implement` -> `/x-verify` -> `/x-review` -> `/git-commit` |
+| APEX (Build) | HIGH / CRITICAL | `/x-analyze` -> `/x-plan` -> [APPROVAL] -> `/x-implement` -> `/x-review` -> `/git-commit` |
+| APEX (Build) | LOW / MEDIUM | `/x-plan` -> `/x-implement` -> `/x-review` -> `/git-commit` |
 | ONESHOT (Fix) | LOW | `/x-fix` -> `/git-commit` |
-| ONESHOT (Fix) | MEDIUM | `/x-fix` -> `/x-verify` -> `/git-commit` |
+| ONESHOT (Fix) | MEDIUM | `/x-fix` -> `/x-review quick` -> `/git-commit` |
 | DEBUG (Error) | LOW / MEDIUM | `/x-troubleshoot` -> `/x-fix` |
 | DEBUG (Error) | HIGH / CRITICAL | `/x-troubleshoot` (deep) -> `/x-implement` |
 | BRAINSTORM | Any | `/x-brainstorm` -> `/x-research` -> `/x-design` -> [APPROVAL] -> `/x-plan` |
@@ -230,7 +230,7 @@ args: "APEX workflow for: add OAuth2 authentication. Complexity: HIGH."
 Routes to ONESHOT (LOW) -> `/x-fix` -> `/git-commit`. Standard agent.
 
 **Complex feature** - `/x-auto add OAuth2 with Google and GitHub providers`:
-Routes to APEX (HIGH) -> `/x-analyze` -> `/x-plan` -> [APPROVAL] -> `/x-implement` -> `/x-verify` -> `/x-review` -> `/git-commit`. Agent: x-designer (opus) for design phase.
+Routes to APEX (HIGH) -> `/x-analyze` -> `/x-plan` -> [APPROVAL] -> `/x-implement` -> `/x-review` -> `/git-commit`. Agent: x-designer (opus) for design phase.
 
 **Debugging** - `/x-auto investigate why the API returns 500 on /users`:
 Routes to DEBUG (MEDIUM) -> `/x-troubleshoot` -> `/x-fix`. Agent: x-debugger (sonnet).

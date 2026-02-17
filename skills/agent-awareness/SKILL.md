@@ -41,7 +41,7 @@ Agent suggestions appear when task complexity matches agent specialization.
 | `x-deployer` | Deployment verification | sonnet | Release, deployment, infrastructure |
 | `x-debugger` | Root cause analysis | sonnet | Complex bugs, race conditions |
 | `x-tester` | Test execution | sonnet | Test failures, coverage gaps |
-| `x-doc-writer` | Documentation generation | sonnet | Generating/updating docs |
+| `x-doc-writer` | Documentation generation | haiku | Generating/updating docs |
 | `x-explorer` | Fast codebase exploration | haiku | Quick searches, understanding structure |
 | `x-refactorer` | Safe refactoring | sonnet | SOLID improvements, cleanup |
 | `x-designer` | Architecture design, system modeling | opus | Complex architecture decisions, system design |
@@ -124,7 +124,7 @@ When skills reference generic roles, resolve to concrete agents using this table
 | code reviewer | x-reviewer | sonnet | Read-only quality analysis, best practices audit |
 | quick reviewer | x-reviewer-quick | haiku | Rapid code scan, sanity check |
 | security auditor | x-security-reviewer | sonnet | OWASP vulnerability detection, security compliance |
-| documentation writer | x-doc-writer | sonnet | Documentation generation, update, and sync |
+| documentation writer | x-doc-writer | haiku | Documentation generation, update, and sync |
 | debugger | x-debugger | sonnet | Runtime error investigation, integration debugging |
 | deep debugger | x-debugger-deep | opus | Elusive bugs, cross-service issues, performance analysis |
 | deployment verifier | x-deployer | sonnet | Deployment verification, rollback assessment |
@@ -165,7 +165,7 @@ When complexity-detection produces its advisory output, read the structured fiel
 │                                                 │
 │ Agent: x-refactorer (sonnet)                    │
 │ Variant: x-designer (opus)                      │
-│ Chain: x-plan → x-implement → x-verify          │
+│ Chain: x-plan → x-implement → x-review           │
 │                                                 │
 │ Multi-session: Yes                              │
 │ Override: use explicit /x-* command             │
@@ -175,7 +175,7 @@ When complexity-detection produces its advisory output, read the structured fiel
 **Interpretation:**
 - Primary agent: delegate refactoring work to a **refactoring agent** (sonnet)
 - If architecture decisions are needed: escalate to an **architect** (opus)
-- Follow chain: plan first, then implement, then verify
+- Follow chain: plan first, then implement, then review
 - Track via x-initiative (multi-session)
 
 ## Variant Selection Criteria
@@ -323,7 +323,7 @@ complexity-detection outputs:
   Complexity: HIGH | Mental Model: APEX
   Agent: x-refactorer (sonnet)
   Variant: x-designer (opus)
-  Chain: x-plan → x-implement → x-verify
+  Chain: x-plan → x-implement → x-review
 
 agent-awareness interprets:
   → Resolve "x-refactorer" via Role Resolution Table

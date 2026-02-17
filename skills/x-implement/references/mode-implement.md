@@ -183,7 +183,7 @@ Quality gates:
 
 | Option | Description |
 |--------|-------------|
-| /x-verify (Recommended) | Run all quality gates |
+| /x-review (Recommended) | Run all quality gates |
 | /x-review | Pre-merge code review |
 | Stop workflow | Manual review first |
 

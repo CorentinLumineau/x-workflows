@@ -4,8 +4,31 @@
 > **Legacy Command**: `/x:review`
 
 <purpose>
-Pre-merge code review with auto-detected target branch, conflict detection, and quality gates. Systematic review following best practices checklist.
+Full readiness assessment — the default mode. Runs all 8 phases: change scoping, quality gates, code review, documentation audit, regression detection, and readiness synthesis. Pre-merge code review with auto-detected target branch, conflict detection, and quality gates.
 </purpose>
+
+## Phases (from x-review)
+
+Review mode runs ALL phases: **0 → 1 → 2 → 3 → 4 → 5 → 6 → 7**
+
+| Phase | Name | Key Actions |
+|-------|------|------------|
+| 0 | Confidence + State | Interview gate, workflow state check |
+| 1 | **Change Scoping** | git diff analysis, domain categorization, initiative detection |
+| 2 | Quality Gates | Lint, type-check, tests, build with evidence protocol |
+| 3 | Code Review | Spec compliance → SOLID/security/pattern audit |
+| 4 | Documentation Audit | API docs, README, initiative docs |
+| 5 | Regression Detection | Coverage delta, removed/disabled tests |
+| 6 | Readiness Report | Pass/warn/block synthesis |
+| 7 | Workflow State | State update, auto-chain to git-commit |
+
+## Phase 1 Scope-Awareness
+
+Phase 1 output informs all subsequent phases:
+- **Phase 2**: Knows which test suites are relevant
+- **Phase 3**: Knows which domains need security review
+- **Phase 4**: Knows which docs may need updating
+- **Phase 5**: Knows baseline for coverage comparison
 
 ## Behavioral Skills
 

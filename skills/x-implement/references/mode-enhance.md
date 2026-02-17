@@ -102,7 +102,7 @@ Present next step:
     "question": "Improvements applied. Continue?",
     "header": "Next",
     "options": [
-      {"label": "/x-verify (Recommended)", "description": "Full quality gates"},
+      {"label": "/x-review (Recommended)", "description": "Full quality gates"},
       {"label": "/git-commit", "description": "Commit improvements"},
       {"label": "Stop", "description": "Review manually"}
     ],

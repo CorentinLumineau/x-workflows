@@ -85,7 +85,7 @@ Suggestions appear **outside** the XML output (not inside the copied prompt) as 
 | research, investigate, compare, evaluate options | `/x-research` | BRAINSTORM |
 | brainstorm, ideas, requirements, explore | `/x-brainstorm` | BRAINSTORM |
 | refactor, restructure, clean up, reorganize | `/x-refactor` | APEX |
-| test, verify, lint, quality, coverage | `/x-verify` | APEX |
+| test, verify, lint, quality, coverage | `/x-review quick` | APEX |
 | review, PR, code review, security review | `/x-review` | APEX |
 | document, docs, readme, API docs | `/x-docs` | UTILITY |
 | release, version, tag, changelog | `/git-create-release` | UTILITY |
@@ -95,8 +95,8 @@ Suggestions appear **outside** the XML output (not inside the copied prompt) as 
 
 | Workflow | Slash Command Chain |
 |----------|---------------------|
-| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-verify` → `/x-review` → `/git-commit` |
-| **ONESHOT** | `/x-fix` → `/x-verify` (optional) → `/git-commit` |
+| **APEX** | `/x-analyze` → `/x-plan` → `/x-implement` → `/x-review` → `/git-commit` |
+| **ONESHOT** | `/x-fix` → `/x-review quick` (optional) → `/git-commit` |
 | **DEBUG** | `/x-troubleshoot` → `/x-fix` or `/x-implement` |
 | **BRAINSTORM** | `/x-brainstorm` ↔ `/x-research` → `/x-design` → `/x-plan` |
 

@@ -52,7 +52,7 @@ Spawn {N} teammates:
   Do NOT modify files outside your scope."
 - Tests: "Write integration and E2E tests for {feature}. Own files in {tests/}.
   Wait for backend and frontend teammates to finish their unit tests first.
-  Use /x-verify to validate all quality gates pass."
+  Use /x-review to validate all quality gates pass."
 
 Team rules:
 - Each teammate owns specific directories (no overlap)
@@ -152,7 +152,7 @@ Team rules:
 - Each teammate owns non-overlapping file sets
 - Interface changes must be communicated via messages
 - All teammates must keep existing tests passing
-- Run /x-verify after completion
+- Run /x-review after completion
 ```
 
 **Model recommendation**: Sonnet for all (safe refactoring needs care)

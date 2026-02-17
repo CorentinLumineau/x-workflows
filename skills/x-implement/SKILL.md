@@ -10,7 +10,7 @@ metadata:
   version: "3.0.0"
   category: workflow
 chains-to:
-  - skill: x-verify
+  - skill: x-review
     condition: "after implementation"
     auto: true
   - skill: x-refactor
@@ -23,6 +23,9 @@ chains-from:
   - skill: x-plan
     auto: false
   - skill: x-troubleshoot
+    auto: false
+  - skill: x-review
+    condition: "changes requested"
     auto: false
   - skill: git-implement-issue
     auto: true
@@ -38,9 +41,9 @@ chains-from:
 |-----------|-------|
 | **Workflow** | APEX |
 | **Phase** | execute (E) |
-| **Position** | 3 of 6 in workflow |
+| **Position** | 3 of 5 in workflow |
 
-**Flow**: `x-plan` → **`x-implement`** → `x-verify`
+**Flow**: `x-plan` → **`x-implement`** → `x-review`
 
 ## Intention
 
@@ -62,8 +65,8 @@ This skill activates:
 ### Context-Triggered
 | Skill | Trigger Conditions |
 |-------|-------------------|
-| `authentication` | Auth flows, login, JWT, OAuth |
-| `owasp` | Security-sensitive code |
+| `identity-access` | Auth flows, login, JWT, OAuth |
+| `secure-coding` | Security-sensitive code |
 | `database` | Schema changes, migrations |
 | `api-design` | API endpoints, contracts |
 
@@ -324,11 +327,11 @@ When approval needed, structure question as:
 
 ## Workflow Chaining
 
-**Next Verb**: `/x-verify`
+**Next Verb**: `/x-review`
 
 | Trigger | Chain To | Auto? |
 |---------|----------|-------|
-| Code written | `/x-verify` | Yes |
+| Code written | `/x-review` | Yes |
 | Needs restructure | `/x-refactor` | No (ask) |
 | Tests failing | (stay in x-implement) | Yes (fix inline) |
 
@@ -339,15 +342,15 @@ When approval needed, structure question as:
 After implementation complete:
 1. Update `.claude/workflow-state.json` (mark implement complete, set verify in_progress)
 2. Auto-invoke next skill via Skill tool:
-   - skill: "x-verify"
+   - skill: "x-review"
    - args: "verify implementation changes"
 
-<workflow-chain on="auto" skill="x-verify" args="verify implementation changes" />
+<workflow-chain on="auto" skill="x-review" args="review implementation changes" />
 
 If restructuring needed (manual):
 "Code is working but needs restructuring. Use /x-refactor?"
 - Option 1: `/x-refactor` - Restructure first
-- Option 2: `/x-verify` - Verify as-is
+- Option 2: `/x-review` - Review as-is
 - Option 3: Continue implementing
 
 </chaining-instruction>
@@ -414,7 +417,7 @@ Initiative documentation updates are handled in Phase 6 (inside instructions) wh
 | Direction | Verb | When |
 |-----------|------|------|
 | Previous | `/x-plan` | Need to revise plan |
-| Next | `/x-verify` | Implementation complete |
+| Next | `/x-review` | Implementation complete |
 | Branch | `/x-refactor` | Need to restructure |
 
 ## Related Verbs
