@@ -93,7 +93,6 @@ workflow_patterns:
 | GIT + "issue" (create) | Direct | git-create-issue |
 | GIT + "issue" (implement) | Planning | git-implement-issue |
 | GIT + "release" | Direct | git-create-release |
-| GIT + "sync"/"mirror" | Direct | git-sync-remotes |
 | GIT + "conflict" | Direct | git-resolve-conflict |
 | GIT + "cleanup"/"branches" | Direct | git-cleanup-branches |
 

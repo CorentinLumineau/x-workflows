@@ -50,6 +50,7 @@ Detect all uncommitted changes (staged, unstaged, untracked), group by area, and
 ## Behavioral Skills
 
 This skill activates:
+- `forge-awareness` - Detect forge type for post-commit chaining context
 - `interview` - Zero-doubt confidence gate (only if ambiguous)
 
 <instructions>

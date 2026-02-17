@@ -11,9 +11,6 @@ metadata:
   category: workflow
   argument-hint: "<pr-number>"
 chains-to:
-  - skill: git-sync-remotes
-    condition: "multi-remote repo"
-    auto: false
   - skill: git-create-release
     condition: "milestone complete"
     auto: false
@@ -42,7 +39,7 @@ Merge a pull request after validating CI status, reviews, and selecting merge st
 |-----------|-------|
 | **Type** | UTILITY |
 | **Position** | End of PR lifecycle |
-| **Typical Flow** | `git-check-ci` or `git-review-pr` → **`git-merge-pr`** → `git-sync-remotes` or `git-create-release` |
+| **Typical Flow** | `git-check-ci` or `git-review-pr` → **`git-merge-pr`** → `git-create-release` or `git-cleanup-branches` |
 | **Human Gates** | Merge strategy selection (Critical), force merge if CI failing (Critical) |
 | **State Tracking** | Updates workflow state with merge commit SHA |
 
@@ -77,7 +74,7 @@ This workflow activates:
 
 ### Phase 1: Validate Merge Readiness
 
-<!-- <state-checkpoint id="merge-validation" data="pr_number, ci_status, review_status, mergeable"> -->
+<!-- <state-checkpoint id="merge-validation" phase="git-merge-pr" status="merge-validation" data="pr_number, ci_status, review_status, mergeable"> -->
 1. Check PR state is "OPEN" - if already merged/closed, inform user and exit
 2. Validate CI status via `ci-awareness`:
    - Read `ci_context.merge_ready` state
@@ -136,7 +133,7 @@ This workflow activates:
 
 ### Phase 5: Update State and Suggest Next Steps
 
-<!-- <state-checkpoint id="merge-complete" data="merge_sha, merged_at, deleted_branch"> -->
+<!-- <state-checkpoint id="merge-complete" phase="git-merge-pr" status="merge-complete" data="merge_sha, merged_at, deleted_branch"> -->
 1. Update workflow state:
    ```json
    {
@@ -149,8 +146,6 @@ This workflow activates:
    ```
 2. Present success message with merge commit SHA
 3. Suggest next steps:
-   <!-- <workflow-chain next="git-sync-remotes" condition="working on local repo"> -->
-   - "Sync local repo with `/git-sync-remotes`"
    <!-- <workflow-chain next="git-create-release" condition="merge to main/master"> -->
    - If merged to main: "Consider creating release with `/git-create-release`"
    <!-- <workflow-chain next="git-cleanup-branches" condition="multiple stale branches exist"> -->
@@ -171,10 +166,9 @@ This workflow activates:
 
 <chaining-instruction>
 **Chains from**: `git-check-ci`, `git-review-pr`, `git-resolve-conflict`
-**Chains to**: `git-sync-remotes`, `git-create-release`, `git-resolve-conflict`, `git-cleanup-branches`
+**Chains to**: `git-create-release`, `git-resolve-conflict`, `git-cleanup-branches`
 
 **Forward chaining**:
-- Always suggest `git-sync-remotes` after successful merge
 - If merged to default branch → suggest `git-create-release`
 - If local branches exist → suggest `git-cleanup-branches`
 

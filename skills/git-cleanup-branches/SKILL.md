@@ -52,7 +52,7 @@ Safely clean up accumulated git branches through intelligent categorization:
 
 ## Phase 0: Initialize Cleanup Context
 
-<state-checkpoint id="cleanup-init">
+<state-checkpoint id="cleanup-init" phase="git-cleanup-branches" status="cleanup-init">
 Checkpoint captures: Current branch, repository state, protected branches list
 </state-checkpoint>
 
@@ -111,7 +111,7 @@ For each remote branch, capture:
 - Name (strip `origin/` prefix)
 - Last commit date
 
-<state-checkpoint id="branch-inventory">
+<state-checkpoint id="branch-inventory" phase="git-cleanup-branches" status="branch-inventory">
 Checkpoint captures: Local branches list, remote branches list, metadata per branch
 </state-checkpoint>
 
@@ -186,7 +186,7 @@ Criteria:
 
 Anything not matching other categories is "active".
 
-<state-checkpoint id="branches-categorized">
+<state-checkpoint id="branches-categorized" phase="git-cleanup-branches" status="branches-categorized">
 Checkpoint captures: Category assignments per branch, statistics per category
 </state-checkpoint>
 
@@ -265,7 +265,7 @@ If option 3 (include stale):
   Require exact phrase match.
   </workflow-gate>
 
-<state-checkpoint id="deletion-plan-approved">
+<state-checkpoint id="deletion-plan-approved" phase="git-cleanup-branches" status="deletion-plan-approved">
 Checkpoint captures: Selected branches for deletion, deletion strategy, user confirmation
 </state-checkpoint>
 
@@ -330,7 +330,7 @@ Should return empty (branch deleted remotely).
 - Partial: Local ✓, Remote ✗ (remote delete failed)
 - Failed: Local ✗ (branch not deleted)
 
-<state-checkpoint id="cleanup-executed">
+<state-checkpoint id="cleanup-executed" phase="git-cleanup-branches" status="cleanup-executed">
 Checkpoint captures: Deletion results per branch, success/failure counts, error messages
 </state-checkpoint>
 
@@ -405,7 +405,7 @@ Present report to user with suggestions.
 
 ## Phase 7: Cleanup Summary
 
-<state-checkpoint id="cleanup-complete">
+<state-checkpoint id="cleanup-complete" phase="git-cleanup-branches" status="cleanup-complete">
 Checkpoint captures: Final statistics, deletion summary, naming report, timestamp
 </state-checkpoint>
 
@@ -507,7 +507,7 @@ Retain summary report for audit
 
 - Behavioral skill: `@skills/forge-awareness/` (remote deletion commands)
 - Knowledge skill: `@skills/vcs-git-workflows/` (branch lifecycle patterns)
-- Knowledge skill: `@skills/data-conventions/` (naming convention standards)
+- Knowledge skill: `@skills/vcs-conventional-commits/` (naming convention standards)
 
 ---
 

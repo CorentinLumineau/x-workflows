@@ -9,10 +9,6 @@ metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
-chains-to:
-  - skill: git-sync-remotes
-    condition: "multi-remote"
-    auto: true
 chains-from:
   - skill: git-commit
     auto: false
@@ -45,6 +41,7 @@ Determine version from commit history.
 ## Behavioral Skills
 
 This skill activates:
+- `forge-awareness` - Detect forge type for cross-forge release creation
 - `interview` - Zero-doubt confidence gate (HIGH RISK - 40% weight)
 
 <instructions>
@@ -229,7 +226,6 @@ After release published:
   </option>
 </workflow-gate>
 
-<workflow-chain on="sync" skill="git-sync-remotes" args="v{version}" />
 <workflow-chain on="next-feature" skill="x-plan" args="{next feature context}" />
 <workflow-chain on="done" action="end" />
 

@@ -61,7 +61,7 @@ Resolve git merge conflicts through guided analysis and user-approved resolution
 
 ## Phase 0: Detect Conflict Context
 
-<state-checkpoint id="conflict-init">
+<state-checkpoint id="conflict-init" phase="git-resolve-conflict" status="conflict-init">
 Checkpoint captures: Git operation type, conflicting branch names, conflict file list
 </state-checkpoint>
 
@@ -130,7 +130,7 @@ Generate conflict inventory table:
 | package.json | 1 | 42 lines | Config |
 | README.md | 2 | 156 lines | Documentation |
 
-<state-checkpoint id="conflict-inventory">
+<state-checkpoint id="conflict-inventory" phase="git-resolve-conflict" status="conflict-inventory">
 Checkpoint captures: File paths, conflict counts per file, file metadata
 </state-checkpoint>
 
@@ -189,7 +189,7 @@ Present recommendation with confidence level:
 - **Medium confidence**: Both sides have merit, suggests manual merge
 - **Low confidence**: Complex conflict, requires human judgment
 
-<state-checkpoint id="conflict-{file}-analyzed">
+<state-checkpoint id="conflict-{file}-analyzed" phase="git-resolve-conflict" status="conflict-analyzed">
 Checkpoint captures: Conflict regions parsed, recommendations generated, confidence levels
 </state-checkpoint>
 
@@ -270,15 +270,13 @@ Once ALL conflicts resolved:
 
 If syntax errors found, report to user and offer to re-open affected conflicts.
 
-<state-checkpoint id="conflicts-resolved">
+<state-checkpoint id="conflicts-resolved" phase="git-resolve-conflict" status="conflicts-resolved">
 Checkpoint captures: All resolutions applied, files modified, syntax check results
 </state-checkpoint>
 
 **Run tests** to verify resolution doesn't break functionality:
 
-<agent-delegate id="post-resolution-tests">
-Delegate to: `ccsetup:x-tester`
-Model: sonnet
+<agent-delegate id="post-resolution-tests" subagent="x-tester" model="sonnet">
 Task: Execute test suite after conflict resolution
 Instructions:
 - Run full test suite
@@ -340,7 +338,7 @@ Should show:
 - Changes staged for commit
 - No unmerged paths
 
-<state-checkpoint id="resolution-finalized">
+<state-checkpoint id="resolution-finalized" phase="git-resolve-conflict" status="resolution-finalized">
 Checkpoint captures: Staged files, resolution summary, test results
 </state-checkpoint>
 
@@ -351,11 +349,11 @@ Checkpoint captures: Staged files, resolution summary, test results
 Determine caller workflow based on operation:
 
 **If merge conflict**:
-<workflow-chain id="return-to-merge">
-Chain to: `git-merge-pr` (if PR-related) or `git-commit`
-Context: Conflicts resolved, ready to complete merge
+<!-- <workflow-chain next="git-merge-pr" condition="PR-related merge conflict resolved"> -->
+<!-- <workflow-chain next="git-commit" condition="non-PR merge conflict resolved"> -->
+Chain to `git-merge-pr` (if PR-related) or `git-commit`.
+Context: Conflicts resolved, ready to complete merge.
 Message: "Conflicts resolved. Resuming merge operation."
-</workflow-chain>
 
 **If rebase conflict**:
 ```bash

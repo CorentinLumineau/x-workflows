@@ -4,11 +4,11 @@ description: Use when implementing a feature or fix tracked by a Gitea issue.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
+user-invocable: true
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
-  user-invocable: true
   argument-hint: "<issue-number>"
 chains-to:
   - skill: x-auto
@@ -50,6 +50,7 @@ Ask user: "Which issue number would you like to work on?"
 ## Behavioral Skills
 
 This skill activates:
+- `forge-awareness` - Detect forge type for issue fetching and PR creation
 - `complexity-detection` - Workflow intent and complexity assessment (via x-auto delegation)
 - `context-awareness` - Project context
 

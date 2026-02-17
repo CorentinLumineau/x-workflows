@@ -65,7 +65,7 @@ This workflow activates:
 
 ### Phase 1: Query CI Status via ci-awareness
 
-<!-- <state-checkpoint id="ci-query" data="target_type, target_value, ci_provider"> -->
+<!-- <state-checkpoint id="ci-query" phase="git-check-ci" status="ci-query" data="target_type, target_value, ci_provider"> -->
 1. Activate `ci-awareness` behavioral skill
 2. Query CI status based on target type:
    - For PR: `gh pr checks {PR}` (GitHub) or `tea pr ci {PR}` (Gitea)
@@ -105,7 +105,7 @@ This workflow activates:
    Merge ready: NO
    ```
 3. Update `ci_context.merge_ready` based on overall status
-<!-- <state-checkpoint id="ci-results" data="overall_status, merge_ready, failing_checks"> -->
+<!-- <state-checkpoint id="ci-results" phase="git-check-ci" status="ci-results" data="overall_status, merge_ready, failing_checks"> -->
 
 ### Phase 3: Offer Next Steps
 

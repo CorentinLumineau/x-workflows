@@ -1,6 +1,6 @@
 # Skills Navigation
 
-> ccsetup v6.6 - Verb-based workflow skills with 4 canonical workflows
+> ccsetup v7.0 - Verb-based workflow skills with 4 canonical workflows + git-forge layer
 
 ## Workflows Overview
 
@@ -40,13 +40,15 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 25 workflow skills | `x-{verb}/` |
-| **x-devsecops** | WHAT to know | 42 knowledge skills | `{category}-{skill}/` |
+| **x-workflows** | HOW to work | 22 workflow skills | `x-{verb}/` |
+| x-workflows | Git operations | 10 git skills | `git-{verb}-{type}/` |
+| x-workflows | Auto-triggered | 7 behavioral skills | `{name}/` |
+| **x-devsecops** | WHAT to know | 53 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 4 | documentation, initiative, interview, orchestration |
 
-**Total: 71 skills**
+**Total: 96 skills**
 
-## Verb Skills by Workflow (25)
+## Verb Skills by Workflow (22)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -75,45 +77,62 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |------|---------|----------|
 | `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
 
-### UTILITY (13)
+### UTILITY (11)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
 | `/x-archive` | Archive completed initiatives | archive, complete initiative |
 | `/x-ask` | Zero-friction Q&A | ask, question, how |
 | `/x-auto` | Auto-routing command | auto, route |
-| `/git-commit` | Conventional commits | commit, git commit |
 | `/x-create` | Skill/agent creation | create skill, create agent |
 | `/x-docs` | Documentation management | docs, documentation |
 | `/x-help` | Command reference | help, commands |
-| `/git-implement-issue` | Issue-driven development | issue, gitea issue |
-| `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-initiative` | Multi-session tracking | initiative, milestone |
 | `/x-prompt` | Prompt enhancement | enhance prompt |
-| `/git-create-release` | Release workflow | release, tag, version |
+| `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-setup` | Project initialization | setup, scaffold |
 | `/x-team` | Team orchestration | team, parallel, swarm |
 
-## Behavioral Skills (3)
+## Git Workflow Skills (10)
+
+| Verb | Purpose | Triggers |
+|------|---------|----------|
+| `/git-check-ci` | CI pipeline status check | check ci, pipeline status |
+| `/git-cleanup-branches` | Branch cleanup after merges | cleanup branches, prune |
+| `/git-commit` | Conventional commits | commit, git commit |
+| `/git-create-issue` | Create forge issue | create issue, new issue |
+| `/git-create-pr` | Create pull request | create pr, pull request |
+| `/git-create-release` | Release workflow | release, tag, version |
+| `/git-implement-issue` | Issue-driven development | issue, gitea issue |
+| `/git-merge-pr` | Merge pull request | merge pr, merge |
+| `/git-resolve-conflict` | Resolve merge conflicts | resolve conflict, merge conflict |
+| `/git-review-pr` | Review pull request | review pr, code review |
+
+## Behavioral Skills (7)
 
 | Skill | Purpose |
 |-------|---------|
 | `agent-awareness` | Agent delegation catalog (auto-triggered) |
+| `ci-awareness` | CI pipeline detection and querying (auto-triggered) |
 | `complexity-detection` | Routing logic (auto-triggered) |
 | `context-awareness` | Context loading (auto-triggered) |
+| `error-recovery` | Error recovery patterns (auto-triggered) |
+| `forge-awareness` | Git forge detection — GitHub/Gitea/GitLab (auto-triggered) |
+| `permission-awareness` | Permission escalation patterns (auto-triggered) |
 
-## Knowledge Skills (39)
+## Knowledge Skills (53)
 
 Skills are prefixed by category for organization:
 
 | Category | Count | Skills |
 |----------|-------|--------|
 | **code-** | 7 | api-design, code-quality, design-patterns, error-handling, llm-optimization, refactoring-patterns, sdk-design |
-| **security-** | 9 | api-security, authentication, authorization, compliance, container-security, input-validation, owasp, secrets, supply-chain |
-| **quality-** | 7 | accessibility-wcag, debugging, load-testing, observability, performance, quality-gates, testing |
-| **delivery-** | 5 | ci-cd, deployment-strategies, feature-flags, infrastructure, release-management |
-| **meta-** | 3 | analysis, architecture-patterns, decision-making |
-| **data-** | 4 | caching, database, message-queues, nosql |
-| **operations-** | 4 | disaster-recovery, incident-response, monitoring, sre-practices |
+| **data-** | 6 | caching, database, data-persistence, message-queues, messaging, nosql |
+| **delivery-** | 7 | ci-cd, ci-cd-delivery, deployment-strategies, feature-flags, infrastructure, release-git, release-management |
+| **meta-** | 4 | analysis, analysis-architecture, architecture-patterns, decision-making |
+| **operations-** | 5 | disaster-recovery, incident-response, monitoring, sre-operations, sre-practices |
+| **quality-** | 8 | accessibility-wcag, debugging, debugging-performance, load-testing, observability, performance, quality-gates, testing |
+| **security-** | 13 | api-security, authentication, authorization, compliance, container-security, git, identity-access, input-validation, owasp, secrets, secrets-supply-chain, secure-coding, supply-chain |
+| **vcs-** | 3 | conventional-commits, forge-operations, git-workflows |
 
 ## Local Skills (4)
 
@@ -176,5 +195,5 @@ make sync-skills
 
 ## Version
 
-**Version**: 6.6.0
-**x-workflows**: 1.0.0 (verb-first refactoring)
+**Version**: 7.0.0
+**x-workflows**: 2.0.0 (git-forge-layer)
