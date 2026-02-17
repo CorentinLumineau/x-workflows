@@ -13,16 +13,12 @@ metadata:
 chains-to:
   - skill: x-auto
     condition: "default routing"
-    auto: true
   - skill: x-plan
     condition: "complex issue"
-    auto: true
   - skill: x-implement
     condition: "simple issue"
-    auto: true
 chains-from:
   - skill: git-create-issue
-    auto: false
 ---
 
 # /git-implement-issue

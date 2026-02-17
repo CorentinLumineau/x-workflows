@@ -12,7 +12,6 @@ metadata:
 chains-to: []
 chains-from:
   - skill: git-merge-pr
-    auto: false
 ---
 
 # /git-cleanup-branches

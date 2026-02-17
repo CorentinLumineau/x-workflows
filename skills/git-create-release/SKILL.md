@@ -11,9 +11,7 @@ metadata:
   category: workflow
 chains-from:
   - skill: git-commit
-    auto: false
   - skill: git-merge-pr
-    auto: false
 ---
 
 # /git-create-release

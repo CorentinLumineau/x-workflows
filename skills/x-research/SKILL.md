@@ -12,13 +12,10 @@ metadata:
 chains-to:
   - skill: x-design
     condition: "found answer"
-    auto: true
   - skill: x-brainstorm
     condition: "more exploration needed"
-    auto: true
 chains-from:
   - skill: x-brainstorm
-    auto: true
 ---
 
 # /x-research
@@ -181,15 +178,13 @@ When approval needed, structure question as:
 
 **Next Verbs**: `/x-design`, `/x-brainstorm`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| "found answer" | `/x-design` | No (suggest) |
-| "need to explore more" | `/x-brainstorm` | No (suggest) |
-| "ready to build" | `/x-plan` | **HUMAN APPROVAL** |
+| Trigger | Chain To |
+|---------|----------|
+| "found answer" | `/x-design` (suggest) |
+| "need to explore more" | `/x-brainstorm` (suggest) |
+| "ready to build" | `/x-plan` (**approval**) |
 
 <chaining-instruction>
-
-**Auto-chain**: research → design (within BRAINSTORM, no approval needed)
 
 After research complete:
 
@@ -274,4 +269,4 @@ After research complete:
 
 ## References
 
-- @skills/meta-analysis/ - Analysis and prioritization
+- @skills/meta/analysis-architecture/ - Analysis and prioritization

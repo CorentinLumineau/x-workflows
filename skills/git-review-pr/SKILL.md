@@ -13,10 +13,8 @@ metadata:
 chains-to:
   - skill: git-merge-pr
     condition: "review approved"
-    auto: false
 chains-from:
   - skill: git-create-pr
-    auto: false
 ---
 
 # /git-review-pr

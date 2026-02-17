@@ -1,6 +1,6 @@
 ---
 name: x-review
-description: Comprehensive codebase readiness assessment — quality gates, code review, documentation audit, and regression detection.
+description: "Use after implementation to perform quality gates, code review, documentation audit, and regression detection."
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
@@ -12,17 +12,12 @@ metadata:
 chains-to:
   - skill: git-commit
     condition: "review approved"
-    auto: true
   - skill: x-implement
     condition: "changes requested"
-    auto: false
 chains-from:
   - skill: x-implement
-    auto: true
   - skill: x-refactor
-    auto: true
   - skill: x-fix
-    auto: false
 ---
 
 # /x-review
@@ -531,42 +526,36 @@ When approval needed, structure question as:
 
 **Next Verb**: `/git-commit`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| Review approved | `/git-commit` | Yes |
-| Changes requested | `/x-implement` | No (show feedback) |
-| Critical issues | Block | No (require fix) |
+| Trigger | Chain To |
+|---------|----------|
+| Review approved | `/git-commit` (suggest) |
+| Changes requested | `/x-implement` (suggest) |
+| Critical issues | Block (require fix) |
 
 <chaining-instruction>
 
-**Auto-chain**: review → commit (on approval, no additional gate)
+After review complete:
 
-After review approved:
-1. Update `.claude/workflow-state.json` (mark review complete, set commit in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "git-commit"
-   - args: "commit reviewed changes"
-
-<workflow-chain on="auto" skill="git-commit" args="commit reviewed changes" />
-
-On changes requested (manual — loop back):
-"Review found issues to address. Return to /x-implement?"
-
-<workflow-gate type="choice" id="review-changes-requested">
-  <question>Review found issues to address. How would you like to proceed?</question>
-  <header>Review issues</header>
-  <option key="fix" recommended="true">
-    <label>Fix issues</label>
+<workflow-gate type="choice" id="review-next">
+  <question>Review complete. How would you like to proceed?</question>
+  <header>Next step</header>
+  <option key="commit" recommended="true">
+    <label>Commit changes</label>
+    <description>Proceed to commit reviewed changes</description>
+  </option>
+  <option key="fix">
+    <label>Request changes</label>
     <description>Return to implementation to address review findings</description>
   </option>
-  <option key="exception">
-    <label>Request exception</label>
-    <description>Proceed with justification for deferring fixes</description>
+  <option key="done">
+    <label>Done</label>
+    <description>Review complete, no further action</description>
   </option>
 </workflow-gate>
 
+<workflow-chain on="commit" skill="git-commit" args="commit reviewed changes" />
 <workflow-chain on="fix" skill="x-implement" args="{review findings and issues to address}" />
-<workflow-chain on="exception" action="end" />
+<workflow-chain on="done" action="end" />
 
 </chaining-instruction>
 

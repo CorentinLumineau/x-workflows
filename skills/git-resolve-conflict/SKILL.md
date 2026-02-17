@@ -12,15 +12,11 @@ metadata:
 chains-to:
   - skill: git-merge-pr
     condition: "conflict resolved"
-    auto: true
   - skill: git-commit
     condition: "conflict during rebase/impl"
-    auto: true
 chains-from:
   - skill: git-merge-pr
-    auto: true
   - skill: x-implement
-    auto: false
 ---
 
 # /git-resolve-conflict

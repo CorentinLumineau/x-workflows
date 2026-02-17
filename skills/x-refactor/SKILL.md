@@ -12,10 +12,8 @@ metadata:
 chains-to:
   - skill: x-review
     condition: "refactor complete"
-    auto: true
 chains-from:
   - skill: x-implement
-    auto: false
 ---
 
 # /x-refactor
@@ -226,29 +224,31 @@ When approval needed, structure question as:
 
 **Next Verb**: `/x-review`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| Refactoring complete | `/x-review` | Yes |
-| Tests failing | `/x-implement` | No (show failures) |
-| Large scope | `/x-initiative` | No (ask) |
+| Trigger | Chain To |
+|---------|----------|
+| Refactoring complete | `/x-review` (suggest) |
+| Tests failing | `/x-implement` (suggest) |
+| Large scope | `/x-initiative` (suggest) |
 
 <chaining-instruction>
 
-**Auto-chain**: refactor → review (no approval needed)
+After refactoring complete:
 
-After refactoring complete with all tests passing:
-1. Update `.claude/workflow-state.json` (mark refactor complete, set review in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "x-review"
-   - args: "review refactoring changes"
+<workflow-gate type="choice" id="refactor-next">
+  <question>Refactoring complete. How would you like to proceed?</question>
+  <header>Next step</header>
+  <option key="review" recommended="true">
+    <label>Review changes</label>
+    <description>Run quality gates and code review on refactored code</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Refactoring complete, no further action</description>
+  </option>
+</workflow-gate>
 
-<workflow-chain on="auto" skill="x-review" args="review refactoring changes" />
-
-On test failures (manual — stay in refactor/implement):
-"Refactoring caused {count} test failures. Fix or rollback?"
-- Option 1: Rollback last change and retry
-- Option 2: `/x-implement` - Fix the failing tests
-- Option 3: Continue refactoring (fix tests inline)
+<workflow-chain on="review" skill="x-review" args="review refactoring changes" />
+<workflow-chain on="done" action="end" />
 
 </chaining-instruction>
 

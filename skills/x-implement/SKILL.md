@@ -12,23 +12,16 @@ metadata:
 chains-to:
   - skill: x-review
     condition: "after implementation"
-    auto: true
   - skill: x-refactor
     condition: "restructure needed"
-    auto: false
   - skill: git-resolve-conflict
     condition: "conflict during dev"
-    auto: false
 chains-from:
   - skill: x-plan
-    auto: false
   - skill: x-troubleshoot
-    auto: false
   - skill: x-review
     condition: "changes requested"
-    auto: false
   - skill: git-implement-issue
-    auto: true
 ---
 
 # /x-implement
@@ -329,29 +322,36 @@ When approval needed, structure question as:
 
 **Next Verb**: `/x-review`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| Code written | `/x-review` | Yes |
-| Needs restructure | `/x-refactor` | No (ask) |
-| Tests failing | (stay in x-implement) | Yes (fix inline) |
+| Trigger | Chain To |
+|---------|----------|
+| Code written | `/x-review` (suggest) |
+| Needs restructure | `/x-refactor` (suggest) |
+| Tests failing | Stay in x-implement |
 
 <chaining-instruction>
 
-**Auto-chain**: implement → verify (no approval needed)
-
 After implementation complete:
-1. Update `.claude/workflow-state.json` (mark implement complete, set verify in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "x-review"
-   - args: "verify implementation changes"
 
-<workflow-chain on="auto" skill="x-review" args="review implementation changes" />
+<workflow-gate type="choice" id="implement-next">
+  <question>Implementation complete. How would you like to proceed?</question>
+  <header>Next step</header>
+  <option key="review" recommended="true">
+    <label>Review changes</label>
+    <description>Run quality gates and code review on implementation</description>
+  </option>
+  <option key="refactor">
+    <label>Refactor first</label>
+    <description>Restructure code before review</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Stop here without review</description>
+  </option>
+</workflow-gate>
 
-If restructuring needed (manual):
-"Code is working but needs restructuring. Use /x-refactor?"
-- Option 1: `/x-refactor` - Restructure first
-- Option 2: `/x-review` - Review as-is
-- Option 3: Continue implementing
+<workflow-chain on="review" skill="x-review" args="review implementation changes" />
+<workflow-chain on="refactor" skill="x-refactor" args="{areas needing restructure}" />
+<workflow-chain on="done" action="end" />
 
 </chaining-instruction>
 

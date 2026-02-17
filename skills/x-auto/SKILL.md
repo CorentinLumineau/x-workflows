@@ -13,7 +13,6 @@ metadata:
 chains-to: []
 chains-from:
   - skill: git-implement-issue
-    auto: true
 ---
 
 # /x-auto

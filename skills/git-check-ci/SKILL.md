@@ -13,13 +13,10 @@ metadata:
 chains-to:
   - skill: git-merge-pr
     condition: "CI passes"
-    auto: false
   - skill: x-fix
     condition: "CI fails"
-    auto: false
 chains-from:
   - skill: git-create-pr
-    auto: true
 ---
 
 # /git-check-ci

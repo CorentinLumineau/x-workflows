@@ -12,12 +12,9 @@ metadata:
 chains-to:
   - skill: x-plan
     condition: "ready to build"
-    auto: false
 chains-from:
   - skill: x-brainstorm
-    auto: true
   - skill: x-research
-    auto: true
 ---
 
 # /x-design
@@ -47,7 +44,7 @@ Ask user: "What would you like to design?"
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `code-quality` - SOLID principles enforcement
-- `analysis` - Trade-off analysis
+- `analysis-architecture` - Trade-off analysis
 
 ## Agent Delegation
 

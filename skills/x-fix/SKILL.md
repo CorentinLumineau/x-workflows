@@ -12,15 +12,11 @@ metadata:
 chains-to:
   - skill: git-commit
     condition: "quick commit"
-    auto: false
   - skill: x-review
     condition: "verify first"
-    auto: false
 chains-from:
   - skill: git-check-ci
-    auto: false
   - skill: x-troubleshoot
-    auto: true
 ---
 
 # /x-fix
@@ -48,7 +44,7 @@ Ask user: "What error or issue would you like to fix?"
 ## Behavioral Skills
 
 This skill activates:
-- `debugging` - Debug methodology (lightweight)
+- `debugging-performance` - Debug methodology (lightweight)
 - `context-awareness` - Project context
 
 ## Agent Delegation
@@ -270,4 +266,4 @@ After fix applied and verified:
 
 ## References
 
-- @skills/quality-debugging/ - Debugging strategies and methodology
+- @skills/quality/debugging-performance/ - Debugging strategies and methodology

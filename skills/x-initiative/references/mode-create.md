@@ -50,7 +50,7 @@ Before creating a new initiative, check for an active one:
      }]
    }
    ```
-   - **Archive first** → Auto-chain to `/x-archive`, then return to create
+   - **Archive first** → Invoke `/x-archive`, then return to create
    - **Continue existing** → Switch to `/x-initiative continue` mode
    - **Force new** → Warn about orphan risk, then proceed to Phase 1
 4. **If no active initiative** → Proceed to Phase 1

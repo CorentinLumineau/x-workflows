@@ -12,14 +12,10 @@ metadata:
 chains-to:
   - skill: x-implement
     condition: "plan approved"
-    auto: false
 chains-from:
   - skill: x-analyze
-    auto: true
   - skill: git-implement-issue
-    auto: true
   - skill: x-design
-    auto: false
 ---
 
 # /x-plan
@@ -48,7 +44,7 @@ Ask user: "What would you like to plan?"
 
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 
 ## Agent Delegation
 
@@ -299,5 +295,5 @@ For exploration before planning:
 
 ## References
 
-- @skills/meta-analysis/ - Pareto prioritization and analysis patterns
+- @skills/meta/analysis-architecture/ - Pareto prioritization and analysis patterns
 - @skills/x-initiative/ - Initiative methodology

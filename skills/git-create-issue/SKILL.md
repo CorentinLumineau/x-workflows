@@ -13,7 +13,6 @@ metadata:
 chains-to:
   - skill: git-implement-issue
     condition: "after issue creation"
-    auto: false
 chains-from: []
 ---
 

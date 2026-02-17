@@ -51,15 +51,15 @@ When restructuring is needed during implementation:
 
 ### Chaining Rules
 
-| From | To | Trigger | Auto-Chain |
-|------|-----|---------|------------|
-| x-analyze | x-plan | Analysis complete | Yes |
-| x-plan | x-implement | **Plan approved** | **HUMAN APPROVAL** |
-| x-implement | x-review | Code written | Yes |
-| x-implement | x-refactor | "restructure needed" | No (ask) |
-| x-refactor | x-review | Refactor complete | Yes |
-| x-review | git-commit | Review approved | Yes |
-| x-review | x-implement | Changes requested | No (show feedback) |
+| From | To | Trigger | Mode |
+|------|-----|---------|------|
+| x-analyze | x-plan | Analysis complete | suggest |
+| x-plan | x-implement | **Plan approved** | **approval** |
+| x-implement | x-review | Code written | suggest |
+| x-implement | x-refactor | "restructure needed" | suggest |
+| x-refactor | x-review | Refactor complete | suggest |
+| x-review | git-commit | Review approved | suggest |
+| x-review | x-implement | Changes requested | suggest |
 
 ### Complexity Triggers
 
@@ -98,10 +98,10 @@ When restructuring is needed during implementation:
 
 ### Chaining Rules
 
-| From | To | Trigger | Auto-Chain |
-|------|-----|---------|------------|
-| x-fix | x-review | "verify first" | No (ask) |
-| x-fix | git-commit | **Quick commit** | **HUMAN APPROVAL** |
+| From | To | Trigger | Mode |
+|------|-----|---------|------|
+| x-fix | x-review | "verify first" | suggest |
+| x-fix | git-commit | **Quick commit** | **approval** |
 
 ### Detection Patterns
 
@@ -160,10 +160,10 @@ If fix turns out to be more complex:
 
 ### Chaining Rules
 
-| From | To | Trigger | Auto-Chain |
-|------|-----|---------|------------|
-| x-troubleshoot | x-fix | Simple fix found | Yes |
-| x-troubleshoot | x-implement | **Complex fix needed** | **HUMAN APPROVAL** |
+| From | To | Trigger | Mode |
+|------|-----|---------|------|
+| x-troubleshoot | x-fix | Simple fix found | suggest |
+| x-troubleshoot | x-implement | **Complex fix needed** | **approval** |
 
 ### Complexity Detection
 
@@ -205,12 +205,12 @@ If fix turns out to be more complex:
 
 ### Chaining Rules
 
-| From | To | Trigger | Auto-Chain |
-|------|-----|---------|------------|
-| x-brainstorm | x-research | "dig deeper" | **User selects** (via gate) |
-| x-brainstorm | x-design | "ready to decide" | **User selects** (via gate) |
-| x-research | x-design | "found answer" | Yes (within BRAINSTORM) |
-| x-design | x-plan | **Ready to build** | **HUMAN APPROVAL** |
+| From | To | Trigger | Mode |
+|------|-----|---------|------|
+| x-brainstorm | x-research | "dig deeper" | suggest (via gate) |
+| x-brainstorm | x-design | "ready to decide" | suggest (via gate) |
+| x-research | x-design | "found answer" | suggest |
+| x-design | x-plan | **Ready to build** | **approval** |
 
 ### Workflow Transitions
 
@@ -259,7 +259,7 @@ Some situations require switching between workflows.
 
 **Low (PROCEED)**:
 - Continue current phase
-- Auto-chain within workflow
+- Suggest next phase within workflow
 
 ### Question Structure
 
@@ -280,42 +280,42 @@ When approval is needed, use this structure:
 
 ---
 
-## Automatic Workflow Execution
+## Workflow Chaining
 
-Verb skills auto-chain to their next phase using the Skill tool, reducing manual intervention while preserving human approval at critical gates.
+Verb skills suggest their next phase via workflow-gates, always asking the user before proceeding. This ensures human-in-the-loop at every transition.
 
-### How Auto-Chaining Works
+### How Chaining Works
 
 After each verb skill completes:
-1. Updates `.claude/workflow-state.json` (marks current phase complete, sets next in_progress)
-2. Checks chaining rules (auto-chain vs. human approval)
-3. If auto-chain: invokes next skill via Skill tool with workflow context
-4. If human approval: presents approval gate with options
+1. Updates `.claude/workflow-state.json` (marks current phase complete)
+2. Presents a workflow-gate with options for the next step
+3. User selects the desired path
+4. Invokes next skill via Skill tool with workflow context
 
 ### Chaining Modes
 
 | Mode | Description | Used When |
 |------|-------------|-----------|
-| **Auto-chain** | Next skill invoked automatically | Low-risk transitions within a workflow |
-| **Human approval** | User must confirm before proceeding | Scope expansion, workflow boundary crossing, commits |
-| **Terminal** | Workflow ends, no auto-chain | Final phase (git-commit) |
+| **suggest** | Options presented, user decides | Standard transitions within a workflow |
+| **approval** | Requires explicit user confirmation | Scope expansion, workflow boundary crossing |
+| **terminal** | Workflow ends | Final phase (git-commit) |
 
 ### Complete Chaining Map
 
 | From | To | Mode | Workflow |
 |------|-----|------|----------|
-| x-analyze | x-plan | Auto-chain | APEX |
-| x-plan | x-implement | **Human approval** | APEX |
-| x-implement | x-review | Auto-chain | APEX |
-| x-review | git-commit | Auto-chain (on approval) | APEX |
-| git-commit | — | Terminal | APEX |
-| x-refactor | x-review | Auto-chain | APEX (sub-flow) |
-| x-fix | git-commit/x-review | **Human approval** | ONESHOT |
-| x-troubleshoot | x-fix | Auto-chain (simple) | DEBUG |
-| x-troubleshoot | x-implement | **Human approval** (complex) | DEBUG |
-| x-brainstorm | x-research/x-design | **User selects** | BRAINSTORM |
-| x-research | x-design | Auto-chain | BRAINSTORM |
-| x-design | x-plan | **Human approval** | BRAINSTORM→APEX |
+| x-analyze | x-plan | suggest | APEX |
+| x-plan | x-implement | **approval** | APEX |
+| x-implement | x-review | suggest | APEX |
+| x-review | git-commit | suggest | APEX |
+| git-commit | — | terminal | APEX |
+| x-refactor | x-review | suggest | APEX (sub-flow) |
+| x-fix | git-commit/x-review | **approval** | ONESHOT |
+| x-troubleshoot | x-fix | suggest | DEBUG |
+| x-troubleshoot | x-implement | **approval** (complex) | DEBUG |
+| x-brainstorm | x-research/x-design | suggest | BRAINSTORM |
+| x-research | x-design | suggest | BRAINSTORM |
+| x-design | x-plan | **approval** | BRAINSTORM→APEX |
 
 ### Invocation Pattern
 

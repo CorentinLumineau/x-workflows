@@ -12,10 +12,8 @@ metadata:
 chains-to:
   - skill: x-fix
     condition: "simple fix found"
-    auto: true
   - skill: x-implement
     condition: "complex fix needed"
-    auto: false
 chains-from: []
 ---
 
@@ -45,7 +43,7 @@ Ask user: "What issue are you experiencing?"
 
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
-- `debugging` - Hypothesis-driven debugging methodology
+- `debugging-performance` - Hypothesis-driven debugging methodology
 
 ## Agent Delegation
 
@@ -199,43 +197,26 @@ When approval needed, structure question as:
 
 **Next Verbs**: `/x-fix`, `/x-implement`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| Simple fix found | `/x-fix` | Yes |
-| **Complex fix needed** | `/x-implement` | **HUMAN APPROVAL** |
-| Needs planning | `/x-plan` | No (ask) |
+| Trigger | Chain To |
+|---------|----------|
+| Simple fix found | `/x-fix` (suggest) |
+| Complex fix needed | `/x-implement` (**approval**) |
+| Needs planning | `/x-plan` (suggest) |
 
 <chaining-instruction>
 
 When root cause is found:
 
-**Auto-chain**: troubleshoot → fix (simple root cause, no approval needed)
-
-For simple, clear fixes:
-1. Update `.claude/workflow-state.json` (mark troubleshoot complete, set fix in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "x-fix"
-   - args: "{root cause and fix description}"
-
-<workflow-chain on="auto" skill="x-fix" args="{root cause and fix description}" />
-
-**Human approval required**: troubleshoot → implement (complex root cause)
-
-For complex fixes requiring implementation:
-1. Update `.claude/workflow-state.json` (mark troubleshoot complete, set implement pending)
-2. Present approval gate:
-   "Investigation found {root cause}. This requires implementation changes."
-
 <workflow-gate type="choice" id="troubleshoot-resolve">
-  <question>Investigation found the root cause. This requires implementation changes. How would you like to proceed?</question>
+  <question>Root cause identified. How would you like to proceed?</question>
   <header>Resolution</header>
-  <option key="implement" recommended="true" approval="required">
+  <option key="fix" recommended="true">
+    <label>Apply fix</label>
+    <description>Attempt a targeted fix based on root cause</description>
+  </option>
+  <option key="implement" approval="required">
     <label>Full implementation</label>
     <description>Start APEX workflow for comprehensive fix (scope expansion)</description>
-  </option>
-  <option key="fix">
-    <label>Try simpler fix</label>
-    <description>Attempt a targeted fix first</description>
   </option>
   <option key="plan">
     <label>Plan first</label>
@@ -247,8 +228,8 @@ For complex fixes requiring implementation:
   </option>
 </workflow-gate>
 
-<workflow-chain on="implement" skill="x-implement" args="{root cause analysis and recommended approach}" />
 <workflow-chain on="fix" skill="x-fix" args="{root cause analysis and recommended approach}" />
+<workflow-chain on="implement" skill="x-implement" args="{root cause analysis and recommended approach}" />
 <workflow-chain on="plan" skill="x-plan" args="{root cause analysis and recommended approach}" />
 <workflow-chain on="continue" action="end" />
 
@@ -312,4 +293,4 @@ Use `complexity-detection` skill to route appropriately:
 
 ## References
 
-- @skills/quality-debugging/ - Debugging strategies and methodology
+- @skills/quality/debugging-performance/ - Debugging strategies and methodology

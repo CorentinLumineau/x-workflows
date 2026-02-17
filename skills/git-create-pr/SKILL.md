@@ -13,13 +13,10 @@ metadata:
 chains-to:
   - skill: git-check-ci
     condition: "after PR created"
-    auto: true
   - skill: git-review-pr
     condition: "PR needs local review"
-    auto: false
 chains-from:
   - skill: git-commit
-    auto: true
 ---
 
 # /git-create-pr

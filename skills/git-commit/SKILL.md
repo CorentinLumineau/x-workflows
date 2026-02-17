@@ -12,17 +12,12 @@ metadata:
 chains-to:
   - skill: git-create-pr
     condition: "branch != main"
-    auto: true
   - skill: git-create-release
     condition: "release workflow"
-    auto: false
 chains-from:
   - skill: x-review
-    auto: true
   - skill: x-fix
-    auto: false
   - skill: git-resolve-conflict
-    auto: true
 ---
 
 # /git-commit
@@ -326,11 +321,11 @@ When approval needed, structure question as:
 
 **Next Verbs**: `/x-review`, `/git-create-release`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| "create PR", "review" | `/x-review` | No (suggest) |
-| "release", "tag" | `/git-create-release` | No (suggest) |
-| "done" | Stop | Yes |
+| Trigger | Chain To |
+|---------|----------|
+| "create PR", "review" | `/x-review` (suggest) |
+| "release", "tag" | `/git-create-release` (suggest) |
+| "done" | Stop |
 
 <chaining-instruction>
 
@@ -339,7 +334,7 @@ When approval needed, structure question as:
 After all commits created:
 1. Update `.claude/workflow-state.json` (mark workflow complete, move to history, prune to max 5, delete file if no active workflow)
 2. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
-3. Present options (no auto-chain — workflow is done):
+3. Present options (workflow is done — suggest next steps):
 
 <workflow-gate type="choice" id="commit-next">
   <question>{N} commit(s) created. What's next?</question>

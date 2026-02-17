@@ -12,7 +12,6 @@ metadata:
 chains-to:
   - skill: x-plan
     condition: "analysis complete"
-    auto: true
 chains-from: []
 ---
 
@@ -42,7 +41,7 @@ Ask user: "What would you like to analyze? (file, module, feature, or codebase)"
 
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 - `code-quality` - Quality assessment
 
 ## Agent Delegation
@@ -233,28 +232,36 @@ When approval needed, structure question as:
 
 **Next Verb**: `/x-plan`
 
-| Trigger | Chain To | Auto? |
-|---------|----------|-------|
-| Analysis complete | `/x-plan` | Yes |
-| Critical issues, fix now | `/x-fix` | No (ask) |
-| Needs implementation | `/x-implement` | No (ask) |
+| Trigger | Chain To |
+|---------|----------|
+| Analysis complete | `/x-plan` (suggest) |
+| Critical issues, fix now | `/x-fix` (suggest) |
+| Needs implementation | `/x-implement` (suggest) |
 
 <chaining-instruction>
 
-**Auto-chain**: analyze → plan (no approval needed)
-
 After analysis complete:
-1. Update `.claude/workflow-state.json` (mark analyze complete, set plan in_progress)
-2. Auto-invoke next skill via Skill tool:
-   - skill: "x-plan"
-   - args: "{analysis summary with prioritized issues}"
 
-<workflow-chain on="auto" skill="x-plan" args="{analysis summary with prioritized issues}" />
+<workflow-gate type="choice" id="analyze-next">
+  <question>Analysis complete. How would you like to proceed?</question>
+  <header>Next step</header>
+  <option key="plan" recommended="true">
+    <label>Plan implementation</label>
+    <description>Create implementation plan based on analysis findings</description>
+  </option>
+  <option key="fix">
+    <label>Fix critical issues</label>
+    <description>Address critical issues immediately with a targeted fix</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Review analysis report without further action</description>
+  </option>
+</workflow-gate>
 
-If critical issues found requiring immediate fix (manual):
-"Found {count} critical issues. Fix now with /x-fix or plan with /x-plan?"
-- Option 1: `/x-fix` - Fix critical issues immediately
-- Option 2: `/x-plan` - Plan comprehensive fix
+<workflow-chain on="plan" skill="x-plan" args="{analysis summary with prioritized issues}" />
+<workflow-chain on="fix" skill="x-fix" args="{critical issues to fix}" />
+<workflow-chain on="done" action="end" />
 
 </chaining-instruction>
 

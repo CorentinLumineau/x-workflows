@@ -37,7 +37,7 @@ Ask user: "What path or module would you like to scan for quick wins?"
 ## Behavioral Skills
 
 This skill activates:
-- `analysis` - Pareto 80/20 prioritization
+- `analysis-architecture` - Pareto 80/20 prioritization
 - `code-quality` - SOLID, DRY, KISS assessment
 
 ## Agent Delegation
@@ -284,6 +284,6 @@ When approval needed, structure question as:
 
 ## References
 
-- @skills/meta-analysis/ - Pareto 80/20 prioritization
+- @skills/meta/analysis-architecture/ - Pareto 80/20 prioritization
 - @skills/code-code-quality/ - SOLID, DRY, KISS principles
 - @skills/quality-testing/ - Test coverage patterns

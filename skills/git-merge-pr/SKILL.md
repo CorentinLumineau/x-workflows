@@ -13,20 +13,14 @@ metadata:
 chains-to:
   - skill: git-create-release
     condition: "milestone complete"
-    auto: false
   - skill: git-resolve-conflict
     condition: "merge conflict detected"
-    auto: true
   - skill: git-cleanup-branches
     condition: "after successful merge"
-    auto: false
 chains-from:
   - skill: git-check-ci
-    auto: false
   - skill: git-review-pr
-    auto: false
   - skill: git-resolve-conflict
-    auto: true
 ---
 
 # /git-merge-pr

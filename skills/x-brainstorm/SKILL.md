@@ -12,13 +12,10 @@ metadata:
 chains-to:
   - skill: x-research
     condition: "dig deeper"
-    auto: false
   - skill: x-design
     condition: "ready to decide"
-    auto: false
 chains-from:
   - skill: x-research
-    auto: true
 ---
 
 # /x-brainstorm
@@ -47,7 +44,7 @@ Ask user: "What would you like to brainstorm?"
 
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
-- `analysis` - Pareto prioritization
+- `analysis-architecture` - Pareto prioritization
 
 ## MCP Servers
 
@@ -339,4 +336,4 @@ Goal → Actors → Impacts → Deliverables
 
 ## References
 
-- @skills/meta-analysis/ - Pareto prioritization and analysis patterns
+- @skills/meta/analysis-architecture/ - Pareto prioritization and analysis patterns
