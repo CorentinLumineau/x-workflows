@@ -3,15 +3,21 @@ name: x-analyze
 description: Use when you need to assess a codebase before planning changes.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Read Grep Glob Bash
+allowed-tools: Read Write Grep Glob Bash
 user-invocable: true
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "1.1.0"
   category: workflow
 chains-to:
   - skill: x-plan
     condition: "analysis complete"
+  - skill: x-fix
+    condition: "critical issues found"
+  - skill: x-review
+    condition: "deep audit needed"
+  - skill: x-docs
+    condition: "documentation gaps found"
 chains-from: []
 ---
 
@@ -147,38 +153,103 @@ Prioritize findings:
 | **Medium** | Quality, maintainability | Plan to fix |
 | **Low** | Style, preferences | Fix opportunistically |
 
-### Phase 4: Report Generation
+### Phase 4a: Write Full Audit Document
 
-Generate analysis report:
+Write the complete audit report to `documentation/audits/analysis-{scope}-{YYYY-MM-DD}.md`.
+
+Create the `documentation/audits/` directory if it does not exist.
+
+Use this template:
 
 ```markdown
 # Code Analysis Report
 
-## Summary
-- Files analyzed: {count}
-- Critical issues: {count}
-- High issues: {count}
-- Medium issues: {count}
+**Date**: {YYYY-MM-DD}
+**Scope**: {scope description}
+**Analyzer**: x-analyze v1.1.0
 
-## Critical Issues
-1. **{Issue}**: {Description}
-   - File: {path}
-   - Line: {line}
-   - Fix: {recommendation}
+## Scope
 
-## High Issues
-...
+### Included
+- {files, modules, or features analyzed}
+
+### Excluded
+- {anything explicitly out of scope}
+
+## Findings
+
+### Quality Domain
+| # | Issue | Severity | File | Line | Evidence |
+|---|-------|----------|------|------|----------|
+| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
+
+### Security Domain
+| # | Issue | Severity | File | Line | Evidence |
+|---|-------|----------|------|------|----------|
+| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
+
+### Performance Domain
+| # | Issue | Severity | File | Line | Evidence |
+|---|-------|----------|------|------|----------|
+| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
+
+### Architecture Domain
+| # | Issue | Severity | File | Line | Evidence |
+|---|-------|----------|------|------|----------|
+| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
+
+## Risk Matrix
+
+| Severity × Likelihood | Likely | Possible | Unlikely |
+|------------------------|--------|----------|----------|
+| **Critical** | {issues} | {issues} | {issues} |
+| **High** | {issues} | {issues} | {issues} |
+| **Medium** | {issues} | {issues} | {issues} |
 
 ## Recommendations
 
 ### Quick Wins (< 1 hour)
-1. {Recommendation}
+1. {Recommendation} — effort: {estimate}
 
 ### Planned Improvements (1-4 hours)
-1. {Recommendation}
+1. {Recommendation} — effort: {estimate}
 
 ### Architectural Changes (> 4 hours)
-1. {Recommendation}
+1. {Recommendation} — effort: {estimate}
+
+## Suggested Next Steps
+
+| Action | Command | When |
+|--------|---------|------|
+| Plan fixes | `/x-plan` | Create implementation plan from findings |
+| Fix critical | `/x-fix` | Address critical issues immediately |
+| Deep review | `/x-review audit` | Audit flagged files in depth |
+| Document | `/x-docs` | Update docs based on findings |
+```
+
+### Phase 4b: Display Executive Summary
+
+After writing the audit document, display a condensed executive summary to the user:
+
+```
+## Analysis Executive Summary
+
+**Scope**: {scope} | **Date**: {date} | **Files analyzed**: {count}
+
+### Findings
+| Severity | Count | Top Issue |
+|----------|-------|-----------|
+| Critical | {n}   | {headline} |
+| High     | {n}   | {headline} |
+| Medium   | {n}   | {headline} |
+| Low      | {n}   | — |
+
+### Top 3 Recommendations
+1. {recommendation} — effort: {estimate}
+2. {recommendation} — effort: {estimate}
+3. {recommendation} — effort: {estimate}
+
+Full report: `documentation/audits/analysis-{scope}-{date}.md`
 ```
 
 ### Phase 5: Update Workflow State
@@ -236,6 +307,8 @@ When approval needed, structure question as:
 |---------|----------|
 | Analysis complete | `/x-plan` (suggest) |
 | Critical issues, fix now | `/x-fix` (suggest) |
+| Needs deep audit | `/x-review audit` (suggest) |
+| Documentation gaps found | `/x-docs` (suggest) |
 | Needs implementation | `/x-implement` (suggest) |
 
 <chaining-instruction>
@@ -253,6 +326,14 @@ After analysis complete:
     <label>Fix critical issues</label>
     <description>Address critical issues immediately with a targeted fix</description>
   </option>
+  <option key="review">
+    <label>Deep review</label>
+    <description>Run deep code and security audit on flagged files</description>
+  </option>
+  <option key="docs">
+    <label>Document findings</label>
+    <description>Update or create documentation based on analysis findings</description>
+  </option>
   <option key="done">
     <label>Done</label>
     <description>Review analysis report without further action</description>
@@ -261,6 +342,8 @@ After analysis complete:
 
 <workflow-chain on="plan" skill="x-plan" args="{analysis summary with prioritized issues}" />
 <workflow-chain on="fix" skill="x-fix" args="{critical issues to fix}" />
+<workflow-chain on="review" skill="x-review" args="audit {flagged files from analysis}" />
+<workflow-chain on="docs" skill="x-docs" args="{documentation gaps identified in analysis}" />
 <workflow-chain on="done" action="end" />
 
 </chaining-instruction>
@@ -294,7 +377,8 @@ After analysis complete:
 - [ ] Scope analyzed
 - [ ] Issues identified across all domains
 - [ ] Findings prioritized
-- [ ] Report generated
+- [ ] Audit document written to `documentation/audits/`
+- [ ] Executive summary displayed to user
 - [ ] Next step presented
 
 ## References
