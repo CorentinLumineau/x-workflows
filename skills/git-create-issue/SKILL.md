@@ -113,7 +113,8 @@ This workflow activates:
    {full description}
    ---
    ```
-<!-- <workflow-gate type="human-approval" criticality="high" prompt="Review issue content. Approve, edit, or cancel?"> -->
+<workflow-gate type="human-approval" criticality="high" prompt="Review issue content. Approve, edit, or cancel?">
+</workflow-gate>
 3. Allow user to edit title, description, labels, or milestone
 
 ### Phase 3: Create Issue via Forge CLI
@@ -122,7 +123,8 @@ This workflow activates:
    - GitHub: `gh issue create --title "{title}" --body "{description}" --label {labels} --milestone {milestone}`
    - Gitea: `tea issue create --title "{title}" --body "{description}" --labels {labels} --milestone {milestone}`
 2. Present command to user for final approval
-<!-- <workflow-gate type="human-approval" criticality="critical" prompt="Create this issue on {forge}?"> -->
+<workflow-gate type="human-approval" criticality="critical" prompt="Create this issue on {forge}?">
+</workflow-gate>
 3. Execute command and capture issue number and URL from output
 4. Store result in `issue_context.created_issue`
 

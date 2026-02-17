@@ -139,7 +139,23 @@ When skills reference generic roles, resolve to concrete agents using this table
 4. If a skill says "delegate to a **codebase explorer**", use `x-explorer`
 5. If no matching role exists, use the main agent or a general-purpose agent
 
-## Reading Complexity Assessment
+## Complexity Integration
+
+Agent-awareness consumes the full routing context from complexity-detection, including the new `agent-guidance` fields:
+
+### Signal-to-Agent Mapping
+
+| Complexity Signal | Agent Selection | Model | Team? |
+|------------------|-----------------|-------|-------|
+| LOW + any intent | Cheapest capable variant | haiku | No |
+| MEDIUM + implement | x-refactorer or main | sonnet | No |
+| MEDIUM + review | x-reviewer-quick first | haiku → sonnet | No |
+| HIGH + implement | x-refactorer | sonnet | Maybe (Feature Team) |
+| HIGH + debug | x-debugger | sonnet | Maybe (Debug Team) |
+| HIGH + review | x-reviewer + x-security-reviewer | sonnet | Yes (Review Team) |
+| CRITICAL + any | x-designer or x-debugger-deep | opus | Yes |
+
+### Reading Complexity Assessment
 
 When complexity-detection produces its advisory output, read the structured fields:
 
@@ -147,6 +163,9 @@ When complexity-detection produces its advisory output, read the structured fiel
 2. **Agent recommendation** → Primary delegation target
 3. **Variant** → Cost optimization alternative
 4. **Chain** → Workflow sequence to follow
+5. **agent-guidance.model** → Model tier for spawned agents
+6. **agent-guidance.team-pattern** → Team composition if parallelism is beneficial
+7. **agent-guidance.reasoning** → Rationale to include in delegation prompts
 
 ### Model Tier Mapping
 

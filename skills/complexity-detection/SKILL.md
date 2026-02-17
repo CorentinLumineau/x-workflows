@@ -527,6 +527,40 @@ This ensures the resolver works NOW (M4) while chain data is populated in M5.
 
 ---
 
+## Agent Guidance Output
+
+After complexity assessment, emit additional guidance for agent selection and team composition:
+
+| Field | Source | Description |
+|-------|--------|-------------|
+| `agent_guidance.recommended` | Agent capability matrix | Primary agent suited for this task |
+| `agent_guidance.variant` | Variant selection criteria | Cost-optimized alternative agent |
+| `agent_guidance.model` | Complexity tier mapping | Model tier recommendation (haiku/sonnet/opus) |
+| `agent_guidance.team_pattern` | Team triggers + parallelizability | Team pattern if beneficial, else "none" |
+| `agent_guidance.reasoning` | Assessment output | Why this recommendation was made |
+
+### Complexity-to-Model Mapping
+
+| Complexity | Primary Model | Explorer Model | Rationale |
+|------------|---------------|----------------|-----------|
+| LOW | haiku | haiku | Fast and cheap for simple tasks |
+| MEDIUM | sonnet | haiku | Balanced reasoning for standard tasks |
+| HIGH | sonnet | sonnet | Deep analysis, opus for architecture decisions |
+| CRITICAL | opus | sonnet | Maximum reasoning + security review |
+
+### Complexity-to-Team Mapping
+
+| Complexity | Parallelizable? | Recommended Team | Pattern |
+|------------|----------------|------------------|---------|
+| LOW | No | none | Direct delegation |
+| MEDIUM | Maybe | none (default) | Subagent delegation |
+| HIGH + multi-domain | Yes | Review/Feature/Debug Team | 2-4 agents |
+| CRITICAL | Yes | Feature Team + Security | 3-5 agents |
+
+Agent guidance fields are written to the routing context (see below) and consumed by x-auto and agent-awareness for delegation decisions.
+
+---
+
 ## Routing Context Contract
 
 The routing context is a session-ephemeral advisory structure produced by complexity-detection and consumed by x-auto, interview, and agent-awareness:
@@ -539,8 +573,38 @@ The routing context is a session-ephemeral advisory structure produced by comple
 | chain | string[] | Suggested skill chain sequence |
 | multi-session-flag | boolean | Whether task likely exceeds single session |
 | confidence | 0-100 | Assessment confidence percentage |
+| agent-guidance.model | string | Recommended model tier (haiku/sonnet/opus) |
+| agent-guidance.variant | string | Cost-optimized variant agent (or "none") |
+| agent-guidance.team-pattern | string | Recommended team pattern (or "none") |
+| agent-guidance.reasoning | string | Brief rationale for agent/model selection |
 
 This contract is advisory — downstream consumers may override any field based on additional context.
+
+---
+
+## Routing Corrections Reader
+
+At assessment start, read historical routing corrections to improve future routing accuracy:
+
+1. **Read correction data**: Query Memory MCP entity `"delegation-log"` for `routing_correction` observations
+2. **Parse corrections**: Extract `{suggested_workflow → user_chosen_workflow}` pairs grouped by intent type
+3. **Build frequency table**: Count corrections per `{intent_type → preferred_workflow}` pair
+4. **Apply adjustment**: If count ≥ 3 for same pattern, add advisory signal:
+   ```
+   Routing adjustment: {intent_type} historically routed to {preferred} (corrected {count} times)
+   ```
+5. **Advisory is ADDITIVE** — never overrides explicit complexity signals, only adds context
+6. **If Memory MCP unavailable**: Skip correction read silently (graceful degradation)
+7. **If auto-memory `routing-corrections.md` exists**: Read as fallback when Memory MCP unavailable
+
+### Correction Data Sources
+
+| Source | Priority | Availability |
+|--------|----------|-------------|
+| Memory MCP `delegation-log` entity | Primary | Requires MCP |
+| Auto-memory `routing-corrections.md` | Fallback | Always available |
+
+At workflow completion, x-auto writes correction summary to auto-memory topic file `routing-corrections.md` for cross-session persistence without MCP dependency.
 
 ---
 

@@ -18,6 +18,7 @@ chains-from:
   - skill: x-implement
   - skill: x-refactor
   - skill: x-fix
+  - skill: x-analyze
 ---
 
 # /x-review
@@ -179,60 +180,9 @@ pnpm build
 
 #### Verification Evidence Protocol — MANDATORY
 
-**This sub-phase CANNOT be skipped. Every quality claim MUST have execution evidence.**
+**This sub-phase CANNOT be skipped.** Every quality claim MUST have execution evidence following the 5-step sequence (IDENTIFY, RUN, READ, VERIFY, CLAIM). Predictions are not verifications.
 
-> **Foundational principle**: "Tests should pass" is a PREDICTION. "Tests pass" after reading output is a VERIFICATION. Only verifications are accepted.
-
-For EACH quality gate, follow this 5-step sequence:
-
-| Step | Action | What You Do |
-|------|--------|-------------|
-| 1. IDENTIFY | Name the gate | "Running lint gate" |
-| 2. RUN | Execute the command | `pnpm lint` (actual execution) |
-| 3. READ | Read full output | Read the complete command output |
-| 4. VERIFY | State pass/fail with evidence | "Lint passed: 0 errors, 0 warnings" |
-| 5. CLAIM | Make status claim | Only NOW can you say "lint gate passes" |
-
-**Prohibited Language** (V-TEST-07 CRITICAL violation):
-
-| Prohibited | Correct Alternative |
-|------------|---------------------|
-| "Tests should pass" | Run tests, read output, report result |
-| "This probably works" | Execute and verify |
-| "Based on the code, tests will pass" | Run the tests |
-| Any claim without output evidence | Complete all 5 steps |
-
-See `references/verification-protocol.md` for anti-pattern examples.
-
-#### Coverage Thresholds — BLOCKING
-
-| Check | Threshold | Violation | Action |
-|-------|-----------|-----------|--------|
-| Line coverage on changed files | ≥80% | V-TEST-03 (HIGH) | BLOCK |
-| Unit test ratio of new tests | ≥60% | V-TEST-04 (MEDIUM) | WARN |
-| Tests have assertions | 100% | V-TEST-05 (CRITICAL) | BLOCK |
-| No flaky tests | 0 flaky | V-TEST-06 (CRITICAL) | BLOCK |
-
-#### STOP — Coverage Hard Gate
-
-> **You MUST stop here and verify coverage numbers before proceeding.**
-
-**Checklist** (ALL must be true to proceed):
-- [ ] Line coverage on changed files ≥ 80% (MEASURED, not estimated)
-- [ ] All tests have assertions (no empty test bodies)
-- [ ] Zero flaky tests (run twice if unsure)
-
-**Common Rationalizations** (if you're thinking any of these, STOP):
-
-| Excuse | Reality |
-|--------|---------|
-| "Coverage is probably fine" | Measure it. "Probably" is not a number. (V-TEST-03) |
-| "The important paths are covered" | 80% threshold on changed files. Measure it. (V-TEST-03) |
-| "Adding more tests would be diminishing returns" | You haven't measured yet. Measure first, then argue. (V-TEST-03) |
-
-> **Foundational principle**: Violating the letter of this gate IS violating its spirit. There is no "technically compliant" shortcut.
-
-See `@skills/code-code-quality/references/anti-rationalization.md` for the full excuse/reality reference.
+For the full protocol, coverage thresholds, and coverage hard gate, see `references/verification-protocol.md`.
 
 #### Handle Failures
 
@@ -301,77 +251,7 @@ Compare implementation against the plan, issue, or user request:
   </agent>
 </parallel-delegate>
 
-For each changed file, audit against enforcement violation definitions:
-
-**SOLID Audit (BLOCKING)**:
-- [ ] SRP (V-SOLID-01: CRITICAL → BLOCK)
-- [ ] OCP (V-SOLID-02: HIGH → BLOCK)
-- [ ] LSP (V-SOLID-03: CRITICAL → BLOCK)
-- [ ] ISP (V-SOLID-04: HIGH → BLOCK)
-- [ ] DIP (V-SOLID-05: HIGH → BLOCK)
-
-**DRY Audit (BLOCKING)**:
-- [ ] No >10 line duplication (V-DRY-01: HIGH → BLOCK)
-- [ ] Flag 3-10 line duplication (V-DRY-02: MEDIUM → WARN)
-- [ ] No repeated magic values (V-DRY-03: MEDIUM → WARN)
-
-**Design Pattern Review**:
-- [ ] No God Objects (V-PAT-01: CRITICAL → BLOCK)
-- [ ] No circular dependencies (V-PAT-02: HIGH → BLOCK)
-- [ ] Flag missing obvious patterns (V-PAT-03: MEDIUM → WARN)
-- [ ] No pattern misuse (V-PAT-04: HIGH → BLOCK)
-
-**Security Review**:
-- [ ] Input validation
-- [ ] Authentication/Authorization
-- [ ] Data exposure
-- [ ] OWASP Top 10
-
-**Test Coverage**:
-- [ ] All new code has tests (V-TEST-01: CRITICAL → BLOCK)
-- [ ] Meaningful assertions (V-TEST-05: CRITICAL → BLOCK)
-- [ ] Edge cases covered
-- [ ] Integration tests if needed
-
-**Pareto Audit**:
-- [ ] No over-engineered solutions (V-PARETO-01: HIGH → BLOCK)
-- [ ] Check for simpler alternatives
-- [ ] Flag >3x complexity for marginal improvement
-
-#### Phase 3c: Severity Classification — STRICT
-
-**CRITICAL (BLOCK):** V-SOLID-01, V-SOLID-03, V-TEST-01, V-TEST-05, V-TEST-06, V-DOC-02, V-PAT-01
-→ MUST fix before approval. No exceptions.
-
-**HIGH (BLOCK):** V-SOLID-02, V-SOLID-04, V-SOLID-05, V-DRY-01, V-TEST-02, V-TEST-03, V-DOC-01, V-DOC-04, V-PAT-02, V-PAT-04, V-KISS-02, V-YAGNI-01, V-PARETO-01
-→ MUST fix OR escalate to user with justification.
-
-**MEDIUM (WARN):** V-DRY-02, V-DRY-03, V-KISS-01, V-YAGNI-02, V-TEST-04, V-TEST-07, V-DOC-03, V-PAT-03, V-PARETO-02, V-PARETO-03
-→ Flag to user. Document if deferring.
-
-**LOW (INFO):** Style, minor improvements.
-
-#### STOP — Review Approval Hard Gate
-
-> **You MUST stop here and verify violations before generating the readiness report.**
-
-**Checklist** (ALL must be true to proceed):
-- [ ] Zero CRITICAL violations
-- [ ] Zero HIGH violations without documented user-approved exception
-- [ ] All MEDIUM violations flagged in readiness report
-
-**Common Rationalizations** (if you're thinking any of these, STOP):
-
-| Excuse | Reality |
-|--------|---------|
-| "Overall the code looks good" | Review is checklist-driven, not impression-driven. Run the checklist. |
-| "These issues are cosmetic" | Check the severity table. CRITICAL/HIGH are never cosmetic. |
-| "The user seems in a hurry" | Quality gates protect users from their own urgency. Hold the line. |
-| "It's just a small change" | Small changes with CRITICAL violations are still CRITICAL. |
-
-> **Foundational principle**: Violating the letter of this gate IS violating its spirit. There is no "technically compliant" shortcut.
-
-See `@skills/code-code-quality/references/anti-rationalization.md` for the full excuse/reality reference.
+For enforcement audit checklists (SOLID, DRY, Design Patterns, Security, Test Coverage, Pareto), severity classification, and the review approval hard gate, see `references/enforcement-audit.md`.
 
 ---
 
@@ -386,27 +266,11 @@ Check documentation sync with code changes. Uses Phase 1 scoping data.
   <context>Documentation audit for x-review readiness assessment</context>
 </agent-delegate>
 
-```
-┌─────────────────────────────────────────────────┐
-│ Documentation Check                             │
-├─────────────────────────────────────────────────┤
-│ Check API docs match code signatures            │
-│ Check examples are current                      │
-│ Check no broken internal links                  │
-│ Flag docs that may need attention               │
-├─────────────────────────────────────────────────┤
-│ Initiative Documentation (if active initiative) │
-│ Check milestone file updated with progress      │
-│ Check initiative README progress table current  │
-│ Check milestones hub reflects latest status     │
-│ Flag stale initiative docs as review finding    │
-└─────────────────────────────────────────────────┘
-```
-
-Detect active initiative:
-1. Check `.claude/initiative.json` for `currentMilestone`
-2. If not found, check `documentation/milestones/_active/` for initiative directories
-3. If no initiative detected, skip initiative documentation checks
+**Checks:**
+- [ ] API docs match code signatures
+- [ ] Examples are current
+- [ ] No broken internal links
+- [ ] Initiative docs updated (if active initiative from `.claude/initiative.json`)
 
 See `references/mode-docs.md` for detailed documentation audit patterns.
 
@@ -438,49 +302,25 @@ See `references/mode-regression.md` for detailed regression detection patterns.
 
 > **All modes** — synthesizes results from all prior phases.
 
-Generate comprehensive readiness report:
+Generate the readiness report using the template in `references/readiness-report-template.md`. The verdict determines workflow chaining (APPROVED/CHANGES REQUESTED/BLOCKED).
 
-```markdown
-## Readiness Report
+### Phase 6b: Write Enforcement Results
 
-### Mode: {mode}
-### Scope: {file_count} files, {lines_added}+ / {lines_removed}-
+After completing the readiness report, persist enforcement results to workflow state:
 
-### Quality Gates (Phase 2)
-| Gate | Status | Evidence |
-|------|--------|----------|
-| Lint | ✅/❌ | {summary} |
-| Types | ✅/❌ | {summary} |
-| Tests | ✅/❌ | {summary} |
-| Build | ✅/❌ | {summary} |
-| Coverage | ✅/⚠️/❌ | {percentage}% |
-
-### Code Review (Phase 3)
-| Practice | Status | Violations | Action |
-|----------|--------|------------|--------|
-| Spec Compliance | ✅/❌ | — | Pass / Fix needed |
-| SOLID | ✅/❌ | V-SOLID-XX | Pass / Fix needed |
-| DRY | ✅/❌ | V-DRY-XX | Pass / Fix needed |
-| Security | ✅/❌ | OWASP | Pass / Fix needed |
-| Testing | ✅/⚠️ | V-TEST-XX | Pass / Flagged |
-| Documentation | ✅/❌ | V-DOC-XX | Pass / Fix needed |
-| Patterns | ✅/⚠️ | V-PAT-XX | Pass / Flagged |
-| Pareto | ✅/⚠️ | V-PARETO-XX | Pass / Flagged |
-
-### Documentation (Phase 4)
-- Code docs: ✅/⚠️/❌
-- Project docs: ✅/⚠️/❌
-- Initiative docs: ✅/⚠️/N/A
-
-### Regression (Phase 5)
-- Coverage delta: {+/-}%
-- Removed tests: {count}
-- Disabled tests: {count}
-
-### Verdict: {APPROVED / CHANGES REQUESTED / BLOCKED}
-
-**ANY ❌ = cannot proceed to /git-commit.**
-```
+1. Collect all V-* violations found during Phases 2-5
+2. Determine blocking status: CRITICAL or HIGH → `blocking: true`; MEDIUM or LOW → `blocking: false`
+3. Write `enforcement` field to `.claude/workflow-state.json`:
+   ```json
+   {
+     "enforcement": {
+       "violations": [{ "code": "V-*", "severity": "...", "details": "..." }],
+       "blocking": false,
+       "summary": "N violations: breakdown by severity"
+     }
+   }
+   ```
+4. If `blocking: true`, the readiness verdict MUST be BLOCKED (not CHANGES REQUESTED)
 
 ---
 
@@ -505,52 +345,27 @@ After completing review:
 
 ## Human-in-Loop Gates
 
-| Decision Level | Action | Example |
-|----------------|--------|---------|
-| **Critical** | ALWAYS ASK | Critical issues found |
-| **High** | ASK IF ABLE | Multiple warnings |
-| **Medium** | ASK IF UNCERTAIN | Borderline issues |
-| **Low** | PROCEED | Clean review |
+| Decision Level | Action |
+|----------------|--------|
+| **Critical** | ALWAYS ASK |
+| **High** | ASK IF ABLE |
+| **Medium** | ASK IF UNCERTAIN |
+| **Low** | PROCEED |
 
 <human-approval-framework>
-
-When approval needed, structure question as:
-1. **Context**: Readiness report summary
-2. **Options**: Fix issues, merge with warnings, or block
-3. **Recommendation**: Fix criticals before merge
-4. **Escape**: "Return to /x-implement" option
-
+When approval needed, present: readiness report summary, options (fix / merge with warnings / block), recommendation, and escape path ("Return to /x-implement").
 </human-approval-framework>
 
 ## Workflow Chaining
 
-**Next Verb**: `/git-commit`
-
-| Trigger | Chain To |
-|---------|----------|
-| Review approved | `/git-commit` (suggest) |
-| Changes requested | `/x-implement` (suggest) |
-| Critical issues | Block (require fix) |
-
 <chaining-instruction>
-
-After review complete:
 
 <workflow-gate type="choice" id="review-next">
   <question>Review complete. How would you like to proceed?</question>
   <header>Next step</header>
-  <option key="commit" recommended="true">
-    <label>Commit changes</label>
-    <description>Proceed to commit reviewed changes</description>
-  </option>
-  <option key="fix">
-    <label>Request changes</label>
-    <description>Return to implementation to address review findings</description>
-  </option>
-  <option key="done">
-    <label>Done</label>
-    <description>Review complete, no further action</description>
-  </option>
+  <option key="commit" recommended="true"><label>Commit changes</label></option>
+  <option key="fix"><label>Request changes</label></option>
+  <option key="done"><label>Done</label></option>
 </workflow-gate>
 
 <workflow-chain on="commit" skill="git-commit" args="commit reviewed changes" />
@@ -561,25 +376,17 @@ After review complete:
 
 ## Severity Levels
 
-| Level | Action | Violation IDs |
-|-------|--------|---------------|
-| CRITICAL (BLOCK) | Must fix before approval | V-SOLID-01/03, V-TEST-01/05/06/07, V-DOC-02, V-PAT-01 |
-| HIGH (BLOCK) | Must fix or escalate | V-SOLID-02/04/05, V-DRY-01, V-TEST-02/03, V-DOC-01/04, V-PAT-02/04, V-PARETO-01 |
-| MEDIUM (WARN) | Flag, document if deferring | V-DRY-02/03, V-KISS-01, V-YAGNI-02, V-TEST-04, V-DOC-03, V-PAT-03, V-PARETO-02/03 |
-| LOW (INFO) | Note for awareness | Style, minor improvements |
+For full severity classification with violation IDs, see `references/enforcement-audit.md`.
 
 ## Critical Rules
 
 1. **No BLOCK violations** — NEVER approve with unresolved CRITICAL/HIGH violations
-2. **SOLID is mandatory** — Full audit using V-SOLID-* definitions
-3. **DRY is enforced** — V-DRY-01 blocks merge
-4. **Security First** — Security issues always CRITICAL
-5. **Test Coverage** — New code MUST have tests (V-TEST-01)
-6. **Evidence Required** — Every quality claim needs execution proof (V-TEST-07)
-7. **Documentation** — Stale docs block merge (V-DOC-01, V-DOC-04)
-8. **Initiative Docs** — Flag stale milestone documentation as a review finding
-9. **Readiness report required** — MUST output Phase 6 report
-10. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
+2. **Evidence Required** — Every quality claim needs execution proof (V-TEST-07)
+3. **Security First** — Security issues always CRITICAL
+4. **Readiness report required** — MUST output Phase 6 report
+5. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
+
+For full enforcement rules (SOLID, DRY, test coverage, documentation), see `references/enforcement-audit.md`.
 
 ## Navigation
 
@@ -603,6 +410,9 @@ After review complete:
 
 ## When to Load References
 
+- **For evidence protocol**: See `references/verification-protocol.md`
+- **For enforcement audit**: See `references/enforcement-audit.md`
+- **For readiness template**: See `references/readiness-report-template.md`
 - **For quick mode details**: See `references/mode-quick.md`
 - **For review checklist**: See `references/mode-review.md`
 - **For audit patterns**: See `references/mode-audit.md`
@@ -611,7 +421,6 @@ After review complete:
 - **For regression detection**: See `references/mode-regression.md`
 - **For coverage improvement**: See `references/mode-coverage.md`
 - **For build guidance**: See `references/mode-build.md`
-- **For evidence protocol**: See `references/verification-protocol.md`
 
 ## References
 

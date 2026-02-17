@@ -67,8 +67,13 @@ Produce a **routing context** with the following fields:
 4. **chain** - Suggested skill chain sequence
 5. **multi-session-flag** - Whether task likely exceeds single session
 6. **confidence** - Assessment confidence percentage (0-100)
+7. **agent-guidance** - Agent selection details from complexity-detection:
+   - `model` - Recommended model tier (haiku/sonnet/opus)
+   - `variant` - Cost-optimized variant agent (or "none")
+   - `team-pattern` - Recommended team pattern (or "none")
+   - `reasoning` - Brief rationale for selection
 
-This routing context is passed to all downstream consumers (interview, agent-awareness) to avoid redundant re-assessment.
+This routing context is passed to all downstream consumers (interview, agent-awareness) to avoid redundant re-assessment. The `agent-guidance` fields inform delegation decisions when spawning subagents or teams.
 
 ### Phase 2: Display Advisory
 
@@ -82,8 +87,10 @@ Present the assessment in a structured format:
 | **Workflow** | {APEX/ONESHOT/DEBUG/BRAINSTORM} |
 | **Complexity** | {LOW/MEDIUM/HIGH/CRITICAL} |
 | **Agent** | {recommended agent} |
+| **Model** | {haiku/sonnet/opus} |
 | **Variant** | {variant or "standard"} |
 | **Chain** | {suggested command chain} |
+| **Team** | {team pattern or "none"} |
 
 ### Rationale
 {Brief explanation of why this routing was chosen}
@@ -115,6 +122,10 @@ Write routing correction to Memory MCP entity `"delegation-log"`:
 Log: "Routing preference recorded for future sessions"
 
 **Note**: Only record when user actively changes the recommendation, not when they accept it.
+
+Additionally, write a summary line to auto-memory topic file `routing-corrections.md` for cross-session persistence without MCP dependency:
+- Format: `"{timestamp}: {intent_type} — suggested {recommended}, user chose {user_choice}"`
+- This ensures corrections survive sessions even when Memory MCP is unavailable
 
 ### Phase 4: Auto-Invoke Recommended Skill
 

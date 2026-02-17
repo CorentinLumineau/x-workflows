@@ -228,7 +228,7 @@ Before creating a skill, verify:
 - [ ] Description includes activation triggers
 - [ ] Mode files exist for all declared modes
 - [ ] References point to existing files
-- [ ] No @core-docs/playbooks or @core-docs/templates (use @skills/)
+- [ ] No deprecated core-docs paths like playbooks/ or templates/ (use @skills/ instead)
 
 ---
 

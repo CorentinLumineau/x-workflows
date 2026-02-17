@@ -216,60 +216,27 @@ pnpm build       # Build succeeds
 
 ### Phase 4b: Enforcement Summary — MANDATORY
 
-**This phase CANNOT be skipped.** Output compliance report:
+**This phase CANNOT be skipped.** Output compliance report. **ANY fail = cannot proceed to Phase 5.**
 
-```
-| Practice       | Status | Violations   | Action           |
-|----------------|--------|--------------|------------------|
-| TDD            | ✅/❌  | V-TEST-01/02 | Pass / Fix needed |
-| Testing        | ✅/❌  | V-TEST-XX    | Pass / Fix needed |
-| SOLID          | ✅/⚠️  | V-SOLID-XX   | Pass / Flagged    |
-| DRY/KISS/YAGNI | ✅/⚠️  | V-DRY/KISS/YAGNI | Pass / Flagged |
-| Patterns       | ✅/⚠️  | V-PAT-XX     | Pass / Flagged    |
-| Pareto         | ✅/⚠️  | V-PARETO-XX  | Pass / Flagged    |
-| Documentation  | ✅/❌  | V-DOC-XX     | Pass / Fix needed |
-```
+For enforcement summary table template, see `references/phase-implementation-gates.md#enforcement-summary`.
 
-**ANY ❌ = cannot proceed to Phase 5.**
+After generating the enforcement summary, persist results to workflow state:
+
+1. Collect all V-* violations from the quality gate output
+2. Write `enforcement` field to `.claude/workflow-state.json` with violations, blocking status, and summary
+3. If `blocking: true` (any CRITICAL or HIGH violation), halt and report — do not proceed to Phase 5
 
 ### Phase 5: Documentation Sync — MANDATORY
 
-**This phase CANNOT be skipped.**
+**This phase CANNOT be skipped.** Verify documentation matches code changes. **BLOCK if any exit gate fails.**
 
-1. Did public API signatures change? → Update API docs (V-DOC-01 BLOCK if skipped)
-2. Were new public functions/classes created? → Add docs (V-DOC-02 BLOCK if skipped)
-3. Did behavior change? → Update relevant docs (V-DOC-04 BLOCK if skipped)
-4. Are internal doc references valid? → Verify (V-DOC-03)
-
-**Phase 5 Exit Gate:**
-- [ ] All public API docs match current signatures
-- [ ] New public APIs documented
-- [ ] Behavioral changes reflected in docs
-
-**BLOCK if any exit gate fails.**
+For documentation sync checklist and exit gate, see `references/phase-implementation-gates.md#documentation-sync`.
 
 ### Phase 6: Initiative Documentation Update (Conditional)
 
-**Skip this phase if no active initiative exists.**
+**Skip this phase if no active initiative exists.** Detect initiative via `.claude/initiative.json` or `documentation/milestones/_active/`.
 
-Detect active initiative:
-1. Check `.claude/initiative.json` for `currentMilestone`
-2. If not found, check `documentation/milestones/_active/` for initiative directories
-3. If no initiative detected, proceed to workflow chaining
-
-When an active initiative is detected, update documentation following the mandatory 5-step protocol:
-
-| Step | File | Update |
-|------|------|--------|
-| 1 | `_active/{initiative}/milestone-N.md` | Add progress update with completed tasks and metrics |
-| 2 | `_active/{initiative}/README.md` | Update progress table (status, percentage, dates) |
-| 3 | `documentation/milestones/README.md` | Update hub progress summary (if file exists) |
-| 4 | `documentation/milestones/MASTER-PLAN.md` | Update orchestration status (if file exists) |
-| 5 | `CLAUDE.md` | Update only for major milestone completions |
-
-Update `.claude/initiative.json` checkpoint with latest progress.
-
-**Reference**: See `@skills/x-initiative/playbooks/README.md` for the full documentation update workflow.
+For initiative detection steps and 5-step update protocol, see `references/phase-implementation-gates.md#initiative-documentation`.
 
 ### Phase 7: Update Workflow State
 
@@ -355,50 +322,11 @@ After implementation complete:
 
 </chaining-instruction>
 
-## TDD Workflow
+## Quick Reference
 
-> **Canonical source**: `@quality-testing` skill
-> Follow Red-Green-Refactor cycle.
-
-```
-Write Test (RED)
-     ↓
-Test Fails (expected)
-     ↓
-Write Code (GREEN)
-     ↓
-Test Passes
-     ↓
-Refactor (if needed)
-     ↓
-All Tests Still Pass
-     ↓
-Next Feature
-```
-
-## Quality Gates
-
-All implementations must pass:
-- **Lint** - Code style compliance
-- **Types** - Type safety
-- **Tests** - All tests passing
-- **Build** - Successful build
-
-## Documentation Sync
-
-After x-implement completes, documentation is automatically checked:
-
-```
-x-implement completes
-        ↓
-code documentation sync (auto)
-        ↓
-x-docs sync (if drift detected)
-        ↓
-initiative documentation updated (if active initiative)
-```
-
-Initiative documentation updates are handled in Phase 6 (inside instructions) when an active initiative is detected via `.claude/initiative.json` or `documentation/milestones/_active/`.
+- **TDD**: Red-Green-Refactor cycle in Phase 2. Canonical source: `@skills/quality-testing/`
+- **Quality Gates**: lint, type-check, test, build in Phase 4.
+- **Documentation Sync**: Phase 5 checklist + Phase 6 initiative docs. See `references/phase-implementation-gates.md`.
 
 ## Critical Rules
 
