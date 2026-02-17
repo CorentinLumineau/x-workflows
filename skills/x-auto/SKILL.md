@@ -60,12 +60,15 @@ Activate `@skills/complexity-detection/` on the user's task description.
 Think step-by-step about: workflow intent (APEX/ONESHOT/DEBUG/BRAINSTORM), complexity tier (LOW/MEDIUM/HIGH/CRITICAL), recommended agent, variant selection, and suggested chain ordering.
 </deep-think>
 
-Determine:
-1. **Workflow intent** - APEX / ONESHOT / DEBUG / BRAINSTORM
-2. **Complexity tier** - LOW / MEDIUM / HIGH / CRITICAL
-3. **Recommended agent** - Best-fit agent for the task
-4. **Recommended variant** - Specialized variant if applicable
-5. **Suggested chain** - Ordered sequence of workflow verbs
+Produce a **routing context** with the following fields:
+1. **intent** - Classified user intent (implement, fix, refactor, review, deploy, research)
+2. **complexity-tier** - Assessed complexity level (1-5)
+3. **recommended-agent** - Suggested agent from agent-awareness catalog
+4. **chain** - Suggested skill chain sequence
+5. **multi-session-flag** - Whether task likely exceeds single session
+6. **confidence** - Assessment confidence percentage (0-100)
+
+This routing context is passed to all downstream consumers (interview, agent-awareness) to avoid redundant re-assessment.
 
 ### Phase 2: Display Advisory
 
@@ -118,6 +121,7 @@ Log: "Routing preference recorded for future sessions"
 After user confirms the recommended workflow:
 
 1. **Validate confidence** — Reuse interview behavioral skill (Phase 0 gate)
+   - Pass the routing context to interview so previously-assessed dimensions (intent, complexity-tier, recommended-agent) are not re-asked
    - All confidence dimensions must be at 100% to auto-invoke
    - If confidence < 100%: show manual commands instead (fallback)
 
@@ -133,30 +137,9 @@ After user confirms the recommended workflow:
 
 </instructions>
 
-## Workflow Routing Table
+See @skills/complexity-detection/ for routing classification.
 
-| Intent | Complexity | Recommended Chain |
-|--------|-----------|-------------------|
-| APEX (Build) | HIGH / CRITICAL | `/x-analyze` -> `/x-plan` -> [APPROVAL] -> `/x-implement` -> `/x-review` -> `/git-commit` |
-| APEX (Build) | LOW / MEDIUM | `/x-plan` -> `/x-implement` -> `/x-review` -> `/git-commit` |
-| ONESHOT (Fix) | LOW | `/x-fix` -> `/git-commit` |
-| ONESHOT (Fix) | MEDIUM | `/x-fix` -> `/x-review quick` -> `/git-commit` |
-| DEBUG (Error) | LOW / MEDIUM | `/x-troubleshoot` -> `/x-fix` |
-| DEBUG (Error) | HIGH / CRITICAL | `/x-troubleshoot` (deep) -> `/x-implement` |
-| BRAINSTORM | Any | `/x-brainstorm` -> `/x-research` -> `/x-design` -> [APPROVAL] -> `/x-plan` |
-
-## Agent Selection Logic
-
-| Condition | Agent Recommendation |
-|-----------|---------------------|
-| Design / architecture task | x-designer (opus) |
-| Complex debugging (HIGH+) | x-debugger-deep (opus) |
-| Quick test validation | x-tester-fast (haiku) |
-| Quick code scan | x-reviewer-quick (haiku) |
-| Standard debugging | x-debugger (sonnet) |
-| Standard implementation | general-purpose (sonnet) |
-| Standard review | x-reviewer (sonnet) |
-| Standard testing | x-tester (sonnet) |
+See @skills/agent-awareness/ for agent selection.
 
 ## Human-in-Loop Gates
 

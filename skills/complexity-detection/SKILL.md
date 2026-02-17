@@ -527,6 +527,23 @@ This ensures the resolver works NOW (M4) while chain data is populated in M5.
 
 ---
 
+## Routing Context Contract
+
+The routing context is a session-ephemeral advisory structure produced by complexity-detection and consumed by x-auto, interview, and agent-awareness:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| intent | string | Classified user intent (implement, fix, refactor, review, deploy, research) |
+| complexity-tier | 1-5 | Assessed complexity level |
+| recommended-agent | string | Suggested agent from agent-awareness catalog |
+| chain | string[] | Suggested skill chain sequence |
+| multi-session-flag | boolean | Whether task likely exceeds single session |
+| confidence | 0-100 | Assessment confidence percentage |
+
+This contract is advisory — downstream consumers may override any field based on additional context.
+
+---
+
 ## References
 
 - @skills/agent-awareness/ - Agent delegation awareness and selection patterns

@@ -45,6 +45,16 @@ Traditional workflows assume the agent understands the request. This behavioral 
 3. **RESEARCH** - Context7, codebase, web based on answer content
 4. **SYNTHESIZE** - Update confidence scores, reformulate if > 80%
 
+## Previously Assessed Dimensions
+
+When receiving a routing context from complexity-detection with confidence >= 70%:
+- Start overlapping dimensions at baseline 80% instead of 0%
+- Skip re-asking questions whose answers are already captured in the routing context
+- Only probe dimensions where complexity-detection expressed low confidence or ambiguity
+- Always allow the user to override any pre-assessed value
+
+This avoids redundant questioning when the decision engine has already classified the task.
+
 ## References
 
 | Reference | Purpose |
