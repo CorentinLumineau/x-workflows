@@ -86,14 +86,14 @@ Activate `@skills/interview/` if:
 - Multiple implementation approaches
 - Technical constraints unknown
 
-### Phase 0b: Workflow State Check
+### Phase 0b: Workflow State Check (ENFORCED)
 
 1. Read `.claude/workflow-state.json` (if exists)
 2. If active workflow exists:
-   - Expected next phase is `implement`? → Proceed
-   - Skipping `plan`? → Warn: "Skipping plan phase. Continue? [Y/n]"
-   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
-3. If no active workflow → Create new APEX workflow state at `implement` phase
+   - Plan phase completed and approved? → Proceed to implementation
+   - **Plan phase NOT completed? → BLOCK**: "Cannot proceed to implementation. Required predecessor 'plan' is not completed. Run /x-plan first."
+   - No active workflow → Create new workflow state, proceed
+3. If no workflow state file exists → Proceed (backward compatibility)
 
 ### Phase 1: Context Discovery
 
@@ -266,25 +266,6 @@ After completing implementation:
 | **Medium** | ASK IF UNCERTAIN | Test strategy |
 | **Low** | PROCEED | Standard implementation |
 
-<human-approval-framework>
-
-When approval needed, structure question as:
-1. **Context**: What's being implemented
-2. **Options**: Different implementation approaches
-3. **Recommendation**: Best approach with rationale
-4. **Escape**: "Pause implementation" option
-
-</human-approval-framework>
-
-## Agent Delegation
-
-**Recommended Agent**: **test runner** (for test execution)
-
-| Delegate When | Keep Inline When |
-|---------------|------------------|
-| Large test suite | Simple unit tests |
-| Coverage analysis | Quick verification |
-
 ## Workflow Chaining
 
 **Next Verb**: `/x-review`
@@ -348,27 +329,18 @@ After implementation complete:
 | Next | `/x-review` | Implementation complete |
 | Branch | `/x-refactor` | Need to restructure |
 
-## Related Verbs
-
-For specific needs:
-- `/x-fix` - Quick bug fixes (ONESHOT workflow)
-- `/x-refactor` - Code restructuring (sub-flow)
-
 ## Success Criteria
 
-- [ ] Tests written first (TDD) — V-TEST-02
-- [ ] All quality gates pass
-- [ ] No regressions introduced
-- [ ] Code follows SOLID principles — V-SOLID-*
-- [ ] Documentation synced (MANDATORY) — V-DOC-*
-- [ ] Enforcement summary produced
-- [ ] Initiative documentation updated (if active initiative)
+- [ ] TDD followed (tests first) — V-TEST-02
+- [ ] All quality gates pass, no regressions
+- [ ] SOLID principles applied — V-SOLID-*
+- [ ] Documentation synced, enforcement summary produced
 
 ## When to Load References
 
 - **For implementation details**: See `references/mode-implement.md`
 - **For enhancement patterns**: See `references/mode-enhance.md`
-- **For migration guidance**: See `references/mode-migrate.md`
+- **For fix patterns**: See `references/mode-fix.md`
 
 ## References
 

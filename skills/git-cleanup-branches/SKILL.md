@@ -118,72 +118,9 @@ Checkpoint captures: Local branches list, remote branches list, metadata per bra
 
 ## Phase 2: Categorize Branches
 
-**Process each branch** through categorization logic:
+**Process each branch** through categorization logic into: **protected**, **safe-to-delete** (merged + remote gone), **stale** (30+ days, unmerged), **orphaned** (no upstream), or **active**.
 
-### Protected Branches
-Match against `PROTECTED_BRANCHES` patterns:
-```bash
-for pattern in "${PROTECTED_BRANCHES[@]}"; do
-  if [[ "$branch" == $pattern ]]; then
-    CATEGORY="protected"
-  fi
-done
-```
-
-### Safe to Delete
-Criteria:
-1. Merged into main branch: `git branch --merged $MAIN_BRANCH | grep -q "^  $branch$"`
-2. AND remote branch deleted (upstream status shows "gone")
-3. AND NOT protected
-4. AND NOT current branch
-
-Example detection:
-```bash
-MERGED=$(git branch --merged $MAIN_BRANCH | grep -q "^  $branch$" && echo "yes" || echo "no")
-UPSTREAM_STATUS=$(git for-each-ref --format='%(upstream:track)' refs/heads/$branch)
-if [[ "$MERGED" == "yes" && "$UPSTREAM_STATUS" == "[gone]" ]]; then
-  CATEGORY="safe-to-delete"
-fi
-```
-
-### Stale Branches
-Criteria:
-1. No commits in 30+ days
-2. NOT merged into main
-3. NOT protected
-4. NOT current branch
-
-Calculate days since last commit:
-```bash
-LAST_COMMIT_DATE=$(git log -1 --format=%ci $branch)
-DAYS_AGO=$(( ($(date +%s) - $(date -d "$LAST_COMMIT_DATE" +%s)) / 86400 ))
-if [[ $DAYS_AGO -gt 30 && "$MERGED" == "no" ]]; then
-  CATEGORY="stale"
-fi
-```
-
-### Orphaned Branches
-Criteria:
-1. Local branch exists
-2. No upstream tracking branch configured
-3. NOT merged
-4. NOT protected
-
-Detection:
-```bash
-UPSTREAM=$(git for-each-ref --format='%(upstream)' refs/heads/$branch)
-if [[ -z "$UPSTREAM" && "$MERGED" == "no" ]]; then
-  CATEGORY="orphaned"
-fi
-```
-
-### Active Branches
-Criteria:
-1. Commits in last 30 days
-2. OR currently checked out
-3. OR has active upstream tracking
-
-Anything not matching other categories is "active".
+> **Detailed categorization scripts**: See `references/branch-categorization.md`
 
 <state-checkpoint id="branches-categorized" phase="git-cleanup-branches" status="branches-categorized">
 Checkpoint captures: Category assignments per branch, statistics per category
@@ -273,132 +210,36 @@ Checkpoint captures: Selected branches for deletion, deletion strategy, user con
 ## Phase 4: Execute Cleanup
 
 **For each branch in deletion list**:
+1. Verify deletability (not current, not protected, not main)
+2. Delete local branch via `git branch -d` (safe) or `git branch -D` (force)
+3. If not fully merged, require force-delete confirmation:
 
-### 4.1 Verify Deletability
-Double-check branch is not:
-- Current branch
-- Protected pattern match
-- Main branch
-
-If any safety check fails, skip with warning.
-
-### 4.2 Delete Local Branch
-```bash
-# Safe delete (only if merged)
-git branch -d {branch}
-
-# If safe delete fails and user approved force-delete
-git branch -D {branch}
-```
-
-Capture exit code:
-- Exit 0: Success
-- Exit 1: Not fully merged (requires -D)
-
-If not fully merged:
 <workflow-gate id="force-delete-branch-{branch}" severity="high">
-"Branch {branch} is not fully merged to {main_branch}.
-
-Force delete will LOSE UNMERGED COMMITS.
-
-Unmerged commits:
-{git log {main_branch}..{branch} --oneline}
-
-Force delete {branch}? (yes/no)"
+"Branch {branch} is not fully merged. Force delete will LOSE UNMERGED COMMITS. Force delete? (yes/no)"
 </workflow-gate>
 
-If user confirms, use `git branch -D {branch}`.
-
-### 4.3 Delete Remote Branch
-If branch has remote counterpart:
-
-**GitHub/Gitea/GitLab**:
-```bash
-git push origin --delete {branch}
-```
-
-Verify deletion:
-```bash
-git ls-remote --heads origin {branch}
-```
-
-Should return empty (branch deleted remotely).
-
-**Track deletion status**:
-- Success: Local ✓, Remote ✓
-- Partial: Local ✓, Remote ✗ (remote delete failed)
-- Failed: Local ✗ (branch not deleted)
+4. Delete remote branch via `git push origin --delete {branch}`
+5. Track deletion status per branch (success/partial/failed)
 
 <state-checkpoint id="cleanup-executed" phase="git-cleanup-branches" status="cleanup-executed">
 Checkpoint captures: Deletion results per branch, success/failure counts, error messages
 </state-checkpoint>
 
+> **Detailed deletion commands and verification**: See `references/cleanup-execution.md`
+
 ---
 
 ## Phase 5: Prune Stale Remote References
 
-**Clean up stale remote-tracking branches**:
-```bash
-git remote prune origin --dry-run
-```
-
-Preview what will be pruned, then:
-```bash
-git remote prune origin
-```
-
-This removes refs to remote branches that no longer exist.
-
-**Verify pruning**:
-```bash
-git branch -r
-```
-
-Ensure no `origin/{deleted-branch}` refs remain for deleted branches.
+Run `git remote prune origin` (preview with `--dry-run` first) to remove refs to deleted remote branches. Verify with `git branch -r`.
 
 ---
 
 ## Phase 6: Naming Convention Report
 
-**Analyze remaining branches** for naming convention compliance.
+**Analyze remaining branches** for naming convention compliance (feature/, fix/, hotfix/, release/, chore/, docs/, test/). Generate compliance report with rename suggestions for non-conforming branches.
 
-**Standard conventions** (configurable):
-```
-feature/{description}    - New features
-fix/{description}        - Bug fixes
-hotfix/{description}     - Production hotfixes
-release/{version}        - Release branches
-chore/{description}      - Maintenance tasks
-docs/{description}       - Documentation
-test/{description}       - Testing branches
-```
-
-**Check each active branch** against patterns:
-```bash
-for branch in $(git branch --format='%(refname:short)'); do
-  if [[ ! "$branch" =~ ^(feature|fix|hotfix|release|chore|docs|test)/ ]]; then
-    NON_CONFORMING+=("$branch")
-  fi
-done
-```
-
-**Generate naming report**:
-```
-Branch Naming Convention Report
-================================
-Compliant:        {count} branches
-Non-compliant:    {count} branches
-
-Non-compliant branches:
-- {branch1} → Suggested: feature/{branch1}
-- {branch2} → Suggested: fix/{branch2}
-- my-test   → Suggested: test/my-test
-
-Recommendation: Rename non-compliant branches for consistency.
-Use: git branch -m {old-name} {new-name}
-```
-
-Present report to user with suggestions.
+> **Convention patterns and check scripts**: See `references/naming-conventions.md`
 
 ---
 
@@ -408,37 +249,9 @@ Present report to user with suggestions.
 Checkpoint captures: Final statistics, deletion summary, naming report, timestamp
 </state-checkpoint>
 
-**Generate final report**:
-```
-Branch Cleanup Complete
-=======================
+Generate final report with deleted/retained counts, failed deletions, pruned refs, naming compliance, and disk space estimate. Optionally run `git gc --auto`.
 
-Deleted:
-- Local branches:   {count}
-- Remote branches:  {count}
-
-Retained:
-- Active branches:  {count}
-- Protected:        {count}
-
-Failed deletions:   {count}
-{list failures if any}
-
-Remote references pruned: {count}
-
-Naming convention:
-- Compliant:        {count}
-- Non-compliant:    {count} (see report above)
-
-Disk space reclaimed: ~{estimate} MB
-```
-
-**Optional: Run garbage collection**:
-```bash
-git gc --auto
-```
-
-This cleans up unreachable objects from deleted branches.
+> **Report template**: See `references/cleanup-execution.md`
 
 <state-cleanup id="cleanup-finished">
 Clear checkpoints: cleanup-init, branch-inventory, branches-categorized, deletion-plan-approved, cleanup-executed, cleanup-complete
@@ -510,45 +323,8 @@ Retain summary report for audit
 
 ---
 
-## Example Usage
+## When to Load References
 
-```bash
-# Clean up branches after work session
-/git-cleanup-branches
-
-# Typically invoked after merging PRs
-# Can be run periodically for maintenance
-```
-
-Expected workflow:
-1. User invokes skill after merging work or periodically
-2. Skill analyzes all local and remote branches
-3. Skill categorizes branches by safety and activity
-4. Skill presents cleanup plan with recommendations
-5. User approves deletions (default safe, or custom selection)
-6. Skill executes deletions with force-delete confirmations as needed
-7. Skill prunes stale remote refs
-8. Skill generates naming convention report
-9. Skill provides cleanup summary
-
----
-
-## Configuration (Optional)
-
-Users can customize cleanup behavior via git config:
-
-```bash
-# Set stale branch threshold (days)
-git config cleanup.staleDays 30
-
-# Set protected branch patterns
-git config cleanup.protectedPatterns "main,master,develop,release-*,hotfix-*"
-
-# Enable auto-prune after cleanup
-git config cleanup.autoPrune true
-
-# Set naming convention patterns
-git config cleanup.namingConvention "feature/,fix/,hotfix/,release/,chore/,docs/,test/"
-```
-
-Skill reads these configs if present, otherwise uses defaults.
+- **For categorization details**: See `references/branch-categorization.md`
+- **For naming conventions**: See `references/naming-conventions.md`
+- **For configuration and usage examples**: See `references/configuration.md`

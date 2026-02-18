@@ -159,73 +159,7 @@ Write the complete audit report to `documentation/audits/analysis-{scope}-{YYYY-
 
 Create the `documentation/audits/` directory if it does not exist.
 
-Use this template:
-
-```markdown
-# Code Analysis Report
-
-**Date**: {YYYY-MM-DD}
-**Scope**: {scope description}
-**Analyzer**: x-analyze v1.1.0
-
-## Scope
-
-### Included
-- {files, modules, or features analyzed}
-
-### Excluded
-- {anything explicitly out of scope}
-
-## Findings
-
-### Quality Domain
-| # | Issue | Severity | File | Line | Evidence |
-|---|-------|----------|------|------|----------|
-| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
-
-### Security Domain
-| # | Issue | Severity | File | Line | Evidence |
-|---|-------|----------|------|------|----------|
-| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
-
-### Performance Domain
-| # | Issue | Severity | File | Line | Evidence |
-|---|-------|----------|------|------|----------|
-| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
-
-### Architecture Domain
-| # | Issue | Severity | File | Line | Evidence |
-|---|-------|----------|------|------|----------|
-| 1 | {issue} | {critical/high/medium/low} | {path} | {line} | {evidence} |
-
-## Risk Matrix
-
-| Severity × Likelihood | Likely | Possible | Unlikely |
-|------------------------|--------|----------|----------|
-| **Critical** | {issues} | {issues} | {issues} |
-| **High** | {issues} | {issues} | {issues} |
-| **Medium** | {issues} | {issues} | {issues} |
-
-## Recommendations
-
-### Quick Wins (< 1 hour)
-1. {Recommendation} — effort: {estimate}
-
-### Planned Improvements (1-4 hours)
-1. {Recommendation} — effort: {estimate}
-
-### Architectural Changes (> 4 hours)
-1. {Recommendation} — effort: {estimate}
-
-## Suggested Next Steps
-
-| Action | Command | When |
-|--------|---------|------|
-| Plan fixes | `/x-plan` | Create implementation plan from findings |
-| Fix critical | `/x-fix` | Address critical issues immediately |
-| Deep review | `/x-review audit` | Audit flagged files in depth |
-| Document | `/x-docs` | Update docs based on findings |
-```
+> See [references/audit-report-template.md](references/audit-report-template.md) for the full report template.
 
 ### Phase 4b: Display Executive Summary
 

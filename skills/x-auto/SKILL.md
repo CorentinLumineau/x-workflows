@@ -137,7 +137,7 @@ After user confirms the recommended workflow:
    - If confidence < 100%: show manual commands instead (fallback)
 
 2. **On 100% confidence + user approval**:
-   - Auto-invoke the first skill in the confirmed chain using the Skill tool
+   - Auto-invoke the first skill in the confirmed chain
    - Pass context: `"{workflow_type} workflow for: {user request}. Complexity: {tier}."`
 
 3. **On rejection or low confidence**:
@@ -192,7 +192,7 @@ When approval needed, structure question as:
 After user confirms a workflow:
 
 1. Display: "Routing to {workflow}. Auto-invoking first skill..."
-2. Use Skill tool to invoke the first verb in the chain:
+2. Invoke the first verb in the chain:
    - skill: "x-{confirmed-verb}"
    - args: "{workflow_type} workflow for: {user request}. Complexity: {tier}."
 3. If user rejects or confidence < 100%: Show manual commands instead:

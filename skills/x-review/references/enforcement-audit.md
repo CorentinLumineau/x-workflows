@@ -1,6 +1,27 @@
 # Enforcement Audit Reference
 
-> Loaded on demand by x-review Phase 3b-3c. Contains audit checklists, severity classification, and the review approval hard gate.
+> Loaded on demand by x-review Phase 3a-3c. Contains spec violation severity, audit checklists, severity classification, and the review approval hard gate.
+
+## Phase 3a: Spec Violation Severity
+
+| Violation | Severity | Action |
+|-----------|----------|--------|
+| Scope creep (extra code not in requirements) | MEDIUM | WARN (HIGH if security risk) |
+| Missing requirement (functional gap) | HIGH | BLOCK |
+| Wrong requirement implemented | CRITICAL | BLOCK |
+
+## Enforcement Result Format
+
+Write to `.claude/workflow-state.json`:
+```json
+{
+  "enforcement": {
+    "violations": [{ "code": "V-*", "severity": "...", "details": "..." }],
+    "blocking": false,
+    "summary": "N violations: breakdown by severity"
+  }
+}
+```
 
 ## Phase 3b: Code Quality Audit Checklists
 
