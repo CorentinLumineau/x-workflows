@@ -59,15 +59,14 @@ Activate `@skills/interview/` if:
 
 **Bypass allowed**: When changes are homogeneous and type is obvious.
 
-### Phase 0b: Workflow State Check (ENFORCED)
+### Phase 0b: Workflow State Check
 
 1. Read `.claude/workflow-state.json` (if exists)
 2. If active workflow exists:
-   - Review phase completed? → Proceed to commit
-   - **Review phase NOT completed? → BLOCK**: "Cannot proceed to commit. Required predecessor 'review' is not completed. Run /x-review first, or confirm explicit bypass."
-   - User explicitly bypasses review? → Proceed with warning logged
-   - No active workflow → Proceed (standalone commit)
-3. If no workflow state file exists → Proceed (backward compatibility)
+   - Expected next phase is `commit`? → Proceed
+   - Skipping `review`? → Warn: "Skipping review phase. Continue? [Y/n]"
+   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
+3. If no active workflow → OK (git-commit can be standalone)
 
 ### Phase 1: Change Detection
 
@@ -234,14 +233,25 @@ Present groups table to user:
 - Always use HEREDOC for commit messages
 - Verify with `git status` after each commit
 
-### Phase 5: Update Workflow State + Cleanup
+### Phase 5: Update Workflow State
 
 After all commits completed:
-1. Mark `commit` phase as `"completed"` in `.claude/workflow-state.json`
-2. Mark workflow as `"completed"` (move to `history` array, prune to max 5)
-3. If no active workflow remains → delete `.claude/workflow-state.json`
-4. Write to Memory MCP entity `"workflow-state"`: phase completed, commit count
-5. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
+
+1. Read `.claude/workflow-state.json`
+2. Mark `commit` phase as `"completed"` with timestamp
+3. Mark entire workflow as `"completed"` (move to `history` array)
+4. **Prune history**: Keep only the last 5 entries in the `history` array, remove older entries
+5. **Cleanup check**: If no active workflow remains (only completed history):
+   - Delete `.claude/workflow-state.json` entirely (prevents orphan accumulation)
+6. If active workflow remains, write updated state to `.claude/workflow-state.json`
+7. Write to Memory MCP entity `"workflow-state"`:
+   - `"phase: commit -> completed"`
+   - `"workflow: completed"`
+   - `"commits: {count} atomic commits created"`
+8. **Memory MCP cleanup** (best-effort):
+   - Search for `orchestration-*` entities → delete all related to this workflow
+   - Search for `delegation-log` → remove observations older than 7 days via `delete_observations`
+   - Search for `interview-state` → remove expired observations via `delete_observations`
 
 <state-cleanup phase="terminal">
   <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
@@ -251,9 +261,32 @@ After all commits completed:
 
 ### Phase 6: Completion Summary + Chaining
 
-Present commit summary table (see [references/conventional-format.md](references/conventional-format.md) for format).
+Present multi-commit summary table:
 
-Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Protocol.
+```
+## Commit Summary
+
+| # | Type | Scope | Message | Files | Hash |
+|---|------|-------|---------|-------|------|
+| 1 | {type} | {scope} | {description} | {count} | {short_hash} |
+| 2 | {type} | {scope} | {description} | {count} | {short_hash} |
+| ... |
+
+**Total**: {N} commits created, {total_files} files committed
+```
+
+If any groups were skipped, note: "Skipped groups: {list} ({file_count} files remain uncommitted)"
+
+### Workflow Completion Summary (MANDATORY)
+
+After successful commit(s), write a 1-line summary to MEMORY.md (L2):
+```
+## Recent Completions
+- Completed {workflow_type} for {context_summary}: {N} commits created ({commit_hashes_short})
+```
+
+This is a MANDATORY L2 write per the Workflow Completion Write Protocol
+(see @skills/initiative/references/persistence-architecture.md).
 
 </instructions>
 
@@ -261,16 +294,47 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 
 | Decision Level | Action | Example |
 |----------------|--------|---------|
-| **Critical** | ALWAYS ASK | Secrets detected; Strategy selection |
+| **Critical** | ALWAYS ASK | Secrets detected in changes; Strategy selection (Phase 3) |
 | **High** | ASK IF ABLE | Type classification ambiguous |
 | **Medium** | ASK IF UNCERTAIN | Per-group commit confirmation |
 | **Low** | PROCEED | Standard single-group commit |
 
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: Changes being committed (groups summary)
+2. **Options**: Strategy choices or per-group accept/skip/edit
+3. **Recommendation**: Most appropriate classification
+4. **Escape**: "Cancel" or "Skip" option always available
+
+</human-approval-framework>
+
+## Agent Delegation
+
+**Recommended Agent**: None (git operations inline)
+
+| Delegate When | Keep Inline When |
+|---------------|------------------|
+| Never | Always inline |
+
 ## Workflow Chaining
+
+**Next Verbs**: `/x-review`, `/git-create-release`
+
+| Trigger | Chain To |
+|---------|----------|
+| "create PR", "review" | `/x-review` (suggest) |
+| "release", "tag" | `/git-create-release` (suggest) |
+| "done" | Stop |
 
 <chaining-instruction>
 
-**Terminal phase**: commit ends the workflow. Present next steps after completion:
+**Terminal phase**: commit ends the workflow
+
+After all commits created:
+1. Update `.claude/workflow-state.json` (mark workflow complete, move to history, prune to max 5, delete file if no active workflow)
+2. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
+3. Present options (workflow is done — suggest next steps):
 
 <workflow-gate type="choice" id="commit-next">
   <question>{N} commit(s) created. What's next?</question>
@@ -292,11 +356,83 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 
 ## Grouping Rules
 
-> See [references/grouping-rules.md](references/grouping-rules.md) for config file patterns, sensitive file patterns, and collection directory patterns.
+### Config File Patterns
 
-## Conventional Commit Format & Safety
+Files matching these patterns are grouped into the `config` group:
+- `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
+- `tsconfig*.json`, `jsconfig*.json`
+- `Makefile`, `Rakefile`, `CMakeLists.txt`
+- `.github/**`, `.claude/**`, `.vscode/**`
+- `.gitignore`, `.gitattributes`, `.editorconfig`
+- `*.config.js`, `*.config.ts`, `*.config.mjs`, `*.config.cjs`
+- `.eslintrc*`, `.prettierrc*`, `.stylelintrc*`
+- `docker-compose*.yml`, `Dockerfile*`
+- `*.toml` (at root), `*.yaml`/`*.yml` (at root, excluding data files)
 
-> See [references/conventional-format.md](references/conventional-format.md) for commit format, type definitions, safety rules, and output formats.
+### Sensitive File Patterns (Auto-Excluded)
+
+Files matching these patterns are **excluded from all groups** with a warning:
+- `.env`, `.env.*` (e.g., `.env.local`, `.env.production`)
+- `credentials*`, `secret*`, `*password*`, `*token*`
+- `*.key`, `*.pem`, `*.p12`, `*.pfx`, `*.keystore`
+- `id_rsa*`, `id_ed25519*`, `id_ecdsa*`
+- `*.secret`, `*.credentials`
+
+### Collection Directory Patterns
+
+Directories that group at the second level (e.g., `skills/git-commit`):
+- `skills`, `agents`, `hooks`, `commands`
+- `src`, `lib`, `pkg`, `internal`
+- `test`, `tests`, `__tests__`, `spec`
+- `components`, `pages`, `routes`, `views`
+- `modules`, `packages`, `apps`
+
+## Conventional Commit Format
+
+```
+<type>(<scope>): <description>
+
+[body]
+
+[footer]
+```
+
+### Types
+
+| Type | Description |
+|------|-------------|
+| feat | New feature |
+| fix | Bug fix |
+| docs | Documentation only |
+| style | Formatting, no code change |
+| refactor | Code restructuring |
+| test | Adding tests |
+| chore | Maintenance |
+
+### Guidelines
+
+- **Subject**: Imperative mood, <50 chars
+- **Body**: Explain what and why, not how
+- **Scope**: Derived from group name (last path segment)
+
+## Safety Rules
+
+**NEVER:**
+- Force push to main/master
+- Skip hooks without explicit request
+- Amend pushed commits
+- Commit secrets or credentials (auto-excluded by sensitive scan)
+- Commit without verification
+- Use `git add -A` or `git add .` (always add specific files)
+- Commit code with unresolved BLOCK-level violations
+
+**ALWAYS:**
+- Use conventional commit format
+- Verify with git status after each commit
+- Run verification before committing
+- Confirm x-review enforcement summary shows no failures before staging
+- Scan for sensitive files before grouping
+- Create atomic commits (one logical change per commit)
 
 ## Critical Rules
 
@@ -307,15 +443,54 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 5. **No Force Push** — Never force push to main/master
 6. **Enforcement gate** — x-review enforcement summary MUST show all pass before staging
 7. **Sensitive Scan** — Always scan for sensitive files and auto-exclude before grouping
+8. **Atomic Per Group** — Each group gets its own commit; never mix groups in one commit (unless user selects "single" strategy)
 
-> See [references/conventional-format.md](references/conventional-format.md) for output format templates.
+## Output Format
+
+After successful commit(s):
+```
+## Commit Summary
+
+| # | Type | Scope | Message | Files | Hash |
+|---|------|-------|---------|-------|------|
+| 1 | {type} | {scope} | {description} | {count} | {hash} |
+| ... |
+
+Total: {N} commits, {total_files} files
+Verification: All checks passed
+```
+
+For single commit (backwards-compatible):
+```
+Commit created:
+- Type: {type}
+- Scope: {scope}
+- Message: {subject}
+- Files: {count} files staged
+- Hash: {commit_hash}
+
+Verification: All checks passed
+```
+
+## Navigation
+
+| Direction | Verb | When |
+|-----------|------|------|
+| Next (review) | `/x-review` | Want PR review |
+| Next (release) | `/git-create-release` | Ready for release |
+| Done | Stop | Commit(s) complete |
 
 ## Success Criteria
 
-- [ ] Changes detected, grouped, and strategy selected
-- [ ] Sensitive files auto-excluded
-- [ ] Atomic commits created with conventional format
-- [ ] Status verified after each commit
+- [ ] All uncommitted changes detected (staged + unstaged + untracked)
+- [ ] Sensitive files scanned and auto-excluded
+- [ ] Changes grouped by area using path analysis
+- [ ] Strategy selected by user (separate/review/single/cancel)
+- [ ] Commit type determined per group (feat/fix/docs/etc)
+- [ ] Messages generated with conventional format
+- [ ] Files staged with git add (specific files per group)
+- [ ] Atomic commits created (one per group)
+- [ ] Status verified after each commit (git status shows expected state)
 
 ## References
 

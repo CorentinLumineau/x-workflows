@@ -61,13 +61,48 @@ Resolve git merge conflicts through guided analysis and user-approved resolution
 Checkpoint captures: Git operation type, conflicting branch names, conflict file list
 </state-checkpoint>
 
-**Detect conflict context** via `git status --porcelain` and check for `.git/MERGE_HEAD`, `.git/rebase-merge/`, or `.git/CHERRY_PICK_HEAD` to determine operation type (merge/rebase/cherry-pick).
+**Check git status** to determine conflict context:
+```bash
+git status --porcelain
+```
 
-**Activate forge-awareness** if conflict appears PR-related.
+Parse output to identify:
+- **Merge conflict**: Both modified (UU), both added (AA), both deleted (DD)
+- **Rebase conflict**: Look for `.git/rebase-merge/` or `.git/rebase-apply/` directory
+- **Cherry-pick conflict**: Look for `.git/CHERRY_PICK_HEAD`
 
-Display conflict context (operation type, source/target branch, file count) to user.
+**Determine operation type**:
+```bash
+# Check for merge
+if [ -f .git/MERGE_HEAD ]; then
+  OPERATION="merge"
+  SOURCE_BRANCH=$(git rev-parse --abbrev-ref MERGE_HEAD)
+fi
 
-> **Detection scripts**: See `references/conflict-detection.md`
+# Check for rebase
+if [ -d .git/rebase-merge ]; then
+  OPERATION="rebase"
+  SOURCE_BRANCH=$(cat .git/rebase-merge/head-name | sed 's#refs/heads/##')
+fi
+
+# Check for cherry-pick
+if [ -f .git/CHERRY_PICK_HEAD ]; then
+  OPERATION="cherry-pick"
+  COMMIT_SHA=$(cat .git/CHERRY_PICK_HEAD)
+fi
+```
+
+**Activate forge-awareness** if conflict appears PR-related:
+- Check if current branch matches PR branch pattern
+- Extract PR number if detectable from branch name
+
+Display conflict context to user:
+```
+Conflict detected during: {merge|rebase|cherry-pick}
+Source: {branch or commit}
+Target: {current branch}
+Files affected: {count}
+```
 
 ---
 
@@ -105,13 +140,50 @@ Present inventory to user and ask:
 **For EACH conflicting file** (iterate in order of criticality: source code → config → docs):
 
 ### 2.1 Read File Content
-Read the entire file content.
+Use Read tool to load entire file content.
 
-### 2.2 Parse and Analyze Conflicts
+### 2.2 Parse Conflict Markers
+Identify conflict regions using pattern:
+```
+<<<<<<< HEAD (or branch name)
+[ours content]
+=======
+[theirs content]
+>>>>>>> {branch/commit}
+```
 
-Parse conflict markers (`<<<<<<<`/`=======`/`>>>>>>>`) to extract ours/theirs content with surrounding context. Classify each conflict (content/addition/deletion/structural/whitespace) and recommend a strategy (accept ours/theirs/manual merge/rewrite) with confidence level (high/medium/low).
+Extract:
+- **Ours**: Content from HEAD/current branch
+- **Theirs**: Content from merging branch/commit
+- **Context**: 5 lines before and after conflict region
 
-> **Conflict types, strategies, and recommendation criteria**: See `references/conflict-analysis.md`
+### 2.3 Semantic Analysis
+Analyze both sides to determine conflict type:
+
+**Conflict Types**:
+1. **Content conflict**: Both sides modified same lines differently
+2. **Addition conflict**: Both sides added content in same location
+3. **Deletion conflict**: One side deleted, other modified
+4. **Structural conflict**: Code structure changed (imports, class definitions)
+5. **Whitespace conflict**: Only whitespace/formatting differs
+
+**Resolution Strategies**:
+- **Accept ours**: Keep HEAD version (use when current branch is authoritative)
+- **Accept theirs**: Keep incoming version (use when merging authoritative changes)
+- **Manual merge**: Combine both sides intelligently
+- **Rewrite**: Neither side is correct, needs fresh implementation
+
+### 2.4 Recommendation Generation
+For each conflict region, generate recommendation based on:
+- Semantic analysis of code changes
+- Function/method context
+- Variable usage and dependencies
+- Comments and documentation hints
+
+Present recommendation with confidence level:
+- **High confidence**: Clear winner (e.g., one side is clearly newer/better)
+- **Medium confidence**: Both sides have merit, suggests manual merge
+- **Low confidence**: Complex conflict, requires human judgment
 
 <state-checkpoint id="conflict-{file}-analyzed" phase="git-resolve-conflict" status="conflict-analyzed">
 Checkpoint captures: Conflict regions parsed, recommendations generated, confidence levels
@@ -163,7 +235,7 @@ Wait for user choice.
 - **Option 4**: Request custom content from user, then apply
 - **Option 5**: Mark for later, continue to next conflict
 
-**Apply the resolution** by replacing the conflict markers:
+**Use Edit tool** to apply resolution:
 ```
 old_string: <<<<<<< HEAD\n{ours}\n=======\n{theirs}\n>>>>>>> {branch}
 new_string: {resolved content}
@@ -186,7 +258,13 @@ Remaining: {file1: 2 regions, file2: 1 region}
 
 Once ALL conflicts resolved:
 
-**Syntax check** for code files (eslint, py_compile, go build, cargo check). If syntax errors found, report to user and offer to re-open affected conflicts.
+**Syntax check** for code files:
+- **JavaScript/TypeScript**: `npx eslint {file} --no-eslintrc` (syntax only)
+- **Python**: `python -m py_compile {file}`
+- **Go**: `go build {file}`
+- **Rust**: `cargo check`
+
+If syntax errors found, report to user and offer to re-open affected conflicts.
 
 <state-checkpoint id="conflicts-resolved" phase="git-resolve-conflict" status="conflicts-resolved">
 Checkpoint captures: All resolutions applied, files modified, syntax check results
@@ -219,17 +297,42 @@ This suggests resolution introduced bugs. Options:
 Choose action:
 </workflow-gate>
 
-If user chooses abort: run `git merge --abort`, `git rebase --abort`, or `git cherry-pick --abort` based on operation type.
+If user chooses abort:
+```bash
+# Abort based on operation type
+if [ "$OPERATION" = "merge" ]; then
+  git merge --abort
+elif [ "$OPERATION" = "rebase" ]; then
+  git rebase --abort
+elif [ "$OPERATION" = "cherry-pick" ]; then
+  git cherry-pick --abort
+fi
+```
 
 <state-cleanup id="resolution-aborted">
 Clear all conflict checkpoints, restore original state
 </state-cleanup>
 
+Exit skill with abort message.
+
 ---
 
 ## Phase 5: Finalize Resolution
 
-Stage resolved files (`git add`), verify with `git status` (all conflicts resolved, no unmerged paths).
+**Stage resolved files**:
+```bash
+git add {all resolved files}
+```
+
+**Verify staging**:
+```bash
+git status
+```
+
+Should show:
+- All conflicts resolved
+- Changes staged for commit
+- No unmerged paths
 
 <state-checkpoint id="resolution-finalized" phase="git-resolve-conflict" status="resolution-finalized">
 Checkpoint captures: Staged files, resolution summary, test results
@@ -239,9 +342,29 @@ Checkpoint captures: Staged files, resolution summary, test results
 
 ## Phase 6: Chain Back to Caller
 
-- **Merge conflict**: Chain to `git-merge-pr` (PR-related) or `git-commit`
-- **Rebase conflict**: Run `git rebase --continue`; if more conflicts appear, re-enter this skill
-- **Cherry-pick conflict**: Run `git cherry-pick --continue`, chain to `git-commit`
+Determine caller workflow based on operation:
+
+**If merge conflict**:
+<!-- <workflow-chain next="git-merge-pr" condition="PR-related merge conflict resolved"> -->
+<!-- <workflow-chain next="git-commit" condition="non-PR merge conflict resolved"> -->
+Chain to `git-merge-pr` (if PR-related) or `git-commit`.
+Context: Conflicts resolved, ready to complete merge.
+Message: "Conflicts resolved. Resuming merge operation."
+
+**If rebase conflict**:
+```bash
+git rebase --continue
+```
+
+If rebase completes successfully, chain to original caller.
+If more conflicts appear, re-enter this skill (recursive).
+
+**If cherry-pick conflict**:
+```bash
+git cherry-pick --continue
+```
+
+Chain to `git-commit` to finalize cherry-pick.
 
 <state-cleanup id="resolution-complete">
 Clear checkpoints: conflict-init, conflict-inventory, conflict-*-analyzed, conflicts-resolved, resolution-finalized
@@ -320,7 +443,21 @@ Retain resolution summary for audit
 
 ---
 
-## When to Load References
+## Example Usage
 
-- **For detection scripts**: See `references/conflict-detection.md`
-- **For conflict types and strategies**: See `references/conflict-analysis.md`
+```bash
+# Detect and resolve conflicts automatically
+/git-resolve-conflict
+
+# Typically invoked by another workflow when conflict detected
+# Not usually invoked directly by user
+```
+
+Expected workflow:
+1. User attempts merge/rebase that causes conflict
+2. Calling workflow (git-merge-pr or x-implement) detects conflict
+3. Skill activates automatically or user invokes manually
+4. Skill analyzes each conflict and presents recommendations
+5. User approves resolution strategy for each conflict
+6. Skill applies resolutions and runs tests
+7. Skill finalizes and chains back to original workflow

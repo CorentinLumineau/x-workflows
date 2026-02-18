@@ -69,12 +69,32 @@ Detect mode from `$ARGUMENTS` keywords:
 
 ## Behavioral Skills
 
-**Always**: `interview`, `code-quality`, `secure-coding`
-**Context-triggered**: `identity-access` (auth), `performance` (perf paths), `testing` (test changes)
+This skill activates:
+
+### Always Active
+- `interview` - Zero-doubt confidence gate (Phase 0)
+- `code-quality` - SOLID, DRY, KISS enforcement
+- `secure-coding` - Security vulnerability check
+
+### Context-Triggered
+| Skill | Trigger Conditions |
+|-------|-------------------|
+| `identity-access` | Auth-related changes |
+| `performance` | Performance-critical paths |
+| `testing` | Test files changed or coverage analysis |
 
 ## Agent Delegation
 
-> See [references/mode-review.md](references/mode-review.md) for full agent delegation matrix by phase.
+| Phase | Role | Agent | Model | When |
+|-------|------|-------|-------|------|
+| 1 | Codebase explorer | x-explorer | haiku | Change scoping |
+| 2 | Fast test runner | x-tester-fast | haiku | Initial gate run |
+| 2 | Test runner (escalation) | x-tester | sonnet | Persistent failures (>3) |
+| 3 | Quick reviewer | x-reviewer-quick | haiku | Small changeset (<5 files) |
+| 3 | Code reviewer | x-reviewer | sonnet | Large changeset or escalation |
+| 3 | Security reviewer | x-security-reviewer | sonnet | Parallel with code reviewer |
+| 4 | Codebase explorer | x-explorer | haiku | Doc link checking |
+| 5 | Test runner | x-tester | sonnet | Coverage analysis |
 
 <instructions>
 
@@ -193,7 +213,15 @@ Compare implementation against the plan, issue, or user request:
    - [ ] No missing requirements (requirements not in code)
    - [ ] Correct requirement implemented (not a different interpretation)
 
-**If spec compliance FAILS → BLOCK.** Return to `/x-implement` with spec violation details. Do NOT proceed to Phase 3b. See [references/enforcement-audit.md](references/enforcement-audit.md) for spec violation severity classification.
+**Spec Violation Severity:**
+
+| Violation | Severity | Action |
+|-----------|----------|--------|
+| Scope creep (extra code not in requirements) | MEDIUM | WARN (HIGH if security risk) |
+| Missing requirement (functional gap) | HIGH | BLOCK |
+| Wrong requirement implemented | CRITICAL | BLOCK |
+
+**If FAIL → BLOCK.** Return to `/x-implement` with spec violation details. Do NOT proceed to Phase 3b.
 
 #### Phase 3b: Code Quality Review — BLOCKING AUDIT
 
@@ -252,12 +280,21 @@ See `references/mode-docs.md` for detailed documentation audit patterns.
 
 > **Modes**: review only (full mode)
 
+Detect regressions introduced by code changes. Uses Phase 1 scoping data.
+
 <agent-delegate role="test runner" subagent="x-tester" model="sonnet">
   <prompt>Analyze coverage delta on changed files, identify removed tests, disabled assertions, and behavioral regression indicators</prompt>
   <context>Regression detection for x-review Phase 5</context>
 </agent-delegate>
 
-See `references/mode-regression.md` for regression checks and detailed detection patterns.
+**Checks:**
+- [ ] No test files deleted without replacement
+- [ ] No `describe.skip()` / `it.skip()` / `@Disabled` added
+- [ ] No assertions removed from existing tests
+- [ ] Coverage not decreased >5% on any changed file
+- [ ] No public API changes without test updates
+
+See `references/mode-regression.md` for detailed regression detection patterns.
 
 ---
 
@@ -269,9 +306,21 @@ Generate the readiness report using the template in `references/readiness-report
 
 ### Phase 6b: Write Enforcement Results
 
-Persist enforcement results to workflow state. Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking), and write to `.claude/workflow-state.json`. If `blocking: true`, verdict MUST be BLOCKED.
+After completing the readiness report, persist enforcement results to workflow state:
 
-> See [references/enforcement-audit.md](references/enforcement-audit.md) for enforcement result format and violation severity rules.
+1. Collect all V-* violations found during Phases 2-5
+2. Determine blocking status: CRITICAL or HIGH → `blocking: true`; MEDIUM or LOW → `blocking: false`
+3. Write `enforcement` field to `.claude/workflow-state.json`:
+   ```json
+   {
+     "enforcement": {
+       "violations": [{ "code": "V-*", "severity": "...", "details": "..." }],
+       "blocking": false,
+       "summary": "N violations: breakdown by severity"
+     }
+   }
+   ```
+4. If `blocking: true`, the readiness verdict MUST be BLOCKED (not CHANGES REQUESTED)
 
 ---
 
@@ -296,7 +345,16 @@ After completing review:
 
 ## Human-in-Loop Gates
 
-| **Critical**: ALWAYS ASK | **High**: ASK IF ABLE | **Medium**: ASK IF UNCERTAIN | **Low**: PROCEED |
+| Decision Level | Action |
+|----------------|--------|
+| **Critical** | ALWAYS ASK |
+| **High** | ASK IF ABLE |
+| **Medium** | ASK IF UNCERTAIN |
+| **Low** | PROCEED |
+
+<human-approval-framework>
+When approval needed, present: readiness report summary, options (fix / merge with warnings / block), recommendation, and escape path ("Return to /x-implement").
+</human-approval-framework>
 
 ## Workflow Chaining
 
@@ -316,6 +374,10 @@ After completing review:
 
 </chaining-instruction>
 
+## Severity Levels
+
+For full severity classification with violation IDs, see `references/enforcement-audit.md`.
+
 ## Critical Rules
 
 1. **No BLOCK violations** — NEVER approve with unresolved CRITICAL/HIGH violations
@@ -328,21 +390,40 @@ For full enforcement rules (SOLID, DRY, test coverage, documentation), see `refe
 
 ## Navigation
 
-| Previous | `/x-implement` or `/x-refactor` | Next | `/git-commit` | Shortcut | `/x-review quick` |
+| Direction | Verb | When |
+|-----------|------|------|
+| Previous | `/x-implement` | Need to fix issues |
+| Previous | `/x-refactor` | Need structural changes |
+| Next | `/git-commit` | Review approved |
+| Shortcut | `/x-review quick` | Runs quick mode |
 
 ## Success Criteria
 
 - [ ] All phases completed for selected mode
-- [ ] Quality gates passed, code review clean, docs current
-- [ ] Readiness report produced, no CRITICAL/HIGH violations
-- [ ] Workflow state updated
+- [ ] Quality gates passed (Phase 2)
+- [ ] Code review clean (Phase 3)
+- [ ] Documentation current (Phase 4)
+- [ ] No regressions detected (Phase 5)
+- [ ] Readiness report produced (Phase 6)
+- [ ] Workflow state updated (Phase 7)
+- [ ] No CRITICAL or HIGH violations
+
+## When to Load References
+
+- **For evidence protocol**: See `references/verification-protocol.md`
+- **For enforcement audit**: See `references/enforcement-audit.md`
+- **For readiness template**: See `references/readiness-report-template.md`
+- **For quick mode details**: See `references/mode-quick.md`
+- **For review checklist**: See `references/mode-review.md`
+- **For audit patterns**: See `references/mode-audit.md`
+- **For security review**: See `references/mode-security.md`
+- **For documentation audit**: See `references/mode-docs.md`
+- **For regression detection**: See `references/mode-regression.md`
+- **For coverage improvement**: See `references/mode-coverage.md`
+- **For build guidance**: See `references/mode-build.md`
 
 ## References
 
-- `references/` — mode-specific guidance (review, quick, audit, security, docs, regression, coverage, build)
-- `references/verification-protocol.md` — evidence protocol
-- `references/enforcement-audit.md` — enforcement rules and violation codes
-- `references/readiness-report-template.md` — readiness report template
 - @skills/code-code-quality/ - SOLID principles, anti-rationalization
 - @skills/security-secure-coding/ - Security checklist
 - @skills/quality-testing/ - Testing pyramid and CI quality checks

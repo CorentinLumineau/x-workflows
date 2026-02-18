@@ -72,11 +72,10 @@ Activate `@skills/interview/` if:
 
 1. Read `.claude/workflow-state.json` (if exists)
 2. If active workflow exists:
-   - Previous analyze phase completed? → Note context, proceed
-   - Analyze phase skipped? → **Warn**: "Analysis phase was skipped. Planning without analysis may miss important context. Continue? [Y/n]"
+   - Expected next phase is `plan`? → Proceed
+   - Skipping `analyze`? → Warn: "Skipping analyze phase. Continue? [Y/n]"
    - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
-   - No active workflow → Create new workflow state
-3. If no workflow state file exists → Proceed (new workflow)
+3. If no active workflow → Create new APEX workflow state at `plan` phase
 
 <plan-mode phase="exploration" trigger="after-interview">
   <enter>After confidence gate passes and workflow state is checked, enter read-only exploration mode</enter>

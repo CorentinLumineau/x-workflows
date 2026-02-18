@@ -35,7 +35,66 @@ Extract complexity detection logic into a shared skill to ensure consistent asse
 | **DEBUG** | Fix Error | Error resolution and troubleshooting |
 | **BRAINSTORM** | Explore/Research | Research and architectural decisions |
 
-> See [references/intent-routing.md](references/intent-routing.md) for intent detection patterns and intent-to-skill mapping table.
+### Intent Detection Patterns
+
+```yaml
+workflow_patterns:
+  APEX:
+    - "add", "implement", "feature", "build", "create"
+    - "refactor", "enhance", "improve", "update"
+    - "integrate", "connect", "setup"
+
+  ONESHOT:
+    - "fix typo", "quick", "simple", "minor"
+    - "rename", "small change", "trivial"
+
+  DEBUG:
+    - "bug", "broken", "error", "crash", "failing"
+    - "intermittent", "doesn't work", "issue"
+    - "troubleshoot", "investigate", "debug"
+
+  BRAINSTORM:
+    - "discuss", "explore", "options", "should we"
+    - "architecture", "design", "approach"
+    - "research", "compare", "evaluate"
+
+  GIT:
+    - "pr", "pull request", "create pr", "merge pr"
+    - "merge", "review pr", "check ci"
+    - "issue", "create issue", "implement issue"
+    - "release", "tag", "create release"
+    - "ci", "pipeline", "checks", "build status"
+    - "conflict", "resolve conflict"
+    - "cleanup", "stale branches", "branch cleanup"
+    - "sync", "mirror", "push to remotes"
+```
+
+### Intent → Skill Mapping
+
+| Intent | Complexity | Route |
+|--------|------------|-------|
+| APEX + LOW | Direct | x-implement |
+| APEX + MEDIUM | Plan first | x-plan → x-implement |
+| APEX + HIGH | Initiative | **x-initiative** → full APEX flow |
+| APEX + CRITICAL | Initiative | **x-initiative** → full APEX flow + security review |
+| ONESHOT | Always LOW | x-implement (autonomous) |
+| DEBUG + LOW | Direct | x-implement fix |
+| DEBUG + MEDIUM | Investigate | x-troubleshoot debug |
+| DEBUG + HIGH | Initiative | **x-initiative** → x-troubleshoot |
+| DEBUG + CRITICAL | Initiative | **x-initiative** → x-troubleshoot + security review |
+| BRAINSTORM + LOW | Quick answer | x-research ask |
+| BRAINSTORM + MEDIUM | Deep dive | x-research deep |
+| BRAINSTORM + HIGH | Initiative | **x-initiative** → x-brainstorm |
+| BRAINSTORM + CRITICAL | Initiative | **x-initiative** → x-brainstorm + security review |
+| GIT + "pr" (create) | Direct | git-create-pr |
+| GIT + "pr" (review) | Direct | git-review-pr |
+| GIT + "pr" (merge) | Direct | git-merge-pr |
+| GIT + "ci"/"checks" | Direct | git-check-ci |
+| GIT + "issue" (create) | Direct | git-create-issue |
+| GIT + "issue" (implement) | Planning | git-implement-issue |
+| GIT + "release" | Direct | git-create-release |
+| GIT + "conflict" | Direct | git-resolve-conflict |
+| GIT + "cleanup"/"branches" | Direct | git-cleanup-branches |
 
 ---
 
@@ -151,24 +210,320 @@ Team: Debug Team (3 agents)
 
 ## Complexity Tiers
 
-> See [references/complexity-tiers.md](references/complexity-tiers.md) for detailed tier definitions (LOW/MEDIUM/HIGH/CRITICAL), detection patterns, assessment algorithm, decision table, confidence scoring, escalation paths, and examples.
+### Tier 1: LOW (→ fix mode)
 
-**Quick reference:**
+**Characteristics:**
+- Clear error message with obvious solution
+- Single file/component involved
+- No cross-layer debugging needed
+- Quick patch possible
 
-| Tier | Mode | Time Estimate |
-|------|------|---------------|
-| LOW | fix | <30 minutes |
-| MEDIUM | debug | 30 min - 2 hours |
-| HIGH | troubleshoot | 2+ hours |
-| CRITICAL | initiative + security review | Multi-day |
+**Detection Patterns:**
+- "typo", "spelling", "rename"
+- "missing import", "undefined variable"
+- "syntax error"
+- Compilation/lint errors with line numbers
+- Simple test assertion failures
+- "TypeError", "ReferenceError" with clear stack
 
----
+**Time Estimate:** <30 minutes
+
+### Tier 2: MEDIUM (→ debug mode)
+
+**Characteristics:**
+- Traceable error through known paths
+- Standard debugging workflow
+- Single layer or 2-3 components
+- Requires understanding code flow
+
+**Detection Patterns:**
+- "how does X work?"
+- "trace", "flow", "understand"
+- Error in business logic (not infrastructure)
+- Test failures with unclear assertions
+- "sometimes fails", but reproducible
+- Standard exceptions with meaningful context
+
+**Time Estimate:** 30 min - 2 hours
+
+### Tier 3: HIGH (→ troubleshoot mode)
+
+**Characteristics:**
+- Root cause unclear
+- Multiple possible causes
+- Requires user context gathering
+- May need instrumentation/logging
+- Cross-layer or multi-service
+
+**Detection Patterns:**
+- "intermittent", "random", "sometimes"
+- "no error message", "silent failure"
+- "works locally but not in production"
+- Performance issues, memory leaks
+- Race conditions, timing issues
+- "tried everything", "can't figure out"
+- Multi-service or infrastructure issues
+
+**Time Estimate:** 2+ hours
+
+### Tier 4: CRITICAL (→ initiative + security review)
+
+**Characteristics:**
+- Multi-system, breaking-change, or security-critical tasks
+- Requires coordinated changes across multiple services
+- Breaking API contracts or data migrations
+- Security vulnerabilities with active exploitation risk
+- Compliance-critical changes (GDPR, SOC2, HIPAA)
+
+**Detection Patterns:**
+- "breaking change", "migration", "deprecation"
+- "security vulnerability", "CVE", "exploit"
+- "compliance", "audit", "regulatory"
+- "production outage", "data loss risk"
+- Multiple teams or services affected
+- Rollback requires coordinated effort
+
+**Time Estimate:** Multi-day, multi-session
+
+## Assessment Algorithm
+
+```
+1. Check Tier 4 (CRITICAL):
+   - Breaking change? → CRITICAL
+   - Security vulnerability? → CRITICAL
+   - Compliance-critical? → CRITICAL
+   - Multi-system coordination? → CRITICAL
+
+2. Check Tier 1 (LOW):
+   - Has obvious solution? → LOW
+   - Single file error? → LOW
+   - Syntax/type error? → LOW
+
+3. Check Tier 3 (HIGH):
+   - Intermittent keywords? → HIGH
+   - No error message? → HIGH
+   - Environment-specific? → HIGH
+   - Performance-related? → HIGH
+   - Multiple services? → HIGH
+
+4. Default to Tier 2 (MEDIUM)
+```
+
+## Decision Table
+
+| Signal | Weight | Tier |
+|--------|--------|------|
+| "breaking change", "migration" | Strong | CRITICAL |
+| "security vulnerability", "CVE" | Strong | CRITICAL |
+| "compliance", "regulatory" | Strong | CRITICAL |
+| Clear error + line number | Strong | LOW |
+| "typo", "import", "undefined" | Strong | LOW |
+| "how does", "trace", "understand" | Strong | MEDIUM |
+| Error with stack trace | Medium | MEDIUM |
+| "intermittent", "random" | Strong | HIGH |
+| "no error", "silent" | Strong | HIGH |
+| "performance", "slow", "memory" | Strong | HIGH |
+| Environment-specific | Strong | HIGH |
+
+## Confidence Scoring
+
+When assessment is ambiguous (confidence < 70%), ask user:
+- "Can you reproduce this consistently?"
+- "Is there an error message?"
+- "Does this happen in all environments?"
+- "How many components are involved?"
+
+## Escalation Paths
+
+```
+fix (LOW)
+├─ Complexity > expected → Recommend debug
+└─ Still stuck → Recommend troubleshoot
+
+debug (MEDIUM)
+├─ Simpler than expected → Can delegate to fix
+└─ More complex → Recommend troubleshoot
+
+troubleshoot (HIGH)
+└─ Once root cause found → Delegate to fix or debug
+
+critical (CRITICAL)
+└─ Always requires initiative tracking + security review
+```
+
+## Examples
+
+### Example 1: LOW (→ fix)
+```
+Input: "TypeError: Cannot read property 'name' of undefined at UserService.ts:45"
+Assessment: LOW
+- Clear error type (TypeError)
+- Exact file and line
+- Single point of failure
+Route: fix mode
+```
+
+### Example 2: MEDIUM (→ debug)
+```
+Input: "User registration is failing but I don't understand why the validation rejects"
+Assessment: MEDIUM
+- Has error (validation failure)
+- Needs code flow understanding
+- Single feature, clear entry point
+Route: debug mode
+```
+
+### Example 3: HIGH (→ troubleshoot)
+```
+Input: "Sometimes orders don't process. No error in logs. Works fine locally."
+Assessment: HIGH
+- Intermittent ("sometimes")
+- No error message
+- Environment-specific
+Route: troubleshoot mode
+```
+
+### Example 4: CRITICAL (→ initiative + security review)
+```
+Input: "We need to migrate the auth system from sessions to JWT and update all 12 microservices"
+Assessment: CRITICAL
+- Breaking change across multiple services
+- Security-critical (authentication)
+- Multi-team coordination needed
+Route: initiative mode + security review
+```
 
 ## Chaining Matrix Awareness
 
-> See [references/chaining-matrix.md](references/chaining-matrix.md) for chain resolution algorithm, metadata schema, named path templates, validation logic, and fallback behavior.
+### Purpose
 
-**Key concept**: After each workflow step completes, read the skill's `chains-to` frontmatter to recommend valid next steps. Falls back to complexity-based routing when chain metadata is unavailable.
+Resolve valid next-step workflows by reading chain metadata from skill frontmatter. This implements the **chain resolver** — the data itself will be populated in M5 when all workflow skills have `chains-to` and `chains-from` fields.
+
+### Chain Resolution Algorithm
+
+```
+1. Read current skill's frontmatter (SKILL.md)
+2. Extract chains-to and chains-from arrays
+3. Combine with named path templates from WORKFLOW_CHAINS.md
+4. Recommend valid next steps based on:
+   - Current phase completion
+   - Workflow intent (APEX/DEBUG/BRAINSTORM)
+   - Complexity tier
+   - Chain compatibility
+```
+
+### Chain Metadata Schema
+
+```yaml
+---
+name: x-implement
+chains-to:
+  - x-review
+  - x-test
+  - git-create-pr
+chains-from:
+  - x-plan
+  - x-analyze
+  - git-implement-issue
+---
+```
+
+### Named Path Templates
+
+Reference `WORKFLOW_CHAINS.md` for pre-defined workflow sequences:
+
+| Path Name | Chain | Use Case |
+|-----------|-------|----------|
+| apex-full | x-analyze → x-plan → x-implement → x-review | Complete feature workflow |
+| debug-flow | x-troubleshoot → x-fix → x-review | Error resolution workflow |
+| quick-fix | x-implement → x-review | Fast iteration for simple changes |
+| research-to-build | x-research → x-plan → x-implement | Exploration → implementation |
+| git-pr-flow | x-implement → git-create-pr → git-merge-pr | PR creation workflow |
+| git-issue-flow | git-implement-issue → x-review → git-create-pr | Issue implementation workflow |
+
+### Next Step Resolution
+
+```
+Given: User completed x-implement
+Current skill: x-implement
+chains-to: [x-review, x-test, git-create-pr]
+
+Recommendations:
+1. Primary: x-review (validate implementation)
+2. Alternative: x-test (run test suite)
+3. Finalize: git-create-pr (create PR for review)
+
+Output:
+┌─────────────────────────────────────────────┐
+│ Next Steps                                  │
+│                                             │
+│ 1. x-review (recommended)                   │
+│    → Validate implementation correctness    │
+│                                             │
+│ 2. x-test (optional)                        │
+│    → Run comprehensive test suite           │
+│                                             │
+│ 3. git-create-pr (finalize)                 │
+│    → Create PR for code review              │
+└─────────────────────────────────────────────┘
+```
+
+### Chain Validation
+
+```
+Before suggesting next step:
+1. Check if target skill exists in skills/ directory
+2. Verify target skill has current skill in chains-from
+3. Validate bidirectional compatibility
+4. If chain is invalid → log warning, skip suggestion
+
+Example validation:
+  x-implement chains-to: x-review ✓
+  x-review chains-from: x-implement ✓
+  Bidirectional: VALID
+```
+
+### Integration with Complexity Detection
+
+```
+Combine chain resolution with complexity tier:
+
+Example: APEX + MEDIUM complexity
+1. Detect mental model: APEX
+2. Assess complexity: MEDIUM
+3. Resolve initial chain: x-plan → x-implement
+4. After x-implement completes:
+   - Read x-implement chains-to
+   - Recommend: x-review (from chains-to)
+   - User can override with explicit command
+
+Example: GIT intent + "pr"
+1. Detect mental model: GIT
+2. Resolve direct route: git-create-pr
+3. After git-create-pr completes:
+   - Read git-create-pr chains-to
+   - Recommend: git-review-pr or git-merge-pr
+```
+
+### Fallback Behavior
+
+```
+If chain metadata is missing or incomplete:
+1. Fall back to complexity-based routing
+2. Use mental model defaults (APEX → plan → implement → review)
+3. Log: "Chain metadata unavailable, using default routing"
+4. Continue workflow with degraded guidance
+
+This ensures the resolver works NOW (M4) while chain data is populated in M5.
+```
+
+### Status
+
+**Implementation**: This section implements the chain resolver logic.
+
+**Data population**: M5 will populate `chains-to` and `chains-from` in all workflow skill frontmatter.
+
+**Current behavior**: Resolver falls back to complexity-based routing until M5 completes chain metadata population.
 
 ---
 
