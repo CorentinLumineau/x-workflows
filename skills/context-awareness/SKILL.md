@@ -97,7 +97,6 @@ When to clean:
 What to clean:
 1. Stale workflow-state entries older than 24h
 2. Orphaned .claude/workflow-state.json.bak files
-3. Stale Memory MCP entities (check TTL)
 ```
 
 ### Cleanup Algorithm
@@ -112,11 +111,7 @@ What to clean:
    - .claude/workflow-state.json.bak with no corresponding workflow-state.json
    - Backup older than 24h
 7. Remove orphan backups
-8. Query Memory MCP for workflow-related entities:
-   - Entity type: "workflow-event-log", "workflow-state-log"
-   - Check TTL or timestamp
-   - Delete entries older than 7 days
-9. Write cleaned state back to disk
+8. Write cleaned state back to disk
 ```
 
 ### State Pruning Example
@@ -134,7 +129,6 @@ After cleanup:
 
   Removed: entry1, entry3
   Backup cleanup: 2 orphan .bak files deleted
-  Memory MCP: 5 stale entities pruned
 ```
 
 ---

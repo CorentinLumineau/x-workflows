@@ -377,23 +377,13 @@ For escalation rules between agent variants, see the canonical Escalation Table 
 
 ## Delegation History
 
-Agent delegation decisions are tracked across 3 layers for learning and optimization.
+Agent delegation decisions are tracked for learning and optimization.
 
-### Storage Layers
+### Storage
 
 | Layer | Location | Content |
 |-------|----------|---------|
 | **L2** | MEMORY.md | Summary patterns (e.g., "x-tester succeeds 90% for test tasks") |
-| **L3** | Memory MCP entity `"delegation-log"` | Structured records per delegation |
-
-### Record Format (L3)
-
-```
-delegation: {agent} ({model}) for {task_type} [{complexity}] -> {outcome} ({duration}ms)
-escalation: {from} -> {to}, reason: {trigger}
-user_override: suggested {agent}, user chose {other}
-user_accepted: {agent} for {task_type}
-```
 
 ### Acceptance Rate Tracking
 

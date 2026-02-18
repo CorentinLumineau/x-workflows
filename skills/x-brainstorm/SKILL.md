@@ -270,7 +270,6 @@ After brainstorm session complete:
 
 <state-checkpoint phase="brainstorm" status="completed">
   <file path=".claude/workflow-state.json">Mark brainstorm complete, set next phase in_progress</file>
-  <memory entity="workflow-state">phase: brainstorm -> completed; next: design or research</memory>
 </state-checkpoint>
 
 <workflow-gate type="choice" id="brainstorm-next">

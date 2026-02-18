@@ -57,7 +57,6 @@ This skill activates:
 | Server | When |
 |--------|------|
 | `sequential-thinking` | Complex planning decisions |
-| `memory` | Cross-session persistence |
 
 <instructions>
 
@@ -126,7 +125,7 @@ Based on assessment, select track:
 **Standard Track** (3-8 hours):
 - Story file in `milestones/_active/stories/`
 - Checkpoint tracking
-- Memory persistence
+- State persistence
 
 **Enterprise Track** (8+ hours):
 - Full initiative structure via `/x-initiative`
@@ -171,7 +170,6 @@ After user approves the plan:
 
 <state-checkpoint phase="plan" status="completed">
   <file path=".claude/workflow-state.json">Mark plan complete with approved: true/false, set implement in_progress after approval</file>
-  <memory entity="workflow-state">phase: plan -> completed (approved); next: implement</memory>
 </state-checkpoint>
 
 </instructions>

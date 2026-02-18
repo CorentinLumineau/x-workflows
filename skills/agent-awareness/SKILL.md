@@ -4,11 +4,6 @@ description: Agent delegation awareness with catalog, decision matrix, and patte
 license: Apache-2.0
 allowed-tools:
   - Read
-mcp:
-  preferred:
-    - memory
-  triggers:
-    memory: "recalling previous agent delegation decisions"
 metadata:
   author: ccsetup contributors
   version: "2.0.0"
@@ -141,12 +136,11 @@ Commands can include `agent_hint` for soft suggestions:
 
 At session start, after loading agent catalog:
 
-1. **Read feedback data**: `open_nodes(["delegation-log"])`
+1. **Read feedback data**: Check auto-memory `routing-corrections.md` for historical correction data
 2. **Parse correction observations**: Extract `routing_correction` and `user_override` entries
 3. **Build frequency table**: Count `{intent_type -> preferred_workflow/agent}` pairs
 4. **If count >= 3 for same pattern**: Add advisory signal to routing recommendations
 5. **Advisory is ADDITIVE** -- never overrides explicit complexity-detection routing
-6. **If Memory MCP unavailable**: Skip feedback read silently (graceful degradation)
 
 ## Behavioral Rules
 

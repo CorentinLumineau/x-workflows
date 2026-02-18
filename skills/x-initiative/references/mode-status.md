@@ -8,7 +8,7 @@ Display and manage workflow state for cross-session context. Show progress on ac
 
 ## References
 
-Status tracking patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
+Status tracking patterns: See @skills/initiative/references/checkpoint-protocol.md
 
 <instructions>
 

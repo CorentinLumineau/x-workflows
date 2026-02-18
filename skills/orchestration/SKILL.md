@@ -77,7 +77,7 @@ For very large batches, spawn parallel workers:
    Delegate to a **batch worker** agent in background:
    > "Process batch {n}: {items}"
 3. Monitor agent progress
-4. Checkpoint completed batches to Memory MCP
+4. Checkpoint completed batches
 5. Aggregate results when all complete
 ```
 
@@ -105,20 +105,20 @@ orchestration_state:
 
 ### Checkpoint Integration
 
-Save orchestration state to Memory MCP:
+Save orchestration state to `.claude/workflow-state.json`:
 
-```yaml
-# Save to Memory MCP (or equivalent persistence)
-entity:
-  name: "orchestration-{timestamp}"
-  type: "OrchestrationCheckpoint"
-  observations:
-    - "task: {main_task}"
-    - "total_batches: {count}"
-    - "completed_batches: [{list}]"
-    - "active_agents: [{agent_ids}]"
-    - "pending_work: [{items}]"
-    - "status: in_progress"
+```json
+{
+  "orchestration": {
+    "task": "{main_task}",
+    "total_batches": "{count}",
+    "completed_batches": ["{list}"],
+    "active_agents": ["{agent_ids}"],
+    "pending_work": ["{items}"],
+    "status": "in_progress",
+    "timestamp": "{ISO}"
+  }
+}
 ```
 
 ### Result Aggregation
@@ -135,17 +135,9 @@ When background agents complete:
 
 After orchestration completes (all batches done or workflow ends):
 
-1. **Delete orchestration checkpoint**: Remove the `orchestration-{timestamp}` entity from Memory MCP via `delete_entities`
-2. **Prune delegation-log**: Remove detailed batch observations, keep only the summary line (task, total agents, outcome, duration)
-3. **Update status**: Final checkpoint update with `"status: completed"` before deletion
-
-```yaml
-# Cleanup call
-delete_entities:
-  entityNames: ["orchestration-{timestamp}"]
-```
-
-**Graceful degradation**: If Memory MCP is unavailable, skip cleanup — entities will be pruned by git-commit's Phase 5 cleanup sweep.
+1. **Update status**: Final checkpoint update with `"status: completed"` in `.claude/workflow-state.json`
+2. **Remove orchestration key**: Delete the `orchestration` key from workflow state
+3. **Prune delegation summary**: Keep only the summary line (task, total agents, outcome, duration) in MEMORY.md
 
 ## Integration with Workflow Skills
 
@@ -213,33 +205,19 @@ When orchestration spawns agents, record each delegation:
 
 ### On Spawn
 
-Write to Memory MCP entity `"delegation-log"`:
+Log delegation to MEMORY.md under `## Delegation Patterns`:
 ```
-add_observations:
-  entityName: "delegation-log"
-  contents:
-    - "delegation: {agent} ({model}) for {task_type} [{complexity}] -> pending at {timestamp}"
+- Delegation: {agent} ({model}) for {task_type} [{complexity}] -> pending at {timestamp}
 ```
 
 ### On Completion
 
-Update the delegation record:
+Update the delegation record in MEMORY.md:
 ```
-add_observations:
-  entityName: "delegation-log"
-  contents:
-    - "delegation: {agent} ({model}) for {task_type} [{complexity}] -> {outcome} ({duration_ms}ms) at {timestamp}"
+- Delegation: {agent} ({model}) for {task_type} [{complexity}] -> {outcome} ({duration_ms}ms) at {timestamp}
 ```
 
 Where `outcome` is: `success`, `failure`, `escalated`, or `timeout`.
-
-### Summary to Auto-Memory
-
-After delegation completes, write a summary line to MEMORY.md:
-```
-## Delegation Patterns
-- Delegation: {agent} ({model}) for {task_type} -> {outcome} ({duration_ms}ms)
-```
 
 Only write to MEMORY.md when the delegation reveals a **pattern** (e.g., same agent type succeeding/failing repeatedly).
 
@@ -260,7 +238,7 @@ Target found? ── No → Log failure, continue with other agents
         ↓ Yes
 Already escalated once for this task? ── Yes → Log, report to user
         ↓ No
-1. Log escalation in delegation-log (Memory MCP)
+1. Log escalation in MEMORY.md delegation patterns
 2. Re-delegate task to upgraded variant
 3. Continue orchestration with upgraded agent
 4. On upgraded agent completion → aggregate normally

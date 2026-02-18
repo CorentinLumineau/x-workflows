@@ -116,16 +116,12 @@ Wait for explicit user choice before continuing.
 
 If user selects a DIFFERENT workflow than recommended (option 2: "Different workflow" or option 3: "Modify"):
 
-Write routing correction to Memory MCP entity `"delegation-log"`:
-- `"routing_correction: suggested {recommended_workflow}, user chose {user_choice} for {intent_type} at {timestamp}"`
+Write routing correction to auto-memory topic file `routing-corrections.md`:
+- Format: `"{timestamp}: {intent_type} — suggested {recommended}, user chose {user_choice}"`
 
 Log: "Routing preference recorded for future sessions"
 
 **Note**: Only record when user actively changes the recommendation, not when they accept it.
-
-Additionally, write a summary line to auto-memory topic file `routing-corrections.md` for cross-session persistence without MCP dependency:
-- Format: `"{timestamp}: {intent_type} — suggested {recommended}, user chose {user_choice}"`
-- This ensures corrections survive sessions even when Memory MCP is unavailable
 
 ### Phase 4: Auto-Invoke Recommended Skill
 

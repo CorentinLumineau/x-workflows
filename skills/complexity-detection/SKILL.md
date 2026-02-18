@@ -231,7 +231,7 @@ This contract is advisory — downstream consumers may override any field based 
 
 At assessment start, read historical routing corrections to improve future routing accuracy:
 
-1. **Read correction data**: Query Memory MCP entity `"delegation-log"` for `routing_correction` observations
+1. **Read correction data**: Check auto-memory `routing-corrections.md` for `routing_correction` entries
 2. **Parse corrections**: Extract `{suggested_workflow → user_chosen_workflow}` pairs grouped by intent type
 3. **Build frequency table**: Count corrections per `{intent_type → preferred_workflow}` pair
 4. **Apply adjustment**: If count ≥ 3 for same pattern, add advisory signal:
@@ -239,17 +239,14 @@ At assessment start, read historical routing corrections to improve future routi
    Routing adjustment: {intent_type} historically routed to {preferred} (corrected {count} times)
    ```
 5. **Advisory is ADDITIVE** — never overrides explicit complexity signals, only adds context
-6. **If Memory MCP unavailable**: Skip correction read silently (graceful degradation)
-7. **If auto-memory `routing-corrections.md` exists**: Read as fallback when Memory MCP unavailable
 
-### Correction Data Sources
+### Correction Data Source
 
 | Source | Priority | Availability |
 |--------|----------|-------------|
-| Memory MCP `delegation-log` entity | Primary | Requires MCP |
-| Auto-memory `routing-corrections.md` | Fallback | Always available |
+| Auto-memory `routing-corrections.md` | Primary | Always available |
 
-At workflow completion, x-auto writes correction summary to auto-memory topic file `routing-corrections.md` for cross-session persistence without MCP dependency.
+At workflow completion, x-auto writes correction summary to auto-memory topic file `routing-corrections.md` for cross-session persistence.
 
 ---
 

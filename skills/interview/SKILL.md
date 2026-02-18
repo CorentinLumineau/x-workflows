@@ -86,8 +86,8 @@ See [bypass-conditions.md](references/bypass-conditions.md) for details.
 
 When interview is bypassed via "explicit skip" (condition 1):
 
-Write skip event to Memory MCP entity `"interview-state"`:
-- `"interview_skip: {skill}, user said: {reason} at {timestamp}"`
+Write skip event to `.claude/interview-state.json`:
+- Add to the session entry: `"skipped": true, "skip_reason": "{reason}"`
 
 **Adaptive Behavior**: On future invocations for the same skill:
 - If ≥ 3 skips recorded for same skill → reduce interview aggressiveness (ask 1 question max)
@@ -113,9 +113,9 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 4. **If confidence = 100%** - Proceed to Phase 1
 ```
 
-## State Persistence (3-Layer)
+## State Persistence (2-Layer)
 
-Interview state uses the 3-layer persistence model:
+Interview state uses the 2-layer persistence model:
 
 ### Write (after each interview completion)
 
@@ -152,14 +152,6 @@ Interview state uses the 3-layer persistence model:
    - Common clarification needed: {pattern}
    ```
 
-3. **L3: MCP Memory** — Write to Memory MCP entity `"interview-state"`:
-   ```
-   add_observations:
-     entityName: "interview-state"
-     contents:
-       - "skill: {name}, confidence: {score}, questions: {count}, at: {timestamp}"
-   ```
-
 ### Read (on interview activation)
 
 1. Check conversation context (same session)
@@ -168,9 +160,7 @@ Interview state uses the 3-layer persistence model:
    b. Remove expired entries (where `expiresAt < now`)
    c. If all entries expired → delete the file entirely
    d. If valid entries remain → write back pruned file, use as baseline
-3. Search Memory MCP: `search_nodes("interview-state")`
-   a. Remove observations older than 24 hours via `delete_observations`
-4. Use most recent valid data as baseline
+3. Use most recent valid data as baseline
 
 ### Smart Bypass (Historical Confidence)
 

@@ -41,7 +41,7 @@ This skill activates:
 
 ## References
 
-Archive checkpoint patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
+Archive checkpoint patterns: See @skills/initiative/references/checkpoint-protocol.md
 
 <instructions>
 
@@ -156,8 +156,8 @@ Keep it **under 80 lines**. This is a reference document, not a copy of the init
 
 ### Phase 4: Archive Operations
 
-<state-cleanup targets="initiative.json,WORKFLOW-STATUS.yaml,Memory-MCP-checkpoint" mandatory="true">
-Cleanup is MANDATORY. Remove initiative checkpoint, WORKFLOW-STATUS, and Memory MCP entity after successful archive.
+<state-cleanup targets="initiative.json,WORKFLOW-STATUS.yaml" mandatory="true">
+Cleanup is MANDATORY. Remove initiative checkpoint and WORKFLOW-STATUS after successful archive.
 If cleanup fails:
 1. Retry once after 2-second wait
 2. If still fails: WARN user (do not BLOCK — archive completion > cleanup)
@@ -179,10 +179,6 @@ If cleanup fails:
    ```bash
    rm .claude/initiative.json
    ```
-
-4. **Clear Memory MCP checkpoint** (OPTIONAL — graceful degradation):
-   Delete the `initiative-checkpoint` entity from persistent cross-session storage.
-   If persistent storage is unavailable, skip — file is the primary SSoT.
 
 ### Phase 5: Workflow Transition
 
@@ -280,4 +276,3 @@ Next: /x-initiative create | /x-initiative status | Done
 ## References
 
 - @skills/initiative/references/checkpoint-protocol.md - Checkpoint lifecycle
-- @skills/initiative/references/memory.md - Memory MCP operations

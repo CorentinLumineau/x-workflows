@@ -283,13 +283,9 @@ After completing review:
 2. Mark `review` phase as `"completed"` with timestamp and `"approved": true/false`
 3. If approved: set `commit` phase as `"in_progress"`
 4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: review -> completed (approved/rejected)"`
-   - `"next: commit"` (if approved)
 
 <state-checkpoint phase="review" status="completed">
   <file path=".claude/workflow-state.json">Mark review complete (approved: true/false), set commit in_progress on approval</file>
-  <memory entity="workflow-state">phase: review -> completed (approved); next: commit</memory>
 </state-checkpoint>
 
 </instructions>

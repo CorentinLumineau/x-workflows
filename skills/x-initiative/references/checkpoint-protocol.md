@@ -1,37 +1,27 @@
 # Checkpoint Protocol
 
-> Memory MCP checkpoint lifecycle for initiative state persistence.
+> Checkpoint lifecycle for initiative state persistence using file-based (L1) and auto-memory (L2) layers.
 
 ## Write Checkpoint (after milestone completion or significant progress)
 
-### Step 1: Create/Update Entity
+### Step 1: Write File Checkpoint
 
-```
-Memory MCP: create_entities or add_observations
+Write or update `.claude/initiative.json`:
 
-Entity:
-  name: "initiative-checkpoint"
-  entityType: "InitiativeCheckpoint"
-  observations:
-    - "initiative: {name}"
-    - "milestone: {current_milestone}"
-    - "status: {in_progress|completed|blocked}"
-    - "progress: {json_encoded_progress}"
-    - "updated: {ISO_timestamp}"
-```
-
-### Step 2: Create Relation (if workflow state exists)
-
-```
-Memory MCP: create_relations
-
-Relation:
-  from: "initiative-checkpoint"
-  to: "workflow-state"
-  relationType: "tracks"
+```json
+{
+  "name": "{initiative_name}",
+  "status": "{in_progress|completed|blocked}",
+  "currentMilestone": "{current_milestone}",
+  "lastUpdated": "{ISO_timestamp}",
+  "progress": {
+    "M1": "completed",
+    "M2": "in_progress"
+  }
+}
 ```
 
-### Step 3: Update Auto-Memory (if learning discovered)
+### Step 2: Update Auto-Memory (if learning discovered)
 
 Only write to MEMORY.md when:
 - A new pattern is confirmed across multiple interactions
@@ -53,28 +43,26 @@ Example MEMORY.md entry:
 
 1. **Conversation context** (if same session) — highest priority
 2. **File: `.claude/initiative.json`** — primary checkpoint
-3. **Memory MCP: `search_nodes("initiative-checkpoint")`** — enrichment
-4. **File: `documentation/milestones/_active/*/README.md`** — reconstruction
-5. **MEMORY.md** — patterns only, not state
+3. **File: `documentation/milestones/_active/*/README.md`** — reconstruction
+4. **MEMORY.md** — patterns and last known position hints
 
 ### Recovery Protocol
 
 ```
-1. search_nodes("initiative-checkpoint")
+1. Read .claude/initiative.json
 2. If found:
-   - Parse observations
-   - Validate against .claude/initiative.json (if exists)
-   - Use most recent timestamp as authoritative
+   - Parse initiative name, milestone, status
+   - Validate against milestone files on disk
    - Restore state to conversation context
 3. If not found:
-   - Fall back to .claude/initiative.json
-   - If that's also missing, scan _active/ directory
+   - Scan _active/ directory for initiative folders
+   - Reconstruct state from milestone file checkboxes
    - Offer to create fresh checkpoint
 ```
 
-### Step 4: Sync Validation (after any checkpoint write)
+### Step 3: Sync Validation (after any checkpoint write)
 
-After writing initiative state to any layer:
+After writing initiative state:
 1. Read initiative.json → extract milestone + status + timestamp
 2. Read WORKFLOW-STATUS.yaml → extract milestone + status + timestamp
 3. If MISMATCH detected (milestone or status differ):
@@ -115,7 +103,7 @@ Archive (optional cleanup)
 
 | Scenario | Action |
 |----------|--------|
-| Memory MCP unavailable | Warn user, continue with file-based (L1) |
-| Entity already exists | Use `add_observations` to append, not overwrite |
+| initiative.json missing | Reconstruct from milestone files on disk |
+| initiative.json corrupted | Fall back to directory scan of _active/ |
 | Conflicting timestamps | Prefer most recent; log discrepancy |
-| Corrupted JSON in observations | Fall back to file-based state |
+| MEMORY.md unavailable | Continue with file-based state only (L1) |

@@ -246,13 +246,9 @@ After completing implementation:
 2. Mark `implement` phase as `"completed"` with timestamp
 3. Set `verify` phase as `"in_progress"`
 4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: implement -> completed"`
-   - `"next: verify"`
 
 <state-checkpoint phase="implement" status="completed">
   <file path=".claude/workflow-state.json">Mark implement complete, set verify in_progress</file>
-  <memory entity="workflow-state">phase: implement -> completed; next: verify</memory>
 </state-checkpoint>
 
 </instructions>

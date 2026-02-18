@@ -185,7 +185,6 @@ When multiple remotes exist (common in mirror setups):
 
 **Cache Storage:**
 - Location: `.claude/workflow-state.json` (forge_context key)
-- Memory MCP: Entity "forge-context" for cross-session persistence
 
 **Cache Refresh Logic:**
 
@@ -254,15 +253,6 @@ Else:
 - Path: `.claude/workflow-state.json`
 - Key: `forge_context`
 - Format: JSON object with remotes array, primary selections, CLI availability
-
-**Memory MCP Persistence:**
-- Entity: `forge-context`
-- Entity Type: `git-configuration`
-- Observations:
-  - Primary forge: {github|gitea|gitlab|unknown}
-  - CLI available: {true|false}
-  - Remote count: {N}
-  - Last detected: {ISO timestamp}
 
 **State Schema:**
 

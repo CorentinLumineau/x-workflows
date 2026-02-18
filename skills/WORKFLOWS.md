@@ -329,7 +329,7 @@ args: "{workflow context summary}"
 
 ## Workflow State Tracking
 
-All workflows persist their state in `.claude/workflow-state.json` with 3-layer persistence:
+All workflows persist their state in `.claude/workflow-state.json` with 2-layer persistence:
 
 ### State Layers
 
@@ -337,9 +337,8 @@ All workflows persist their state in `.claude/workflow-state.json` with 3-layer 
 |-------|----------|---------|---------------------|
 | **L1** | `.claude/workflow-state.json` | Primary file-based state — **self-sufficient for resume** | **YES** (sole requirement) |
 | **L2** | MEMORY.md (auto-memory) | Cross-session learnings + checkpoint state summaries | No — enrichment |
-| **L3** | Memory MCP entity `"workflow-state"` | Cross-session structured data, queryable history | No — enrichment |
 
-> **Note**: L1 alone contains the complete workflow state schema (type, phase, timestamps, context). L3 adds structured history and richer queries but is not essential for workflow continuity. See `persistence-architecture.md` for the full degradation matrix.
+> **Note**: L1 alone contains the complete workflow state schema (type, phase, timestamps, context). See `persistence-architecture.md` for the full degradation matrix.
 
 ### State Schema
 
@@ -403,7 +402,6 @@ If a session ends mid-workflow, the state persists and can be resumed.
 Session ends mid-workflow
         ↓
 State saved in .claude/workflow-state.json (L1)
-Checkpoint in Memory MCP (L3)
         ↓
 Next session starts
         ↓
@@ -422,7 +420,7 @@ Expired state is summarized to MEMORY.md and cleared. See persistence-architectu
 
 ### Completion Write Protocol
 
-Terminal workflow phases (git-commit, x-archive) trigger a MANDATORY 3-layer write including
+Terminal workflow phases (git-commit, x-archive) trigger a MANDATORY 2-layer write including
 a L2 MEMORY.md summary. This ensures cross-session awareness of completed work.
 
 ### Staleness Warning
@@ -606,7 +604,6 @@ These markers standardize inconsistent patterns across skills.
 ```xml
 <state-checkpoint phase="phase-name" status="completed">
   <file path=".claude/workflow-state.json">Description of state update</file>
-  <memory entity="workflow-state">Key-value state summary</memory>
 </state-checkpoint>
 ```
 
@@ -624,7 +621,6 @@ These markers standardize inconsistent patterns across skills.
 ```xml
 <state-cleanup phase="terminal">
   <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
-  <memory-prune entities="pattern-*" older-than="7d" />
   <history-prune max-entries="5" />
 </state-cleanup>
 ```

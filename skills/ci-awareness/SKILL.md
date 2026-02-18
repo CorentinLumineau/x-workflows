@@ -127,7 +127,6 @@ Determine required checks from: branch protection API, CI config heuristics (tes
 ## State Persistence
 
 - **File**: `.claude/workflow-state.json` key `ci_context` (5-minute TTL)
-- **Memory MCP**: Entity `ci-status` type `ci-pipeline-status`
 
 > **Full state schema, polling state, and integration patterns**: See `references/state-schema.md`
 

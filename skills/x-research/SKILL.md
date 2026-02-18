@@ -190,7 +190,6 @@ After research complete:
 
 <state-checkpoint phase="research" status="completed">
   <file path=".claude/workflow-state.json">Mark research complete, set design in_progress</file>
-  <memory entity="workflow-state">phase: research -> completed; next: design</memory>
 </state-checkpoint>
 
 <workflow-gate type="choice" id="research-next">

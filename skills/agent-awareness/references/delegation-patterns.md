@@ -118,7 +118,7 @@ Low-risk path:
 ### Escalation Protocol
 
 1. **Detect trigger condition** from agent delegation outcome
-2. **Log escalation** in delegation history (Memory MCP entity `"delegation-log"`)
+2. **Log escalation** in delegation history
 3. **Suggest or auto-escalate**: If orchestration skill is active, auto-escalate; otherwise suggest to user
 4. **Max 1 escalation per delegation** -- no recursive escalation loops
 
@@ -150,24 +150,18 @@ When agent-awareness suggests a delegation:
 
 ### On Suggestion
 
-Record the suggestion in delegation log:
+Record the suggestion in MEMORY.md delegation patterns:
 ```
-add_observations:
-  entityName: "delegation-log"
-  contents:
-    - "suggestion: {agent} ({model}) for {task_type} [{complexity}] at {timestamp}"
+"suggestion: {agent} ({model}) for {task_type} [{complexity}] at {timestamp}"
 ```
 
 ### On User Decision
 
 Track if user accepted or overrode the suggestion:
 ```
-add_observations:
-  entityName: "delegation-log"
-  contents:
-    - "user_override: suggested {agent}, user chose {other_agent}"
-    # OR
-    - "user_accepted: {agent} for {task_type}"
+"user_override: suggested {agent}, user chose {other_agent}"
+# OR
+"user_accepted: {agent} for {task_type}"
 ```
 
 ### Acceptance Tracking
@@ -175,4 +169,4 @@ add_observations:
 Store acceptance rate per agent-task combination to inform future suggestions:
 - Track: `{agent} + {task_type} -> accepted/overridden`
 - Pattern: If user consistently overrides a suggestion, adjust future recommendations
-- Data location: Memory MCP entity `"delegation-log"` (L3)
+- Data location: MEMORY.md delegation patterns (L2)

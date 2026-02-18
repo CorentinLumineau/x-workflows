@@ -204,8 +204,7 @@ When approval needed, structure question as:
 
 After release published:
 1. Update `.claude/workflow-state.json` (mark workflow complete, move to history, prune to max 5, delete file if no active workflow)
-2. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
-3. Present options (no auto-chain — workflow is done):
+2. Present options (no auto-chain — workflow is done):
 
 <workflow-gate type="choice" id="release-next">
   <question>Release v{version} published. What's next?</question>
@@ -229,7 +228,6 @@ After release published:
 
 <state-cleanup phase="terminal">
   <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
-  <memory-prune entities="orchestration-*" older-than="7d" />
   <history-prune max-entries="5" />
 </state-cleanup>
 

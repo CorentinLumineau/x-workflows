@@ -24,7 +24,6 @@ This mode activates:
 | Server | When |
 |--------|------|
 | `sequential-thinking` | Complex planning decisions |
-| `memory` | Cross-session persistence |
 
 <instructions>
 
@@ -132,8 +131,7 @@ Create initiative structure using `/x-initiative create`.
 1. ExitPlanMode (plan presented to user)
 2. User approves → story file written (Standard track) or initiative created (Enterprise track)
 3. workflow-state.json updated
-4. Memory MCP checkpoint saved
-5. Chain to x-implement
+4. Chain to x-implement
 
 Present next step:
 ```json

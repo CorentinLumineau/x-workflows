@@ -59,34 +59,6 @@ Single-file changes, bug fixes, and routine maintenance do not need initiatives.
 }
 ```
 
-## Memory MCP Usage
-
-For cross-session persistence beyond file-based tracking:
-
-### Creating Entities
-
-```
-Entity: "initiative:{name}"
-Type: "initiative"
-Observations:
-  - "Status: in_progress"
-  - "Current milestone: M2"
-  - "Completed: M1 (2026-01-27)"
-```
-
-### Updating on Milestone Completion
-
-```
-Add observation to "initiative:{name}":
-  - "M2 completed (2026-01-28): all tasks done, tests passing"
-```
-
-### Session Recovery
-
-1. Search Memory for `initiative:{name}`
-2. Cross-reference with `.claude/initiative.json`
-3. Use the most recent data source
-
 ## Error Recovery Patterns
 
 ### Incomplete Milestone File
@@ -103,13 +75,6 @@ If `.claude/initiative.json` is missing but milestone files exist:
 - Create a new JSON from the file evidence
 - Inform the user
 
-### Conflicting State
-
-If Memory MCP and files disagree:
-- Files take precedence (they are version-controlled)
-- Update Memory to match files
-- Log the conflict for the user
-
 ## Documentation Update Workflow
 
 After completing any milestone:
@@ -117,7 +82,6 @@ After completing any milestone:
 1. Update the milestone file (mark tasks complete)
 2. Update the initiative README progress table
 3. Update `.claude/initiative.json`
-4. Optionally update Memory MCP entities
 
 ## Checklist for LLM Assistants
 

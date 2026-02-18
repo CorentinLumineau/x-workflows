@@ -153,14 +153,9 @@ After root cause resolution:
    - Complex fix → Set `implement` as next
    - Architecture issue → Set `plan` as next
 4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: troubleshoot -> completed"`
-   - `"root_cause: {summary}"`
-   - `"next: {fix|implement|plan}"`
 
 <state-checkpoint phase="troubleshoot" status="completed">
   <file path=".claude/workflow-state.json">Mark troubleshoot complete, set next phase based on resolution (fix/implement/plan)</file>
-  <memory entity="workflow-state">phase: troubleshoot -> completed; root_cause: {summary}; next: fix or implement or plan</memory>
 </state-checkpoint>
 
 </instructions>

@@ -8,7 +8,7 @@ Initiative archival with comprehensive documentation updates and lessons learned
 
 ## References
 
-Archive checkpoint patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
+Archive checkpoint patterns: See @skills/initiative/references/checkpoint-protocol.md
 
 <instructions>
 
@@ -134,10 +134,6 @@ Keep it **under 80 lines**. This is a reference document, not a copy of the init
    ```bash
    rm .claude/initiative.json
    ```
-
-4. **Clear Memory MCP checkpoint** (OPTIONAL — graceful degradation):
-   Delete the `initiative-checkpoint` entity from persistent cross-session storage.
-   If persistent storage is unavailable, skip — file is the primary SSoT.
 
 ### Phase 5: Workflow Transition
 

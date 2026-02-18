@@ -140,13 +140,9 @@ After fix applied and verified:
    - ONESHOT: Set `commit` as next (or `verify` if requested)
    - DEBUG: Set `verify` or `commit` as next
 4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: fix -> completed"`
-   - `"next: {verify|commit}"`
 
 <state-checkpoint phase="fix" status="completed">
   <file path=".claude/workflow-state.json">Mark fix complete, set next phase (verify or commit) pending approval</file>
-  <memory entity="workflow-state">phase: fix -> completed; next: verify or commit</memory>
 </state-checkpoint>
 
 </instructions>

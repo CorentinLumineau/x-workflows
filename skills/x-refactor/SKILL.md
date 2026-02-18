@@ -181,13 +181,9 @@ After refactoring verified:
 2. Mark `refactor` phase as `"completed"` with timestamp
 3. Set `review` phase as `"in_progress"`
 4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: refactor -> completed"`
-   - `"next: review"`
 
 <state-checkpoint phase="refactor" status="completed">
   <file path=".claude/workflow-state.json">Mark refactor complete, set review in_progress</file>
-  <memory entity="workflow-state">phase: refactor -> completed; next: review</memory>
 </state-checkpoint>
 
 </instructions>

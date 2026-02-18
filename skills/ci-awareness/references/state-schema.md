@@ -7,15 +7,6 @@
 - Key: `ci_context`
 - TTL: 5 minutes (CI status changes frequently)
 
-**Memory MCP Persistence:**
-- Entity: `ci-status`
-- Entity Type: `ci-pipeline-status`
-- Observations:
-  - All checks passing: {true|false}
-  - Merge ready: {true|false}
-  - Failing checks: {comma-separated list}
-  - Last checked: {ISO timestamp}
-
 ## TypeScript Interface
 
 ```typescript

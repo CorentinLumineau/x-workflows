@@ -8,7 +8,7 @@ Create new initiative documentation with Pareto-optimized milestone breakdown. S
 
 ## References
 
-Persistence patterns: See @skills/initiative/references/checkpoint-protocol.md and @skills/initiative/references/memory.md
+Persistence patterns: See @skills/initiative/references/checkpoint-protocol.md
 
 <instructions>
 

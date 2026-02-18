@@ -240,12 +240,9 @@ After all commits completed:
 1. Mark `commit` phase as `"completed"` in `.claude/workflow-state.json`
 2. Mark workflow as `"completed"` (move to `history` array, prune to max 5)
 3. If no active workflow remains → delete `.claude/workflow-state.json`
-4. Write to Memory MCP entity `"workflow-state"`: phase completed, commit count
-5. Cleanup stale Memory MCP entities (orchestration-*, delegation-log, interview-state)
 
 <state-cleanup phase="terminal">
   <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
-  <memory-prune entities="orchestration-*" older-than="7d" />
   <history-prune max-entries="5" />
 </state-cleanup>
 

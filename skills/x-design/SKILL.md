@@ -195,7 +195,6 @@ After design validated:
 
 <state-checkpoint phase="design" status="completed">
   <file path=".claude/workflow-state.json">Mark design complete; if transitioning to APEX, create new APEX workflow at plan phase</file>
-  <memory entity="workflow-state">phase: design -> completed; transition: BRAINSTORM -> APEX (if approved)</memory>
 </state-checkpoint>
 
 </instructions>

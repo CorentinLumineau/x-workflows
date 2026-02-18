@@ -171,21 +171,12 @@ Suggestions (ranked):
    - Continue workflow from last checkpoint
 
 4. If no backup or backup also corrupt:
-   - Check Memory MCP for last known state:
-     * Query entity "workflow-state-log"
-     * Retrieve most recent state observation
-   - If Memory MCP has state:
-     * Reconstruct workflow-state.json from memory
-     * Write new backup
-     * Continue workflow
-
-5. If no state found anywhere:
    - Create fresh state file
    - Initialize with minimal required fields
    - Warn user: "Lost workflow progress. Starting from phase: {current}"
    - Continue workflow (best effort)
 
-6. Always: Write new backup after successful recovery
+5. Always: Write new backup after successful recovery
 ```
 
 ### Partial Recovery (Checkpoint-based)
@@ -277,20 +268,6 @@ Maximum 1 backup file (rolling backup):
   "errors": [],
   "last_backup": "2026-02-16T10:35:42Z"
 }
-```
-
-### Memory MCP Integration
-
-Write recovery events to Memory MCP for cross-session persistence:
-
-```
-Entity: "error-recovery-log"
-Entity Type: "workflow-event-log"
-
-Observations:
-- "2026-02-16T10:40:12Z: Transient error recovered (network timeout) after 2 retries"
-- "2026-02-16T10:42:05Z: Corruption detected in workflow-state.json, restored from backup"
-- "2026-02-16T10:45:30Z: Checkpoint saved at phase: implement"
 ```
 
 ---

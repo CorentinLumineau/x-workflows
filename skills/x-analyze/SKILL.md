@@ -194,13 +194,9 @@ After completing analysis:
 2. Mark `analyze` phase as `"completed"` with timestamp
 3. Set `plan` phase as `"in_progress"`
 4. Write updated state to `.claude/workflow-state.json`
-5. Write to Memory MCP entity `"workflow-state"`:
-   - `"phase: analyze -> completed"`
-   - `"next: plan"`
 
 <state-checkpoint phase="analyze" status="completed">
   <file path=".claude/workflow-state.json">Mark analyze complete, set plan in_progress</file>
-  <memory entity="workflow-state">phase: analyze -> completed; next: plan</memory>
 </state-checkpoint>
 
 </instructions>

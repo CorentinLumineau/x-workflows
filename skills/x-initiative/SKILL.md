@@ -110,30 +110,21 @@ This workflow activates these behavioral skills:
 
 See @skills/initiative/SKILL.md for persistence schema and patterns.
 
-Canonical references for persistence implementation:
-- @skills/initiative/references/checkpoint-protocol.md - Memory MCP checkpoint lifecycle
-- @skills/initiative/references/memory.md - Entity naming and Memory MCP operations
+Canonical reference for persistence implementation:
+- @skills/initiative/references/checkpoint-protocol.md - Checkpoint lifecycle (L1 file + L2 auto-memory)
 
 ### Write Order (All State Changes)
 
 <state-checkpoint phase="initiative" status="milestone-progress">
-Cross-session initiative persistence via multi-layer write order with sync validation:
-file checkpoint (L1), WORKFLOW-STATUS.yaml (L1), Memory MCP (L3), MEMORY.md (L2).
+Cross-session initiative persistence via 2-layer write order with sync validation:
+file checkpoint (L1), WORKFLOW-STATUS.yaml (L1), MEMORY.md (L2).
 **Sync Protocol**: After writes, validate initiative.json matches WORKFLOW-STATUS.yaml.
 See @skills/initiative/references/persistence-architecture.md for sync trigger table and conflict resolution.
 </state-checkpoint>
 
 1. **initiative.json** (REQUIRED) — Primary checkpoint (L1: file)
 2. **WORKFLOW-STATUS.yaml** (REQUIRED) — Rich context (L1: file)
-3. **Memory MCP** (REQUIRED) — Cross-session structured storage (L3: MCP)
-4. **MEMORY.md** — Update if learning discovered (L2: auto-memory)
-
-**Memory MCP Integration**: REQUIRED
-
-If Memory MCP unavailable:
-- Log WARNING (not silent): "Memory MCP unavailable — operating in degraded mode"
-- Continue with file-based only (L1)
-- Flag in `/x-help context`: "MCP Memory: cross (degraded mode)"
+3. **MEMORY.md** — Update if learning discovered (L2: auto-memory)
 
 ### Session Start Recovery
 
