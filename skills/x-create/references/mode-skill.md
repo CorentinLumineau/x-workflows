@@ -130,6 +130,14 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: {tools}
 user-invocable: true
+# argument-hint: "[mode] [name]"           # Optional: shown in command palette
+# disable-model-invocation: true            # Optional: prevent auto-invocation
+# context: fork                             # Optional: run in subagent context
+# agent: x-{agent-name}                    # Optional: bind to agent definition
+# chains-from:                              # Optional: workflow DAG
+#   - x-{upstream-skill}
+# chains-to:
+#   - x-{downstream-skill}
 metadata:
   author: {author}
   version: "1.0.0"
@@ -234,22 +242,19 @@ ls -la {resolved_path}/
 
 Validate against guide recommendations from Phase 0.8 if available.
 
-### Phase 5: Completion
+### Phase 5: Integration & Completion
 
-```json
-{
-  "questions": [{
-    "question": "Skill '{name}' created at {resolved_path}. What's next?",
-    "header": "Next",
-    "options": [
-      {"label": "Create mode files", "description": "Add mode references"},
-      {"label": "Test skill", "description": "Verify it works"},
-      {"label": "Done", "description": "Skill complete"}
-    ],
-    "multiSelect": false
-  }]
-}
-```
+**Load and apply** `references/integration-checklist.md`:
+
+1. **Run skill integration steps** — verify frontmatter, chaining metadata, behavioral skills, references
+2. **Report checklist status** — show which items pass and which need attention
+3. **Present post-creation workflow gate** from the integration checklist:
+   - Chain to x-implement or x-review
+   - Create another component
+   - Complete integration manually
+   - Done
+
+If user arrived from x-brainstorm or x-design, pre-select "Chain to next workflow" as the recommended option.
 </instructions>
 
 ## Skill Requirements

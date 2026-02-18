@@ -14,6 +14,8 @@ chains-to:
     condition: "dig deeper"
   - skill: x-design
     condition: "ready to decide"
+  - skill: x-create
+    condition: "create new component"
 chains-from:
   - skill: x-research
 ---

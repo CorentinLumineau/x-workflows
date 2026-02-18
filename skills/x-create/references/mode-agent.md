@@ -96,6 +96,15 @@ model: {haiku|sonnet|opus}
 tools:
   - Read
   - {other_tools}
+# --- Optional fields (add only when needed) ---
+# disallowedTools: [Bash, Write]             # Deny-list (overrides tools)
+# memory: true                               # Enable persistent memory
+# permissionMode: bypassPermissions           # Or: default, plan, acceptEdits
+# maxTurns: 25                               # Limit agentic turns
+# skills: [x-review, x-implement]            # Skills available to agent
+# mcpServers: [sequential-thinking, context7] # MCP servers to connect
+# hooks:
+#   - PreToolUse                              # Hook event triggers
 ---
 
 # Agent: x-{name}
@@ -153,22 +162,19 @@ ls {scope.paths.agents}x-{name}.md
 head -15 {scope.paths.agents}x-{name}.md
 ```
 
-### Phase 4: Completion
+### Phase 4: Integration & Completion
 
-```json
-{
-  "questions": [{
-    "question": "Agent 'x-{name}' created. What's next?",
-    "header": "Next",
-    "options": [
-      {"label": "Register in agentTypes", "description": "Add to tool-mapping.json for marker resolution"},
-      {"label": "Test agent", "description": "Verify it works"},
-      {"label": "Done", "description": "Agent complete"}
-    ],
-    "multiSelect": false
-  }]
-}
-```
+**Load and apply** `references/integration-checklist.md`:
+
+1. **Run agent integration steps** — verify frontmatter, role overlap check, model selection, tool mapping
+2. **Report checklist status** — show which items pass and which need attention
+3. **Present post-creation workflow gate** from the integration checklist:
+   - Chain to x-implement or x-review
+   - Create another component
+   - Complete integration manually
+   - Done
+
+If the agent should be registered in `tool-mapping.json` agentTypes, highlight this in the checklist report.
 </instructions>
 
 ## Agent Types

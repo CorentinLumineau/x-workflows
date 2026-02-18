@@ -12,6 +12,8 @@ metadata:
 chains-to:
   - skill: x-plan
     condition: "ready to build"
+  - skill: x-create
+    condition: "create new component"
 chains-from:
   - skill: x-brainstorm
   - skill: x-research

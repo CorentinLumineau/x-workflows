@@ -26,6 +26,14 @@ This document defines the canonical structure for skills in the ccsetup plugin.
 ---
 name: x-{skill-name}
 description: "{Brief description}. Modes: {mode1}, {mode2}. Use when {triggers}."
+# --- Optional fields (add only when needed) ---
+# argument-hint: "[mode] [name]"           # Shown in command palette
+# disable-model-invocation: true            # Prevent auto-invocation by Claude
+# context: fork                             # Run in subagent context (isolated)
+# agent: x-{agent-name}                    # Bind to specific agent definition
+# hooks:
+#   - PreToolUse                            # Hook event triggers
+#   - PostToolUse
 ---
 ```
 

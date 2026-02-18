@@ -18,7 +18,7 @@ This document defines the canonical structure for agents in the ccsetup plugin.
 
 ## 1. Agent File Structure
 
-### Frontmatter (Required)
+### Frontmatter (Required + Optional)
 
 ```yaml
 ---
@@ -26,7 +26,16 @@ name: x-{agent-name}
 description: "{Purpose} specialist. Use when {triggers}. {Capabilities}."
 model: haiku | sonnet | opus
 tools: [Read, Grep, Glob, Edit, Write, Bash, LSP, Task]
-color: "{hex-color}"  # Optional, for visual distinction
+# --- Optional fields (add only when needed) ---
+# disallowedTools: [Bash, Write]             # Deny-list (overrides tools)
+# memory: true                               # Enable persistent memory
+# permissionMode: bypassPermissions           # Or: default, plan, acceptEdits
+# maxTurns: 25                               # Limit agentic turns
+# skills: [x-review, x-implement]            # Skills available to agent
+# mcpServers: [sequential-thinking, context7] # MCP servers to connect
+# hooks:
+#   - PreToolUse                              # Hook event triggers
+#   - PostToolUse
 ---
 ```
 

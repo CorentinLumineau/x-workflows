@@ -5,9 +5,16 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob
 user-invocable: true
+argument-hint: "[skill|agent|discover] [name]"
+chains-from:
+  - x-brainstorm
+  - x-design
+chains-to:
+  - x-implement
+  - x-review
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
+  version: "3.0.0"
   category: workflow
 ---
 
@@ -20,14 +27,14 @@ Ecosystem-aware creation wizard for plugin components. Scans the existing ecosys
 | Mode | Description |
 |------|-------------|
 | skill (default) | Create behavioral or workflow skill |
-| command | Create slash command |
 | agent | Create subagent |
+| discover | Zero-context gap analysis — scan ecosystem, suggest candidates |
 
 ## Mode Detection
 | Keywords | Mode |
 |----------|------|
-| "command", "slash command" | command |
 | "agent", "subagent", "worker" | agent |
+| "discover", "what to create", "gaps", "what's missing" | discover |
 | (default) | skill |
 
 ## Agent Delegation
@@ -47,13 +54,13 @@ Ecosystem-aware creation wizard for plugin components. Scans the existing ecosys
 Pipeline: **0.5 → 0.6 → 0.7 → 0.8 → mode file**
 
 - **0.5** Scope Detection (existing — unchanged)
-- **0.6** Ecosystem Scan (NEW — dedup, related components)
-- **0.7** Smart Routing (NEW — correct repo + path)
-- **0.8** Guide Consultation (NEW — current best practices)
-- **mode** Mode-specific wizard (skill/command/agent)
+- **0.6** Ecosystem Scan (dedup, related components)
+- **0.7** Smart Routing + Routing Gate (correct repo + path + user confirmation)
+- **0.8** Guide Consultation (current best practices)
+- **mode** Mode-specific wizard (skill/agent/discover)
 
 **Default mode**: skill
-**No-args behavior**: Ask what to create
+**No-args behavior**: Enter discover mode
 
 ## Scope Detection
 
@@ -66,7 +73,6 @@ scopes:
     detect: "Current directory contains .claude-plugin/"
     paths:
       agents: "{plugin_root}/agents/"
-      commands: "{plugin_root}/commands/"
       skills: "{plugin_root}/skills/"
       hooks: "{plugin_root}/hooks/"
   project:
@@ -74,14 +80,12 @@ scopes:
     detect: "Current directory contains .claude/ directory"
     paths:
       agents: ".claude/agents/"
-      commands: ".claude/commands/"
       skills: ".claude/skills/"
   user:
     description: "User-level (global)"
     detect: "~/.claude/ exists"
     paths:
       agents: "~/.claude/agents/"
-      commands: "~/.claude/commands/"
       skills: "~/.claude/skills/"
 ```
 
@@ -104,7 +108,6 @@ Scan the existing ecosystem to prevent duplicates and show context.
 1. **Glob** all existing components in detected scope:
    - `{plugin_root}/skills/*/SKILL.md` → Skills
    - `{plugin_root}/agents/*.md` → Agents
-   - `{plugin_root}/commands/*.md` → Commands
 2. **Parse** frontmatter from each (name, description, category)
 3. **Duplicate check**:
    - Exact name match → **BLOCK** (show existing, confirm intent)
@@ -119,9 +122,19 @@ If scan finds 0 components, report "Empty ecosystem" and proceed.
 Determine the correct repository and path for the new component.
 
 <deep-think trigger="routing-decision">
-<purpose>Analyze the component being created and determine the correct target repository and path based on routing rules. Consider: Is this a workflow skill (x-*), behavioral skill, knowledge skill, agent, or command? Does the source repo exist locally?</purpose>
+<purpose>Analyze the component being created and determine the correct target repository and path based on routing rules. Consider: Is this a workflow skill (x-*), behavioral skill, knowledge skill, or agent? Does the source repo exist locally?</purpose>
 <context>Reference routing-rules.md for the complete decision tree. Check if ../x-workflows or ../x-devsecops exists relative to the current workspace.</context>
 </deep-think>
+
+<workflow-gate id="routing-confirmation">
+<purpose>Confirm routing decision with user before proceeding to creation</purpose>
+<context>Show the user: component type classification, target repository, resolved file path, and routing rationale. Allow override if the auto-detected route is wrong.</context>
+<options>
+  <option id="confirm">Proceed with detected route</option>
+  <option id="override">Choose different target</option>
+  <option id="abort">Cancel creation</option>
+</options>
+</workflow-gate>
 
 **Protocol**: See `references/routing-rules.md` for full decision tree.
 
@@ -129,20 +142,20 @@ Determine the correct repository and path for the new component.
    - Workflow skill (x-*) → target: x-workflows
    - Behavioral skill → target: x-workflows
    - Knowledge skill → target: x-devsecops
-   - Agent/Command → target: current scope (plugin/project/user)
+   - Agent → target: current scope (plugin/project/user)
 2. **Smart detection**: Check if target source repo exists locally
    - Look for `../x-workflows` or `../x-devsecops` relative to workspace
    - If found → create directly in source repo
    - If not found → create locally + add `<!-- TODO: migrate to {repo} -->` note
 3. **Resolve path**: Apply routing rules to determine exact file path
-4. **Show routing**: "Will create at: `{resolved_path}` ({reason})"
+4. **Present routing gate**: Show classification, target, path, and rationale for confirmation
 
 ### Phase 0.8: Guide Consultation
 
 Query current Claude Code best practices for the component type being created.
 
 <agent-delegate role="claude code guide" model="haiku">
-<prompt>What are current Claude Code best practices for creating a {component_type}? Include: recommended file structure, frontmatter fields, naming conventions, and any recent changes to the command/skill/agent format. Focus on practical patterns, not theory.</prompt>
+<prompt>What are current Claude Code best practices for creating a {component_type}? Include: recommended file structure, frontmatter fields, naming conventions, and any recent changes to the skill/agent format. Focus on practical patterns, not theory.</prompt>
 <context>Creating a {component_type} named "{name}" in {scope} scope. Purpose: {description}</context>
 </agent-delegate>
 
@@ -166,14 +179,6 @@ Behavioral rules that guide AI behavior:
 skills/{name}/
 ├── SKILL.md        # Main skill file
 └── references/     # Supporting docs
-```
-
-### Commands
-
-User-invocable slash commands:
-
-```
-commands/{name}.md
 ```
 
 ### Agents
@@ -230,5 +235,6 @@ All created components must pass:
 - **For ecosystem scan protocol**: See `references/ecosystem-catalog.md`
 - **For routing decisions**: See `references/routing-rules.md`
 - **For skill mode**: See `references/mode-skill.md`
-- **For command mode**: See `references/mode-command.md`
 - **For agent mode**: See `references/mode-agent.md`
+- **For discover mode**: See `references/mode-discover.md`
+- **For post-creation integration**: See `references/integration-checklist.md`
