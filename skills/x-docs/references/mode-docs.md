@@ -103,7 +103,7 @@ documentation/
 
 ## Additional References
 
-- @core-docs/DOC_FRAMEWORK_ENFORCEMENT.md - Doc structure
+- @core-docs/DOCUMENTATION-FRAMEWORK.md - Doc structure
 - `doc-sync-patterns.md` - Doc patterns
 
 <critical_rules>

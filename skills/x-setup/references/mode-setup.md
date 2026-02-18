@@ -190,7 +190,7 @@ Uses templates from:
 
 ## References
 
-- @core-docs/DOC_FRAMEWORK_ENFORCEMENT.md - Structure standards
+- @core-docs/DOCUMENTATION-FRAMEWORK.md - Structure standards
 - ../templates/README.md - Available templates
 
 <success_criteria>

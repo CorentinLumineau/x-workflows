@@ -133,7 +133,7 @@ For each stale doc:
 ## Additional References
 
 - `doc-sync-patterns.md` - Doc patterns
-- @core-docs/DOC_FRAMEWORK_ENFORCEMENT.md - Standards
+- @core-docs/DOCUMENTATION-FRAMEWORK.md - Standards
 
 <success_criteria>
 

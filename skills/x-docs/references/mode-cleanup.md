@@ -134,7 +134,7 @@ For each issue:
 
 ## Additional References
 
-- @core-docs/DOC_FRAMEWORK_ENFORCEMENT.md - Structure
+- @core-docs/DOCUMENTATION-FRAMEWORK.md - Structure
 - `doc-sync-patterns.md` - Patterns
 
 <success_criteria>

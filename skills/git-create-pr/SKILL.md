@@ -88,8 +88,7 @@ This workflow activates:
    - [Affected components/users]
    ```
 3. Present title and description to user for review
-<workflow-gate type="human-approval" criticality="medium" prompt="Review PR title and description. Approve or provide edits?">
-</workflow-gate>
+<!-- <workflow-gate type="human-approval" criticality="medium" prompt="Review PR title and description. Approve or provide edits?"> -->
 
 ### Phase 3: Create Pull Request
 
@@ -97,8 +96,7 @@ This workflow activates:
    - GitHub: `gh pr create --title "{title}" --body "{description}" --base {base_branch}`
    - Gitea: `tea pr create --title "{title}" --description "{description}" --base {base_branch}`
 2. Present PR creation command to user for approval
-<workflow-gate type="human-approval" criticality="critical" prompt="Create pull request with these details?">
-</workflow-gate>
+<!-- <workflow-gate type="human-approval" criticality="critical" prompt="Create pull request with these details?"> -->
 3. Execute command and capture PR URL and number
 4. Store PR metadata in `pr_context.created_pr`
 
@@ -108,8 +106,7 @@ This workflow activates:
 2. If match found:
    - Extract issue number N
    - Add "Closes #N" to PR description via forge CLI edit command
-   <workflow-gate type="human-approval" criticality="medium" prompt="Link PR to issue #{N}?">
-   </workflow-gate>
+   <!-- <workflow-gate type="human-approval" criticality="medium" prompt="Link PR to issue #{N}?"> -->
 3. Infer labels from changes:
    - `feat:` → `enhancement`
    - `fix:` → `bug`

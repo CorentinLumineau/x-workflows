@@ -167,7 +167,7 @@ pnpm build --watch
 
 ## References
 
-- @core-docs/DOC_FRAMEWORK_ENFORCEMENT.md - Project structure
+- @core-docs/DOCUMENTATION-FRAMEWORK.md - Project structure
 - Documentation/reference/ - Stack-specific docs
 
 ## Success Criteria
