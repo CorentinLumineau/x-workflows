@@ -38,21 +38,6 @@ This mode activates:
 
 ## Agent Delegation
 
-### Per-Phase Delegation Matrix
-
-| Phase | Role | Agent | Model | When |
-|-------|------|-------|-------|------|
-| 1 | Codebase explorer | x-explorer | haiku | Change scoping |
-| 2 | Fast test runner | x-tester-fast | haiku | Initial gate run |
-| 2 | Test runner (escalation) | x-tester | sonnet | Persistent failures (>3) |
-| 3 | Quick reviewer | x-reviewer-quick | haiku | Small changeset (<5 files) |
-| 3 | Code reviewer | x-reviewer | sonnet | Large changeset or escalation |
-| 3 | Security reviewer | x-security-reviewer | sonnet | Parallel with code reviewer |
-| 4 | Codebase explorer | x-explorer | haiku | Doc link checking |
-| 5 | Test runner | x-tester | sonnet | Coverage analysis |
-
-### Summary
-
 | Role | When | Characteristics |
 |------|------|-----------------|
 | **code reviewer** | Code review | Read-only analysis |

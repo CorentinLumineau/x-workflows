@@ -149,7 +149,7 @@ Place documentation correctly:
 
 ## References
 
-- @core-docs/DOC_FRAMEWORK_ENFORCEMENT.md - Doc standards
+- @core-docs/DOCUMENTATION-FRAMEWORK.md - Doc standards
 - @skills/x-setup/templates/README.md - Templates
 
 <success_criteria>

@@ -190,7 +190,7 @@ Set up workflow state and delegate to x-auto for implementation.
 
 2. **Chain to x-auto** for implementation routing:
 
-Invoke x-auto with the routing context:
+Use the Skill tool to invoke x-auto with the issue context:
 ```
 skill: "x-auto"
 args: "Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY"
@@ -241,7 +241,28 @@ For large diffs, focus on the most impactful files. Read modified source files i
 
 4. **Write PR description** (LLM-generated):
 
-> See [references/pr-description-guide.md](references/pr-description-guide.md) for PR description template and guidelines.
+Structure the description as:
+
+```markdown
+## Summary
+<2-3 sentences: what this PR does and why, referencing the issue context>
+
+## Changes
+<grouped bullet points by theme, NOT 1:1 with commits>
+
+## Impact
+<optional: breaking changes, migration notes, testing considerations>
+
+close #$ISSUE_NUMBER
+```
+
+**Guidelines**:
+- Be specific: mention component names, file counts, patterns used
+- Group by theme, not by commit
+- Highlight reviewer concerns: breaking changes, config changes, new dependencies
+- Include metrics when relevant: line counts, component counts
+- Skip trivial details
+- The `Impact` section is optional — omit for straightforward PRs
 
 5. **Create the PR**:
 ```bash
@@ -266,14 +287,40 @@ EOF
 
 | Decision Level | Action | Example |
 |----------------|--------|---------|
-| **Critical** | ALWAYS ASK | PR creation, branch recreation |
+| **Critical** | ALWAYS ASK | PR creation confirmation |
+| **Critical** | ALWAYS ASK | Branch recreation (data loss) |
 | **High** | ALWAYS ASK | Base branch selection |
 | **Medium** | ASK IF UNCERTAIN | Issue interpretation |
 | **Low** | PROCEED | Fetching issue details, pushing branch |
 
+<human-approval-framework>
+
+When approval needed, structure question as:
+1. **Context**: Current state and what's about to happen
+2. **Options**: Clear choices with consequences
+3. **Recommendation**: Highlight the suggested path
+4. **Escape**: "Cancel" option always available
+
+**CRITICAL**: PR creation requires explicit user approval. Never auto-create PRs.
+
+</human-approval-framework>
+
 ## Workflow Chaining
 
+**Next Verb**: `/x-auto` (delegates implementation routing)
+
+| Trigger | Chain To | Auto? |
+|---------|----------|-------|
+| Phase 3 reached | `/x-auto` | Yes (with issue context) |
+| Implementation complete | PR creation (Phase 4) | **HUMAN APPROVAL REQUIRED** |
+| PR created | Stop | Yes |
+
 <chaining-instruction>
+
+After Phase 2 (branch setup):
+1. Write workflow state with `pr_pending: true`
+2. Use Skill tool to invoke x-auto with issue context
+3. After x-auto chain completes, proceed to Phase 4 (PR creation)
 
 <workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY" />
 <workflow-chain on="pr-create" action="phase4" />
@@ -309,7 +356,19 @@ EOF
 
 ## Output Format
 
-> See [references/pr-description-guide.md](references/pr-description-guide.md) for output format and examples.
+After successful PR creation:
+```
+## Issue #$ISSUE_NUMBER Complete
+
+| Step | Status |
+|------|--------|
+| Issue fetched | Done |
+| Branch created | feature-branch.$ISSUE_NUMBER |
+| Implementation | Completed via x-auto |
+| PR created | $PR_URL |
+
+PR links to issue #$ISSUE_NUMBER and will auto-close on merge.
+```
 
 ## Navigation
 
@@ -326,6 +385,17 @@ EOF
 - [ ] Branch pushed to remote
 - [ ] PR created with proper description and `close #N`
 - [ ] Workflow state cleaned up
+
+## Examples
+
+**Standard feature** — `/git-implement-issue 42`:
+Fetches issue #42 → creates `feature-branch.42` → routes through x-auto (likely APEX) → creates PR with `close #42`.
+
+**Bug fix** — `/git-implement-issue 108`:
+Fetches issue #108 → creates `feature-branch.108` → x-auto routes to ONESHOT/DEBUG → creates PR with `close #108`.
+
+**Existing branch** — `/git-implement-issue 42` (branch exists):
+Detects existing `feature-branch.42` → asks user to switch or recreate → continues from current state.
 
 ## References
 

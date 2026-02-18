@@ -333,13 +333,11 @@ All workflows persist their state in `.claude/workflow-state.json` with 3-layer 
 
 ### State Layers
 
-| Layer | Location | Purpose | Required for Resume? |
-|-------|----------|---------|---------------------|
-| **L1** | `.claude/workflow-state.json` | Primary file-based state — **self-sufficient for resume** | **YES** (sole requirement) |
-| **L2** | MEMORY.md (auto-memory) | Cross-session learnings + checkpoint state summaries | No — enrichment |
-| **L3** | Memory MCP entity `"workflow-state"` | Cross-session structured data, queryable history | No — enrichment |
-
-> **Note**: L1 alone contains the complete workflow state schema (type, phase, timestamps, context). L3 adds structured history and richer queries but is not essential for workflow continuity. See `persistence-architecture.md` for the full degradation matrix.
+| Layer | Location | Purpose |
+|-------|----------|---------|
+| **L1** | `.claude/workflow-state.json` | Primary file-based state (same-session) |
+| **L2** | MEMORY.md (auto-memory) | Cross-session summary |
+| **L3** | Memory MCP entity `"workflow-state"` | Cross-session structured data |
 
 ### State Schema
 
@@ -354,33 +352,10 @@ All workflows persist their state in `.claude/workflow-state.json` with 3-layer 
       "implement": { "status": "completed", "timestamp": "..." },
       "review": { "status": "in_progress" },
       "commit": { "status": "pending" }
-    },
-    "enforcement": {
-      "violations": [
-        { "code": "V-TEST-03", "severity": "HIGH", "details": "Coverage 72% on changed files" }
-      ],
-      "blocking": true,
-      "summary": "1 HIGH violation (blocking)"
     }
   },
   "history": []
 }
-```
-
-#### Enforcement Field
-
-The `enforcement` field is written by x-review (Phase 6b) and x-implement (Phase 4b) to track V-* violation results:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `violations` | array | List of detected violations with `code`, `severity`, and `details` |
-| `blocking` | boolean | `true` if any CRITICAL or HIGH violation exists |
-| `summary` | string | Human-readable summary (e.g., "2 violations: 1 HIGH, 1 MEDIUM") |
-
-**Blocking logic:**
-- CRITICAL or HIGH severity → `blocking: true`
-- MEDIUM or LOW severity → `blocking: false` (warn only)
-- Missing `enforcement` field → treated as no violations (backward compatible)
 ```
 
 ### Phase 0b: Pre-Flight Check

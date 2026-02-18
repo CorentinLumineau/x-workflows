@@ -17,7 +17,6 @@ chains-to:
 chains-from:
   - skill: git-check-ci
   - skill: x-troubleshoot
-  - skill: x-analyze
 ---
 
 # /x-fix

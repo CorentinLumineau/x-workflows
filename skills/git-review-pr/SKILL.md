@@ -100,7 +100,34 @@ Present PR details to user before gate:
 
 ## Phase 1: Fetch PR Locally
 
-Fetch PR branch locally using forge-appropriate checkout command (gh/tea/glab). Verify checkout success and capture base branch merge-base.
+Fetch PR branch to local environment for analysis:
+
+**GitHub**:
+```bash
+gh pr checkout {number}
+```
+
+**Gitea**:
+```bash
+git fetch origin pull/{number}/head:pr-{number}
+git checkout pr-{number}
+```
+
+**GitLab**:
+```bash
+glab mr checkout {number}
+```
+
+Verify checkout success:
+```bash
+git status
+git log -1 --oneline
+```
+
+Capture base branch (usually main/master):
+```bash
+git merge-base HEAD origin/main  # or origin/master
+```
 
 <state-checkpoint phase="pr-fetched" status="captured">
 PR branch name, base commit SHA, working directory state
@@ -152,11 +179,50 @@ If tests fail, flag as blocking issue in review findings (severity: Critical).
 
 Generate comprehensive review report with sections:
 
-Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion findings (with location and recommendation), Test Results (counts + coverage), Security Assessment (OWASP + secrets check).
+### 4.1 Executive Summary
+- Overall verdict: APPROVE / REQUEST_CHANGES / COMMENT
+- Total findings count by severity
+- Test results summary
+- Key blocking issues (if any)
 
-**Verdict**: REQUEST_CHANGES if critical findings/test failures/security issues; APPROVE if none; COMMENT for suggestions only.
+### 4.2 Critical Findings
+List all Critical severity findings:
+- Source: code-quality / security
+- Location: file:line
+- Description: what's wrong
+- Recommendation: how to fix
 
-> **Full report template and verdict logic**: See `references/review-report-template.md`
+### 4.3 Warnings
+List all Warning severity findings (same structure as Critical)
+
+### 4.4 Suggestions
+List all Suggestion severity findings (same structure as Critical)
+
+### 4.5 Test Results
+- Tests passed/failed/skipped
+- Coverage: overall % and diff vs. base
+- Failed tests details (if any)
+
+### 4.6 Security Assessment
+- OWASP categories checked
+- Vulnerabilities found (count)
+- Secrets exposure check: PASS/FAIL
+- Recommended security improvements
+
+### 4.7 Verdict Logic
+Determine verdict based on:
+- **REQUEST_CHANGES** if:
+  - Any Critical findings exist
+  - Tests failed
+  - Security vulnerabilities found
+- **APPROVE** if:
+  - No Critical findings
+  - All tests passed
+  - No security vulnerabilities
+  - Warnings/Suggestions are acceptable
+- **COMMENT** if:
+  - Only Suggestions exist
+  - User wants to approve with minor comments
 
 <state-checkpoint phase="review-compiled" status="captured">
 Complete review report, verdict, structured findings JSON
@@ -205,9 +271,33 @@ If user chooses option 2 (force approve with issues):
 
 List blocking issues again before this gate. Require exact match of "APPROVE ANYWAY" confirmation phrase.
 
-**Submit review via forge CLI** (gh/tea/glab) with chosen verdict and review body. Verify submission via exit code and confirm review appears.
+**Submit review via forge CLI**:
 
-> **Forge submission commands**: See `references/review-report-template.md`
+**GitHub**:
+```bash
+gh pr review {number} \
+  --approve | --request-changes | --comment \
+  --body "{review report markdown}"
+```
+
+**Gitea**:
+```bash
+tea pr review {number} \
+  --approve | --reject | --comment \
+  --comment "{review report markdown}"
+```
+
+**GitLab**:
+```bash
+glab mr review {number} \
+  --approve | --approve=false \
+  --comment "{review report markdown}"
+```
+
+Verify submission:
+- Check CLI exit code
+- Fetch PR again to confirm review appears
+- Display review URL to user
 
 <state-checkpoint phase="review-submitted" status="captured">
 Submission timestamp, review URL, final verdict
@@ -341,6 +431,22 @@ When approval needed, structure question as:
 
 ---
 
-## When to Load References
+## Example Usage
 
-- **For report template and verdict logic**: See `references/review-report-template.md`
+```bash
+# Review PR #42
+/git-review-pr 42
+
+# Review PR with hash prefix
+/git-review-pr #156
+```
+
+Expected workflow:
+1. User invokes skill with PR number
+2. Skill fetches PR locally
+3. Parallel code + security review runs
+4. Tests execute on PR branch
+5. Structured report generated
+6. User reviews findings and approves submission
+7. Review posted to forge
+8. User proceeds to merge (chains to git-merge-pr) or waits for author

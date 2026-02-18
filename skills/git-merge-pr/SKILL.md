@@ -66,16 +66,6 @@ This workflow activates:
    - GitHub: `gh pr view {PR} --json number,title,state,mergeable,reviews,statusCheckRollup`
    - Gitea: `tea pr show {PR}`
 
-### Phase 0b: Workflow State Check (ENFORCED)
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - CI check completed (passed or acknowledged)? → Proceed to merge
-   - **CI check NOT completed? → BLOCK**: "Cannot merge PR. Required predecessor 'ci-check' is not completed. Run /git-check-ci first, or confirm explicit bypass."
-   - User explicitly bypasses CI check? → Proceed with warning logged
-   - No active workflow → Proceed (standalone merge)
-3. If no workflow state file exists → Proceed (backward compatibility)
-
 ### Phase 1: Validate Merge Readiness
 
 <!-- <state-checkpoint id="merge-validation" phase="git-merge-pr" status="merge-validation" data="pr_number, ci_status, review_status, mergeable"> -->
@@ -92,8 +82,7 @@ This workflow activates:
 5. If any validation fails:
    - Present detailed status report
    - Ask user if they want to force merge (require explicit "force merge" confirmation)
-   <workflow-gate type="human-approval" criticality="critical" prompt="CI failing or reviews incomplete. Force merge anyway?">
-   </workflow-gate>
+   <!-- <workflow-gate type="human-approval" criticality="critical" prompt="CI failing or reviews incomplete. Force merge anyway?"> -->
 
 ### Phase 2: Select Merge Strategy
 
@@ -108,8 +97,7 @@ This workflow activates:
    - Multiple clean commits → suggest rebase
    - Complex history → suggest merge commit
 3. Prompt user for strategy selection
-<workflow-gate type="human-approval" criticality="critical" prompt="Select merge strategy (squash/rebase/merge)?">
-</workflow-gate>
+<!-- <workflow-gate type="human-approval" criticality="critical" prompt="Select merge strategy (squash/rebase/merge)?"> -->
 4. Store selected strategy in `merge_context.strategy`
 
 ### Phase 3: Execute Merge
@@ -119,8 +107,7 @@ This workflow activates:
    - Rebase: `gh pr merge {PR} --rebase` or `tea pr merge {PR} --rebase`
    - Merge: `gh pr merge {PR} --merge` or `tea pr merge {PR} --merge`
 2. If squash selected, allow user to edit commit message
-   <workflow-gate type="human-approval" criticality="medium" prompt="Edit squash commit message?">
-   </workflow-gate>
+   <!-- <workflow-gate type="human-approval" criticality="medium" prompt="Edit squash commit message?"> -->
 3. Execute merge command
 4. Capture merge commit SHA from output
 5. If merge fails:
@@ -132,8 +119,7 @@ This workflow activates:
 ### Phase 4: Cleanup Remote Branch
 
 1. Ask user if remote branch should be deleted
-   <workflow-gate type="human-approval" criticality="medium" prompt="Delete remote branch after merge?">
-   </workflow-gate>
+   <!-- <workflow-gate type="human-approval" criticality="medium" prompt="Delete remote branch after merge?"> -->
 2. If approved, delete via:
    - GitHub: `gh pr merge` with `--delete-branch` flag (can add to phase 3 command)
    - Gitea: `git push origin --delete {branch-name}`

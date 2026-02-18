@@ -9,9 +9,6 @@ metadata:
   author: ccsetup contributors
   version: "3.0.0"
   category: workflow
-chains-to: []
-chains-from:
-  - skill: x-analyze
 ---
 
 # /x-docs
