@@ -1,6 +1,6 @@
 ---
 name: error-recovery
-description: Classify and recover from tool failures, network errors, and session interruptions.
+description: Use when a tool call fails, a network error occurs, or a session interruption is detected. Applies recovery strategies.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

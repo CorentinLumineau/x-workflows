@@ -1,6 +1,6 @@
 ---
 name: ci-awareness
-description: Detect CI/CD system and query pipeline status for merge readiness and failure diagnosis.
+description: Use when checking CI/CD pipeline status, diagnosing build failures, or verifying merge readiness.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

@@ -1,6 +1,6 @@
 ---
 name: interview
-description: Universal confidence gate ensuring human-in-the-loop before any significant action.
+description: Use when about to take a significant action needing confirmation. Confidence gate with human-in-the-loop validation.
 category: behavioral
 user-invocable: false
 triggers:

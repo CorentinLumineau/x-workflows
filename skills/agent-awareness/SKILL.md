@@ -1,6 +1,6 @@
 ---
 name: agent-awareness
-description: Agent delegation awareness with catalog, decision matrix, and patterns. Auto-triggered.
+description: Use when delegating work to agents. Provides agent catalog, decision matrix, and delegation patterns. Auto-triggered.
 license: Apache-2.0
 allowed-tools:
   - Read

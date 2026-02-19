@@ -1,6 +1,6 @@
 ---
 name: forge-awareness
-description: Auto-detect forge platform from git remotes for forge-agnostic workflow operations.
+description: Use when git operations need forge-specific CLI commands. Auto-detects forge platform (GitHub/Gitea) from remotes.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

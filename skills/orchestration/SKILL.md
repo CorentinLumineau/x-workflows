@@ -1,6 +1,6 @@
 ---
 name: orchestration
-description: Parallel workflow coordination for batch operations. Auto-triggered when batch detection identifies >5 similar items.
+description: Use when batch detection identifies >5 similar items needing parallel processing. Coordinates parallel batch execution.
 license: Apache-2.0
 allowed-tools: Read, Grep, Glob
 metadata:

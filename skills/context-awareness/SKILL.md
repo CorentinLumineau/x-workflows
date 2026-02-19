@@ -1,6 +1,6 @@
 ---
 name: context-awareness
-description: Detect runtime environment, manage session state, and provide tool availability context.
+description: Use when session starts or context needs detection. Identifies environment, session state, and tool availability.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash

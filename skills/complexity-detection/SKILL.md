@@ -1,6 +1,6 @@
 ---
 name: complexity-detection
-description: Intelligent routing for all workflows based on complexity and intent.
+description: Use when routing a task to determine workflow complexity. Analyzes intent and scope for workflow selection.
 license: Apache-2.0
 allowed-tools: Read Grep Glob
 metadata:

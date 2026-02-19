@@ -1,6 +1,6 @@
 ---
 name: permission-awareness
-description: Detect runtime permission mode and adapt workflow behavior for safe tool usage.
+description: Use when workflow must adapt to the current permission mode. Detects runtime permissions and adjusts tool usage.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
