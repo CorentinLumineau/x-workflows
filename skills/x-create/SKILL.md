@@ -51,10 +51,11 @@ Ecosystem-aware creation wizard for plugin components. Scans the existing ecosys
 
 ## Execution
 
-Pipeline: **0.5 → 0.6 → 0.7 → 0.8 → mode file**
+Pipeline: **0.5 → 0.5b → 0.6 → 0.7 → 0.8 → mode file**
 
 - **0.5** Scope Detection (existing — unchanged)
-- **0.6** Ecosystem Scan (dedup, related components)
+- **0.5b** Scope-Prefix Injection (auto-prefix based on scope + triggerability)
+- **0.6** Ecosystem Scan (dedup, related components — prefix-aware)
 - **0.7** Smart Routing + Routing Gate (correct repo + path + user confirmation)
 - **0.8** Guide Consultation (current best practices)
 - **mode** Mode-specific wizard (skill/agent/discover)
@@ -99,6 +100,28 @@ scopes:
 3. **Confirm** with user or allow override
 4. **Resolve** all `{scope.paths.*}` templates using confirmed scope
 
+### Phase 0.5b: Scope-Prefix Injection
+
+Apply scope-based naming prefix after scope is confirmed.
+
+**Protocol**: See `references/scope-prefix.md` for complete convention.
+
+1. **Determine triggerability**:
+   - Commands → always user-triggerable
+   - Agents → always user-triggerable
+   - Skills with `user-invocable: true` → user-triggerable
+   - Skills with `user-invocable: false` (behavioral) → NOT user-triggerable
+2. **If user-triggerable AND scope has a prefix**:
+   - project → `prj-`
+   - user → `usr-`
+   - plugin → no scope prefix (uses existing `x-`/`git-` convention)
+3. **Double-prefix detection**:
+   - If name already starts with scope prefix → use as-is, note: "Prefix already present"
+   - If name starts with a *different* scope prefix → **WARN**: "Name has `{other_prefix}` but scope is `{scope}`. Use `{scope_prefix}{base_name}` instead? [Y/n]"
+   - Otherwise → prepend prefix, show: "Auto-prefixed: `{prefix}{name}` ({scope} scope convention)"
+4. **If NOT user-triggerable** → no prefix, note: "No prefix for behavioral skills"
+5. **Pass prefixed name** downstream to all subsequent phases
+
 ### Phase 0.6: Ecosystem Scan
 
 Scan the existing ecosystem to prevent duplicates and show context.
@@ -109,7 +132,10 @@ Scan the existing ecosystem to prevent duplicates and show context.
    - `{plugin_root}/skills/*/SKILL.md` → Skills
    - `{plugin_root}/agents/*.md` → Agents
 2. **Parse** frontmatter from each (name, description, category)
-3. **Duplicate check**:
+3. **Duplicate check** (prefix-aware):
+   - Strip any scope prefix (`prj-`, `usr-`) before comparing to catch conflicts
+   - Match both `{prefix}{name}` and `{name}` against existing components
+   - Cross-check against other scope prefixes (e.g., `usr-{name}` when creating `prj-{name}`)
    - Exact name match → **BLOCK** (show existing, confirm intent)
    - Similar name (edit distance < 3) → **WARN** (show similar, suggest review)
 4. **Show related** components in same category/scope
@@ -235,6 +261,7 @@ All created components must pass:
 ## When to Load References
 
 - **For Claude Code platform spec**: See `references/claude-code-platform.md` (frontmatter fields, hooks, env vars, file structures)
+- **For scope-prefix convention**: See `references/scope-prefix.md` (prj-, usr- prefixing rules)
 - **For ecosystem scan protocol**: See `references/ecosystem-catalog.md`
 - **For routing decisions**: See `references/routing-rules.md`
 - **For skill mode**: See `references/mode-skill.md`

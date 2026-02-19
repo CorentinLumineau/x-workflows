@@ -28,10 +28,16 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Agent Information (Enhanced with Ecosystem Context)
 
-**Consume pre-processing context** from Phases 0.6-0.8:
+**Consume pre-processing context** from Phases 0.5b-0.8:
 - Cross-reference with existing agentTypes from tool-mapping.json (12 registered types)
 - Check for duplicate roles or overlapping capabilities
 - Apply guide consultation recommendations from Phase 0.8
+
+**Apply scope-prefix** (from Phase 0.5b — see `references/scope-prefix.md`):
+- If scope is `project` → auto-apply `prj-` prefix: `prj-{name}`
+- If scope is `user` → auto-apply `usr-` prefix: `usr-{name}`
+- If scope is `plugin` → no scope prefix (uses existing `x-` convention)
+- Show prefixed name in confirmation: "Agent name: **{prefixed_name}** ({scope} scope)"
 
 **Existing agentTypes reference** (from `.github/config/tool-mapping.json`):
 
@@ -71,7 +77,7 @@ Gather agent details:
 ```
 
 Then ask for:
-- Agent name (x-{name})
+- Agent name (auto-prefixed per scope: `prj-{name}` / `usr-{name}` / `x-{name}`)
 - Purpose/description
 - Recommended model (haiku/sonnet/opus)
 - Tools available
@@ -148,7 +154,7 @@ Delegate to a **x-{name}** agent ({model}):
 **Version**: 1.0.0
 ```
 
-Save to `{scope.paths.agents}x-{name}.md`
+Save to `{scope.paths.agents}{prefixed_name}.md` (where `{prefixed_name}` is `prj-{name}`, `usr-{name}`, or `x-{name}` per scope)
 
 **If creating a plugin-level agent**: Also consider registering in `tool-mapping.json` agentTypes for semantic marker resolution. This enables other skills to reference the agent via `<agent-delegate role="{role}">`.
 

@@ -266,14 +266,29 @@ Components can declare hooks to respond to lifecycle events.
 
 ## Naming Conventions
 
-| Component | Pattern | Examples |
-|-----------|---------|---------|
-| Workflow skill | `x-{verb}` | x-implement, x-review |
-| Behavioral skill | `{noun}` or `{noun}-{modifier}` | interview, code-quality |
-| Knowledge skill | `{category}-{topic}` | security-owasp, quality-testing |
-| Agent | `x-{role}` | x-tester, x-reviewer |
-| Command | `{verb}` or `{verb}-{noun}` | commit, bump-version |
-| Output style | `{adjective}` or `{style-name}` | explanatory, learning |
+| Component | Scope | Pattern | Examples |
+|-----------|-------|---------|---------|
+| Workflow skill | plugin | `x-{verb}` | x-implement, x-review |
+| Behavioral skill | any | `{noun}` or `{noun}-{modifier}` | interview, code-quality |
+| Knowledge skill | plugin | `{category}-{topic}` | security-owasp, quality-testing |
+| Agent | plugin | `x-{role}` | x-tester, x-reviewer |
+| Agent | project | `prj-{name}` | prj-db-migrator |
+| Agent | user | `usr-{name}` | usr-my-helper |
+| Command | plugin | `{verb}` or `{verb}-{noun}` | commit, bump-version |
+| Command | project | `prj-{name}` | prj-lint, prj-deploy |
+| Command | user | `usr-{name}` | usr-scratch |
+| Skill (user-invocable) | project | `prj-{name}` | prj-validate-schema |
+| Skill (user-invocable) | user | `usr-{name}` | usr-my-linter |
+| Output style | any | `{adjective}` or `{style-name}` | explanatory, learning |
+
+### Scope-Prefix Convention
+
+Components at project and user scope receive automatic name prefixes for autocomplete discoverability:
+- **`prj-`** for project scope (`/prj-<TAB>` → all project components)
+- **`usr-`** for user scope (`/usr-<TAB>` → all personal components)
+- **No prefix** for behavioral skills (auto-activated, not `/`-discoverable)
+
+See `references/scope-prefix.md` for the complete convention.
 
 ---
 

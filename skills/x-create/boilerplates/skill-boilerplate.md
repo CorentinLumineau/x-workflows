@@ -18,13 +18,18 @@ This document defines the canonical structure for skills in the ccsetup plugin.
 
 ## 1. SKILL.md Structure
 
-### User-Invocable Skills (x-* prefix)
+### User-Invocable Skills
 
 **Minimal frontmatter per Anthropic guidelines:**
 
 ```yaml
 ---
+# Plugin scope:
 name: x-{skill-name}
+# Project scope:
+# name: prj-{skill-name}
+# User scope:
+# name: usr-{skill-name}
 description: "{Brief description}. Modes: {mode1}, {mode2}. Use when {triggers}."
 # --- Optional fields (add only when needed) ---
 # allowed-tools: Read, Write, Edit, Grep, Glob, Bash  # Tool allowlist (comma-separated)
@@ -225,11 +230,15 @@ This mode activates:
 
 ## 4. Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| User-invocable skill | `x-{verb}` | `x-implement`, `x-review` |
-| Behavioral skill | `{noun}` or `{noun}-{modifier}` | `code-quality`, `context-awareness` |
-| Mode file | `mode-{mode}.md` | `mode-fix.md`, `mode-create.md` |
+| Type | Scope | Pattern | Example |
+|------|-------|---------|---------|
+| User-invocable skill | plugin | `x-{verb}` | `x-implement`, `x-review` |
+| User-invocable skill | project | `prj-{name}` | `prj-validate-schema` |
+| User-invocable skill | user | `usr-{name}` | `usr-my-linter` |
+| Behavioral skill | any | `{noun}` or `{noun}-{modifier}` | `code-quality`, `context-awareness` |
+| Mode file | any | `mode-{mode}.md` | `mode-fix.md`, `mode-create.md` |
+
+> **Scope-prefix convention**: See `references/scope-prefix.md` for the complete prefix system, double-prefix detection, and behavioral skill exemptions.
 
 ---
 

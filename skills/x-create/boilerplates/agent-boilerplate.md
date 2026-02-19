@@ -22,7 +22,12 @@ This document defines the canonical structure for agents in the ccsetup plugin.
 
 ```yaml
 ---
+# Plugin scope:
 name: x-{agent-name}
+# Project scope:
+# name: prj-{agent-name}
+# User scope:
+# name: usr-{agent-name}
 description: "{Purpose} specialist. Use when {triggers}. {Capabilities}."
 model: haiku | sonnet | opus | inherit
 tools: [Read, Grep, Glob, Edit, Write, Bash, LSP, Task]
@@ -145,10 +150,14 @@ Additional:
 
 ## 3. Naming Conventions
 
-| Pattern | Example | Use |
-|---------|---------|-----|
-| `x-{role}er` | x-explorer, x-refactorer | Role-based agents |
-| `x-{role}-{modifier}` | x-reviewer | Compound roles |
+| Scope | Pattern | Example | Use |
+|-------|---------|---------|-----|
+| plugin | `x-{role}er` | x-explorer, x-refactorer | Plugin role-based agents |
+| plugin | `x-{role}-{modifier}` | x-reviewer-quick | Plugin compound roles |
+| project | `prj-{name}` | prj-db-migrator | Project-scoped agents |
+| user | `usr-{name}` | usr-my-helper | User-scoped agents |
+
+> **Scope-prefix convention**: See `references/scope-prefix.md` for the complete prefix system and double-prefix detection.
 
 ---
 

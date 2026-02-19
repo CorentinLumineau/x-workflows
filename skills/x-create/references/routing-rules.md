@@ -10,10 +10,15 @@ Creating...
 ├─ Behavioral skill → x-workflows/skills/{name}/
 ├─ Knowledge skill → x-devsecops/skills/{category}/{name}/
 ├─ Agent (plugin) → ccsetup-plugin/agents/x-{name}.md
-├─ Agent (project) → .claude/agents/x-{name}.md
+├─ Agent (project) → .claude/agents/prj-{name}.md
+├─ Agent (user) → ~/.claude/agents/usr-{name}.md
 ├─ Command (plugin) → ccsetup-plugin/commands/{name}.md
-├─ Command (project) → .claude/commands/{name}.md
-└─ Local skill → .claude/skills/{name}/ or ~/.claude/skills/{name}/
+├─ Command (project) → .claude/commands/prj-{name}.md
+├─ Command (user) → ~/.claude/commands/usr-{name}.md
+├─ Local skill (project, user-invocable) → .claude/skills/prj-{name}/
+├─ Local skill (project, behavioral) → .claude/skills/{name}/ (no prefix)
+├─ Local skill (user, user-invocable) → ~/.claude/skills/usr-{name}/
+└─ Local skill (user, behavioral) → ~/.claude/skills/{name}/ (no prefix)
 ```
 
 ## Smart Detection
@@ -36,7 +41,8 @@ Before creating, check if the target source repo exists locally:
 | Workflow (x-*) | Name starts with `x-`, user-invocable, has modes | x-workflows | `skills/x-{name}/` |
 | Behavioral | Auto-activated, context-triggered, no `/x-` prefix | x-workflows | `skills/{name}/` |
 | Knowledge | Domain expertise, reference material, category-based | x-devsecops | `skills/{category}/{name}/` |
-| Local | Project-specific, not reusable across projects | N/A (local) | `.claude/skills/{name}/` |
+| Local (user-invocable) | Project-specific, user-triggerable | N/A (local) | `.claude/skills/prj-{name}/` or `~/.claude/skills/usr-{name}/` |
+| Local (behavioral) | Project-specific, auto-activated | N/A (local) | `.claude/skills/{name}/` (no prefix) |
 
 ### Knowledge Skill Categories
 
@@ -55,16 +61,21 @@ Before creating, check if the target source repo exists locally:
 | Scope | When | Path |
 |-------|------|------|
 | Plugin | Extending ccsetup plugin | `ccsetup-plugin/commands/{name}.md` |
-| Project | Project-specific command | `.claude/commands/{name}.md` |
-| User | Personal global command | `~/.claude/commands/{name}.md` |
+| Project | Project-specific command | `.claude/commands/prj-{name}.md` |
+| User | Personal global command | `~/.claude/commands/usr-{name}.md` |
 
 ### Agents
 
 | Scope | When | Path |
 |-------|------|------|
 | Plugin | Extending ccsetup plugin | `ccsetup-plugin/agents/x-{name}.md` |
-| Project | Project-specific agent | `.claude/agents/x-{name}.md` |
-| User | Personal global agent | `~/.claude/agents/x-{name}.md` |
+| Project | Project-specific agent | `.claude/agents/prj-{name}.md` |
+| User | Personal global agent | `~/.claude/agents/usr-{name}.md` |
+
+### Scope Prefix
+
+Components at project and user scope receive automatic name prefixes for discoverability.
+See `references/scope-prefix.md` for the complete convention, double-prefix detection, and examples.
 
 ## Critical Constraints
 

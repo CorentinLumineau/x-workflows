@@ -28,11 +28,17 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Skill Information (Enhanced with Ecosystem Context)
 
-**Consume pre-processing context** from Phases 0.6-0.8:
+**Consume pre-processing context** from Phases 0.5b-0.8:
 - Show ecosystem scan results (total count, category breakdown)
 - Display any duplicate warnings or blocks from Phase 0.6
 - Show the resolved target path from Phase 0.7
 - Apply guide consultation recommendations from Phase 0.8
+
+**Apply scope-prefix** (from Phase 0.5b — see `references/scope-prefix.md`):
+- If scope is `project` AND skill is user-invocable → auto-apply `prj-` prefix to name
+- If scope is `user` AND skill is user-invocable → auto-apply `usr-` prefix to name
+- If skill is behavioral → no prefix (note: "No prefix for behavioral skills")
+- Show prefixed name in confirmation: "Skill name: **{prefixed_name}** ({scope} scope)"
 
 Gather skill details:
 
