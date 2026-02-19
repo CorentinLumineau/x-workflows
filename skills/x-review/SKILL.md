@@ -19,6 +19,7 @@ chains-from:
   - skill: x-refactor
   - skill: x-fix
   - skill: x-analyze
+  - skill: x-create
 ---
 
 # /x-review

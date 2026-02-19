@@ -22,6 +22,7 @@ chains-from:
   - skill: x-review
     condition: "changes requested"
   - skill: git-implement-issue
+  - skill: x-create
 ---
 
 # /x-implement
