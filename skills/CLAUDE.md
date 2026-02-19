@@ -42,11 +42,11 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |--------|---------|--------|--------|
 | **x-workflows** | HOW to work | 21 workflow skills | `x-{verb}/` |
 | x-workflows | Git operations | 10 git skills | `git-{verb}-{type}/` |
-| x-workflows | Auto-triggered | 9 behavioral skills | `{name}/` (includes interview, orchestration) |
+| x-workflows | Auto-triggered | 12 behavioral skills | `{name}/` (includes interview, orchestration) |
 | **x-devsecops** | WHAT to know | 21 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 1 | initiative |
 
-**Total: 62 skills**
+**Total: 65 skills**
 
 ## Verb Skills by Workflow (21)
 
