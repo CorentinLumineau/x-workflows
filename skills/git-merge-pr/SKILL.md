@@ -79,6 +79,8 @@ This workflow activates:
 ### Phase 1: Validate Merge Readiness
 
 <state-checkpoint id="merge-validation" phase="git-merge-pr" status="merge-validation" data="pr_number, ci_status, review_status, mergeable">
+Checkpoint captures: PR number, CI status, review status, mergeability
+</state-checkpoint>
 1. Check PR state is "OPEN" - if already merged/closed, inform user and exit
 2. Validate CI status via `ci-awareness`:
    - Read `ci_context.merge_ready` state
@@ -142,6 +144,8 @@ This workflow activates:
 ### Phase 5: Update State and Suggest Next Steps
 
 <state-checkpoint id="merge-complete" phase="git-merge-pr" status="merge-complete" data="merge_sha, merged_at, deleted_branch">
+Checkpoint captures: merge SHA, merge timestamp, deleted branch
+</state-checkpoint>
 1. Update workflow state:
    ```json
    {
