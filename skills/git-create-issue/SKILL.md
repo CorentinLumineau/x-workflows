@@ -61,7 +61,7 @@ This workflow activates:
 
 ### Phase 1: Gather Issue Details via Interview
 
-<!-- <state-checkpoint id="issue-gathering" phase="git-create-issue" status="issue-gathering" data="title, type, template_selected"> -->
+<state-checkpoint id="issue-gathering" phase="git-create-issue" status="issue-gathering" data="title, type, template_selected">
 1. Activate `interview` behavioral skill to gather:
    - Issue type (bug/feature/task/documentation/question)
    - If templates exist, ask user to select template or use blank
@@ -130,7 +130,7 @@ This workflow activates:
 
 ### Phase 4: Post-Creation Actions
 
-<!-- <state-checkpoint id="issue-created" phase="git-create-issue" status="issue-created" data="issue_number, issue_url, labels, milestone"> -->
+<state-checkpoint id="issue-created" phase="git-create-issue" status="issue-created" data="issue_number, issue_url, labels, milestone">
 1. Update workflow state:
    ```json
    {

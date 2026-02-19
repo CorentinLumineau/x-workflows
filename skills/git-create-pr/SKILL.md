@@ -72,7 +72,7 @@ This workflow activates:
 
 ### Phase 1: Branch Analysis
 
-<!-- <state-checkpoint id="pr-analysis" phase="git-create-pr" status="pr-analysis" data="branch_name, base_branch, commit_count, file_changes"> -->
+<state-checkpoint id="pr-analysis" phase="git-create-pr" status="pr-analysis" data="branch_name, base_branch, commit_count, file_changes">
 1. Identify base branch (typically `main` or `master`) via `git remote show origin`
 2. Generate diff summary via `git diff origin/{base}...HEAD --stat`
 3. Analyze commit messages via `git log origin/{base}..HEAD --pretty=format:"%s"`
@@ -128,7 +128,7 @@ This workflow activates:
 
 ### Phase 5: Update State and Present Results
 
-<!-- <state-checkpoint id="pr-created" phase="git-create-pr" status="pr-created" data="pr_number, pr_url, linked_issue"> -->
+<state-checkpoint id="pr-created" phase="git-create-pr" status="pr-created" data="pr_number, pr_url, linked_issue">
 1. Update workflow state with:
    ```json
    {
