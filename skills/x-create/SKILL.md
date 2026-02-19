@@ -150,19 +150,21 @@ Determine the correct repository and path for the new component.
 3. **Resolve path**: Apply routing rules to determine exact file path
 4. **Present routing gate**: Show classification, target, path, and rationale for confirmation
 
-### Phase 0.8: Guide Consultation
+### Phase 0.8: Platform Reference & Guide Consultation
 
-Query current Claude Code best practices for the component type being created.
+Load the Claude Code platform specification and optionally query for latest best practices.
+
+1. **Load platform reference** — Read `references/claude-code-platform.md` for authoritative frontmatter fields, hook events, environment variables, and file structure patterns
+2. **Carry forward** platform spec into mode-specific wizard phases — use this as the source of truth for all frontmatter fields and component structure
+3. **Optional live query** — If the claude code guide agent is available, query for any recent changes not yet in the static reference:
 
 <agent-delegate role="claude code guide" model="haiku">
-<prompt>What are current Claude Code best practices for creating a {component_type}? Include: recommended file structure, frontmatter fields, naming conventions, and any recent changes to the skill/agent format. Focus on practical patterns, not theory.</prompt>
-<context>Creating a {component_type} named "{name}" in {scope} scope. Purpose: {description}</context>
+<prompt>Are there any recent Claude Code changes (since 2026-02-19) affecting {component_type} creation? Only report NEW changes to frontmatter fields, file structure, or naming conventions. Say "no changes" if nothing new.</prompt>
+<context>Creating a {component_type} named "{name}" in {scope} scope. We already have the platform spec loaded — only report deltas.</context>
 </agent-delegate>
 
-1. **Query** the Claude Code guide for current patterns
-2. **Extract** actionable recommendations (file structure, frontmatter, naming)
-3. **Carry forward** recommendations into the mode-specific wizard phases
-4. **Fallback**: If delegation is unavailable, use the static boilerplates in mode files
+4. **Merge** any live query deltas with static reference (static reference wins on conflicts)
+5. **Fallback**: If both delegation and reference are unavailable, use the static boilerplates in mode files
 
 ## Behavioral Skills
 
@@ -232,6 +234,7 @@ All created components must pass:
 
 ## When to Load References
 
+- **For Claude Code platform spec**: See `references/claude-code-platform.md` (frontmatter fields, hooks, env vars, file structures)
 - **For ecosystem scan protocol**: See `references/ecosystem-catalog.md`
 - **For routing decisions**: See `references/routing-rules.md`
 - **For skill mode**: See `references/mode-skill.md`

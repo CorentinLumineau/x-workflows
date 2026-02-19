@@ -24,20 +24,24 @@ This document defines the canonical structure for agents in the ccsetup plugin.
 ---
 name: x-{agent-name}
 description: "{Purpose} specialist. Use when {triggers}. {Capabilities}."
-model: haiku | sonnet | opus
+model: haiku | sonnet | opus | inherit
 tools: [Read, Grep, Glob, Edit, Write, Bash, LSP, Task]
 # --- Optional fields (add only when needed) ---
+# color: blue                                 # Visual: blue, cyan, green, yellow, magenta, red
 # disallowedTools: [Bash, Write]             # Deny-list (overrides tools)
-# memory: true                               # Enable persistent memory
-# permissionMode: bypassPermissions           # Or: default, plan, acceptEdits
+# memory: user                               # Persistent memory: user, project, or local
+# permissionMode: default                    # default, acceptEdits, dontAsk, bypassPermissions, plan
 # maxTurns: 25                               # Limit agentic turns
-# skills: [x-review, x-implement]            # Skills available to agent
+# skills: [x-review, x-implement]            # Skills preloaded into agent context
 # mcpServers: [sequential-thinking, context7] # MCP servers to connect
 # hooks:
-#   - PreToolUse                              # Hook event triggers
-#   - PostToolUse
+#   PreToolUse:                               # Agent-scoped hooks (same format as settings.json)
+#     - matcher: "Write|Edit"
+#       hooks: [{ type: command, command: "..." }]
 ---
 ```
+
+> **Field reference**: See `references/claude-code-platform.md` for complete field descriptions and types.
 
 ### Model Selection Guidelines
 

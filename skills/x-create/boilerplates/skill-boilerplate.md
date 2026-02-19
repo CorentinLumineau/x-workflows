@@ -27,15 +27,21 @@ This document defines the canonical structure for skills in the ccsetup plugin.
 name: x-{skill-name}
 description: "{Brief description}. Modes: {mode1}, {mode2}. Use when {triggers}."
 # --- Optional fields (add only when needed) ---
+# allowed-tools: Read, Write, Edit, Grep, Glob, Bash  # Tool allowlist (comma-separated)
 # argument-hint: "[mode] [name]"           # Shown in command palette
+# model: sonnet                            # sonnet, opus, haiku, or inherit
+# user-invocable: true                     # false = hidden from / menu (Claude-only)
 # disable-model-invocation: true            # Prevent auto-invocation by Claude
-# context: fork                             # Run in subagent context (isolated)
-# agent: x-{agent-name}                    # Bind to specific agent definition
+# context: fork                             # Run in isolated subagent context
+# agent: x-{agent-name}                    # Subagent type when context: fork
 # hooks:
-#   - PreToolUse                            # Hook event triggers
-#   - PostToolUse
+#   PreToolUse:                             # Skill-scoped hooks (same format as settings.json)
+#     - matcher: "Write|Edit"
+#       hooks: [{ type: command, command: "..." }]
 ---
 ```
+
+> **Field reference**: See `references/claude-code-platform.md` for complete field descriptions and types.
 
 **Body structure:**
 

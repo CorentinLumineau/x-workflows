@@ -78,6 +78,8 @@ Then ask for:
 
 ### Phase 2: Generate Agent File
 
+**REQUIRED**: Before generating, load `references/claude-code-platform.md` for the complete agent frontmatter field reference. Use the platform spec as the authoritative source — include all relevant optional fields as comments (memory, skills, mcpServers, hooks, permissionMode, maxTurns, disallowedTools, color).
+
 Apply guide consultation patterns from Phase 0.8 if available.
 
 **Model selection guidance** (from agentTypes patterns):
@@ -228,6 +230,7 @@ Complex domain tasks:
 
 ## References
 
+- references/claude-code-platform.md — Authoritative frontmatter fields, permission modes, model selection
 - @skills/agent-awareness/ - Agent selection guide and task management
 - boilerplates/agent-boilerplate.md - Agent structure template
 - `.github/config/tool-mapping.json` - Registered agentTypes

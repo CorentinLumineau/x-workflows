@@ -81,6 +81,8 @@ Where `{resolved_path}` comes from Phase 0.7 routing (may be in source repo or l
 
 ### Phase 3: Generate SKILL.md
 
+**REQUIRED**: Before generating, load `references/claude-code-platform.md` for the complete frontmatter field reference. Use the platform spec as the authoritative source for all frontmatter fields — do not guess or use outdated field names. Include all relevant optional fields as comments so the user sees available options.
+
 For behavioral skill:
 ```markdown
 ---
@@ -290,6 +292,7 @@ If user arrived from x-brainstorm or x-design, pre-select "Chain to next workflo
 
 ## References
 
+- references/claude-code-platform.md — Authoritative frontmatter fields, hook events, env vars
 - @documentation/development/plugin-architecture.md
 - boilerplates/skill-boilerplate.md
 - references/ecosystem-catalog.md
