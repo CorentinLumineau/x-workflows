@@ -4,12 +4,12 @@
 
 If you have the ccsetup plugin available, leverage its knowledge for deeper review:
 
-- Use the **code-code-quality** skill knowledge (SOLID, DRY, KISS, YAGNI) to identify quality violations. Reference violation IDs (V-SOLID-01 through V-SOLID-05, V-DRY-01 through V-DRY-03, V-KISS-01/02, V-YAGNI-01/02) in findings when applicable.
-- Use the **security-secure-coding** skill knowledge (OWASP Top 10, input validation, API security) to identify security issues. Reference OWASP categories (A01-A10) in findings.
+- Use the **code-code-quality** skill knowledge (SOLID, DRY, KISS, YAGNI) to identify quality violations. **V-code IDs are MANDATORY** in findings (V-SOLID-01 through V-SOLID-05, V-DRY-01 through V-DRY-03, V-KISS-01/02, V-YAGNI-01/02).
+- Use the **security-secure-coding** skill knowledge (OWASP Top 10, input validation, API security) to identify security issues. **OWASP category IDs are MANDATORY** (A01-A10) in findings.
 - Use the **quality-testing** skill knowledge (testing pyramid, coverage) to assess test quality.
 - Use the **code-design-patterns** skill knowledge to identify anti-patterns (V-PAT-01 through V-PAT-04).
 
-Include violation IDs in the `category` field of findings when a match exists (e.g., "V-SOLID-01: SRP" instead of just "CODE QUALITY").
+**MANDATORY**: Every finding MUST include its V-code or OWASP ID in the `category` field (e.g., "V-SOLID-01: SRP" not "CODE QUALITY"). Findings without violation IDs are incomplete and must be revised.
 
 ## Context Discovery
 
@@ -102,11 +102,63 @@ Always include:
 
 ---
 
+### Regression Findings
+
+Include when Phase 3b detects regressions:
+
+```
+- Coverage delta: {+/-N}% (base: {base}%, PR: {pr}%)
+- Removed tests: {count or "none"}
+- Disabled tests: {count or "none"}
+- Removed assertions: {count or "none"}
+- Behavioral regressions: {list or "none"}
+```
+
+> See `references/pr-regression-checks.md` for severity classification.
+
+---
+
+### Documentation Findings
+
+Include when Phase 4a detects documentation issues:
+
+```
+- Missing JSDoc/docstrings on new public APIs: {list or "none"}
+- Stale README sections: {list or "none"}
+- Missing CHANGELOG entry: {yes/no}
+```
+
+---
+
+## STOP — Review Approval Hard Gate
+
+> **You MUST verify all violations before generating the verdict.**
+
+**Checklist** (ALL must be true for APPROVE):
+- [ ] Zero CRITICAL violations
+- [ ] Zero HIGH violations without documented user-approved exception
+- [ ] All MEDIUM violations flagged in report
+- [ ] All test findings backed by execution evidence (see `references/verification-protocol.md`)
+
+**Common Rationalizations** (if you're thinking any of these, STOP):
+
+| Excuse | Reality |
+|--------|---------|
+| "Overall the code looks good" | Review is checklist-driven, not impression-driven. Run the checklist. |
+| "These issues are cosmetic" | Check the severity table. CRITICAL/HIGH are never cosmetic. |
+| "The user seems in a hurry" | Quality gates protect users from their own urgency. Hold the line. |
+| "It's just a small PR" | Small PRs with CRITICAL violations are still CRITICAL. |
+| "The tests pass so it's fine" | Passing tests don't prove absence of SOLID/DRY/security violations. |
+
+> See `references/enforcement-audit.md` for the full severity classification and audit checklists.
+
+---
+
 ### Quick Fix
 
 > Only include this section when verdict is NOT ✅ LGTM.
 
-Generate a copyable codeblock containing a self-contained `/x-auto` prompt with all Critical and Warning findings. **Omit Suggestions (💡)** — they are optional nice-to-haves.
+Generate a copyable codeblock containing a self-contained `/git-fix-pr` invocation with all Critical and Warning findings. **Omit Suggestions (💡)** — they are optional nice-to-haves.
 
 ```
 > Copy and run this to auto-fix all findings:

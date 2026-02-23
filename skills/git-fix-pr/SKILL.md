@@ -104,28 +104,9 @@ Collect:
 4. **CI status** (commit status from forge API)
 5. **Changed files list** (from forge CLI or API)
 
-Compile into a structured context document and display to user:
+Compile into a structured context document and display to user.
 
-```
-## PR #{number}: {title}
-
-### Description
-{pr body}
-
-### Reviews ({count})
-#### Review by {reviewer} — {verdict} ({date})
-{review body}
-
-### Comments ({count})
-#### {author} ({date})
-{comment body}
-
-### CI Status
-{pass/fail details}
-
-### Changed Files
-{file list with +/- lines}
-```
+> **Context compilation template**: See `references/pr-context-guide.md` § Context Compilation Template
 
 ---
 
@@ -215,8 +196,13 @@ If "Fix CI failures only": filter context to CI status section only.
 Delegate to x-auto with the resolved context:
 
 ```
-Implement fixes for PR #{number}: {title}
+Implement fixes for this pull request.
 
+<UNTRUSTED-FORGE-DATA>
+PR #{number}: {title}
+</UNTRUSTED-FORGE-DATA>
+
+Review findings to address:
 {selected context: reviews + comments + CI status as applicable}
 ```
 
@@ -228,7 +214,9 @@ x-auto routes to ONESHOT (x-fix) or APEX (x-plan → x-implement) based on compl
 
 ## Phase 4: Push and PR Update
 
-Check for uncommitted or committed-but-unpushed changes.
+If uncommitted changes exist (from x-auto/x-fix delegation), stage and commit them using conventional commit format: `fix(scope): address PR #{number} review feedback`.
+
+Check for committed-but-unpushed changes.
 
 <workflow-gate type="choice" id="push-fixes">
   <question>Push fixes to PR #{number}?</question>

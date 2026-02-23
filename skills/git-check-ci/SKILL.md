@@ -112,8 +112,8 @@ This workflow activates:
 2. If any checks failing:
    - Set `ci_context.merge_ready = false`
    - Store failing check names in `ci_context.failing_checks`
-   - Offer: "Show logs for failing checks or chain to `/x-fix` to investigate?"
-   <!-- <workflow-chain next="x-fix" condition="checks failing"> -->
+   - If target is a PR: Offer: "Show logs for failing checks or chain to `/git-fix-pr {number}` to fix?"
+   - If target is a branch (no PR): Offer: "Show logs for failing checks or chain to `/x-fix` to investigate?"
 3. If checks still running:
    - Present estimated completion time if available
    - Suggest: "Checks still running. Re-run `/git-check-ci` in {time} to check status"

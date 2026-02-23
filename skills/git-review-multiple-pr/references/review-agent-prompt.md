@@ -119,7 +119,7 @@ Always include a test results section:
 
 > Only include this section when verdict is NOT ✅ LGTM.
 
-Generate a copyable codeblock containing a self-contained `/x-auto` prompt with all Critical and Warning findings for this PR. **Omit Suggestions (💡).**
+Generate a copyable codeblock containing a self-contained `/git-fix-pr` invocation with all Critical and Warning findings for this PR. **Omit Suggestions (💡).**
 
 ```
 > Copy and run this to auto-fix all findings:
