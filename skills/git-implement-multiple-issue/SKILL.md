@@ -175,17 +175,17 @@ For each selected issue, spawn an implementation agent with worktree isolation. 
 **Pre-dispatch enforcement**: Count `len(FINAL_ISSUE_LIST)` before spawning. If count > 5, split into sequential batches of 5 — never emit more than 5 Task calls in a single message.
 
 <parallel-delegate strategy="concurrent">
-  <agent role="general-purpose" subagent="general-purpose" model="sonnet" isolation="{{worktree if isolation-mode=worktree, omit if isolation-mode=direct}}">
+  <agent role="general-purpose" subagent="general-purpose" model="sonnet" isolation="worktree">
     <prompt>See references/implement-agent-prompt.md for the full agent prompt template. Key points: wrap forge data in UNTRUSTED-FORGE-DATA tags, create branch using `feature-branch.{number}` naming convention (per worktree-awareness), delegate to /x-auto, commit with close #{number}, return structured report (Status/Branch/Files/Tests/Changes/Notes). Do NOT push or create PR.</prompt>
     <context>Full issue implementation in isolated worktree — create branch, implement via x-auto, commit. Return structured completion report.</context>
   </agent>
 </parallel-delegate>
 
-**Isolation behavior**:
-- **Worktree mode** (default): All Task calls include `isolation: "worktree"`. Agents run in true parallel.
-- **Direct mode**: Task calls omit `isolation` parameter. Issues are implemented **sequentially** to avoid branch conflicts. Only one agent runs at a time.
+**Isolation behavior** (based on Phase 1 `isolation-mode` gate selection):
+- **Worktree mode** (default): Use the `<parallel-delegate>` template above. All Task calls MUST include `isolation: "worktree"` (hardcoded). Agents run in true parallel. Emit all Task calls in a single message.
+- **Direct mode**: Do NOT use the `<parallel-delegate>` template above. Instead, emit one Task call at a time **without** the `isolation` parameter. Issues are implemented **sequentially** to avoid branch conflicts. Only one agent runs at a time. Wait for each agent to complete before spawning the next.
 
-**IMPORTANT**: The above is a **template for one agent**. At runtime, generate one Task call per selected issue. In worktree mode, emit all calls in a single message (parallel). In direct mode, emit one call at a time (sequential).
+**IMPORTANT**: The `<parallel-delegate>` above is a **template for one agent**. At runtime, generate one Task call per selected issue.
 
 > **Full agent prompt and output format**: See `references/implement-agent-prompt.md`
 
