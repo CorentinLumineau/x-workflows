@@ -7,9 +7,9 @@ allowed-tools: Read Grep Glob Bash
 user-invocable: true
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "1.1.0"
   category: workflow
-  argument-hint: "<issue-number>"
+  argument-hint: "[issue-number]"
 chains-to:
   - skill: x-auto
     condition: "default routing"
@@ -40,7 +40,7 @@ chains-from:
 **Issue**: $ARGUMENTS
 
 {{#if not $ARGUMENTS}}
-Ask user: "Which issue number would you like to work on?"
+Fetch open issues without active PRs, group by milestone, and present interactive selection (Phase 0.5).
 {{/if}}
 
 ## Behavioral Skills
@@ -56,22 +56,76 @@ This skill activates:
 
 Verify prerequisites before proceeding.
 
-1. **tea CLI availability**:
+1. **Forge CLI availability**:
 ```bash
-tea --version
+# Try tea first, fall back to gh
+tea --version 2>/dev/null || gh --version 2>/dev/null
 ```
-If `tea` is not found, stop and instruct: "The `tea` CLI is required. Install it from https://gitea.com/gitea/tea and configure with `tea login add`."
+If neither is found, stop and instruct: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
 
 2. **Issue number validation**:
    - Extract the issue number from `$ARGUMENTS`
    - Must be a positive integer
-   - If not provided or invalid, ask: "Which issue number would you like to work on?"
+   - If not provided or invalid, proceed to **Phase 0.5** for interactive selection
 
 3. **Git repository check**:
 ```bash
 git rev-parse --is-inside-work-tree
 ```
 If not in a git repo, stop and instruct: "Run this command from inside a git repository."
+
+### Phase 0.5: Issue Discovery & Selection
+
+> Only entered when no valid issue number was provided. See [references/issue-selection-guide.md](references/issue-selection-guide.md) for API commands, scoring, and edge cases.
+
+1. **Fetch open issues and open PRs** using the detected forge CLI (tea or gh)
+
+2. **Filter** out issues that already have PRs:
+   - Branch-name match: open PR head is `feature-branch.N`
+   - Body-reference match: PR body contains `close #N`, `closes #N`, `fix #N`, `fixes #N` (case-insensitive)
+
+3. **Score and sort** candidates using prioritization heuristic:
+   - Has milestone (+30), urgency label (+20), priority/high (+15), bug (+10), age (+1/week), comments (+2/each)
+
+4. **Group by milestone** (ordered by due date), then backlog for unassigned issues
+
+5. **Present numbered list**:
+```
+No issue number provided. Open issues without active PRs:
+
+## Milestone: v2.0.0 (due 2026-03-01) -- 2 issues
+  [1] #12 git-skills should validate a complete state machine (14d)
+  [2] #10 Add criteria verification for ecosystem audit (21d)
+
+## Backlog -- 3 issues
+  [3] #9  Refactor to use exclusively native memory system (28d)
+  [4] #7  git-implement-issue should be aware of existing PRs (35d)
+  [5] #6  Improve the PR review workflow (42d)
+```
+
+6. **User selection**:
+
+<workflow-gate type="choice" id="issue-selection">
+  <question>Which issue would you like to implement?</question>
+  <header>Issue</header>
+  <option key="pick">
+    <label>Pick from list</label>
+    <description>Select a number from the list above</description>
+  </option>
+  <option key="manual">
+    <label>Enter issue number</label>
+    <description>Type an issue number directly</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort the workflow</description>
+  </option>
+</workflow-gate>
+
+7. **Edge cases**:
+   - 0 open issues: "No open issues found."
+   - 0 candidates (all have PRs): "All open issues already have active PRs. Consider `/git-create-issue`."
+   - 50+ candidates: show top 15, note "Showing top 15. Enter an issue number directly for others."
 
 ### Phase 1: Issue Context
 
@@ -104,12 +158,39 @@ $ISSUE_BODY
    - `ISSUE_TITLE` — the issue title
    - `ISSUE_BODY` — the issue body/description
    - `ISSUE_LABELS` — labels (if any)
+   - `issue_selection` — `"argument"` (provided directly) or `"interactive"` (from Phase 0.5)
 
 ### Phase 2: Branch Setup
 
-Create or switch to a feature branch for this issue.
+Select branch strategy and create or switch to the working branch.
 
-1. **Detect base branch** — find the closest release branch:
+1. **Branch strategy selection**:
+
+<workflow-gate type="choice" id="branch-strategy">
+  <question>How should changes be organized for issue #$ISSUE_NUMBER?</question>
+  <header>Strategy</header>
+  <option key="feature" recommended="true">
+    <label>Feature branch (recommended)</label>
+    <description>Create feature-branch.$ISSUE_NUMBER from a base branch</description>
+  </option>
+  <option key="direct">
+    <label>Directly on current branch</label>
+    <description>Implement on $CURRENT_BRANCH without creating a feature branch (skips PR)</description>
+  </option>
+</workflow-gate>
+
+**If "direct" is chosen:**
+   - Check for uncommitted changes:
+```bash
+git status --porcelain
+```
+   - If dirty working tree, offer stash/proceed/cancel
+   - Store `branch_strategy = "direct"`, `feature_branch = null`, `pr_pending = false`
+   - Skip to Phase 3
+
+**If "feature" is chosen** (default):
+
+2. **Detect base branch** — find the closest release branch:
 ```bash
 # List remote release branches
 git fetch --prune
@@ -118,7 +199,7 @@ git branch -r --list 'origin/release-branch.*'
 
 If release branches exist, determine the best base via merge-base distance (closest wins). If no release branches exist, fall back to `main` or `master`.
 
-2. **Present branch options**:
+3. **Present branch options**:
 
 <workflow-gate type="choice" id="branch-setup">
   <question>Which base branch should the feature branch target?</question>
@@ -137,7 +218,7 @@ If release branches exist, determine the best base via merge-base distance (clos
   </option>
 </workflow-gate>
 
-3. **Create and switch to feature branch**:
+4. **Create and switch to feature branch**:
 ```bash
 # Ensure we have latest
 git fetch origin $BASE_BRANCH
@@ -175,6 +256,8 @@ Set up workflow state and delegate to x-auto for implementation.
   "active_workflow": "git-implement-issue",
   "issue_number": $ISSUE_NUMBER,
   "issue_title": "$ISSUE_TITLE",
+  "issue_selection": "$ISSUE_SELECTION",
+  "branch_strategy": "$BRANCH_STRATEGY",
   "base_branch": "$BASE_BRANCH",
   "feature_branch": "feature-branch.$ISSUE_NUMBER",
   "phases": {
@@ -188,6 +271,11 @@ Set up workflow state and delegate to x-auto for implementation.
 }
 ```
 
+When `branch_strategy == "direct"`:
+- `feature_branch`: `null`
+- `base_branch`: `$CURRENT_BRANCH`
+- `pr_pending`: `false`
+
 2. **Chain to x-auto** for implementation routing:
 
 Invoke x-auto with the routing context:
@@ -200,9 +288,27 @@ x-auto will assess complexity and route to the appropriate workflow chain (APEX,
 
 **IMPORTANT**: After x-auto and its downstream chain complete, execution returns here for Phase 4.
 
-### Phase 4: PR Creation
+### Phase 4: PR Creation (Conditional)
 
-After implementation is complete, create a pull request linking back to the issue.
+After implementation is complete, create a pull request or show completion summary.
+
+**If `branch_strategy == "direct"`**: Skip PR creation, show completion summary:
+```
+## Issue #$ISSUE_NUMBER Complete (Direct Mode)
+
+| Step | Status |
+|------|--------|
+| Issue fetched | Done |
+| Branch strategy | Direct (on $CURRENT_BRANCH) |
+| Implementation | Completed via x-auto |
+| PR | Skipped (direct mode) |
+
+Changes committed directly to $CURRENT_BRANCH.
+To create a PR later: `git checkout -b feature-branch.$ISSUE_NUMBER` + `/git-create-pr`
+```
+Update workflow state to `"completed"` and clean up.
+
+**If `branch_strategy == "feature"`**:
 
 1. **Confirm PR creation**:
 
@@ -267,7 +373,7 @@ EOF
 | Decision Level | Action | Example |
 |----------------|--------|---------|
 | **Critical** | ALWAYS ASK | PR creation, branch recreation |
-| **High** | ALWAYS ASK | Base branch selection |
+| **High** | ALWAYS ASK | Issue selection, branch strategy, base branch selection |
 | **Medium** | ASK IF UNCERTAIN | Issue interpretation |
 | **Low** | PROCEED | Fetching issue details, pushing branch |
 
@@ -290,22 +396,25 @@ EOF
 - Delete remote branches without user approval
 - Modify the base branch directly
 - Skip the implementation phase
+- Implement on main/release without explicit branch strategy selection
 
 **ALWAYS:**
 - Validate issue exists before creating branches
 - Confirm base branch selection with the user
 - Push feature branch before creating PR
-- Include `close #N` in PR description
+- Include `close #N` in PR description (feature branch mode)
 - Clean up workflow state after completion
+- Verify working tree is clean before direct-on-branch implementation
 
 ## Critical Rules
 
 1. **Issue First** — Always fetch and display the issue before any action
 2. **Branch Convention** — Feature branches MUST follow `feature-branch.N` naming
-3. **Human Gates** — PR creation and branch selection require explicit approval
+3. **Human Gates** — PR creation, issue selection, and branch strategy require explicit approval
 4. **Context Passing** — Pass full issue context (title + body) to x-auto
 5. **State Tracking** — Maintain `.claude/workflow-state.json` throughout
 6. **Clean Exit** — Update workflow state on completion or cancellation
+7. **Strategy Awareness** — Respect branch strategy throughout; never create a PR in direct mode
 
 ## Output Format
 
@@ -316,15 +425,19 @@ EOF
 | Direction | Verb | When |
 |-----------|------|------|
 | Delegates to | `/x-auto` | Implementation routing |
-| Terminal | Stop | PR created or cancelled |
+| Terminal | Stop | PR created, direct-mode complete, or cancelled |
 
 ## Success Criteria
 
 - [ ] Issue fetched and displayed to user
-- [ ] Feature branch created from correct base
+- [ ] Interactive selection works when no issue number provided
+- [ ] Branch strategy choice presented (feature vs direct)
+- [ ] Feature branch created from correct base (feature mode)
+- [ ] Working tree verified clean (direct mode)
 - [ ] Implementation completed (via x-auto chain)
-- [ ] Branch pushed to remote
-- [ ] PR created with proper description and `close #N`
+- [ ] Branch pushed to remote (feature mode)
+- [ ] PR created with proper description and `close #N` (feature mode)
+- [ ] Completion summary with recovery path shown (direct mode)
 - [ ] Workflow state cleaned up
 
 ## References
@@ -332,3 +445,5 @@ EOF
 - @skills/x-auto/ - Task routing and complexity assessment
 - @skills/git-commit/ - Workflow state management patterns
 - @skills/complexity-detection/ - Shared complexity detection logic
+- [references/issue-selection-guide.md](references/issue-selection-guide.md) - Issue discovery API and scoring
+- [references/pr-description-guide.md](references/pr-description-guide.md) - PR description template
