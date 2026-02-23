@@ -103,24 +103,6 @@ orchestration_state:
   pending_batches: [2, 3, 4]
 ```
 
-### Checkpoint Integration
-
-Save orchestration state to `.claude/workflow-state.json`:
-
-```json
-{
-  "orchestration": {
-    "task": "{main_task}",
-    "total_batches": "{count}",
-    "completed_batches": ["{list}"],
-    "active_agents": ["{agent_ids}"],
-    "pending_work": ["{items}"],
-    "status": "in_progress",
-    "timestamp": "{ISO}"
-  }
-}
-```
-
 ### Result Aggregation
 
 When background agents complete:
@@ -130,14 +112,6 @@ When background agents complete:
 3. Prioritize issues by severity (CRITICAL first)
 4. Apply fixes in severity order
 5. Update checkpoint with aggregated state
-
-### Checkpoint Cleanup
-
-After orchestration completes (all batches done or workflow ends):
-
-1. **Update status**: Final checkpoint update with `"status: completed"` in `.claude/workflow-state.json`
-2. **Remove orchestration key**: Delete the `orchestration` key from workflow state
-3. **Prune delegation summary**: Keep only the summary line (task, total agents, outcome, duration) in MEMORY.md
 
 ## Integration with Workflow Skills
 

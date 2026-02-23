@@ -269,10 +269,6 @@ When approval needed, structure question as:
 
 After brainstorm session complete:
 
-<state-checkpoint phase="brainstorm" status="completed">
-  <file path=".claude/workflow-state.json">Mark brainstorm complete, set next phase in_progress</file>
-</state-checkpoint>
-
 <workflow-gate type="choice" id="brainstorm-next">
   <question>Brainstorming complete. What would you like to do next?</question>
   <header>Next step</header>

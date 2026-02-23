@@ -1,10 +1,10 @@
-# 2-Layer Persistence Architecture
+# Persistence Architecture
 
 > Reference document for cross-session state management across the workflow ecosystem.
 
 ## Overview
 
-All workflow state uses a 2-layer persistence model to ensure data survives session boundaries.
+Workflow state uses a 2-layer persistence model to ensure data survives session boundaries.
 
 | Layer | Storage | Purpose | Availability |
 |-------|---------|---------|-------------|
@@ -23,7 +23,6 @@ State Change Event
     ▼
 1. L1: Write to .claude/{file}.json
    ├── initiative.json (initiative state)
-   ├── workflow-state.json (workflow position)
    └── interview-state.json (confidence history)
    → REQUIRED, always available, fastest
     │
@@ -41,51 +40,14 @@ State Change Event
 
 ### Workflow Completion Write Protocol
 
-When a workflow reaches a TERMINAL phase (git-commit, x-archive), both layers
-receive a mandatory completion write:
+When a workflow reaches a TERMINAL phase (git-commit, x-archive), MEMORY.md
+receives a mandatory completion write:
 
 | Layer | Write | Content | Mandatory? |
 |-------|-------|---------|------------|
-| L1 | UPDATE workflow-state.json | `"status": "completed", "completedAt": "{ISO_timestamp}"` | YES |
 | L2 | WRITE to MEMORY.md | `"Completed {workflow_type} for {context_summary}: {outcome}"` | **YES** (not conditional) |
 
 **Note**: L2 writes at workflow completion are MANDATORY, unlike per-checkpoint L2 writes which remain conditional. This ensures cross-session awareness. Write 1-2 lines only.
-
-### Workflow State TTL
-
-workflow-state.json includes a TTL field for automatic expiry:
-
-```json
-{
-  "type": "APEX",
-  "phase": "implement",
-  "lastUpdated": "2026-02-11T14:00:00Z",
-  "ttl": "24h",
-  "context": "...",
-  "enforcement": {
-    "violations": [
-      { "code": "V-TEST-03", "severity": "HIGH", "details": "..." }
-    ],
-    "blocking": true,
-    "summary": "1 HIGH violation (blocking)"
-  }
-}
-```
-
-**Enforcement Field** (optional, backward compatible):
-- Written by x-review (Phase 6b) and x-implement (Phase 4b)
-- `blocking: true` when any CRITICAL or HIGH violation exists
-- Missing field treated as no violations (safe default)
-
-**TTL Expiry Protocol** (checked by context-awareness at Phase 0):
-
-1. Read workflow-state.json
-2. Parse `lastUpdated` + `ttl` (default: 24h if field missing)
-3. If expired (`now > lastUpdated + ttl`):
-   a. Write summary to MEMORY.md: `"Expired workflow: {type} at {phase} for {context}"`
-   b. Clear workflow-state.json (reset to `{}`)
-   c. Log: `"Workflow state expired (inactive > {ttl})"`
-4. If NOT expired → proceed normally
 
 ---
 
@@ -102,7 +64,7 @@ Session Start / Resume
     │
     ▼
 2. L1: Read .claude/*.json (primary file state)
-   → initiative.json, workflow-state.json, interview-state.json
+   → initiative.json, interview-state.json
     │
     ▼
 3. L2: MEMORY.md (learnings and checkpoint state summaries)
@@ -119,36 +81,6 @@ Session Start / Resume
 - Use highest-priority available source as authoritative
 - Enrich with lower-priority sources if available
 - L2 contains checkpoint state summaries and patterns/learnings
-
----
-
-## L1 Self-Sufficiency
-
-L1 (`workflow-state.json`) is the **sole required layer** for workflow resume. No external dependencies are needed to recover workflow position and continue execution.
-
-### What L1 Contains
-
-The workflow-state.json file holds the complete state schema:
-- Workflow type (APEX, ONESHOT, DEBUG, BRAINSTORM)
-- Current phase and phase history with timestamps
-- Start time, TTL, and context summary
-- Phase approval status (e.g., plan approved)
-
-### Layer Roles
-
-| Layer | Role in Resume | Required? |
-|-------|---------------|-----------|
-| **L1** | Full workflow state — position, phases, context | **YES** (self-sufficient) |
-| **L2** | Cross-session learnings, patterns, state awareness summaries | No — adds cross-session context |
-
-### Key Guarantee
-
-A fresh session with only `.claude/workflow-state.json` present can:
-1. Detect the active workflow type and phase
-2. Offer resume at the correct position
-3. Continue execution without loss of workflow integrity
-
-L2 (MEMORY.md) provides cross-session learnings and pattern awareness. It improves the resume experience but is **not essential** for workflow continuity.
 
 ---
 
@@ -174,32 +106,15 @@ Write an L2 state summary at these phase boundaries:
 "Active {workflow_type} workflow: {completed_phase} completed, {next_phase_verb} {context_summary}"
 ```
 
-### Relationship to Existing L2 Writes
+### Relationship to L2 Writes
 
 | L2 Write Type | Trigger | Content | Mandatory? |
 |---------------|---------|---------|------------|
 | **Learning** (existing) | Pattern/preference discovered | Learning content | Conditional |
 | **Completion** (existing) | Terminal phase reached | Outcome summary | **YES** |
-| **Checkpoint state** (new) | Major phase transition | 1-line position summary | **YES** |
+| **Checkpoint state** | Major phase transition | 1-line position summary | **YES** |
 
-**Note**: Checkpoint state writes are intentionally brief (1 line). They exist solely so that a new session reading MEMORY.md can detect an active workflow even if L1 is unavailable.
-
----
-
-## Graceful Degradation Matrix
-
-The persistence architecture degrades predictably based on which layers are available at session resume.
-
-| Available Layers | Tier | Resume? | Behavior |
-|-----------------|------|---------|----------|
-| **L1 + L2** | Full | Yes | Complete resume — cross-session learnings from L2, complete state from L1 |
-| **L1 only** | Minimal | Yes | Fully functional — workflow position and phase state intact, can resume without loss of integrity |
-| **L2 only** | — | No | MEMORY.md may contain checkpoint state summaries — can inform user of last known position, but cannot auto-resume |
-| **None** | — | No | Fresh start — no prior context, workflow begins from scratch |
-
-### Degradation Principle
-
-The architecture follows a **self-sufficiency gradient**: L1 alone is fully sufficient (Minimal tier), and L1 + L2 is the Full tier covering all workflows. A resume from L1-only produces the same workflow position as a resume from both layers — the difference is context depth, not state accuracy.
+**Note**: Checkpoint state writes are intentionally brief (1 line). They exist solely so that a new session reading MEMORY.md can detect an active workflow.
 
 ---
 
@@ -264,7 +179,6 @@ Invalid transitions (REJECT with warning):
 | Component | Writes | Reads | Layers Used |
 |-----------|--------|-------|-------------|
 | x-initiative | Initiative state | Initiative state | L1 + L2 |
-| Verb skills | Workflow position | Workflow position | L1 |
 | Interview | Confidence scores | Historical confidence | L1 + L2 |
 | Orchestration | Delegation records | Delegation history | L2 |
 | Context-awareness | — | All state (read-only) | L1 + L2 |

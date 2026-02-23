@@ -34,7 +34,7 @@ This skill detects the CI/CD system in use, queries pipeline status, classifies 
 ### Phase 1: Detect CI System from Forge Type
 
 ```
-Read forge_context from workflow-state.json:
+Detect forge type from forge-awareness:
   - primary_forge == "github" → GitHub Actions
   - primary_forge == "gitea" → Gitea Actions
   - primary_forge == "gitlab" → GitLab CI
@@ -84,8 +84,6 @@ Query CI status using forge-appropriate CLI (gh/tea/glab) or API. Extract check 
 
 Classify each check by status (completed/in_progress/queued) and conclusion (success/failure/neutral/cancelled/skipped). Aggregate into merge readiness assessment tracking required vs optional checks.
 
-> **Data structures and classification table**: See `references/state-schema.md`
-
 ### Phase 4: Failure Diagnosis
 
 When checks fail, retrieve logs via forge CLI and classify the failure:
@@ -123,12 +121,6 @@ For long-running CI: poll every 5 minutes (max 30 minutes), exit early when all 
 ## Required vs. Optional Checks
 
 Determine required checks from: branch protection API, CI config heuristics (test/lint/build = required), or historical merge analysis.
-
-## State Persistence
-
-- **File**: `.claude/workflow-state.json` key `ci_context` (5-minute TTL)
-
-> **Full state schema, polling state, and integration patterns**: See `references/state-schema.md`
 
 ## Error Handling
 

@@ -62,10 +62,6 @@ Perform batch code review of multiple pull requests with:
 
 ## Phase 0: Input Resolution and Forge Detection
 
-<state-checkpoint phase="batch-init" status="captured">
-Forge type, PR numbers, repository context, resolution method
-</state-checkpoint>
-
 **Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea).
 
 Parse `$ARGUMENTS`:
@@ -141,10 +137,6 @@ If more than 5 selected:
   </option>
 </workflow-gate>
 
-<state-checkpoint phase="selection-complete" status="captured">
-Selected PR numbers, count, total token cost estimate
-</state-checkpoint>
-
 ---
 
 ## Phase 2: Parallel Review Dispatch
@@ -187,10 +179,6 @@ Verdict: 🚨 if Critical findings OR test failures OR security vulns. ✅ if no
 > **Full agent prompt and output format**: See `references/review-agent-prompt.md`
 
 Wait for all agents to complete. Collect all structured reports.
-
-<state-checkpoint phase="reviews-complete" status="captured">
-All review reports (one per PR), agent execution status, completion timestamps
-</state-checkpoint>
 
 ---
 
@@ -240,10 +228,6 @@ If overriding to APPROVE with Critical findings:
 > **Forge submission commands**: See `references/forge-commands.md`
 > **Force-approve audit trail**: If force-approving with Critical findings, prepend audit notice — see `references/forge-commands.md#force-approve-audit-trail`
 
-<state-checkpoint id="approval-loop-progress" phase="batch-approval" status="iteration-complete" data="pr_number, verdict, submission_status, review_url">
-Checkpoint captures: current PR approval status, running totals
-</state-checkpoint>
-
 ---
 
 ## Phase 4: Summary Report and Chaining
@@ -275,13 +259,6 @@ If all reviews are APPROVE:
 If mixed verdicts: suggest `/git-merge-pr {number}` for individual approved PRs. If stacked PRs excluded: suggest `/git-review-multiple-pr {excluded_numbers}` after base merges.
 
 </chaining-instruction>
-
-<state-cleanup phase="terminal">
-  <delete path=".claude/checkpoints/batch-init" condition="always" />
-  <delete path=".claude/checkpoints/selection-complete" condition="always" />
-  <delete path=".claude/checkpoints/reviews-complete" condition="always" />
-  <delete path=".claude/checkpoints/batch-approval" condition="always" />
-</state-cleanup>
 
 </instructions>
 

@@ -66,21 +66,8 @@ This workflow activates:
    - GitHub: `gh pr view {PR} --json number,title,state,mergeable,reviews,statusCheckRollup`
    - Gitea: `tea pr show {PR}`
 
-### Phase 0b: Workflow State Check (ENFORCED)
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - CI check completed (passed or acknowledged)? → Proceed to merge
-   - **CI check NOT completed? → BLOCK**: "Cannot merge PR. Required predecessor 'ci-check' is not completed. Run /git-check-ci first, or confirm explicit bypass."
-   - User explicitly bypasses CI check? → Proceed with warning logged
-   - No active workflow → Proceed (standalone merge)
-3. If no workflow state file exists → Proceed (backward compatibility)
-
 ### Phase 1: Validate Merge Readiness
 
-<state-checkpoint id="merge-validation" phase="git-merge-pr" status="merge-validation" data="pr_number, ci_status, review_status, mergeable">
-Checkpoint captures: PR number, CI status, review status, mergeability
-</state-checkpoint>
 1. Check PR state is "OPEN" - if already merged/closed, inform user and exit
 2. Validate CI status via `ci-awareness`:
    - Read `ci_context.merge_ready` state
@@ -143,9 +130,6 @@ Checkpoint captures: PR number, CI status, review status, mergeability
 
 ### Phase 5: Update State and Suggest Next Steps
 
-<state-checkpoint id="merge-complete" phase="git-merge-pr" status="merge-complete" data="merge_sha, merged_at, deleted_branch">
-Checkpoint captures: merge SHA, merge timestamp, deleted branch
-</state-checkpoint>
 1. Update workflow state:
    ```json
    {

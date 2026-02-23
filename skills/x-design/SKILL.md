@@ -71,13 +71,6 @@ Activate `@skills/interview/` if:
 - Unknown technical constraints
 - Breaking change potential
 
-### Phase 0b: Workflow State Check
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active BRAINSTORM workflow exists → Proceed
-3. If active non-BRAINSTORM workflow? → Warn: "Active {type} workflow. Start BRAINSTORM? [Y/n]"
-4. If no active workflow → Create new BRAINSTORM workflow state at `design` phase
-
 <plan-mode phase="exploration" trigger="after-interview">
   <enter>After confidence gate passes, enter read-only exploration mode for architecture discovery</enter>
   <scope>Phases 1-2: requirements review and architecture discovery (read-only: Glob, Grep, Read only)</scope>
@@ -193,10 +186,6 @@ Validate design against all five SOLID principles:
 ### Phase 5: Update Workflow State
 
 After design validated:
-
-<state-checkpoint phase="design" status="completed">
-  <file path=".claude/workflow-state.json">Mark design complete; if transitioning to APEX, create new APEX workflow at plan phase</file>
-</state-checkpoint>
 
 </instructions>
 

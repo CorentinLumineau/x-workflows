@@ -189,10 +189,6 @@ When approval needed, structure question as:
 
 After research complete:
 
-<state-checkpoint phase="research" status="completed">
-  <file path=".claude/workflow-state.json">Mark research complete, set design in_progress</file>
-</state-checkpoint>
-
 <workflow-gate type="choice" id="research-next">
   <question>Research complete. What would you like to do next?</question>
   <header>Next step</header>

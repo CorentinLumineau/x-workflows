@@ -61,20 +61,8 @@ This workflow activates:
 4. Check branch has commits ahead of base branch via `git log origin/main..HEAD --oneline`
 5. If no commits found, explain situation and exit (nothing to PR)
 
-### Phase 0b: Workflow State Check (ENFORCED)
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Commit phase completed? → Proceed to PR creation
-   - **Commit phase NOT completed? → BLOCK**: "Cannot create PR. Required predecessor 'commit' is not completed. Run /git-commit first."
-   - No active workflow → Proceed (standalone PR)
-3. If no workflow state file exists → Proceed (backward compatibility)
-
 ### Phase 1: Branch Analysis
 
-<state-checkpoint id="pr-analysis" phase="git-create-pr" status="pr-analysis" data="branch_name, base_branch, commit_count, file_changes">
-Checkpoint captures: branch name, base branch, commit count, file changes
-</state-checkpoint>
 1. Identify base branch (typically `main` or `master`) via `git remote show origin`
 1b. Check if current branch is worktree-managed:
     - If branch name matches `worktree-*` pattern OR inside `.claude/worktrees/` → worktree session
@@ -138,9 +126,6 @@ Checkpoint captures: branch name, base branch, commit count, file changes
 
 ### Phase 5: Update State and Present Results
 
-<state-checkpoint id="pr-created" phase="git-create-pr" status="pr-created" data="pr_number, pr_url, linked_issue">
-Checkpoint captures: PR number, URL, linked issue
-</state-checkpoint>
 1. Update workflow state with:
    ```json
    {

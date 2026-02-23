@@ -30,8 +30,6 @@ This behavioral skill wraps ALL workflow skills with resilient error handling, e
 | Tool failure | Any tool call returns an error |
 | Network error | HTTP timeout, DNS failure, connection refused |
 | Session interruption | Context window approaching limit, agent crash |
-| State corruption | workflow-state.json invalid or inconsistent |
-
 Error recovery activates automatically when ANY tool call fails. It does not require user invocation.
 
 ---
@@ -42,7 +40,6 @@ Error recovery activates automatically when ANY tool call fails. It does not req
 |------------|----------|----------|-------------|
 | **Transient** | Network timeout, rate limit, temporary file lock | Retry with exponential backoff | 3 |
 | **Permanent** | File not found, permission denied, invalid argument | Report with context, suggest fix | 0 |
-| **Corruption** | Invalid JSON in state file, orphan workflow state | Rollback to last known good state | 1 |
 | **Partial** | Some files written, commit incomplete | Resume from checkpoint | 1 |
 
 ### Classification Algorithm
@@ -62,11 +59,6 @@ Error recovery activates automatically when ANY tool call fails. It does not req
    - "404 Not Found", "403 Forbidden"
    - "Invalid argument", "Syntax error"
    - "Command not found"
-
-   Corruption patterns:
-   - "Unexpected token", "Invalid JSON"
-   - "Schema validation failed"
-   - "State mismatch"
 
    Partial patterns:
    - "Operation incomplete"
@@ -124,7 +116,6 @@ Attempt 3: Success → Log "Recovered after 2 retries" → Continue
    - Add warning to final summary
 
 4. If operation is Required:
-   - Save state checkpoint to workflow-state.json
    - Generate actionable error report:
      * What failed
      * Why it failed (root cause hypothesis)
@@ -151,43 +142,10 @@ Suggestions (ranked):
 4. Restore from backup: .claude/backups/config.json
 ```
 
-### Corruption Recovery
+### Partial Recovery
 
 ```
-1. Detect corruption:
-   - Try parsing workflow-state.json as JSON
-   - Validate against expected schema
-   - Check for orphan references (files listed but missing)
-
-2. Check for backup:
-   - Look for .claude/workflow-state.json.bak
-   - Verify backup is valid JSON
-   - Compare backup timestamp to current state
-
-3. If backup exists and is valid:
-   - Log: "Restoring state from backup (timestamp: {time})"
-   - Copy backup to workflow-state.json
-   - Re-run validation
-   - Continue workflow from last checkpoint
-
-4. If no backup or backup also corrupt:
-   - Create fresh state file
-   - Initialize with minimal required fields
-   - Warn user: "Lost workflow progress. Starting from phase: {current}"
-   - Continue workflow (best effort)
-
-5. Always: Write new backup after successful recovery
-```
-
-### Partial Recovery (Checkpoint-based)
-
-```
-1. Read last checkpoint from workflow-state.json:
-   - phases_completed: ["analyze", "plan"]
-   - current_phase: "implement"
-   - artifacts: {files: [...], commits: [...]}
-
-2. Identify completed vs incomplete operations:
+1. Identify completed vs incomplete operations:
    - Check if expected artifacts exist on disk
    - Verify git commits match checkpoint
    - Compare file checksums if available
@@ -226,48 +184,6 @@ Resume verification:
   ✗ No test results found
 
 Action: Resume from "verify" phase (re-run tests only)
-```
-
----
-
-## State Persistence
-
-### Backup Strategy
-
-```
-Before ANY modification to workflow-state.json:
-1. Copy current state to .claude/workflow-state.json.bak
-2. Include timestamp in backup metadata
-3. Only modify original after backup succeeds
-
-Maximum 1 backup file (rolling backup):
-- New backup overwrites old backup
-- Keeps only most recent known-good state
-```
-
-### Checkpoint Format
-
-```json
-{
-  "workflow": "x-implement",
-  "started_at": "2026-02-16T10:30:00Z",
-  "phases_completed": ["analyze", "plan"],
-  "current_phase": "implement",
-  "checkpoints": [
-    {
-      "phase": "analyze",
-      "completed_at": "2026-02-16T10:32:15Z",
-      "artifacts": ["analysis.md"]
-    },
-    {
-      "phase": "plan",
-      "completed_at": "2026-02-16T10:35:42Z",
-      "artifacts": ["plan.md", "file-list.txt"]
-    }
-  ],
-  "errors": [],
-  "last_backup": "2026-02-16T10:35:42Z"
-}
 ```
 
 ---

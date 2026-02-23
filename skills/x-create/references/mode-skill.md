@@ -72,7 +72,6 @@ Then ask for:
 | Delegates to agents | `agent-delegate` |
 | Needs complex reasoning | `deep-think` |
 | Looks up library docs | `doc-query` |
-| Tracks workflow state | `state-checkpoint` |
 | Needs external research | `web-research` |
 
 ### Phase 2: Skill Structure

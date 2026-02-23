@@ -292,35 +292,9 @@ If `feature-branch.$ISSUE_NUMBER` already exists, ask the user:
 
 ### Phase 3: Implementation
 
-Set up workflow state and delegate to x-auto for implementation.
+Delegate to x-auto for implementation.
 
-1. **Write workflow state** to `.claude/workflow-state.json`:
-```json
-{
-  "active_workflow": "git-implement-issue",
-  "issue_number": $ISSUE_NUMBER,
-  "issue_title": "$ISSUE_TITLE",
-  "issue_selection": "$ISSUE_SELECTION",
-  "branch_strategy": "$BRANCH_STRATEGY",
-  "base_branch": "$BASE_BRANCH",
-  "feature_branch": "feature-branch.$ISSUE_NUMBER",
-  "phases": {
-    "context": "completed",
-    "branch": "completed",
-    "implement": "in_progress",
-    "pr": "pending"
-  },
-  "pr_pending": true,
-  "started_at": "$TIMESTAMP"
-}
-```
-
-When `branch_strategy == "direct"`:
-- `feature_branch`: `null`
-- `base_branch`: `$CURRENT_BRANCH`
-- `pr_pending`: `false`
-
-2. **Chain to x-auto** for implementation routing:
+1. **Chain to x-auto** for implementation routing:
 
 Invoke x-auto with the routing context:
 ```
@@ -350,7 +324,6 @@ After implementation is complete, create a pull request or show completion summa
 Changes committed directly to $CURRENT_BRANCH.
 To create a PR later: `git checkout -b feature-branch.$ISSUE_NUMBER` + `/git-create-pr`
 ```
-Update workflow state to `"completed"` and clean up.
 
 **If `branch_strategy == "feature"`**:
 
@@ -405,11 +378,6 @@ EOF
   --head "feature-branch.$ISSUE_NUMBER"
 ```
 
-6. **Update workflow state**:
-   - Mark `pr` phase as `"completed"`
-   - Mark workflow as `"completed"`
-   - Clean up `.claude/workflow-state.json` per git-commit cleanup protocol
-
 </instructions>
 
 ## Human-in-Loop Gates
@@ -448,7 +416,6 @@ EOF
 - Confirm base branch selection with the user
 - Push feature branch before creating PR
 - Include `close #N` in PR description (feature branch mode)
-- Clean up workflow state after completion
 - Verify working tree is clean before direct-on-branch implementation
 
 ## Critical Rules
@@ -457,9 +424,7 @@ EOF
 2. **Branch Convention** — Feature branches MUST follow `feature-branch.N` naming
 3. **Human Gates** — PR creation, issue selection, and branch strategy require explicit approval
 4. **Context Passing** — Pass full issue context (title + body) to x-auto
-5. **State Tracking** — Maintain `.claude/workflow-state.json` throughout
-6. **Clean Exit** — Update workflow state on completion or cancellation
-7. **Strategy Awareness** — Respect branch strategy throughout; never create a PR in direct mode
+5. **Strategy Awareness** — Respect branch strategy throughout; never create a PR in direct mode
 
 ## Output Format
 
@@ -484,12 +449,10 @@ EOF
 - [ ] Branch pushed to remote (feature mode)
 - [ ] PR created with proper description and `close #N` (feature mode)
 - [ ] Completion summary with recovery path shown (direct mode)
-- [ ] Workflow state cleaned up
 
 ## References
 
 - @skills/x-auto/ - Task routing and complexity assessment
-- @skills/git-commit/ - Workflow state management patterns
 - @skills/complexity-detection/ - Shared complexity detection logic
 - [references/issue-selection-guide.md](references/issue-selection-guide.md) - Issue discovery API and scoring
 - [references/pr-description-guide.md](references/pr-description-guide.md) - PR description template

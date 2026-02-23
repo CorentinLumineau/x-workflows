@@ -58,10 +58,6 @@ Perform comprehensive local code review of a pull request including:
 
 ## Phase 0: Forge Detection and Validation
 
-<state-checkpoint phase="review-init" status="captured">
-PR number, forge type, repository context, review scope
-</state-checkpoint>
-
 **Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea/GitLab).
 
 Parse `$ARGUMENTS`:
@@ -124,10 +120,6 @@ Set `USE_WORKTREE=true` if user selects "Use worktree".
 
 Fetch PR branch locally using forge-appropriate checkout command (gh/tea/glab). Verify checkout success and capture base branch merge-base.
 
-<state-checkpoint phase="pr-fetched" status="captured">
-PR branch name, base commit SHA, working directory state, worktree path (if applicable)
-</state-checkpoint>
-
 ---
 
 ## Phase 2: Parallel Code and Security Review
@@ -142,10 +134,6 @@ PR branch name, base commit SHA, working directory state, worktree path (if appl
     <context>PR security review — OWASP, auth, input validation, secrets, dependencies</context>
   </agent>
 </parallel-delegate>
-
-<state-checkpoint phase="review-findings" status="captured">
-Code review findings, security review findings, agent execution logs
-</state-checkpoint>
 
 **Aggregate findings**:
 - Merge findings from both reviewers
@@ -162,10 +150,6 @@ Code review findings, security review findings, agent execution logs
   <context>PR test execution phase — run all tests and report results with coverage</context>
 </agent-delegate>
 
-<state-checkpoint phase="test-results" status="captured">
-Test execution summary, coverage metrics, failure details
-</state-checkpoint>
-
 If tests fail, flag as blocking issue in review findings (severity: Critical).
 
 ---
@@ -179,10 +163,6 @@ Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion find
 **Verdict**: REQUEST_CHANGES if critical findings/test failures/security issues; APPROVE if none; COMMENT for suggestions only.
 
 > **Full report template and verdict logic**: See `references/review-report-template.md`
-
-<state-checkpoint phase="review-compiled" status="captured">
-Complete review report, verdict, structured findings JSON
-</state-checkpoint>
 
 ---
 
@@ -231,10 +211,6 @@ List blocking issues again before this gate. Require exact match of "APPROVE ANY
 
 > **Forge submission commands**: See `references/review-report-template.md`
 
-<state-checkpoint phase="review-submitted" status="captured">
-Submission timestamp, review URL, final verdict
-</state-checkpoint>
-
 ---
 
 ## Phase 6: Cleanup and Chaining
@@ -269,15 +245,6 @@ If verdict is REQUEST_CHANGES:
 - Inform user: "Review submitted requesting changes. Use /git-review-pr {number} again after author addresses feedback."
 
 </chaining-instruction>
-
-<state-cleanup phase="terminal">
-  <delete path=".claude/checkpoints/review-init" condition="always" />
-  <delete path=".claude/checkpoints/pr-fetched" condition="always" />
-  <delete path=".claude/checkpoints/review-findings" condition="always" />
-  <delete path=".claude/checkpoints/test-results" condition="always" />
-  <delete path=".claude/checkpoints/review-compiled" condition="always" />
-  <delete path=".claude/checkpoints/review-submitted" condition="always" />
-</state-cleanup>
 
 </instructions>
 

@@ -68,16 +68,6 @@ Activate `@skills/interview/` if:
 - Multiple valid approaches
 - Dependencies unknown
 
-### Phase 0b: Workflow State Check
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Previous analyze phase completed? → Note context, proceed
-   - Analyze phase skipped? → **Warn**: "Analysis phase was skipped. Planning without analysis may miss important context. Continue? [Y/n]"
-   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
-   - No active workflow → Create new workflow state
-3. If no workflow state file exists → Proceed (new workflow)
-
 <plan-mode phase="exploration" trigger="after-interview">
   <enter>After confidence gate passes and workflow state is checked, enter read-only exploration mode</enter>
   <scope>Phases 1-3: scope assessment, track selection, plan design (read-only: Glob, Grep, Read only)</scope>
@@ -168,10 +158,6 @@ Create initiative structure using `/x-initiative create`.
 **Plan mode exits here** — ExitPlanMode presents the plan for user approval. All writes are deferred to after approval.
 
 After user approves the plan:
-
-<state-checkpoint phase="plan" status="completed">
-  <file path=".claude/workflow-state.json">Mark plan complete with approved: true/false, set implement in_progress after approval</file>
-</state-checkpoint>
 
 </instructions>
 

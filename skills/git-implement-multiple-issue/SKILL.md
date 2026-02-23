@@ -62,10 +62,6 @@ Perform batch implementation of multiple issues with:
 
 ## Phase 0: Input Resolution and Forge Detection
 
-<state-checkpoint phase="batch-init" status="captured">
-Forge type, issue numbers, repository context, resolution method
-</state-checkpoint>
-
 **Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea).
 
 **Forge CLI availability**: `tea --version 2>/dev/null || gh --version 2>/dev/null` — if neither found, stop: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
@@ -157,10 +153,6 @@ If more than 3 selected:
   </option>
 </workflow-gate>
 
-<state-checkpoint phase="selection-complete" status="captured">
-Selected issue numbers, count, base branch
-</state-checkpoint>
-
 <workflow-gate type="choice" id="isolation-mode">
   <question>Use worktree isolation for parallel implementation?</question>
   <header>Isolation</header>
@@ -198,10 +190,6 @@ For each selected issue, spawn an implementation agent with worktree isolation. 
 > **Full agent prompt and output format**: See `references/implement-agent-prompt.md`
 
 Wait for all agents to complete. Collect all structured reports.
-
-<state-checkpoint phase="implementations-complete" status="captured">
-All implementation reports (one per issue), agent execution status, completion timestamps
-</state-checkpoint>
 
 ---
 
@@ -247,10 +235,6 @@ git diff origin/$BASE_BRANCH...feature-branch.$ISSUE_NUMBER --stat
 
 4. **If "Skip PR"**: note as skipped in summary, branch remains for later manual PR.
 
-<state-checkpoint id="pr-creation-progress" phase="batch-pr-creation" status="iteration-complete" data="issue_number, pr_status, pr_url">
-Checkpoint captures: current issue PR creation status, running totals
-</state-checkpoint>
-
 ---
 
 ## Phase 4: Summary Report and Chaining
@@ -282,13 +266,6 @@ If all implementations succeeded and PRs were created:
 If mixed results: suggest `/git-review-multiple-pr {pr_numbers}` for successfully created PRs. If failures: suggest re-running failed issues individually with `/git-implement-issue {number}`.
 
 </chaining-instruction>
-
-<state-cleanup phase="terminal">
-  <delete path=".claude/checkpoints/batch-init" condition="always" />
-  <delete path=".claude/checkpoints/selection-complete" condition="always" />
-  <delete path=".claude/checkpoints/implementations-complete" condition="always" />
-  <delete path=".claude/checkpoints/batch-pr-creation" condition="always" />
-</state-cleanup>
 
 </instructions>
 

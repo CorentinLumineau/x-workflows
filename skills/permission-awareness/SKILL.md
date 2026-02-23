@@ -88,7 +88,7 @@ bypassPermissions:
    - Interactive terminal session → default or acceptEdits
    - Headless (no TTY) → bypassPermissions
 
-5. Cache detection result in workflow-state.json:
+5. Cache detection result in session memory:
    - Only detect once per session
    - Re-use cached mode for subsequent checks
 ```
@@ -108,7 +108,7 @@ Step 3: Probe Bash
   Requires permission prompt → acceptEdits (not bypass)
 
 Result: acceptEdits mode detected
-Cache: workflow-state.json → "permission_mode": "acceptEdits"
+Cache: session memory → "permission_mode": "acceptEdits"
 ```
 
 ---

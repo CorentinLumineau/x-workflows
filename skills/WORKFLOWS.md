@@ -287,10 +287,9 @@ Verb skills suggest their next phase via workflow-gates, always asking the user 
 ### How Chaining Works
 
 After each verb skill completes:
-1. Updates `.claude/workflow-state.json` (marks current phase complete)
-2. Presents a workflow-gate with options for the next step
-3. User selects the desired path
-4. Invokes next skill via Skill tool with workflow context
+1. Presents a workflow-gate with options for the next step
+2. User selects the desired path
+3. Invokes next skill via Skill tool with workflow context
 
 ### Chaining Modes
 
@@ -323,114 +322,6 @@ Skills invoke the next phase using:
 ```
 skill: "x-{next}"
 args: "{workflow context summary}"
-```
-
----
-
-## Workflow State Tracking
-
-All workflows persist their state in `.claude/workflow-state.json` with 2-layer persistence:
-
-### State Layers
-
-| Layer | Location | Purpose | Required for Resume? |
-|-------|----------|---------|---------------------|
-| **L1** | `.claude/workflow-state.json` | Primary file-based state — **self-sufficient for resume** | **YES** (sole requirement) |
-| **L2** | MEMORY.md (auto-memory) | Cross-session learnings + checkpoint state summaries | No — enrichment |
-
-> **Note**: L1 alone contains the complete workflow state schema (type, phase, timestamps, context). See `persistence-architecture.md` for the full degradation matrix.
-
-### State Schema
-
-```json
-{
-  "active": {
-    "type": "APEX",
-    "started": "2026-02-10T14:30:00Z",
-    "phases": {
-      "analyze": { "status": "completed", "timestamp": "..." },
-      "plan": { "status": "completed", "timestamp": "...", "approved": true },
-      "implement": { "status": "completed", "timestamp": "..." },
-      "review": { "status": "in_progress" },
-      "commit": { "status": "pending" }
-    },
-    "enforcement": {
-      "violations": [
-        { "code": "V-TEST-03", "severity": "HIGH", "details": "Coverage 72% on changed files" }
-      ],
-      "blocking": true,
-      "summary": "1 HIGH violation (blocking)"
-    }
-  },
-  "history": []
-}
-```
-
-#### Enforcement Field
-
-The `enforcement` field is written by x-review (Phase 6b) and x-implement (Phase 4b) to track V-* violation results:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `violations` | array | List of detected violations with `code`, `severity`, and `details` |
-| `blocking` | boolean | `true` if any CRITICAL or HIGH violation exists |
-| `summary` | string | Human-readable summary (e.g., "2 violations: 1 HIGH, 1 MEDIUM") |
-
-**Blocking logic:**
-- CRITICAL or HIGH severity → `blocking: true`
-- MEDIUM or LOW severity → `blocking: false` (warn only)
-- Missing `enforcement` field → treated as no violations (backward compatible)
-```
-
-### Phase 0b: Pre-Flight Check
-
-Every verb skill includes a Phase 0b that:
-1. Reads `.claude/workflow-state.json`
-2. Verifies the expected phase matches
-3. Warns on phase skipping
-4. Creates new workflow state if none exists
-
----
-
-## Interruption Recovery
-
-If a session ends mid-workflow, the state persists and can be resumed.
-
-### Recovery Flow
-
-```
-Session ends mid-workflow
-        ↓
-State saved in .claude/workflow-state.json (L1)
-        ↓
-Next session starts
-        ↓
-context-awareness detects active workflow
-        ↓
-Offers: "Resume APEX workflow at phase 'review' (4/5)? [Y/n]"
-        ↓
-Resume → Continues from last in_progress phase
-Start Fresh → Archives current workflow to history
-```
-
-### Workflow State TTL
-
-Workflow state in `.claude/workflow-state.json` expires after 24 hours (configurable via `ttl` field).
-Expired state is summarized to MEMORY.md and cleared. See persistence-architecture.md for protocol.
-
-### Completion Write Protocol
-
-Terminal workflow phases (git-commit, x-archive) trigger a MANDATORY 2-layer write including
-a L2 MEMORY.md summary. This ensures cross-session awareness of completed work.
-
-### Staleness Warning
-
-If the active workflow is older than 24 hours, context-awareness warns:
-```
-Active workflow detected (stale — 36h old):
-  Type: APEX, Phase: verify (4/6)
-
-Resume anyway? State may be outdated.
 ```
 
 ---
@@ -500,7 +391,7 @@ Skills use XML-like semantic markers to declare tool interactions. These markers
 
 **Key principle**: Markers **supplement** prose, they don't replace it. All prose descriptions remain valid fallback behavior on platforms without a compilation adapter.
 
-### Marker Vocabulary (9 markers, 4 tiers)
+### Marker Vocabulary (7 markers, 4 tiers)
 
 #### Tier 1: Interaction & Orchestration
 
@@ -599,14 +490,6 @@ These markers work via prose but compilation improves reliability by generating 
 
 These markers standardize inconsistent patterns across skills.
 
-**`<state-checkpoint>`** — Workflow State Persistence
-
-```xml
-<state-checkpoint phase="phase-name" status="completed">
-  <file path=".claude/workflow-state.json">Description of state update</file>
-</state-checkpoint>
-```
-
 **`<web-research>`** — External Research
 
 ```xml
@@ -614,15 +497,6 @@ These markers standardize inconsistent patterns across skills.
   <purpose>What to research</purpose>
   <strategy>Research approach description</strategy>
 </web-research>
-```
-
-**`<state-cleanup>`** — Terminal Phase Cleanup
-
-```xml
-<state-cleanup phase="terminal">
-  <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
-  <history-prune max-entries="5" />
-</state-cleanup>
 ```
 
 #### Tier 4: Platform-Native
@@ -651,8 +525,7 @@ These markers compile to platform-specific features and are no-ops on unsupporte
 1. **Supplement, don't replace**: Always keep prose descriptions alongside markers. Markers enhance behavior on supported platforms; prose ensures functionality everywhere.
 2. **One gate, many chains**: A `<workflow-gate>` should be followed by `<workflow-chain>` entries matching each option key.
 3. **Roles over IDs**: In `<agent-delegate>`, prefer `role` over `subagent`. Adapters resolve roles using their agent mapping tables.
-4. **State consistency**: Every skill that modifies workflow state should use `<state-checkpoint>`. Only terminal skills use `<state-cleanup>`.
-5. **Idempotent compilation**: Source files always copied fresh before transform. Never modify source files with compiled output.
+4. **Idempotent compilation**: Source files always copied fresh before transform. Never modify source files with compiled output.
 
 ### Adapter Compilation Notes
 
@@ -723,4 +596,4 @@ See @skills/agent-awareness/ for team composition details and spawn patterns.
 
 **Version**: 3.0.0 (x-workflows)
 **Compatibility**: ccsetup 6.6.0+
-**Changes**: Added semantic markers DSL (9 markers, 4 tiers), agent role mapping table, adapter compilation notes
+**Changes**: Added semantic markers DSL (7 markers, 4 tiers), agent role mapping table, adapter compilation notes

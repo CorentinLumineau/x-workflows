@@ -198,10 +198,6 @@ Capture the PR number and URL.
 
 #### Phase 4d: Iteration Checkpoint
 
-<state-checkpoint id="quickwin-loop-progress" phase="git-quickwins-to-pr" status="iteration-complete" data="current_index, total, issue_number, pr_number, pr_url">
-Checkpoint captures: loop progress, issue and PR metadata
-</state-checkpoint>
-
 Store iteration result:
 ```json
 {
@@ -264,10 +260,6 @@ Generate the final orchestration summary:
 - Run `/git-review-pr {pr_number}` for local review
 - Run `/git-check-ci {pr_number}` to verify CI status
 ```
-
-<state-cleanup phase="git-quickwins-to-pr">
-Clean up any workflow state files created during the loop
-</state-cleanup>
 
 </instructions>
 

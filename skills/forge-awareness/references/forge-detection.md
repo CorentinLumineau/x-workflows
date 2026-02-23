@@ -54,7 +54,6 @@ fi
 | workflow-gate | Prompt user for choice | Auto-proceed with recommended option |
 | Unknown forge | Ask user to classify | Classify as "unknown", log warning |
 | CLI not found | Suggest install command | Use API fallback, log warning |
-| state-checkpoint | Write to file | Post structured comment on issue (if workclaude) |
 
 ## Error Handling
 

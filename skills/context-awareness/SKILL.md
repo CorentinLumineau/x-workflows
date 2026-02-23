@@ -19,7 +19,7 @@ Detect runtime environment, manage session state, and provide tool availability 
 
 Provide unified context detection for all workflow skills:
 1. **Environment Detection** → CI vs interactive, agent type, platform
-2. **Session State Management** → workflow-state.json lifecycle, cleanup
+2. **Session State Management** → session context lifecycle
 3. **Tool Availability** → CLI presence, version checking, fallback strategies
 
 This behavioral skill ensures workflows adapt to their execution environment and have access to accurate tool availability data.
@@ -31,9 +31,7 @@ This behavioral skill ensures workflows adapt to their execution environment and
 | Trigger | Condition |
 |---------|-----------|
 | Workflow start | First phase of any workflow skill |
-| State access | Before reading/writing workflow-state.json |
 | Tool usage | Before invoking external CLI tools |
-| Session end | After workflow completion or error |
 
 context-awareness activates automatically at workflow boundaries to ensure environment and state are properly initialized.
 
@@ -60,8 +58,6 @@ context-awareness activates automatically at workflow boundaries to ensure envir
 3. Detect platform:
    - uname -s → Linux, Darwin, Windows
    - Architecture: x86_64, arm64
-
-4. Cache detection results in workflow-state.json
 ```
 
 ### Environment Context Schema
@@ -149,57 +145,6 @@ Add worktree fields to the environment context:
 
 ---
 
-## State Cleanup
-
-### Cleanup Strategy
-
-Prune stale workflow state to prevent accumulation of orphaned data:
-
-```
-When to clean:
-1. At workflow start (before initialization)
-2. After workflow completion (success or failure)
-3. On explicit cleanup request
-
-What to clean:
-1. Stale workflow-state entries older than 24h
-2. Orphaned .claude/workflow-state.json.bak files
-```
-
-### Cleanup Algorithm
-
-```
-1. Read workflow-state.json
-2. Check last_updated timestamp for each entry
-3. Current time - last_updated > 24h → mark for deletion
-4. Verify entry is not active (no in-progress phases)
-5. Delete stale entries
-6. Check for orphan backup files:
-   - .claude/workflow-state.json.bak with no corresponding workflow-state.json
-   - Backup older than 24h
-7. Remove orphan backups
-8. Write cleaned state back to disk
-```
-
-### State Pruning Example
-
-```
-Before cleanup:
-  workflow-state.json:
-    - entry1: last_updated: 2026-02-15T10:00:00Z (26h ago) → STALE
-    - entry2: last_updated: 2026-02-16T10:00:00Z (30min ago) → ACTIVE
-    - entry3: last_updated: 2026-02-14T10:00:00Z (50h ago) → STALE
-
-After cleanup:
-  workflow-state.json:
-    - entry2: last_updated: 2026-02-16T10:00:00Z (ACTIVE)
-
-  Removed: entry1, entry3
-  Backup cleanup: 2 orphan .bak files deleted
-```
-
----
-
 ## Tool Detection
 
 ### Detection Protocol
@@ -218,8 +163,7 @@ Tools to check:
 Detection process:
 1. Run: which <tool> (or where <tool> on Windows)
 2. If found → check version: <tool> --version
-3. Store results in workflow-state.json under tool_availability
-4. Cache for 24h (don't re-check every workflow)
+3. Cache results in session context for the duration of the workflow
 ```
 
 ### Tool Availability Schema
@@ -257,14 +201,13 @@ Detection process:
 
 ```
 Cache strategy:
-1. Check if tool already in workflow-state.json
-2. Compare checked_at to current time
-3. If checked_at < 24h ago → use cached result
-4. If checked_at > 24h ago → re-check tool
-5. Always re-check if version is required for compatibility
+1. Check if tool was already detected in current session
+2. If already detected → use cached result
+3. If not yet detected → run detection
+4. Always re-check if version is required for compatibility
 
 When to re-check:
-- Every 24h (TTL expired)
+- New session (no prior cache)
 - After package manager operations (npm install, etc.)
 - On explicit request (user runs tool detection command)
 - If cached version doesn't meet minimum requirements
@@ -364,20 +307,6 @@ Before execution:
 1. Detect CI vs interactive mode
 2. Check tool availability (gh, npm, docker)
 3. Adapt workflow based on available tools
-```
-
-### State Initialization Pattern
-
-```
-At workflow start:
-1. Check if workflow-state.json exists
-2. If exists → validate and clean stale entries
-3. If not exists → create fresh state file
-4. Detect environment (CI, agent, platform)
-4b. Detect worktree state (git rev-parse commands)
-5. Detect tool availability (cached or fresh check)
-6. Write initial state to disk
-7. Create backup (.bak file)
 ```
 
 ---

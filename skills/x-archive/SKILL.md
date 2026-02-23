@@ -157,14 +157,6 @@ Keep it **under 80 lines**. This is a reference document, not a copy of the init
 
 ### Phase 4: Archive Operations
 
-<state-cleanup targets="initiative.json,WORKFLOW-STATUS.yaml" mandatory="true">
-Cleanup is MANDATORY. Remove initiative checkpoint and WORKFLOW-STATUS after successful archive.
-If cleanup fails:
-1. Retry once after 2-second wait
-2. If still fails: WARN user (do not BLOCK — archive completion > cleanup)
-3. Log: "Cleanup incomplete for {target}: manual removal may be needed"
-</state-cleanup>
-
 1. **Write executive summary**:
    ```bash
    # Single file, not a folder

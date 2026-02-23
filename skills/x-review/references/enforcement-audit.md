@@ -10,19 +10,6 @@
 | Missing requirement (functional gap) | HIGH | BLOCK |
 | Wrong requirement implemented | CRITICAL | BLOCK |
 
-## Enforcement Result Format
-
-Write to `.claude/workflow-state.json`:
-```json
-{
-  "enforcement": {
-    "violations": [{ "code": "V-*", "severity": "...", "details": "..." }],
-    "blocking": false,
-    "summary": "N violations: breakdown by severity"
-  }
-}
-```
-
 ## Phase 3b: Code Quality Audit Checklists
 
 For each changed file, audit against enforcement violation definitions:

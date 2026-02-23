@@ -138,10 +138,6 @@ Generate release notes from commits:
 
 ### Phase 4: Create Release
 
-<state-checkpoint phase="release" status="tag-created">
-Track release progress: pre-checks passed, version determined, notes generated, tag created, release published.
-</state-checkpoint>
-
 ```bash
 # Create and push tag
 git tag -a v{version} -m "Release v{version}"
@@ -204,8 +200,7 @@ When approval needed, structure question as:
 **Terminal phase**: release ends the workflow
 
 After release published:
-1. Update `.claude/workflow-state.json` (mark workflow complete, move to history, prune to max 5, delete file if no active workflow)
-2. Present options (no auto-chain — workflow is done):
+1. Present options (no auto-chain — workflow is done):
 
 <workflow-gate type="choice" id="release-next">
   <question>Release v{version} published. What's next?</question>
@@ -226,11 +221,6 @@ After release published:
 
 <workflow-chain on="next-feature" skill="x-plan" args="{next feature context}" />
 <workflow-chain on="done" action="end" />
-
-<state-cleanup phase="terminal">
-  <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
-  <history-prune max-entries="5" />
-</state-cleanup>
 
 </chaining-instruction>
 

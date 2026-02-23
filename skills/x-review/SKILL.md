@@ -89,17 +89,6 @@ Activate `@skills/interview/` if:
 - Multiple review focuses possible
 - Security implications unknown
 
-#### 0b: Workflow State Check
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Expected next phase is `review`? → Proceed
-   - Skipping prior phases? → Warn: "Skipping {phase}. Continue? [Y/n]"
-   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
-3. If no active workflow → Create new workflow state at `review` phase
-
----
-
 ### Phase 1: Change Scoping
 
 > **Modes**: review, audit, docs (skipped in quick)
@@ -269,26 +258,11 @@ See `references/mode-regression.md` for regression checks and detailed detection
 
 Generate the readiness report using the template in `references/readiness-report-template.md`. The verdict determines workflow chaining (APPROVED/CHANGES REQUESTED/BLOCKED).
 
-### Phase 6b: Write Enforcement Results
+### Phase 6b: Enforcement Results
 
-Persist enforcement results to workflow state. Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking), and write to `.claude/workflow-state.json`. If `blocking: true`, verdict MUST be BLOCKED.
+Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). If blocking, verdict MUST be BLOCKED.
 
 > See [references/enforcement-audit.md](references/enforcement-audit.md) for enforcement result format and violation severity rules.
-
----
-
-### Phase 7: Workflow State
-
-After completing review:
-
-1. Read `.claude/workflow-state.json`
-2. Mark `review` phase as `"completed"` with timestamp and `"approved": true/false`
-3. If approved: set `commit` phase as `"in_progress"`
-4. Write updated state to `.claude/workflow-state.json`
-
-<state-checkpoint phase="review" status="completed">
-  <file path=".claude/workflow-state.json">Mark review complete (approved: true/false), set commit in_progress on approval</file>
-</state-checkpoint>
 
 </instructions>
 

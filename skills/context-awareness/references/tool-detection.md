@@ -9,11 +9,10 @@ Complete reference for detecting CLI tool availability and managing fallback str
 ```
 1. Initialize detection session
 2. For each tool in priority list:
-   a. Check cache (workflow-state.json)
+   a. Check session cache
    b. If cached and fresh (< 24h) → use cached result
    c. If stale or missing → run detection
 3. Store results in tool_availability map
-4. Write to workflow-state.json
 ```
 
 ---

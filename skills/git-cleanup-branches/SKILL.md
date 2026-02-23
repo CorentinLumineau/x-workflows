@@ -51,10 +51,6 @@ Safely clean up accumulated git branches through intelligent categorization:
 
 ## Phase 0: Initialize Cleanup Context
 
-<state-checkpoint id="cleanup-init" phase="git-cleanup-branches" status="cleanup-init">
-Checkpoint captures: Current branch, repository state, protected branches list
-</state-checkpoint>
-
 **Activate forge-awareness** to detect GitHub/Gitea/GitLab context.
 
 **Capture current state**:
@@ -110,10 +106,6 @@ For each remote branch, capture:
 - Name (strip `origin/` prefix)
 - Last commit date
 
-<state-checkpoint id="branch-inventory" phase="git-cleanup-branches" status="branch-inventory">
-Checkpoint captures: Local branches list, remote branches list, metadata per branch
-</state-checkpoint>
-
 ---
 
 ## Phase 2: Categorize Branches
@@ -121,10 +113,6 @@ Checkpoint captures: Local branches list, remote branches list, metadata per bra
 **Process each branch** through categorization logic into: **protected**, **safe-to-delete** (merged + remote gone), **stale** (30+ days, unmerged), **orphaned** (no upstream), or **active**.
 
 > **Detailed categorization scripts**: See `references/branch-categorization.md`
-
-<state-checkpoint id="branches-categorized" phase="git-cleanup-branches" status="branches-categorized">
-Checkpoint captures: Category assignments per branch, statistics per category
-</state-checkpoint>
 
 **Generate category summary**:
 ```
@@ -201,10 +189,6 @@ If option 3 (include stale):
   Require exact phrase match.
   </workflow-gate>
 
-<state-checkpoint id="deletion-plan-approved" phase="git-cleanup-branches" status="deletion-plan-approved">
-Checkpoint captures: Selected branches for deletion, deletion strategy, user confirmation
-</state-checkpoint>
-
 ---
 
 ## Phase 4: Execute Cleanup
@@ -220,10 +204,6 @@ Checkpoint captures: Selected branches for deletion, deletion strategy, user con
 
 4. Delete remote branch via `git push origin --delete {branch}`
 5. Track deletion status per branch (success/partial/failed)
-
-<state-checkpoint id="cleanup-executed" phase="git-cleanup-branches" status="cleanup-executed">
-Checkpoint captures: Deletion results per branch, success/failure counts, error messages
-</state-checkpoint>
 
 > **Detailed deletion commands and verification**: See `references/cleanup-execution.md`
 
@@ -245,18 +225,9 @@ Run `git remote prune origin` (preview with `--dry-run` first) to remove refs to
 
 ## Phase 7: Cleanup Summary
 
-<state-checkpoint id="cleanup-complete" phase="git-cleanup-branches" status="cleanup-complete">
-Checkpoint captures: Final statistics, deletion summary, naming report, timestamp
-</state-checkpoint>
-
 Generate final report with deleted/retained counts, failed deletions, pruned refs, naming compliance, and disk space estimate. Optionally run `git gc --auto`.
 
 > **Report template**: See `references/cleanup-execution.md`
-
-<state-cleanup id="cleanup-finished">
-Clear checkpoints: cleanup-init, branch-inventory, branches-categorized, deletion-plan-approved, cleanup-executed, cleanup-complete
-Retain summary report for audit
-</state-cleanup>
 
 </instructions>
 

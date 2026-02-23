@@ -70,14 +70,7 @@ Activate `@skills/interview/` if:
 - No performance baseline exists
 - Definition of "clean" unclear
 
-### Phase 0b: Workflow State Check
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active APEX workflow exists with `implement` completed → This is a sub-flow, proceed
-3. If active workflow at different phase? → Confirm: "Active workflow at {phase}. Refactor as sub-flow? [Y/n]"
-4. If no active workflow → Create new workflow state for refactor sub-flow
-
-### Phase 0c: Scope Detection (CRITICAL)
+### Phase 0b: Scope Detection (CRITICAL)
 
 **Before any refactoring, assess scope.**
 
@@ -173,19 +166,6 @@ pnpm lint        # No lint errors
 pnpm type-check  # No type errors
 pnpm build       # Builds successfully
 ```
-
-### Phase 5: Update Workflow State
-
-After refactoring verified:
-
-1. Read `.claude/workflow-state.json`
-2. Mark `refactor` phase as `"completed"` with timestamp
-3. Set `review` phase as `"in_progress"`
-4. Write updated state to `.claude/workflow-state.json`
-
-<state-checkpoint phase="refactor" status="completed">
-  <file path=".claude/workflow-state.json">Mark refactor complete, set review in_progress</file>
-</state-checkpoint>
 
 </instructions>
 

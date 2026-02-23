@@ -89,16 +89,7 @@ Activate `@skills/interview/` if:
 - Multiple implementation approaches
 - Technical constraints unknown
 
-### Phase 0b: Workflow State Check (ENFORCED)
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Plan phase completed and approved? → Proceed to implementation
-   - **Plan phase NOT completed? → BLOCK**: "Cannot proceed to implementation. Required predecessor 'plan' is not completed. Run /x-plan first."
-   - No active workflow → Create new workflow state, proceed
-3. If no workflow state file exists → Proceed (backward compatibility)
-
-### Phase 0c: Isolation Suggestion (Conditional)
+### Phase 0b: Isolation Suggestion (Conditional)
 
 Skip if task complexity is SIMPLE or MODERATE.
 
@@ -249,11 +240,10 @@ pnpm build       # Build succeeds
 
 For enforcement summary table template, see `references/phase-implementation-gates.md#enforcement-summary`.
 
-After generating the enforcement summary, persist results to workflow state:
+After generating the enforcement summary:
 
 1. Collect all V-* violations from the quality gate output
-2. Write `enforcement` field to `.claude/workflow-state.json` with violations, blocking status, and summary
-3. If `blocking: true` (any CRITICAL or HIGH violation), halt and report — do not proceed to Phase 5
+2. If any CRITICAL or HIGH violation, halt and report — do not proceed to Phase 5
 
 ### Phase 5: Documentation Sync — MANDATORY
 
@@ -267,20 +257,7 @@ For documentation sync checklist and exit gate, see `references/phase-implementa
 
 For initiative detection steps and 5-step update protocol, see `references/phase-implementation-gates.md#initiative-documentation`.
 
-### Phase 7: Update Workflow State
-
-After completing implementation:
-
-1. Read `.claude/workflow-state.json`
-2. Mark `implement` phase as `"completed"` with timestamp
-3. Set `verify` phase as `"in_progress"`
-4. Write updated state to `.claude/workflow-state.json`
-
-<state-checkpoint phase="implement" status="completed">
-  <file path=".claude/workflow-state.json">Mark implement complete, set verify in_progress</file>
-</state-checkpoint>
-
-### Phase 8: Worktree Merge-Back (Conditional)
+### Phase 7: Worktree Merge-Back (Conditional)
 
 Skip if not working in a worktree.
 

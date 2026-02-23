@@ -60,16 +60,6 @@ Activate `@skills/interview/` if:
 
 **Bypass allowed**: When changes are homogeneous and type is obvious.
 
-### Phase 0b: Workflow State Check (ENFORCED)
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Review phase completed? → Proceed to commit
-   - **Review phase NOT completed? → BLOCK**: "Cannot proceed to commit. Required predecessor 'review' is not completed. Run /x-review first, or confirm explicit bypass."
-   - User explicitly bypasses review? → Proceed with warning logged
-   - No active workflow → Proceed (standalone commit)
-3. If no workflow state file exists → Proceed (backward compatibility)
-
 ### Phase 1: Change Detection
 
 Detect ALL uncommitted changes (staged + unstaged + untracked):
@@ -235,19 +225,7 @@ Present groups table to user:
 - Always use HEREDOC for commit messages
 - Verify with `git status` after each commit
 
-### Phase 5: Update Workflow State + Cleanup
-
-After all commits completed:
-1. Mark `commit` phase as `"completed"` in `.claude/workflow-state.json`
-2. Mark workflow as `"completed"` (move to `history` array, prune to max 5)
-3. If no active workflow remains → delete `.claude/workflow-state.json`
-
-<state-cleanup phase="terminal">
-  <delete path=".claude/workflow-state.json" condition="no-active-workflows" />
-  <history-prune max-entries="5" />
-</state-cleanup>
-
-### Phase 6: Completion Summary + Chaining
+### Phase 5: Completion Summary + Chaining
 
 Present commit summary table (see [references/conventional-format.md](references/conventional-format.md) for format).
 

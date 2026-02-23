@@ -57,10 +57,6 @@ Resolve git merge conflicts through guided analysis and user-approved resolution
 
 ## Phase 0: Detect Conflict Context
 
-<state-checkpoint id="conflict-init" phase="git-resolve-conflict" status="conflict-init">
-Checkpoint captures: Git operation type, conflicting branch names, conflict file list
-</state-checkpoint>
-
 **Detect conflict context** via `git status --porcelain` and check for `.git/MERGE_HEAD`, `.git/rebase-merge/`, or `.git/CHERRY_PICK_HEAD` to determine operation type (merge/rebase/cherry-pick).
 
 **Activate forge-awareness** if conflict appears PR-related.
@@ -91,10 +87,6 @@ Generate conflict inventory table:
 | package.json | 1 | 42 lines | Config |
 | README.md | 2 | 156 lines | Documentation |
 
-<state-checkpoint id="conflict-inventory" phase="git-resolve-conflict" status="conflict-inventory">
-Checkpoint captures: File paths, conflict counts per file, file metadata
-</state-checkpoint>
-
 Present inventory to user and ask:
 "Found {total} conflict regions across {count} files. Proceed with resolution analysis?"
 
@@ -112,10 +104,6 @@ Read the entire file content.
 Parse conflict markers (`<<<<<<<`/`=======`/`>>>>>>>`) to extract ours/theirs content with surrounding context. Classify each conflict (content/addition/deletion/structural/whitespace) and recommend a strategy (accept ours/theirs/manual merge/rewrite) with confidence level (high/medium/low).
 
 > **Conflict types, strategies, and recommendation criteria**: See `references/conflict-analysis.md`
-
-<state-checkpoint id="conflict-{file}-analyzed" phase="git-resolve-conflict" status="conflict-analyzed">
-Checkpoint captures: Conflict regions parsed, recommendations generated, confidence levels
-</state-checkpoint>
 
 ---
 
@@ -188,10 +176,6 @@ Once ALL conflicts resolved:
 
 **Syntax check** for code files (eslint, py_compile, go build, cargo check). If syntax errors found, report to user and offer to re-open affected conflicts.
 
-<state-checkpoint id="conflicts-resolved" phase="git-resolve-conflict" status="conflicts-resolved">
-Checkpoint captures: All resolutions applied, files modified, syntax check results
-</state-checkpoint>
-
 **Run tests** to verify resolution doesn't break functionality:
 
 <agent-delegate id="post-resolution-tests" subagent="x-tester" model="sonnet">
@@ -221,19 +205,11 @@ Choose action:
 
 If user chooses abort: run `git merge --abort`, `git rebase --abort`, or `git cherry-pick --abort` based on operation type.
 
-<state-cleanup id="resolution-aborted">
-Clear all conflict checkpoints, restore original state
-</state-cleanup>
-
 ---
 
 ## Phase 5: Finalize Resolution
 
 Stage resolved files (`git add`), verify with `git status` (all conflicts resolved, no unmerged paths).
-
-<state-checkpoint id="resolution-finalized" phase="git-resolve-conflict" status="resolution-finalized">
-Checkpoint captures: Staged files, resolution summary, test results
-</state-checkpoint>
 
 ---
 
@@ -242,11 +218,6 @@ Checkpoint captures: Staged files, resolution summary, test results
 - **Merge conflict**: Chain to `git-merge-pr` (PR-related) or `git-commit`
 - **Rebase conflict**: Run `git rebase --continue`; if more conflicts appear, re-enter this skill
 - **Cherry-pick conflict**: Run `git cherry-pick --continue`, chain to `git-commit`
-
-<state-cleanup id="resolution-complete">
-Clear checkpoints: conflict-init, conflict-inventory, conflict-*-analyzed, conflicts-resolved, resolution-finalized
-Retain resolution summary for audit
-</state-cleanup>
 
 </instructions>
 

@@ -68,14 +68,6 @@ Activate `@skills/interview/` if:
 - No reproduction steps provided
 - Multiple systems potentially involved
 
-### Phase 0b: Workflow State Check
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Expected workflow is DEBUG? → Proceed
-   - Active non-DEBUG workflow? → Warn: "Active {type} workflow at {phase}. Start DEBUG? [Y/n]"
-3. If no active workflow → Create new DEBUG workflow state
-
 ### Phase 1: Observe
 
 <agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
@@ -142,22 +134,6 @@ Based on findings, route to appropriate action:
 | Complex fix needed | `/x-implement` |
 | Needs architectural change | `/x-plan` |
 | Root cause still unclear | Continue investigation |
-
-### Phase 5: Update Workflow State
-
-After root cause resolution:
-
-1. Read `.claude/workflow-state.json`
-2. Mark `troubleshoot` phase as `"completed"` with timestamp
-3. Set next phase based on resolution:
-   - Simple fix → Set `fix` as next
-   - Complex fix → Set `implement` as next
-   - Architecture issue → Set `plan` as next
-4. Write updated state to `.claude/workflow-state.json`
-
-<state-checkpoint phase="troubleshoot" status="completed">
-  <file path=".claude/workflow-state.json">Mark troubleshoot complete, set next phase based on resolution (fix/implement/plan)</file>
-</state-checkpoint>
 
 </instructions>
 

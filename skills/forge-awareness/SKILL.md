@@ -104,42 +104,6 @@ fi
 
 > See [references/forge-detection.md](references/forge-detection.md) for CLI install commands and fallback strategies.
 
-### Phase 4: Store in Workflow State
-
-Write to `.claude/workflow-state.json`:
-
-```json
-{
-  "forge_context": {
-    "primary_forge": "github",
-    "primary_remote": "origin",
-    "cli_available": true,
-    "cli_tool": "gh",
-    "cli_version": "gh version 2.40.0 (2024-01-15)",
-    "remotes": [
-      {
-        "name": "origin",
-        "forge": "github",
-        "url": "git@github.com:owner/repo.git",
-        "owner": "owner",
-        "repo": "repo",
-        "hostname": "github.com"
-      },
-      {
-        "name": "gitea-mirror",
-        "forge": "gitea",
-        "url": "https://gitea.example.com/org/project.git",
-        "owner": "org",
-        "repo": "project",
-        "hostname": "gitea.example.com"
-      }
-    ],
-    "detected_at": "2026-02-16T10:30:00Z",
-    "ttl": "2026-02-17T10:30:00Z"
-  }
-}
-```
-
 ## Multi-Remote Support
 
 When multiple remotes exist (common in mirror setups):
@@ -159,50 +123,9 @@ When multiple remotes exist (common in mirror setups):
    - Support `--remote` flag to target specific remote
    - Example: `git-create-pr --remote gitea-mirror`
 
-**Multi-Remote State Example:**
-
-```json
-{
-  "forge_context": {
-    "primary_forge": "github",
-    "primary_remote": "origin",
-    "mirror_detected": true,
-    "mirror_remotes": ["gitea-mirror", "gitlab-backup"],
-    "remotes": [...]
-  }
-}
-```
-
 ## CI/Headless Detection
 
 > See [references/forge-detection.md](references/forge-detection.md) for CI environment detection scripts and headless mode adaptations.
-
-## Caching Strategy
-
-**Cache Duration:**
-- Default TTL: 24 hours
-- Invalidation triggers: Remote URL change, manual cache clear
-
-**Cache Storage:**
-- Location: `.claude/workflow-state.json` (forge_context key)
-
-**Cache Refresh Logic:**
-
-```
-On skill activation:
-  1. Check if forge_context exists in workflow-state.json
-  2. Check if ttl expired (current_time > ttl)
-  3. If expired OR remotes changed → re-detect
-  4. Else → use cached context
-```
-
-**Manual Cache Clear:**
-
-```bash
-# Clear forge context from workflow state
-# (Consumed by git-clear-state or similar)
-rm -f .claude/workflow-state.json
-```
 
 ## Error Handling
 
@@ -224,61 +147,8 @@ behavioral-skills:
 1. User invokes `git-create-pr`
 2. Compiler detects `forge-awareness` in behavioral skills
 3. forge-awareness auto-fires **before** Phase 0 of git-create-pr
-4. forge_context written to workflow-state.json
-5. git-create-pr reads forge_context and uses appropriate CLI/API
-
-**Accessing Forge Context in Skills:**
-
-```markdown
-## Phase 0: Load Forge Context
-
-<doc-query>
-Read forge context from workflow-state.json
-Extract: primary_forge, cli_tool, primary_remote
-</doc-query>
-
-<workflow-gate>
-If forge is GitHub AND cli_tool is "gh":
-  → Use gh CLI commands
-Else if forge is Gitea AND cli_tool is "tea":
-  → Use tea CLI commands
-Else:
-  → Fall back to API calls (see @skills/vcs-forge-operations/)
-</workflow-gate>
-```
-
-## State Persistence
-
-**File Persistence:**
-- Path: `.claude/workflow-state.json`
-- Key: `forge_context`
-- Format: JSON object with remotes array, primary selections, CLI availability
-
-**State Schema:**
-
-```typescript
-interface ForgeContext {
-  primary_forge: "github" | "gitea" | "gitlab" | "unknown";
-  primary_remote: string;
-  cli_available: boolean;
-  cli_tool: "gh" | "tea" | "glab" | "none";
-  cli_version?: string;
-  remotes: Array<{
-    name: string;
-    forge: string;
-    url: string;
-    owner: string;
-    repo: string;
-    hostname: string;
-  }>;
-  detected_at: string; // ISO 8601
-  ttl: string; // ISO 8601
-  is_headless?: boolean;
-  ci_platform?: string;
-  error?: boolean;
-  error_message?: string;
-}
-```
+4. Forge context detected (primary forge, CLI tool, remotes)
+5. git-create-pr uses the detected forge context to select appropriate CLI/API
 
 ## References
 

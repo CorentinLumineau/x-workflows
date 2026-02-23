@@ -73,15 +73,6 @@ Activate `@skills/interview/` if:
 - No comparison baseline
 - Analysis focus undefined
 
-### Phase 0b: Workflow State Check
-
-1. Read `.claude/workflow-state.json` (if exists)
-2. If active workflow exists:
-   - Expected next phase is `analyze`? → Proceed
-   - Skipping a phase? → Warn: "Skipping {phase}. Continue? [Y/n]"
-   - Active workflow at different phase? → Confirm: "Active workflow at {phase}. Start new? [Y/n]"
-3. If no active workflow → Create new APEX workflow state
-
 <plan-mode phase="exploration" trigger="after-interview">
   <enter>After confidence gate passes, enter read-only exploration mode for codebase analysis</enter>
   <scope>Phases 1-3: scope definition, multi-domain analysis, issue prioritization (read-only: Glob, Grep, Read only)</scope>
@@ -186,19 +177,6 @@ After writing the audit document, display a condensed executive summary to the u
 
 Full report: `documentation/audits/analysis-{scope}-{date}.md`
 ```
-
-### Phase 5: Update Workflow State
-
-After completing analysis:
-
-1. Read `.claude/workflow-state.json`
-2. Mark `analyze` phase as `"completed"` with timestamp
-3. Set `plan` phase as `"in_progress"`
-4. Write updated state to `.claude/workflow-state.json`
-
-<state-checkpoint phase="analyze" status="completed">
-  <file path=".claude/workflow-state.json">Mark analyze complete, set plan in_progress</file>
-</state-checkpoint>
 
 </instructions>
 
