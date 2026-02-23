@@ -13,7 +13,10 @@ metadata:
 chains-to:
   - skill: git-implement-issue
     condition: "after issue creation"
-chains-from: []
+  - skill: git-implement-multiple-issue
+    condition: "batch implementation"
+chains-from:
+  - skill: git-quickwins-to-pr
 ---
 
 # /git-create-issue

@@ -15,8 +15,12 @@ chains-to:
     condition: "after PR created"
   - skill: git-review-pr
     condition: "PR needs local review"
+  - skill: git-review-multiple-pr
+    condition: "batch review"
 chains-from:
   - skill: git-commit
+  - skill: git-implement-issue
+  - skill: git-quickwins-to-pr
 ---
 
 # /git-create-pr

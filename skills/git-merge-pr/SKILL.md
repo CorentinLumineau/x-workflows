@@ -23,6 +23,7 @@ chains-from:
   - skill: git-check-ci
   - skill: git-review-pr
   - skill: git-resolve-conflict
+  - skill: git-review-multiple-pr
 ---
 
 # /git-merge-pr

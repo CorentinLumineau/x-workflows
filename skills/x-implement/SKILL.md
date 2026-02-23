@@ -24,6 +24,7 @@ chains-from:
     condition: "changes requested"
   - skill: git-implement-issue
   - skill: x-create
+  - skill: x-quickwins
 ---
 
 # /x-implement

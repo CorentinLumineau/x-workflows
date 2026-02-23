@@ -19,6 +19,7 @@ chains-to:
     condition: "CI failures on PR"
 chains-from:
   - skill: git-create-pr
+  - skill: git-implement-issue
 ---
 
 # /git-check-ci

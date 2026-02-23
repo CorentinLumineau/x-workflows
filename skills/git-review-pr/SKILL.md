@@ -17,6 +17,7 @@ chains-to:
     condition: "review requested changes"
 chains-from:
   - skill: git-create-pr
+  - skill: git-implement-issue
   - skill: git-fix-pr
     condition: "fixes implemented, re-review"
 ---
