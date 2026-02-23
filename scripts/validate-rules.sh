@@ -222,6 +222,80 @@ for skill_dir in "$REPO_ROOT/skills"/*/; do
     fi
 done
 
+# Check 7: Frontmatter spec compliance (field placement)
+echo ""
+echo "Checking frontmatter spec compliance (field placement)..."
+
+# Fields that MUST be at top-level (not nested under metadata:)
+TOPLEVEL_FIELDS=("user-invocable" "argument-hint" "allowed-tools" "model" "context" "agent" "hooks" "disable-model-invocation")
+
+# Behavioral skills (non-workflow, non-git, non-ci-*-issue)
+BEHAVIORAL_SKILLS=()
+
+for skill_dir in "$REPO_ROOT/skills"/*/; do
+    if [[ -d "$skill_dir" ]]; then
+        skill_name=$(basename "$skill_dir")
+        skill_file="${skill_dir}SKILL.md"
+
+        if [[ ! -f "$skill_file" ]]; then
+            continue  # Already caught by Check 2
+        fi
+
+        # Extract frontmatter (content between first two --- lines)
+        frontmatter=$(sed -n '/^---$/,/^---$/p' "$skill_file" | sed '1d;$d')
+
+        if [[ -z "$frontmatter" ]]; then
+            continue
+        fi
+
+        # Determine skill type
+        # x-* and git-* are user-invocable workflow skills
+        # Everything else is behavioral (auto-triggered)
+        is_workflow=false
+        if [[ "$skill_name" == x-* || "$skill_name" == git-* ]]; then
+            is_workflow=true
+        fi
+
+        # Check 7a: Top-level fields must NOT be indented (nested under metadata:)
+        for field in "${TOPLEVEL_FIELDS[@]}"; do
+            # Look for the field with leading whitespace (indented = nested)
+            if echo "$frontmatter" | grep -qE "^[[:space:]]+${field}:"; then
+                log_error "skills/$skill_name has '$field' nested under metadata (must be top-level)"
+            fi
+        done
+
+        # Check 7b: user-invocable presence and correctness by skill type
+        if [[ "$is_workflow" == true ]]; then
+            if echo "$frontmatter" | grep -qE "^user-invocable:[[:space:]]*true"; then
+                log_success "skills/$skill_name has user-invocable: true (workflow)"
+            elif echo "$frontmatter" | grep -qE "^user-invocable:"; then
+                log_error "skills/$skill_name is a workflow skill but user-invocable is not 'true'"
+            else
+                log_error "skills/$skill_name is a workflow skill missing top-level user-invocable: true"
+            fi
+        else
+            # Behavioral skill
+            if echo "$frontmatter" | grep -qE "^user-invocable:[[:space:]]*false"; then
+                log_success "skills/$skill_name has user-invocable: false (behavioral)"
+            elif echo "$frontmatter" | grep -qE "^user-invocable:"; then
+                log_error "skills/$skill_name is a behavioral skill but user-invocable is not 'false'"
+            else
+                log_error "skills/$skill_name is a behavioral skill missing top-level user-invocable: false"
+            fi
+        fi
+
+        # Check 7c: argument-hint format (if present)
+        arg_hint=$(echo "$frontmatter" | grep -E '^argument-hint:' | head -1 | sed 's/^argument-hint:[[:space:]]*//' | sed 's/^["'"'"']//' | sed 's/["'"'"']$//' || true)
+        if [[ -n "$arg_hint" ]]; then
+            if echo "$arg_hint" | grep -qE '[<\[]'; then
+                log_success "skills/$skill_name argument-hint uses bracket convention"
+            else
+                log_warning "skills/$skill_name argument-hint '$arg_hint' should use <required> or [optional] brackets"
+            fi
+        fi
+    fi
+done
+
 # Summary
 echo ""
 echo "=========================================="

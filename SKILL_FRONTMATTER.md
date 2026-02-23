@@ -36,6 +36,7 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 user-invocable: true
+argument-hint: "<task description>"
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
@@ -45,7 +46,8 @@ metadata:
 
 **Key fields**:
 - `name`: Must match directory name
-- `user-invocable: true`: **Required** for all x-* skills
+- `user-invocable: true`: **Required** for all x-* skills (top-level)
+- `argument-hint`: Optional, describes expected argument using `<required>` / `[optional]` brackets
 - `category: workflow`: Standard for workflow skills
 - `allowed-tools`: List of permitted Claude Code tools
 
@@ -75,6 +77,7 @@ name: {skill-name}
 description: {What this skill does}
 category: behavioral
 user-invocable: false
+argument-hint: ""
 triggers:
   - {trigger_condition_1}
   - {trigger_condition_2}
@@ -84,7 +87,8 @@ triggers:
 
 **Key fields**:
 - `name`: Must match directory name (no `x-` prefix)
-- `user-invocable: false`: **Required** to prevent user invocation
+- `user-invocable: false`: **Required** to prevent user invocation (top-level)
+- `argument-hint`: Empty string for behavioral skills (not user-invoked)
 - `category: behavioral`: Standard for behavioral skills
 - `triggers:`: Array documenting auto-activation conditions
 
@@ -158,6 +162,62 @@ triggers:
 
 ---
 
+## Field Placement Rules
+
+Claude Code's frontmatter parser treats **top-level fields** as platform directives. Fields nested under `metadata:` are invisible to the platform and will not function correctly.
+
+### Top-Level Fields (MUST NOT be indented)
+
+These fields must appear at the root level of frontmatter (same indentation as `name:` and `description:`):
+
+| Field | Purpose | Required |
+|-------|---------|----------|
+| `user-invocable` | Controls CLI menu visibility | Yes (all skills) |
+| `argument-hint` | Describes expected argument | Optional |
+| `allowed-tools` | List of permitted Claude Code tools | Workflow skills |
+| `model` | Override model for this skill | Optional |
+| `context` | Context injection directives | Optional |
+| `agent` | Agent delegation target | Optional |
+| `hooks` | Hook triggers | Optional |
+| `disable-model-invocation` | Prevent auto-invocation | Optional |
+
+### Metadata Fields (nested under `metadata:`)
+
+These fields are informational and go under the `metadata:` block:
+
+| Field | Purpose |
+|-------|---------|
+| `author` | Skill author(s) |
+| `version` | Semantic version |
+| `category` | Skill category (workflow, behavioral) |
+
+### Common Mistake: Nested Platform Directives
+
+❌ **Wrong** — `user-invocable` nested under `metadata:` (invisible to platform):
+
+```yaml
+metadata:
+  category: behavioral
+  user-invocable: false    # BUG: platform can't see this!
+```
+
+✅ **Correct** — `user-invocable` at top-level:
+
+```yaml
+user-invocable: false        # Platform reads this correctly
+metadata:
+  category: behavioral
+```
+
+### `argument-hint` Format Convention
+
+When present, `argument-hint` should use bracket notation:
+- `<required-arg>` — angle brackets for required arguments
+- `[optional-arg]` — square brackets for optional arguments
+- Combined: `<task> [--mode quick]`
+
+---
+
 ## Validation Rules
 
 ### Naming Validation
@@ -170,10 +230,12 @@ triggers:
 
 ### Frontmatter Validation
 
-| Skill Type | Required Fields | Forbidden Fields |
-|------------|-----------------|------------------|
-| Workflow (x-*) | `name`, `description`, `user-invocable: true` | `triggers` |
-| Behavioral | `name`, `description`, `user-invocable: false`, `triggers` | N/A |
+| Skill Type | Required Fields | Optional Fields | Forbidden Fields |
+|------------|-----------------|-----------------|------------------|
+| Workflow (x-*) | `name`, `description`, `user-invocable: true` | `argument-hint`, `allowed-tools` | `triggers` |
+| Behavioral | `name`, `description`, `user-invocable: false`, `triggers` | `argument-hint` | N/A |
+
+> **Rule**: `user-invocable` and `argument-hint` must always be at top-level. See [Field Placement Rules](#field-placement-rules).
 
 ### Common Mistakes
 
@@ -268,6 +330,12 @@ make validate
 - `description` exists and is single-line
 - `allowed-tools` present (workflow skills)
 - `triggers` present (behavioral skills)
+
+**Check 7 validates** (field placement):
+- Platform directives (`user-invocable`, `argument-hint`, etc.) are at top-level, not nested under `metadata:`
+- `user-invocable: true` for workflow skills (x-*, git-*, ci-*-issue)
+- `user-invocable: false` for behavioral skills
+- `argument-hint` uses `<required>` / `[optional]` bracket convention
 
 ---
 
