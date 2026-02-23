@@ -3,7 +3,7 @@ name: git-create-issue
 description: Use when you need to create a new issue on the forge to track a bug, feature, or task.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Read Grep Glob Bash
+allowed-tools: Read Grep Glob Bash AskUserQuestion
 user-invocable: true
 metadata:
   author: ccsetup contributors
@@ -87,10 +87,46 @@ Checkpoint captures: issue title, type, template selection
    - Related issues/PRs
 
 3. If template selected, pre-fill description with template structure
-4. Ask for:
-   - Labels (suggest based on type: bug → "bug", feature → "enhancement")
-   - Milestone (list available milestones via `gh api repos/{owner}/{repo}/milestones`)
-   - Assignees (optional)
+4. Fetch available metadata from forge:
+   - Labels: `gh label list --json name,description` / `tea labels ls`
+   - Milestones: `gh api repos/{owner}/{repo}/milestones --jq '.[].title'` / `tea milestones ls`
+   - If fetch fails or returns empty, skip the corresponding gate below
+
+5. Present metadata selection via structured gates:
+
+<workflow-gate type="multi-select" id="label-selection">
+  <question>Which labels should be applied to this issue?</question>
+  <header>Labels</header>
+  <options source="fetched-labels">
+    <option key="suggested" recommended="true">
+      <label>{type-appropriate label}</label>
+      <description>Auto-suggested based on issue type</description>
+    </option>
+    <!-- Additional options populated from fetched labels -->
+  </options>
+</workflow-gate>
+
+<workflow-gate type="choice" id="milestone-selection">
+  <question>Assign to a milestone?</question>
+  <header>Milestone</header>
+  <option key="none">
+    <label>No milestone</label>
+    <description>Skip milestone assignment</description>
+  </option>
+  <!-- Additional options populated from fetched milestones -->
+</workflow-gate>
+
+<workflow-gate type="multi-select" id="assignee-selection">
+  <question>Assign to anyone? (optional)</question>
+  <header>Assignees</header>
+  <option key="none" recommended="true">
+    <label>No assignees</label>
+    <description>Leave unassigned for now</description>
+  </option>
+  <!-- Additional options populated from repo collaborators -->
+</workflow-gate>
+
+Note: If the repository has no labels or milestones configured, skip the corresponding gate entirely and proceed with defaults.
 
 ### Phase 2: Review Issue Content
 
@@ -123,7 +159,7 @@ Checkpoint captures: issue title, type, template selection
 
 1. Construct issue creation command:
    - GitHub: `gh issue create --title "{title}" --body "{description}" --label {labels} --milestone {milestone}`
-   - Gitea: `tea issue create --title "{title}" --body "{description}" --labels {labels} --milestone {milestone}`
+   - Gitea: `tea issue create --title "{title}" --description "{description}" --labels {labels} --milestone {milestone}`
 2. Present command to user for final approval
 <workflow-gate type="human-approval" criticality="critical" prompt="Create this issue on {forge}?">
 </workflow-gate>
