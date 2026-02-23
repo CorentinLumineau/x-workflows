@@ -32,18 +32,27 @@ tea pr list --state open --output json | head -20
 tea api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}/reviews"
 # Non-empty array = reviewed (formal review exists)
 
-# Tier 2: If formal reviews empty, check issue comments for CI review patterns
-# CI bots (e.g. gitea-actions) post reviews as issue comments, not formal reviews
+# Tier 2: If formal reviews empty, check issue comments for review patterns
+# Reviews may be posted as comments by CI bots (gitea-actions), by developers
+# using /git-review-pr or /git-review-multiple-pr, or handwritten reviews.
+# Match on content patterns, not author — any user can post a review comment.
 tea api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/comments" | \
   python3 -c "
-import json, sys
+import json, sys, re
 comments = json.load(sys.stdin)
-ci_reviews = [c for c in comments
-  if 'Verdict' in c.get('body', '')
-  and c.get('user', {}).get('login') in ('gitea-actions',)]
-print(len(ci_reviews))
+# Match skill-generated reviews (Verdict pattern) and common review indicators
+REVIEW_PATTERNS = re.compile(
+    r'\*{0,2}Verdict\*{0,2}\s*:' # **Verdict**: from skill-generated reviews
+    r'|LGTM'                      # common approval shorthand
+    r'|REQUEST_CHANGES'           # formal verdict keyword
+    r'|Needs Changes'             # skill verdict
+    r'|Critical Issues'           # skill verdict
+)
+review_comments = [c for c in comments
+    if REVIEW_PATTERNS.search(c.get('body', ''))]
+print(len(review_comments))
 "
-# If count > 0 = reviewed (CI review comment exists)
+# If count > 0 = reviewed (review comment exists, from any author)
 # A PR is "unreviewed" only if BOTH tier 1 AND tier 2 return empty/zero
 ```
 

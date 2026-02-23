@@ -45,7 +45,7 @@ Perform batch code review of multiple pull requests with:
 **Arguments**: `$ARGUMENTS` contains space-separated PR numbers (e.g., "12 15 23" or "#12 #15 #23")
 
 **Flags**:
-- `--unreviewed`: Auto-fetch all open PRs without reviews (checks both formal PR reviews AND CI review comments on Gitea)
+- `--unreviewed`: Auto-fetch all open PRs without reviews (checks formal PR reviews AND review-pattern comments from any author on Gitea)
 
 ---
 
@@ -70,7 +70,7 @@ Forge type, PR numbers, repository context, resolution method
 
 Parse `$ARGUMENTS`:
 - If PR numbers provided: strip "#" prefixes, **validate each matches `/^\d+$/`** (reject non-numeric), store as `PR_LIST`
-- If `--unreviewed` flag: auto-fetch unreviewed PRs via forge API (max 20 candidates). On Gitea, uses two-tier check: formal PR reviews AND CI review comments (see `references/forge-commands.md`)
+- If `--unreviewed` flag: auto-fetch unreviewed PRs via forge API (max 20 candidates). On Gitea, uses two-tier check: formal PR reviews AND review-pattern comments from any author (see `references/forge-commands.md`)
 - If no arguments: use **interview** skill to ask user for PR numbers
 
 > **Auto-fetch and submission commands**: See `references/forge-commands.md`
