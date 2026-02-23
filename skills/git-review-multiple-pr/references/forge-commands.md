@@ -26,9 +26,25 @@ gh pr list --search "review:none" --state open --json number,title,author,headRe
 # Gitea lacks native "unreviewed" filter — fetch open PRs with limit
 tea pr list --state open --output json | head -20
 
-# For each PR, check if reviews exist:
+# For each PR, check if reviews exist (two-tier check):
+
+# Tier 1: Check formal PR reviews
 tea api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}/reviews"
-# Empty array = unreviewed
+# Non-empty array = reviewed (formal review exists)
+
+# Tier 2: If formal reviews empty, check issue comments for CI review patterns
+# CI bots (e.g. gitea-actions) post reviews as issue comments, not formal reviews
+tea api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/comments" | \
+  python3 -c "
+import json, sys
+comments = json.load(sys.stdin)
+ci_reviews = [c for c in comments
+  if 'Verdict' in c.get('body', '')
+  and c.get('user', {}).get('login') in ('gitea-actions',)]
+print(len(ci_reviews))
+"
+# If count > 0 = reviewed (CI review comment exists)
+# A PR is "unreviewed" only if BOTH tier 1 AND tier 2 return empty/zero
 ```
 
 **Limit**: Cap at 20 candidates for both forges. If >20 unreviewed PRs exist, inform user and suggest filtering by author or label.
