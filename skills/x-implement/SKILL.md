@@ -63,6 +63,7 @@ This skill activates:
 | `secure-coding` | Security-sensitive code |
 | `database` | Schema changes, migrations |
 | `api-design` | API endpoints, contracts |
+| `worktree-awareness` | Complex task, user requests isolation |
 
 ## Agent Delegation
 
@@ -95,6 +96,32 @@ Activate `@skills/interview/` if:
    - **Plan phase NOT completed? → BLOCK**: "Cannot proceed to implementation. Required predecessor 'plan' is not completed. Run /x-plan first."
    - No active workflow → Create new workflow state, proceed
 3. If no workflow state file exists → Proceed (backward compatibility)
+
+### Phase 0c: Isolation Suggestion (Conditional)
+
+Skip if task complexity is SIMPLE or MODERATE.
+
+When complexity-detection indicates COMPLEX:
+
+<workflow-gate type="choice" id="worktree-suggestion">
+  <question>This is a complex task. Work in an isolated worktree? This lets other work continue on the main branch.</question>
+  <header>Isolation</header>
+  <option key="inline" recommended="true">
+    <label>Work inline</label>
+    <description>Continue on current branch (default behavior)</description>
+  </option>
+  <option key="worktree">
+    <label>Use worktree</label>
+    <description>Create isolated worktree — merge back when done</description>
+  </option>
+</workflow-gate>
+
+If worktree selected:
+- Call `EnterWorktree` tool with a descriptive name based on the task
+- Branch becomes PR-ready on completion
+- Merge-back step added after Phase 7
+
+Uses: @skills/worktree-awareness/
 
 ### Phase 1: Context Discovery
 
@@ -251,6 +278,41 @@ After completing implementation:
 <state-checkpoint phase="implement" status="completed">
   <file path=".claude/workflow-state.json">Mark implement complete, set verify in_progress</file>
 </state-checkpoint>
+
+### Phase 8: Worktree Merge-Back (Conditional)
+
+Skip if not working in a worktree.
+
+When implementation is complete in a worktree:
+
+<workflow-gate type="choice" id="worktree-merge">
+  <question>Implementation complete in worktree. Merge back to the source branch?</question>
+  <header>Merge</header>
+  <option key="merge" recommended="true">
+    <label>Merge back</label>
+    <description>Merge worktree branch to source and prune</description>
+  </option>
+  <option key="pr">
+    <label>Create PR instead</label>
+    <description>Keep worktree branch and create a pull request</description>
+  </option>
+  <option key="keep">
+    <label>Keep worktree</label>
+    <description>Leave worktree active for more work</description>
+  </option>
+</workflow-gate>
+
+If merge selected:
+1. Switch to source branch
+2. Merge worktree branch
+3. Resolve conflicts if needed (delegate to @skills/git-resolve-conflict/)
+4. Run tests to verify merge
+5. Prune worktree
+
+If PR selected:
+- Chain to `/git-create-pr` with worktree branch
+
+Uses: @skills/worktree-awareness/ merge-back protocol.
 
 </instructions>
 

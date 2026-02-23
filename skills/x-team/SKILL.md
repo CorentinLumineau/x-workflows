@@ -58,6 +58,7 @@ This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `complexity-detection` - Task parallelizability assessment
 - `agent-awareness` - Agent capability catalog
+- `worktree-awareness` - Worktree lifecycle (Phase 3 optional, Phase 5b)
 
 ## MCP Servers
 
@@ -104,6 +105,7 @@ Analyze the prompt to determine:
 2. **Team size** — How many teammates are optimal? (2-5 recommended)
 3. **Coordination needs** — Do teammates need to share findings?
 4. **Risk level** — Should teammates require plan approval?
+5. **Isolation strategy** — File ownership (default) or worktree isolation?
 
 ### Phase 2: Team Pattern Selection
 
@@ -144,6 +146,28 @@ When all teammates finish, synthesize their findings and present a unified resul
 - Assign a clear deliverable per teammate
 - Suggest which `/x-*` workflow each teammate should follow
 
+#### Optional: Worktree Isolation Mode
+
+When teammates need to modify overlapping files, offer worktree isolation instead of strict file ownership:
+
+If worktree mode selected:
+- Spawn teammates with `isolation: "worktree"` in the Task tool call
+- Each teammate gets an isolated worktree copy of the repository
+- Teammates can modify any file without conflict risk
+- Conflicts are resolved via git merge at synthesis phase
+
+Use: @skills/worktree-awareness/ for lifecycle management.
+
+**When to prefer worktree isolation over file ownership:**
+
+| Scenario | Worktree | File Ownership |
+|----------|----------|----------------|
+| Overlapping file modifications needed | Yes | No |
+| Cross-cutting refactoring | Yes | No |
+| Database migration + API changes | Yes | Risky |
+| Independent module work | Either | Preferred (simpler) |
+| Read-only analysis | No | N/A |
+
 ### Phase 4: Coordination Mode
 
 Based on task risk, configure the team lead behavior:
@@ -169,6 +193,20 @@ Guide the user on monitoring the team:
 **Split-pane mode (tmux):**
 - Click into any pane to interact directly
 - Each teammate has full terminal visibility
+
+### Phase 5b: Worktree Merge-Back (when worktree mode used)
+
+Skip if file ownership mode was used.
+
+When worktree-isolated teammates complete their work:
+1. Review each worktree branch's changes
+2. Merge branches back to source sequentially
+3. Resolve conflicts if needed (delegate to @skills/git-resolve-conflict/)
+4. Run full test suite after all merges
+5. Prune worktrees after successful merge
+6. Verify: `git worktree list` shows no stale entries
+
+Use: @skills/worktree-awareness/ merge-back protocol.
 
 **Synthesis checklist:**
 - [ ] All teammates have completed their tasks

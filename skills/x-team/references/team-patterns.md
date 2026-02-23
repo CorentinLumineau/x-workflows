@@ -64,6 +64,8 @@ Team rules:
 
 **Model recommendation**: Sonnet for backend/frontend, Haiku for tests
 
+**Alternative**: If teammates need to modify overlapping files (e.g., shared types, config), use Worktree Mode instead of file ownership.
+
 ---
 
 ## Pattern 3: Review Team
@@ -156,6 +158,55 @@ Team rules:
 ```
 
 **Model recommendation**: Sonnet for all (safe refactoring needs care)
+
+**Alternative**: For cross-cutting refactors where module boundaries overlap, use Worktree Mode for safer parallel execution.
+
+---
+
+## Worktree Mode
+
+Worktree isolation is an alternative to file ownership for team patterns. Instead of requiring each teammate to own specific directories, worktrees give each teammate an isolated copy of the entire repository.
+
+### When to Use Worktree Mode
+
+| Scenario | Worktree | File Ownership |
+|----------|----------|----------------|
+| Overlapping file modifications | **Worktree** | Cannot do safely |
+| Cross-cutting refactoring | **Worktree** | Risky with shared files |
+| Database migration + API changes | **Worktree** | Risky coordination |
+| Independent module work | Either | **Preferred** (simpler) |
+| Read-only analysis (Review, Debug) | Not needed | N/A |
+
+### Worktree Team Template
+
+```
+Create an agent team to implement: {feature with overlapping concerns}
+
+Spawn {N} teammates with worktree isolation:
+- Backend: "Implement backend for {feature}. You have an isolated worktree —
+  feel free to modify any file. Use /x-implement with TDD.
+  Focus on {backend scope} but update shared types if needed."
+  [spawn with isolation: "worktree"]
+- Frontend: "Implement frontend for {feature}. You have an isolated worktree —
+  feel free to modify any file. Use /x-implement with TDD.
+  Focus on {frontend scope} but update shared types if needed."
+  [spawn with isolation: "worktree"]
+
+Team rules:
+- Each teammate works in an isolated worktree (no file conflicts possible)
+- Teammates can modify any file including shared types, configs, etc.
+- After completion, branches are merged back sequentially
+- Conflicts resolved via git merge tooling
+- All teammates follow CLAUDE.md conventions
+```
+
+### Merge-Back After Worktree Mode
+
+After all worktree teammates complete:
+1. Merge each worktree branch back to source (one at a time)
+2. Resolve conflicts at each merge step
+3. Run full test suite after all merges
+4. Prune all worktrees
 
 ---
 
