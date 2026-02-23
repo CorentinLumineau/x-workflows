@@ -75,6 +75,8 @@ tea api "repos/${OWNER}/${REPO}/pulls?state=open&limit=20"
 
 **CRITICAL: Never use string interpolation for the review body.** Use `--body-file` or single-quoted heredoc to prevent shell injection from LLM-generated or forge-sourced content.
 
+**`$REPORT_BODY` definition**: The complete, unmodified structured report from the review agent. This includes ALL sections: verdict header, finding groups (🚨 Critical, ⚠️ Warnings, 💡 Suggestions, ✅ Good), Test Results, AND the Quick Fix section (when verdict is not ✅ LGTM). Do NOT reconstruct or omit any part of the agent output.
+
 ### GitHub (safe pattern)
 ```bash
 # Write report to secure temp file — no shell expansion

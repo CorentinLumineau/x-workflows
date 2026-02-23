@@ -315,6 +315,10 @@ After each verb skill completes:
 | x-brainstorm | x-research/x-design | suggest | BRAINSTORM |
 | x-research | x-design | suggest | BRAINSTORM |
 | x-design | x-plan | **approval** | BRAINSTORM→APEX |
+| git-review-pr | git-fix-pr | suggest | PR Review |
+| git-review-multiple-pr | git-fix-pr | suggest | PR Review |
+| git-fix-pr | git-review-pr | suggest | PR Review |
+| git-check-ci | git-fix-pr | suggest | CI |
 
 ### Invocation Pattern
 
@@ -365,6 +369,7 @@ args: "{workflow context summary}"
 | `/x-ask` | Zero-friction Q&A |
 | `/git-commit` | Conventional commits |
 | `/git-create-release` | Release workflow |
+| `/git-fix-pr` | PR fix from review feedback |
 | `/x-docs` | Documentation management |
 | `/x-help` | Command reference |
 | `/x-quickwins` | Pareto-scored quick wins |

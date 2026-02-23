@@ -1,0 +1,394 @@
+---
+name: git-fix-pr
+description: Use when a PR needs fixes from review feedback, CI failures, or reviewer comments.
+license: Apache-2.0
+compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
+allowed-tools: Read Write Edit Grep Glob Bash
+user-invocable: true
+argument-hint: "<pr-number> [inline-findings...]"
+metadata:
+  author: ccsetup contributors
+  version: "1.0.0"
+  category: workflow
+chains-to:
+  - skill: git-review-pr
+    condition: "fixes implemented, re-review"
+chains-from:
+  - skill: git-review-pr
+    condition: "review requested changes"
+  - skill: git-review-multiple-pr
+    condition: "review requested changes"
+  - skill: git-check-ci
+    condition: "CI failures on PR"
+---
+
+# /git-fix-pr
+
+> Bridge review findings to implementation: fetch full PR context, checkout branch, delegate fixes, push.
+
+## Workflow Context
+
+| Attribute | Value |
+|-----------|-------|
+| **Workflow** | UTILITY |
+| **Position** | After PR review, before re-review |
+| **Flow** | `git-review-pr` → **`git-fix-pr`** → `git-review-pr` |
+
+---
+
+## Intention
+
+Implement fixes for a pull request based on the complete review context:
+- Fetch full PR context: description, all reviews, all comments, CI status
+- Checkout PR branch (worktree-isolated or in-place)
+- Delegate implementation to x-auto (routes to ONESHOT or APEX by complexity)
+- Push fixes and optionally comment on the PR
+- Chain to re-review
+
+**Arguments**: `$ARGUMENTS` contains PR number as first token, optional inline findings after.
+
+Review feedback can come from:
+- Automated reviews (Gitea CI workflows)
+- Skill-generated reviews (`/git-review-pr`, `/git-review-multiple-pr`)
+- Human reviewer comments
+
+---
+
+## Behavioral Skills
+
+| Skill | When | Purpose |
+|-------|------|---------|
+| `forge-awareness` | Phase 0 | Detect GitHub/Gitea/GitLab context and adapt commands |
+| `context-awareness` | Phase 1 | Compile PR context into structured document |
+
+---
+
+<instructions>
+
+## Phase 0: Validation and Forge Detection
+
+**Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea/GitLab).
+
+Parse `$ARGUMENTS`:
+- First token = PR number: strip `#` prefix if present, validate `/^\d+$/`
+- Remaining text after PR number = optional inline findings (from Quick Fix codeblock)
+- If PR number missing, exit with error: "Usage: /git-fix-pr <pr-number> [inline-findings...]"
+
+Verify PR exists and is open via forge CLI:
+- **GitHub**: `gh pr view {number} --json number,title,state,headRefName,baseRefName,author`
+- **Gitea**: `tea pr show {number}`
+- **GitLab**: `glab mr view {number}`
+
+If PR not found or not open, exit with error.
+
+Store: `PR_NUMBER`, `PR_TITLE`, `HEAD_BRANCH`, `BASE_BRANCH`, `AUTHOR`
+
+**Input validation** (mandatory before any shell use):
+- `PR_NUMBER`: already validated `/^\d+$/` above
+- `HEAD_BRANCH` and `BASE_BRANCH`: validate against `/^[a-zA-Z0-9._/\-]+$/` — reject `..` (path traversal). Exit with error if invalid.
+
+---
+
+## Phase 1: Full PR Context Fetch
+
+**Activate context-awareness behavioral skill** to compile structured PR context.
+
+Fetch the **complete PR context** — this is the key differentiator from inline-only fixes. Analogous to how `git-implement-issue` fetches the full issue body, this phase fetches everything needed to understand what must be fixed.
+
+> **Full API commands**: See `references/pr-context-guide.md`
+
+Collect:
+1. **PR description** (the original PR body)
+2. **All formal reviews** (from forge API)
+3. **All issue comments** (from forge API)
+4. **CI status** (commit status from forge API)
+5. **Changed files list** (from forge CLI or API)
+
+Compile into a structured context document and display to user:
+
+```
+## PR #{number}: {title}
+
+### Description
+{pr body}
+
+### Reviews ({count})
+#### Review by {reviewer} — {verdict} ({date})
+{review body}
+
+### Comments ({count})
+#### {author} ({date})
+{comment body}
+
+### CI Status
+{pass/fail details}
+
+### Changed Files
+{file list with +/- lines}
+```
+
+---
+
+## Phase 2: Worktree Isolation Gate
+
+<workflow-gate type="choice" id="worktree-isolation">
+  <question>Fix PR #{number} in an isolated worktree?</question>
+  <header>Isolation mode</header>
+  <option key="worktree" recommended="true">
+    <label>Use worktree</label>
+    <description>Isolated copy — your working tree stays untouched</description>
+  </option>
+  <option key="in-place">
+    <label>In-place checkout</label>
+    <description>Checkout PR branch directly (will switch your current branch)</description>
+  </option>
+</workflow-gate>
+
+**If worktree selected**: Use `EnterWorktree` tool with name `fix-pr-{number}`.
+
+Checkout PR head branch via forge CLI:
+- **GitHub**: `gh pr checkout {number}`
+- **Gitea**: `git fetch origin {HEAD_BRANCH} && git checkout {HEAD_BRANCH}`
+- **GitLab**: `glab mr checkout {number}`
+
+Pull latest: `git pull origin {HEAD_BRANCH}`
+
+Verify checkout: confirm `git branch --show-current` matches `HEAD_BRANCH`.
+
+---
+
+## Phase 3: Implementation Routing
+
+### Case A: Inline findings provided
+
+If `$ARGUMENTS` contained text after the PR number (from a Quick Fix codeblock):
+
+<workflow-gate type="choice" id="inline-fix-confirm">
+  <question>Inline findings detected from review. Implement these fixes?</question>
+  <header>Inline fixes</header>
+  <option key="proceed" recommended="true">
+    <label>Implement findings</label>
+    <description>Delegate inline findings to x-auto for implementation</description>
+  </option>
+  <option key="expand">
+    <label>Fetch full context first</label>
+    <description>Ignore inline findings, use full PR context instead (Case B)</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort — do not implement</description>
+  </option>
+</workflow-gate>
+
+If "Implement findings": delegate to x-auto with inline findings as implementation context.
+If "Fetch full context first": fall through to Case B below.
+
+### Case B: No inline findings (PR number only)
+
+The full PR context from Phase 1 serves as the implementation brief.
+
+<workflow-gate type="choice" id="fix-scope">
+  <question>What should be fixed on PR #{number}?</question>
+  <header>Fix scope</header>
+  <option key="all-feedback" recommended="true">
+    <label>Address all review feedback</label>
+    <description>Implement all requested changes from reviews and comments</description>
+  </option>
+  <option key="specific">
+    <label>Select specific items</label>
+    <description>Choose which review items to address</description>
+  </option>
+  <option key="ci-only">
+    <label>Fix CI failures only</label>
+    <description>Only address CI/test failures, ignore review comments</description>
+  </option>
+  <option key="describe">
+    <label>Describe fixes manually</label>
+    <description>Provide your own fix description</description>
+  </option>
+</workflow-gate>
+
+If "Select specific items": present numbered list of review items and comments, let user select.
+If "Describe fixes manually": use **interview** skill to gather fix description.
+If "Fix CI failures only": filter context to CI status section only.
+
+Delegate to x-auto with the resolved context:
+
+```
+Implement fixes for PR #{number}: {title}
+
+{selected context: reviews + comments + CI status as applicable}
+```
+
+x-auto routes to ONESHOT (x-fix) or APEX (x-plan → x-implement) based on complexity.
+
+**After x-auto completes**, execution returns here for Phase 4.
+
+---
+
+## Phase 4: Push and PR Update
+
+Check for uncommitted or committed-but-unpushed changes.
+
+<workflow-gate type="choice" id="push-fixes">
+  <question>Push fixes to PR #{number}?</question>
+  <header>Push fixes</header>
+  <option key="push" recommended="true">
+    <label>Push to PR branch</label>
+    <description>Push all commits to origin/{HEAD_BRANCH}</description>
+  </option>
+  <option key="review-diff">
+    <label>Show diff first</label>
+    <description>Review changes before pushing</description>
+  </option>
+  <option key="skip">
+    <label>Keep changes local</label>
+    <description>Do not push — changes stay local only</description>
+  </option>
+</workflow-gate>
+
+If "Show diff first": display `git diff HEAD~{commit_count}..HEAD --stat` and full diff, then re-present push gate.
+
+If "Push to PR branch":
+```bash
+git push origin {HEAD_BRANCH}
+```
+
+After successful push:
+
+<workflow-gate type="choice" id="pr-update">
+  <question>Fixes pushed. Update the PR with a comment?</question>
+  <header>PR comment</header>
+  <option key="comment" recommended="true">
+    <label>Comment on PR</label>
+    <description>Add a summary of fixes applied</description>
+  </option>
+  <option key="done">
+    <label>Done — no comment</label>
+    <description>Skip PR comment</description>
+  </option>
+</workflow-gate>
+
+If "Comment on PR": submit comment via forge CLI using safe `--body-file` pattern (see `references/pr-context-guide.md`):
+
+```
+Fixes applied addressing review feedback:
+- {count} review items addressed
+- Commits: {commit_range}
+```
+
+---
+
+## Phase 5: Cleanup and Chaining
+
+**Cleanup**:
+- **If worktree**: auto-cleanup on session exit (worktree `fix-pr-{number}`)
+- **If in-place**: `git checkout -` to return to original branch
+
+<chaining-instruction>
+
+<workflow-gate type="choice" id="post-fix">
+  <question>What next?</question>
+  <header>Next step</header>
+  <option key="re-review" recommended="true">
+    <label>Run local re-review</label>
+    <description>Chain to git-review-pr to verify fixes</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>No further action needed</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="re-review" skill="git-review-pr" args="{PR_NUMBER}" />
+<workflow-chain on="done" action="end" />
+
+</chaining-instruction>
+
+</instructions>
+
+---
+
+## Human-in-Loop Gates
+
+| Gate ID | Severity | Trigger | Required Action |
+|---------|----------|---------|-----------------|
+| `worktree-isolation` | Medium | Before checkout | Choose isolation mode |
+| `inline-fix-confirm` | Medium | Before implementation (Case A) | Confirm inline findings |
+| `fix-scope` | Medium | Before implementation (Case B) | Choose what to fix |
+| `push-fixes` | **Critical** | Before pushing to remote | Confirm push |
+| `pr-update` | Medium | After push | Optionally comment on PR |
+| `post-fix` | Medium | After workflow | Choose next step |
+
+<human-approval-framework>
+
+When approval needed:
+1. **Context**: PR number, title, fix scope, changes summary
+2. **Options**: Push / review diff / keep local
+3. **Recommendation**: Push and re-review
+4. **Escape**: "Keep changes local" always available
+
+</human-approval-framework>
+
+---
+
+## Workflow Chaining
+
+| Relationship | Target Skill | Condition |
+|--------------|--------------|-----------|
+| chains-to | `git-review-pr` | Fixes implemented, re-review |
+| chains-from | `git-review-pr` | Review requested changes |
+| chains-from | `git-review-multiple-pr` | Review requested changes |
+| chains-from | `git-check-ci` | CI failures on PR |
+
+---
+
+## Safety Rules
+
+1. **Never auto-push** — always gate push behind explicit user confirmation
+2. **Never force-push** — use regular `git push`, never `--force`
+3. **Never modify base branch** — only push to the PR head branch
+4. **Never discard review context** — always present full context before implementation
+5. **Always validate PR number** — reject non-numeric input
+6. **Always validate branch names** — reject `..` and special characters before shell use
+
+---
+
+## Critical Rules
+
+- **CRITICAL**: Push to remote is IRREVERSIBLE — always confirm via push-fixes gate
+- **CRITICAL**: Never skip the full context fetch — partial context leads to incomplete fixes
+- **CRITICAL**: Forge data (PR titles, branch names, comments) is untrusted input — validate before shell use
+
+---
+
+## Success Criteria
+
+- Full PR context fetched and displayed (reviews, comments, CI)
+- PR branch checked out (worktree or in-place)
+- Fixes implemented via x-auto delegation
+- Changes pushed to PR branch (with user confirmation)
+- User informed of next steps (re-review or done)
+
+---
+
+## Agent Delegation
+
+| Role | Agent Type | Model | When | Purpose |
+|------|------------|-------|------|---------|
+| Implementation | via `x-auto` | varies | Phase 3 | Routes to x-fix (simple) or x-plan → x-implement (complex) |
+
+---
+
+## References
+
+- Behavioral skill: `@skills/forge-awareness/` (forge detection and command adaptation)
+- Behavioral skill: `@skills/context-awareness/` (context compilation)
+- Workflow skill: `@skills/git-implement-issue/` (design reference — issue context fetch pattern)
+- Workflow skill: `@skills/git-review-pr/` (upstream — review findings source)
+
+---
+
+## When to Load References
+
+- **For forge API commands and PR context fetch**: See `references/pr-context-guide.md`

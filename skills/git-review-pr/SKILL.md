@@ -13,8 +13,12 @@ metadata:
 chains-to:
   - skill: git-merge-pr
     condition: "review approved"
+  - skill: git-fix-pr
+    condition: "review requested changes"
 chains-from:
   - skill: git-create-pr
+  - skill: git-fix-pr
+    condition: "fixes implemented, re-review"
 ---
 
 # /git-review-pr
@@ -242,7 +246,22 @@ If verdict is APPROVE and user wants to proceed with merge:
 <workflow-chain on="done" action="end" />
 
 If verdict is REQUEST_CHANGES:
-- Inform user: "Review submitted requesting changes. Use /git-review-pr {number} again after author addresses feedback."
+
+<workflow-gate type="choice" id="post-request-changes">
+  <question>Review submitted with REQUEST_CHANGES. Implement fixes now?</question>
+  <header>Fix findings</header>
+  <option key="fix" recommended="true">
+    <label>Fix findings now</label>
+    <description>Chain to git-fix-pr to implement fixes on the PR branch</description>
+  </option>
+  <option key="done">
+    <label>Done — wait for author</label>
+    <description>Leave for the PR author to address</description>
+  </option>
+</workflow-gate>
+
+<workflow-chain on="fix" skill="git-fix-pr" args="{pr-number}" />
+<workflow-chain on="done" action="end" />
 
 </chaining-instruction>
 
@@ -275,7 +294,9 @@ When approval needed, structure question as:
 | Relationship | Target Skill | Condition |
 |--------------|--------------|-----------|
 | chains-to | `git-merge-pr` | Review approved and user wants to merge |
+| chains-to | `git-fix-pr` | Review requested changes and user wants to fix |
 | chains-from | `git-create-pr` | PR created and ready for review |
+| chains-from | `git-fix-pr` | Fixes implemented, re-review |
 
 ---
 

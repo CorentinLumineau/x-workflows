@@ -130,7 +130,8 @@ Always append:
 ## Next Steps
 
 - Merge approved PRs: `/git-merge-pr {number}` for each ✅ PR
-- Re-review after changes: `/git-review-pr {number}` for ⚠️/🚨 PRs
+- Fix review findings: `/git-fix-pr {number}` for ⚠️/🚨 PRs
+- Re-review after fixes: `/git-review-pr {number}` after fixes applied
 - Review stacked PRs after base merges: `/git-review-multiple-pr {excluded_numbers}`
 ```
 

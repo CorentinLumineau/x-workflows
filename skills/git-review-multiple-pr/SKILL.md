@@ -13,6 +13,8 @@ metadata:
 chains-to:
   - skill: git-merge-pr
     condition: "all reviews approved"
+  - skill: git-fix-pr
+    condition: "review requested changes"
 chains-from:
   - skill: git-create-pr
   - skill: git-implement-multiple-issue
@@ -224,7 +226,7 @@ If overriding to APPROVE with Critical findings:
   </option>
 </workflow-gate>
 
-**Submit** via forge CLI with confirmed verdict and report body. Verify via exit code.
+**Submit** via forge CLI with confirmed verdict and the **complete agent report** as the review body. The `$REPORT_BODY` variable MUST contain the full structured output from the review agent — pass it through unchanged. **Do NOT manually reconstruct, summarize, or omit any sections.** This includes: verdict header, all finding groups (Critical/Warnings/Suggestions/Good), Test Results, AND the Quick Fix section (when verdict is not ✅ LGTM). Verify submission via exit code.
 
 > **Forge submission commands**: See `references/forge-commands.md`
 > **Force-approve audit trail**: If force-approving with Critical findings, prepend audit notice — see `references/forge-commands.md#force-approve-audit-trail`

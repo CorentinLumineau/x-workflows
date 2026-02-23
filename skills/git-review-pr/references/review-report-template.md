@@ -112,12 +112,9 @@ Generate a copyable codeblock containing a self-contained `/x-auto` prompt with 
 > Copy and run this to auto-fix all findings:
 
 ​```
-/x-auto implement fixes for PR #{number}:
-
+/git-fix-pr {number}
 {CATEGORY}:
 - {file}:{line} — {description}
-
-Run /x-review when all fixes are applied.
 ​```
 ```
 
@@ -128,7 +125,6 @@ Run /x-review when all fixes are applied.
 - Each finding on one line: `file:line — description` (no code snippets)
 - Use the same file:line references from the findings above
 - Description is one sentence summarizing the issue and fix direction
-- End with `Run /x-review when all fixes are applied.`
 - If verdict is ✅ LGTM → skip this entire section
 
 ---

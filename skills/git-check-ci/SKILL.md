@@ -15,6 +15,8 @@ chains-to:
     condition: "CI passes"
   - skill: x-fix
     condition: "CI fails"
+  - skill: git-fix-pr
+    condition: "CI failures on PR"
 chains-from:
   - skill: git-create-pr
 ---
@@ -128,11 +130,12 @@ This workflow activates:
 
 <chaining-instruction>
 **Chains from**: `git-create-pr`
-**Chains to**: `git-merge-pr`, `x-fix`
+**Chains to**: `git-merge-pr`, `x-fix`, `git-fix-pr`
 
 **Forward chaining**:
 - If checks passing → suggest `/git-merge-pr`
-- If checks failing → suggest `/x-fix` to investigate
+- If checks failing on a PR → suggest `/git-fix-pr {number}` to fix PR-specific failures
+- If checks failing on a branch (no PR) → suggest `/x-fix` to investigate
 - Always present CI status table first
 
 **Backward compatibility**:
