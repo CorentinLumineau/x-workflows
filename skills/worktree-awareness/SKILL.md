@@ -32,7 +32,7 @@ This behavioral skill ensures worktrees are properly managed with human gates at
 |---------|-----------|
 | Session start in worktree | context-awareness detects is_worktree=true |
 | Parallelizable task | complexity-detection identifies parallel work |
-| x-team spawn | Feature or Refactor pattern with overlapping files |
+| Parallel agent spawn | Feature or Refactor pattern with overlapping files |
 | Explicit request | User mentions worktree or isolation |
 
 worktree-awareness activates automatically when worktree context is relevant.
@@ -77,7 +77,7 @@ When to SUGGEST worktree isolation:
 
 | Context | Suggest Worktree | Rationale |
 |---------|-----------------|-----------|
-| x-team Feature/Refactor pattern | Yes | Parallel agents benefit most from isolation |
+| Parallel Feature/Refactor pattern | Yes | Parallel agents benefit most from isolation |
 | x-implement COMPLEX task | Yes | Long implementation avoids blocking main branch |
 | x-implement SIMPLE task | No | Overhead exceeds benefit |
 | x-fix (ONESHOT) | No | Quick fixes don't need isolation |
@@ -90,7 +90,13 @@ When to SUGGEST worktree isolation:
 
 ## Branch Naming Convention
 
-Worktree branches follow `{type}/{descriptive-name}` convention:
+When issue context is available (e.g., from `git-implement-issue` or `git-implement-multiple-issue`), use the **issue-based naming convention**:
+
+| Pattern | Example | When |
+|---------|---------|------|
+| `feature-branch.{number}` | `feature-branch.42` | Issue-driven development (preferred) |
+
+When no issue context exists, fall back to the **descriptive convention**:
 
 | Type | Example | When |
 |------|---------|------|

@@ -73,7 +73,7 @@ Output format (MANDATORY):
 
 ## Rules
 
-- **Branch naming**: Always `feature-branch.{number}` — no exceptions.
+- **Branch naming**: Always `feature-branch.{number}` — no exceptions. This convention is defined in @skills/worktree-awareness/ and enables PR cross-referencing in batch workflows.
 - **No push**: The agent must NOT push branches. The orchestrator handles push + PR creation in Phase 3.
 - **No PR creation**: The agent must NOT create PRs. The orchestrator handles this sequentially.
 - **Commit message**: Must reference the issue (`close #{number}` or `fixes #{number}`).
