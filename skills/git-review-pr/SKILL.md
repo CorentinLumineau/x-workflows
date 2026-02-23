@@ -9,7 +9,7 @@ metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
-  argument-hint: "<pr-number>"
+  argument-hint: "<pr-number> [--worktree]"
 chains-to:
   - skill: git-merge-pr
     condition: "review approved"
@@ -40,6 +40,9 @@ Perform comprehensive local code review of a pull request including:
 
 **Arguments**: `$ARGUMENTS` contains PR number (e.g., "123" or "#123")
 
+**Flags**:
+- `--worktree`: Run the entire review in an isolated git worktree. Prevents branch switching in the user's working tree. If omitted, user is prompted during Phase 0.
+
 ---
 
 ## Behavioral Skills
@@ -61,10 +64,10 @@ PR number, forge type, repository context, review scope
 
 **Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea/GitLab).
 
-Extract PR number from `$ARGUMENTS`:
-- Strip "#" prefix if present
-- Validate numeric format
-- If ambiguous or missing, use **interview** skill to confirm PR number
+Parse `$ARGUMENTS`:
+- Extract PR number: strip "#" prefix if present, validate numeric format
+- Detect `--worktree` flag: set `USE_WORKTREE=true` if present
+- If PR number ambiguous or missing, use **interview** skill to confirm
 
 Verify PR exists via forge CLI:
 - **GitHub**: `gh pr view {number} --json number,title,state,headRefName`
@@ -96,14 +99,33 @@ Present PR details to user before gate:
 - File change count
 - Review scope (full review with security + tests)
 
+**Worktree decision** (skip if `USE_WORKTREE` already set by `--worktree` flag):
+
+<workflow-gate type="choice" id="worktree-isolation">
+  <question>Review in an isolated worktree? This avoids switching your current branch.</question>
+  <header>Isolation mode</header>
+  <option key="worktree" recommended="true">
+    <label>Use worktree</label>
+    <description>Isolated copy — your working tree stays untouched</description>
+  </option>
+  <option key="in-place">
+    <label>In-place checkout</label>
+    <description>Checkout PR branch directly (will switch your current branch)</description>
+  </option>
+</workflow-gate>
+
+Set `USE_WORKTREE=true` if user selects "Use worktree".
+
 ---
 
 ## Phase 1: Fetch PR Locally
 
+**If `USE_WORKTREE=true`**: Use the `EnterWorktree` tool with name `review-pr-{number}` before fetching. This creates an isolated working copy so the review does not affect the user's current branch or uncommitted work.
+
 Fetch PR branch locally using forge-appropriate checkout command (gh/tea/glab). Verify checkout success and capture base branch merge-base.
 
 <state-checkpoint phase="pr-fetched" status="captured">
-PR branch name, base commit SHA, working directory state
+PR branch name, base commit SHA, working directory state, worktree path (if applicable)
 </state-checkpoint>
 
 ---
@@ -218,8 +240,8 @@ Submission timestamp, review URL, final verdict
 ## Phase 6: Cleanup and Chaining
 
 **Cleanup local state**:
-- Return to original branch: `git checkout -`
-- Optionally delete PR branch locally (if merged): `git branch -d pr-{number}`
+- **If worktree was used**: The worktree (`review-pr-{number}`) is automatically cleaned up on session exit. No branch switching needed — the user's original branch was never changed.
+- **If in-place checkout**: Return to original branch (`git checkout -`) and optionally delete PR branch locally (`git branch -d pr-{number}`).
 
 <chaining-instruction>
 

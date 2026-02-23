@@ -76,6 +76,10 @@ This workflow activates:
 Checkpoint captures: branch name, base branch, commit count, file changes
 </state-checkpoint>
 1. Identify base branch (typically `main` or `master`) via `git remote show origin`
+1b. Check if current branch is worktree-managed:
+    - If branch name matches `worktree-*` pattern OR inside `.claude/worktrees/` → worktree session
+    - Extract task context from worktree name or branch name
+    - Note worktree origin for PR description enrichment
 2. Generate diff summary via `git diff origin/{base}...HEAD --stat`
 3. Analyze commit messages via `git log origin/{base}..HEAD --pretty=format:"%s"`
 4. Categorize changes (feat/fix/refactor/docs/test/chore) based on files and commits
@@ -86,6 +90,10 @@ Checkpoint captures: branch name, base branch, commit count, file changes
 1. Generate conventional PR title following pattern: `{type}({scope}): {description}`
    - Extract type from commit prefixes (feat/fix/etc.)
    - Infer scope from primary directory changed
+   - If worktree branch detected, use branch name to infer PR scope:
+     - `worktree-feature-auth` → type `feat`, scope `auth`
+     - `feature/auth-backend` → type `feat`, scope `auth`
+     - `fix/memory-leak-api` → type `fix`, scope `api`
    - Keep title under 72 characters
 2. Generate PR description with structure:
    ```markdown
@@ -149,6 +157,9 @@ Checkpoint captures: PR number, URL, linked issue
    - If CI detected: "Check CI status with `/git-check-ci {PR}`"
    <!-- <workflow-chain next="git-review-pr" condition="reviewers configured"> -->
    - If reviewers configured: "Request reviews with `/git-review-pr {PR}`"
+4. If PR was created from a worktree branch:
+   - Suggest: "This PR was created from a worktree. After merge, run `git worktree remove` and `git worktree prune` to clean up."
+   - Do NOT auto-prune — user may want to keep the worktree for follow-up work
 
 </instructions>
 
