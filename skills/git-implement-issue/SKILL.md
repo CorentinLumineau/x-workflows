@@ -26,6 +26,7 @@ chains-to:
 chains-from:
   - skill: git-create-issue
   - skill: git-merge-pr
+  - skill: git-quickwins-to-pr
 ---
 
 # /git-implement-issue
