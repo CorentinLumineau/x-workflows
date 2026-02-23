@@ -193,7 +193,7 @@ For each selected issue, spawn an implementation agent with worktree isolation. 
 - **Worktree mode** (default): All Task calls include `isolation: "worktree"`. Agents run in true parallel.
 - **Direct mode**: Task calls omit `isolation` parameter. Issues are implemented **sequentially** to avoid branch conflicts. Only one agent runs at a time.
 
-**IMPORTANT**: The above is a **template for one agent**. At runtime, generate one Task call per selected issue, all in a single message. Each agent gets its own worktree via `isolation: "worktree"`.
+**IMPORTANT**: The above is a **template for one agent**. At runtime, generate one Task call per selected issue. In worktree mode, emit all calls in a single message (parallel). In direct mode, emit one call at a time (sequential).
 
 > **Full agent prompt and output format**: See `references/implement-agent-prompt.md`
 
