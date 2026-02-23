@@ -41,12 +41,12 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
 | **x-workflows** | HOW to work | 21 workflow skills | `x-{verb}/` |
-| x-workflows | Git operations | 11 git skills | `git-{verb}-{type}/` |
+| x-workflows | Git operations | 13 git skills | `git-{verb}-{type}/` |
 | x-workflows | Auto-triggered | 12 behavioral skills | `{name}/` (includes interview, orchestration) |
 | **x-devsecops** | WHAT to know | 21 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 1 | initiative |
 
-**Total: 66 skills**
+**Total: 68 skills**
 
 ## Verb Skills by Workflow (21)
 
@@ -91,7 +91,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-setup` | Project initialization | setup, scaffold |
 | `/x-team` | Team orchestration | team, parallel, swarm |
 
-## Git Workflow Skills (11)
+## Git Workflow Skills (13)
 
 | Verb | Purpose | Triggers |
 |------|---------|----------|
@@ -102,9 +102,11 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/git-create-pr` | Create pull request | create pr, pull request |
 | `/git-create-release` | Release workflow | release, tag, version |
 | `/git-implement-issue` | Issue-driven development | issue, gitea issue |
+| `/git-implement-multiple-issue` | Batch issue implementation | implement issues, batch implement |
 | `/git-merge-pr` | Merge pull request | merge pr, merge |
 | `/git-quickwins-to-pr` | Quick wins to tracked issues+PRs | quickwins to pr, batch quickwins |
 | `/git-resolve-conflict` | Resolve merge conflicts | resolve conflict, merge conflict |
+| `/git-review-multiple-pr` | Batch PR review | review prs, batch review |
 | `/git-review-pr` | Review pull request | review pr, code review |
 
 ## Behavioral Skills (9)

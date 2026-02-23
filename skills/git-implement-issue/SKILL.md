@@ -7,7 +7,7 @@ allowed-tools: Read Grep Glob Bash
 user-invocable: true
 metadata:
   author: ccsetup contributors
-  version: "1.1.0"
+  version: "1.2.0"
   category: workflow
   argument-hint: "[issue-number]"
 chains-to:
@@ -17,6 +17,8 @@ chains-to:
     condition: "complex issue"
   - skill: x-implement
     condition: "simple issue"
+  - skill: git-review-pr
+    condition: "existing PR found for issue"
 chains-from:
   - skill: git-create-issue
 ---
@@ -74,15 +76,57 @@ git rev-parse --is-inside-work-tree
 ```
 If not in a git repo, stop and instruct: "Run this command from inside a git repository."
 
+4. **PR-awareness check** (only when a valid issue number was provided in step 2):
+
+   Fetch open PRs to check for existing work on this issue:
+   ```bash
+   # Gitea
+   tea pulls ls -o tsv -f index,title,head,state --state open --limit 50
+
+   # GitHub
+   gh pr list --state open --limit 50 --json number,title,headRefName,body
+   ```
+
+   Cross-reference the provided issue number against open PRs using the 3-condition algorithm from [references/issue-selection-guide.md](references/issue-selection-guide.md):
+   - Branch-name match: open PR head is `feature-branch.$ISSUE_NUMBER`
+   - Body-reference match: PR body contains `close #$ISSUE_NUMBER`, `closes #$ISSUE_NUMBER`, `fix #$ISSUE_NUMBER`, `fixes #$ISSUE_NUMBER`, or `resolve #$ISSUE_NUMBER` (case-insensitive)
+   - Title-reference match: PR title contains `#$ISSUE_NUMBER` preceded by a word boundary
+
+   **If match found** — present a workflow gate:
+
+   <workflow-gate type="choice" id="pr-awareness">
+     <question>Issue #$ISSUE_NUMBER already has an active PR (#$PR_NUMBER: $PR_TITLE). What would you like to do?</question>
+     <header>Existing PR</header>
+     <option key="continue">
+       <label>Continue anyway</label>
+       <description>Proceed with implementation (may create a second PR for this issue)</description>
+     </option>
+     <option key="review">
+       <label>Switch to PR review</label>
+       <description>Review the existing PR #$PR_NUMBER instead</description>
+     </option>
+     <option key="cancel">
+       <label>Cancel</label>
+       <description>Abort the workflow</description>
+     </option>
+   </workflow-gate>
+
+   - If "Switch to PR review" → chain to `/git-review-pr $PR_NUMBER` and end this workflow
+   - If "Cancel" → end workflow
+   - If "Continue anyway" → proceed to Phase 1
+
+   **If no match** → proceed normally to Phase 1.
+
 ### Phase 0.5: Issue Discovery & Selection
 
 > Only entered when no valid issue number was provided. See [references/issue-selection-guide.md](references/issue-selection-guide.md) for API commands, scoring, and edge cases.
 
 1. **Fetch open issues and open PRs** using the detected forge CLI (tea or gh)
 
-2. **Filter** out issues that already have PRs:
+2. **Filter** out issues that already have PRs (see [references/issue-selection-guide.md](references/issue-selection-guide.md) for full algorithm):
    - Branch-name match: open PR head is `feature-branch.N`
-   - Body-reference match: PR body contains `close #N`, `closes #N`, `fix #N`, `fixes #N` (case-insensitive)
+   - Body-reference match: PR body contains `close #N`, `closes #N`, `fix #N`, `fixes #N`, or `resolve #N` (case-insensitive)
+   - Title-reference match: PR title contains `#N` preceded by a word boundary
 
 3. **Score and sort** candidates using prioritization heuristic:
    - Has milestone (+30), urgency label (+20), priority/high (+15), bug (+10), age (+1/week), comments (+2/each)
@@ -373,7 +417,7 @@ EOF
 | Decision Level | Action | Example |
 |----------------|--------|---------|
 | **Critical** | ALWAYS ASK | PR creation, branch recreation |
-| **High** | ALWAYS ASK | Issue selection, branch strategy, base branch selection |
+| **High** | ALWAYS ASK | Issue selection, branch strategy, base branch selection, PR-awareness (existing PR found) |
 | **Medium** | ASK IF UNCERTAIN | Issue interpretation |
 | **Low** | PROCEED | Fetching issue details, pushing branch |
 
@@ -383,6 +427,7 @@ EOF
 
 <workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY" />
 <workflow-chain on="pr-create" action="phase4" />
+<workflow-chain on="existing-pr-review" skill="git-review-pr" args="$PR_NUMBER" />
 <workflow-chain on="cancel" action="end" />
 <workflow-chain on="skip" action="end" />
 
@@ -430,6 +475,7 @@ EOF
 ## Success Criteria
 
 - [ ] Issue fetched and displayed to user
+- [ ] PR-awareness check catches issues with active PRs (explicit issue number)
 - [ ] Interactive selection works when no issue number provided
 - [ ] Branch strategy choice presented (feature vs direct)
 - [ ] Feature branch created from correct base (feature mode)
