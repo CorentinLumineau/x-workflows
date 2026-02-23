@@ -4,11 +4,11 @@ description: Use when delegating work to agents. Provides agent catalog, decisio
 license: Apache-2.0
 allowed-tools:
   - Read
+user-invocable: false
 metadata:
   author: ccsetup contributors
   version: "2.0.0"
   category: behavioral
-  user-invocable: false
 ---
 
 # Agent Awareness v2.0.0

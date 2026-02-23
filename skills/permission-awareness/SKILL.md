@@ -4,11 +4,11 @@ description: Use when workflow must adapt to the current permission mode. Detect
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
+user-invocable: false
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: behavioral
-  user-invocable: false
 ---
 
 # Permission Awareness
