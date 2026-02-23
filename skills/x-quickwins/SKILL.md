@@ -10,6 +10,14 @@ metadata:
   category: workflow
   user-invocable: true
   argument-hint: "[path] [--focus category,...] [--count N]"
+chains-to:
+  - skill: git-quickwins-to-pr
+    condition: "full lifecycle orchestration"
+  - skill: x-fix
+    condition: "simple quick win"
+  - skill: x-implement
+    condition: "quick win needs TDD"
+chains-from: []
 ---
 
 # /x-quickwins
