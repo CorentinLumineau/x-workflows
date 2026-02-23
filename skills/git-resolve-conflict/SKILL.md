@@ -215,7 +215,14 @@ Stage resolved files (`git add`), verify with `git status` (all conflicts resolv
 
 ## Phase 6: Chain Back to Caller
 
-- **Merge conflict**: Chain to `git-merge-pr` (PR-related) or `git-commit`
+Accept `resume_context` from the calling workflow if provided (e.g., PR number, merge strategy from `git-merge-pr`).
+
+- **Merge conflict** (from `git-merge-pr`):
+  - Set `resume_from_conflict: true` in workflow state along with preserved caller context (`pr_number`, `merge_strategy`, `feature_branch`, `base_branch`)
+  - Chain to `git-merge-pr $PR_NUMBER` — the flag tells git-merge-pr to skip Phase 0–1 validation and resume at merge execution
+  <!-- <workflow-chain next="git-merge-pr" condition="conflict resolved, resume merge"> -->
+- **Merge conflict** (standalone or from `git-commit`):
+  - Chain to `git-commit`
 - **Rebase conflict**: Run `git rebase --continue`; if more conflicts appear, re-enter this skill
 - **Cherry-pick conflict**: Run `git cherry-pick --continue`, chain to `git-commit`
 

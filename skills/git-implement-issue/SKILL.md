@@ -19,8 +19,13 @@ chains-to:
     condition: "simple issue"
   - skill: git-review-pr
     condition: "existing PR found for issue"
+  - skill: git-check-ci
+    condition: "after PR created"
+  - skill: git-create-pr
+    condition: "direct mode PR recovery"
 chains-from:
   - skill: git-create-issue
+  - skill: git-merge-pr
 ---
 
 # /git-implement-issue
@@ -229,7 +234,13 @@ Select branch strategy and create or switch to the working branch.
 git status --porcelain
 ```
    - If dirty working tree, offer stash/proceed/cancel
-   - Store `branch_strategy = "direct"`, `feature_branch = null`, `pr_pending = false`
+   - Capture current branch and default branch for later reference:
+```bash
+CURRENT_BRANCH=$(git branch --show-current)
+BASE_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+PRE_IMPLEMENT_SHA=$(git rev-parse HEAD)
+```
+   - Store `branch_strategy = "direct"`, `feature_branch = null`, `pr_pending = false`, `BASE_BRANCH`, `PRE_IMPLEMENT_SHA`
    - Skip to Phase 3
 
 **If "feature" is chosen** (default):
@@ -310,7 +321,44 @@ x-auto will assess complexity and route to the appropriate workflow chain (APEX,
 
 After implementation is complete, create a pull request or show completion summary.
 
-**If `branch_strategy == "direct"`**: Skip PR creation, show completion summary:
+**If `branch_strategy == "direct"`**:
+
+1. Check if commits were made during implementation:
+```bash
+# Compare HEAD before and after implementation
+git log --oneline $PRE_IMPLEMENT_SHA..HEAD
+```
+
+2. **If commits were made** — offer PR recovery path:
+
+<workflow-gate type="choice" id="direct-mode-pr">
+  <question>Implementation committed directly to $CURRENT_BRANCH. Create a PR from these commits?</question>
+  <header>Create PR?</header>
+  <option key="create-pr">
+    <label>Create PR</label>
+    <description>Create a feature branch from HEAD, push, and chain to git-create-pr</description>
+  </option>
+  <option key="return-base">
+    <label>Return to base branch</label>
+    <description>Switch back to $BASE_BRANCH (if on a non-default branch)</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Keep commits on $CURRENT_BRANCH as-is</description>
+  </option>
+</workflow-gate>
+
+- If "Create PR":
+  ```bash
+  git switch -c feature-branch.$ISSUE_NUMBER
+  git push -u origin feature-branch.$ISSUE_NUMBER
+  ```
+  Chain to `/git-create-pr` with base `$CURRENT_BRANCH`
+  <!-- <workflow-chain next="git-create-pr" condition="direct mode PR recovery"> -->
+- If "Return to base branch": `git switch $BASE_BRANCH`
+- If "Done": show completion summary and exit
+
+3. **If no commits were made** — show completion summary:
 ```
 ## Issue #$ISSUE_NUMBER Complete (Direct Mode)
 
@@ -319,10 +367,7 @@ After implementation is complete, create a pull request or show completion summa
 | Issue fetched | Done |
 | Branch strategy | Direct (on $CURRENT_BRANCH) |
 | Implementation | Completed via x-auto |
-| PR | Skipped (direct mode) |
-
-Changes committed directly to $CURRENT_BRANCH.
-To create a PR later: `git checkout -b feature-branch.$ISSUE_NUMBER` + `/git-create-pr`
+| PR | Skipped (no commits detected) |
 ```
 
 **If `branch_strategy == "feature"`**:
@@ -378,6 +423,30 @@ EOF
   --head "feature-branch.$ISSUE_NUMBER"
 ```
 
+6. **Post-PR action**:
+
+<workflow-gate type="choice" id="post-pr-action">
+  <question>PR created for issue #$ISSUE_NUMBER. What would you like to do next?</question>
+  <header>Next step</header>
+  <option key="check-ci" recommended="true">
+    <label>Check CI status</label>
+    <description>Chain to git-check-ci to monitor pipeline for the new PR</description>
+  </option>
+  <option key="return-base">
+    <label>Return to base branch</label>
+    <description>Switch back to $BASE_BRANCH</description>
+  </option>
+  <option key="stay">
+    <label>Stay on feature branch</label>
+    <description>Remain on feature-branch.$ISSUE_NUMBER</description>
+  </option>
+</workflow-gate>
+
+- If "Check CI status": chain to `/git-check-ci $PR_NUMBER`
+  <!-- <workflow-chain next="git-check-ci" condition="after PR created"> -->
+- If "Return to base branch": `git switch $BASE_BRANCH`
+- If "Stay on feature branch": done
+
 </instructions>
 
 ## Human-in-Loop Gates
@@ -386,7 +455,7 @@ EOF
 |----------------|--------|---------|
 | **Critical** | ALWAYS ASK | PR creation, branch recreation |
 | **High** | ALWAYS ASK | Issue selection, branch strategy, base branch selection, PR-awareness (existing PR found) |
-| **Medium** | ASK IF UNCERTAIN | Issue interpretation |
+| **Medium** | ALWAYS ASK | Post-PR action (check CI / return / stay), direct-mode PR recovery |
 | **Low** | PROCEED | Fetching issue details, pushing branch |
 
 ## Workflow Chaining
@@ -396,6 +465,8 @@ EOF
 <workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY" />
 <workflow-chain on="pr-create" action="phase4" />
 <workflow-chain on="existing-pr-review" skill="git-review-pr" args="$PR_NUMBER" />
+<workflow-chain on="post-pr-action" skill="git-check-ci" args="$PR_NUMBER" condition="after PR created" />
+<workflow-chain on="direct-mode-pr" skill="git-create-pr" args="" condition="direct mode PR recovery" />
 <workflow-chain on="cancel" action="end" />
 <workflow-chain on="skip" action="end" />
 
@@ -435,7 +506,9 @@ EOF
 | Direction | Verb | When |
 |-----------|------|------|
 | Delegates to | `/x-auto` | Implementation routing |
-| Terminal | Stop | PR created, direct-mode complete, or cancelled |
+| Chains to | `/git-check-ci` | After PR created (user choice) |
+| Chains to | `/git-create-pr` | Direct mode PR recovery (user choice) |
+| Terminal | Stop | PR created + user stays, direct-mode done, or cancelled |
 
 ## Success Criteria
 
@@ -448,7 +521,9 @@ EOF
 - [ ] Implementation completed (via x-auto chain)
 - [ ] Branch pushed to remote (feature mode)
 - [ ] PR created with proper description and `close #N` (feature mode)
-- [ ] Completion summary with recovery path shown (direct mode)
+- [ ] Post-PR action gate offered (check CI / return to base / stay) (feature mode)
+- [ ] Direct mode offers PR recovery when commits exist (direct mode)
+- [ ] Clean exit state — user is on expected branch after workflow ends
 
 ## References
 

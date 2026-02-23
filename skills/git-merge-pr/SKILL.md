@@ -17,6 +17,8 @@ chains-to:
     condition: "merge conflict detected"
   - skill: git-cleanup-branches
     condition: "after successful merge"
+  - skill: git-implement-issue
+    condition: "start next issue after merge"
 chains-from:
   - skill: git-check-ci
   - skill: git-review-pr
@@ -34,8 +36,8 @@ Merge a pull request after validating CI status, reviews, and selecting merge st
 | **Type** | UTILITY |
 | **Position** | End of PR lifecycle |
 | **Typical Flow** | `git-check-ci` or `git-review-pr` → **`git-merge-pr`** → `git-create-release` or `git-cleanup-branches` |
-| **Human Gates** | Merge strategy selection (Critical), force merge if CI failing (Critical) |
-| **State Tracking** | Updates workflow state with merge commit SHA |
+| **Human Gates** | Merge strategy (Critical), force merge (Critical), local branch cleanup (Medium), issue closure (Medium) |
+| **State Tracking** | Updates workflow state with merge commit SHA, clears stale implement-issue state |
 
 ## Intention
 
@@ -59,6 +61,13 @@ This workflow activates:
 
 ### Phase 0: Forge and CI Detection
 
+**Conflict recovery check**: If `resume_from_conflict: true` exists in workflow state (set by `git-resolve-conflict` after successful resolution):
+- Read preserved context: `pr_number`, `merge_strategy`, `feature_branch`, `base_branch` from workflow state
+- Clear `resume_from_conflict` flag
+- Skip Phase 0 and Phase 1 entirely — conflicts are resolved, PR was already validated
+- Jump directly to **Phase 2** (if merge strategy needs re-confirmation) or **Phase 3** (if strategy was preserved)
+
+**Normal flow**:
 1. Activate `forge-awareness` to detect forge type and validate CLI availability
 2. Activate `ci-awareness` to check CI configuration
 3. Validate `$ARGUMENTS` contains valid PR number
@@ -128,24 +137,109 @@ This workflow activates:
    - Gitea: `git push origin --delete {branch-name}`
 3. Update PR labels to include "merged"
 
-### Phase 5: Update State and Suggest Next Steps
+### Phase 5: Update State and Complete Post-Merge Lifecycle
 
-1. Update workflow state:
+1. **Clear stale workflow state** — If previous `git-implement-issue` state exists, clear stale fields:
+   - Read existing workflow state
+   - Preserve merge metadata (this phase)
+   - Clear: `active_workflow`, `issue_number`, `feature_branch`, `branch_strategy`, `pr_pending` (from implement-issue)
+   - Write cleaned state
+
+2. **Update workflow state** with merge metadata:
    ```json
    {
      "pr_number": 123,
      "merge_sha": "abc123...",
      "merge_strategy": "squash",
      "merged_at": "ISO-8601",
-     "remote_branch_deleted": true
+     "remote_branch_deleted": true,
+     "returned_to_base": false,
+     "local_branch_deleted": false,
+     "issue_verified_closed": false
    }
    ```
-2. Present success message with merge commit SHA
-3. Suggest next steps:
-   <!-- <workflow-chain next="git-create-release" condition="merge to main/master"> -->
-   - If merged to main: "Consider creating release with `/git-create-release`"
-   <!-- <workflow-chain next="git-cleanup-branches" condition="multiple stale branches exist"> -->
-   - "Clean up local branches with `/git-cleanup-branches`"
+
+3. Present success message with merge commit SHA
+
+### Phase 5b: Return to Base Branch
+
+After successful merge, return to the base branch and pull latest:
+
+```bash
+# Switch back to the base branch (target of the merged PR)
+git switch $BASE_BRANCH
+
+# Pull latest to include the merge commit
+git pull origin $BASE_BRANCH
+```
+
+Update state: `returned_to_base: true`
+
+This step is deterministic and safe — no gate required.
+
+### Phase 5c: Clean Local Feature Branch
+
+<workflow-gate type="choice" id="clean-local-branch">
+  <question>Delete local feature branch `$FEATURE_BRANCH`? It has been merged into $BASE_BRANCH.</question>
+  <header>Local cleanup</header>
+  <option key="delete" recommended="true">
+    <label>Delete local branch</label>
+    <description>Remove the merged feature branch locally via `git branch -d`</description>
+  </option>
+  <option key="keep">
+    <label>Keep branch</label>
+    <description>Retain the local branch for reference</description>
+  </option>
+</workflow-gate>
+
+If "Delete local branch":
+```bash
+# Safe delete — only works if branch is fully merged
+git branch -d $FEATURE_BRANCH
+```
+
+If delete fails (branch not fully merged), inform user and suggest `git branch -D` with explicit warning. Do NOT auto-force-delete.
+
+Update state: `local_branch_deleted: true` (or `false` if kept/failed)
+
+### Phase 5d: Verify Issue Closure
+
+1. Extract issue number from PR body — look for `Closes #N`, `Fixes #N`, `Resolves #N` patterns (case-insensitive)
+2. If issue number found, check issue state via forge API:
+   - Gitea: `tea issues details $ISSUE_NUMBER` — check state field
+   - GitHub: `gh issue view $ISSUE_NUMBER --json state`
+3. If issue is already closed: report "Issue #$ISSUE_NUMBER auto-closed by merge" ✓
+4. If issue is still open:
+
+<workflow-gate type="choice" id="close-issue">
+  <question>Issue #$ISSUE_NUMBER is still open after merge. Close it now?</question>
+  <header>Issue closure</header>
+  <option key="close" recommended="true">
+    <label>Close issue</label>
+    <description>Close issue #$ISSUE_NUMBER via forge API</description>
+  </option>
+  <option key="keep-open">
+    <label>Keep open</label>
+    <description>Leave issue open (may need further work)</description>
+  </option>
+</workflow-gate>
+
+If "Close issue":
+- Gitea: `tea issues close $ISSUE_NUMBER`
+- GitHub: `gh issue close $ISSUE_NUMBER`
+
+5. If no issue number found in PR body: skip (inform user "No linked issue found in PR description")
+
+Update state: `issue_verified_closed: true` (or `false` if kept open/not found)
+
+### Phase 5e: Suggest Next Steps
+
+<!-- <workflow-chain next="git-create-release" condition="merge to main/master"> -->
+- If merged to main: "Consider creating release with `/git-create-release`"
+<!-- <workflow-chain next="git-cleanup-branches" condition="multiple stale branches exist"> -->
+- "Clean up other local branches with `/git-cleanup-branches`"
+<!-- <workflow-chain next="git-implement-issue" condition="start next issue"> -->
+- "Start next issue with `/git-implement-issue`"
 
 </instructions>
 
@@ -157,20 +251,31 @@ This workflow activates:
 | Merge strategy | Critical | Always before merge | Wait for selection (suggest based on analysis) |
 | Squash message edit | Medium | Squash strategy selected | Use default PR title |
 | Branch deletion | Medium | After successful merge | Keep branch (safer default) |
+| Local branch cleanup | Medium | After return to base branch | Delete merged branch |
+| Issue closure | Medium | Issue still open after merge | Close issue via forge API |
 
 ## Workflow Chaining
 
 <chaining-instruction>
 **Chains from**: `git-check-ci`, `git-review-pr`, `git-resolve-conflict`
-**Chains to**: `git-create-release`, `git-resolve-conflict`, `git-cleanup-branches`
+**Chains to**: `git-create-release`, `git-resolve-conflict`, `git-cleanup-branches`, `git-implement-issue`
 
 **Forward chaining**:
 - If merged to default branch → suggest `git-create-release`
 - If local branches exist → suggest `git-cleanup-branches`
+- After merge complete → suggest `git-implement-issue` for next issue
 
 **Backward chaining**:
 - If merge conflicts → chain to `git-resolve-conflict` and return here after resolution
 - Accepts input from any PR validation workflow
+
+**Conflict recovery mode**:
+- If `resume_from_conflict: true` in workflow state → skip Phase 0–1 validation, resume at Phase 2 (merge strategy) or Phase 3 (execute merge)
+- Set by `git-resolve-conflict` when chaining back after conflict resolution
+
+<workflow-chain on="clean-local-branch" action="phase5c" />
+<workflow-chain on="close-issue" action="phase5d" />
+<workflow-chain on="suggest-next" skill="git-implement-issue" args="" condition="start next issue" />
 </chaining-instruction>
 
 ## Safety Rules
@@ -208,8 +313,12 @@ This workflow activates:
 - [ ] Merge commit SHA captured
 - [ ] Remote branch deleted (if user approved)
 - [ ] PR labels updated to include "merged"
+- [ ] Stale implement-issue state cleared
 - [ ] Workflow state updated with merge metadata
-- [ ] Next steps suggested (sync, release, cleanup)
+- [ ] Returned to base branch with latest changes pulled
+- [ ] Local feature branch cleaned up (if user approved)
+- [ ] Linked issue verified closed (or manually closed)
+- [ ] Next steps suggested (release, cleanup, next issue)
 
 ## References
 

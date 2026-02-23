@@ -237,6 +237,48 @@ git diff origin/$BASE_BRANCH...feature-branch.$ISSUE_NUMBER --stat
 
 ---
 
+## Phase 3.5: Worktree Cleanup
+
+After all PR decisions are made, explicitly clean up worktrees created in Phase 2.
+
+1. **List all worktrees** from the implementation phase:
+```bash
+git worktree list
+```
+
+2. **For each implementation worktree**:
+   - If PR was **created** for this issue → remove worktree:
+     ```bash
+     git worktree remove {worktree_path}
+     ```
+   - If PR was **skipped** or implementation **failed**:
+
+<workflow-gate type="choice" id="cleanup-worktree-{issue_number}">
+  <question>Worktree for issue #{issue_number} was not submitted as a PR. Remove it?</question>
+  <header>Worktree #{issue_number}</header>
+  <option key="remove">
+    <label>Remove worktree</label>
+    <description>Delete the worktree and its working directory (branch is preserved)</description>
+  </option>
+  <option key="keep">
+    <label>Keep worktree</label>
+    <description>Retain for later manual work</description>
+  </option>
+</workflow-gate>
+
+3. **Prune orphaned worktree references**:
+```bash
+git worktree prune
+```
+
+4. **Verify cleanup**:
+```bash
+git worktree list
+```
+Report remaining worktrees (should only be main working tree + any user chose to keep).
+
+---
+
 ## Phase 4: Summary Report and Chaining
 
 > **Summary report template**: See `references/batch-summary-template.md`
@@ -279,6 +321,7 @@ If mixed results: suggest `/git-review-multiple-pr {pr_numbers}` for successfull
 | `confirm-batch-size` | Medium | If >3 issues selected | Confirm resource cost |
 | `base-branch` | High | Before dispatch | Confirm shared base branch |
 | `per-issue-pr` | Critical | Before each PR creation | Create or skip PR |
+| `cleanup-worktree-{N}` | Medium | Skipped/failed worktree in Phase 3.5 | Remove or keep worktree |
 | `post-batch-action` | Medium | After all PRs created | Review or done |
 
 <human-approval-framework>
@@ -297,7 +340,7 @@ When approval needed:
 
 **NEVER:** Auto-create PRs without per-issue user confirmation. Skip PR-awareness filtering. Spawn >5 concurrent implementation agents (hard cap). Push branches without user confirmation. Force push to any branch. Modify the base branch directly. Use string interpolation for PR body in shell commands (use single-quoted heredoc).
 
-**ALWAYS:** Filter out issues with active PRs before implementation. Present each PR for individual approval. Offer "Skip" at every iteration. Capture all implementation reports before PR creation loop. Report excluded issues with PR cross-reference reason. Run `git worktree prune` at terminal phase to clean orphaned worktrees. Validate all forge-sourced data before shell use.
+**ALWAYS:** Filter out issues with active PRs before implementation. Present each PR for individual approval. Offer "Skip" at every iteration. Capture all implementation reports before PR creation loop. Report excluded issues with PR cross-reference reason. Execute Phase 3.5 worktree cleanup before summary — remove completed worktrees, gate on skipped/failed, prune orphans. Validate all forge-sourced data before shell use.
 
 **ISOLATION OPT-OUT:** When user selects "Direct on branch" mode, implement issues sequentially (one Task call at a time, wait for completion before next). Never spawn parallel agents without worktree isolation — concurrent edits on the same working tree cause corruption.
 
