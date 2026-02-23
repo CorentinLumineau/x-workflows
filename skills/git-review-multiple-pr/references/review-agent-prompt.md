@@ -115,6 +115,32 @@ Always include a test results section:
 - Failed tests: {details or "none"}
 ```
 
+### Quick Fix
+
+> Only include this section when verdict is NOT ✅ LGTM.
+
+Generate a copyable codeblock containing a self-contained `/x-auto` prompt with all Critical and Warning findings for this PR. **Omit Suggestions (💡).**
+
+```
+> Copy and run this to auto-fix all findings:
+
+​```
+/x-auto implement fixes for PR #{number}:
+
+{CATEGORY}:
+- {file}:{line} — {description}
+
+Run /x-review when all fixes are applied.
+​```
+```
+
+**Rules:**
+- Only 🚨 Critical and ⚠️ Warning findings (no Suggestions)
+- Group by CATEGORY tag — omit empty categories
+- One line per finding: `file:line — description` (no code snippets)
+- End with `Run /x-review when all fixes are applied.`
+- If verdict is ✅ LGTM → skip this entire section
+
 ## Category Tags
 
 CATEGORY must be one of: SECURITY, BUG, LOGIC, PERFORMANCE, TESTING, BREAKING CHANGE, CODE QUALITY.

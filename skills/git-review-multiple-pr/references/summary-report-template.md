@@ -84,6 +84,14 @@ Brief explanation of the concern and recommended fix.
 - Bullet per positive observation (brief)
 ```
 
+### Quick Fix
+
+For each per-PR detail section where the verdict is NOT ✅ LGTM, include the Quick Fix codeblock produced by the review agent. This provides a copyable `/x-auto` prompt with all Critical and Warning findings for that PR.
+
+The agent output already contains this section (see `review-agent-prompt.md`). Include it verbatim in the per-PR detail — do not regenerate or modify the findings.
+
+If the PR verdict is ✅ LGTM, omit the Quick Fix section for that PR.
+
 ## Category Tags
 
 Use these categories in findings. When ccsetup plugin knowledge skills apply, include violation IDs:

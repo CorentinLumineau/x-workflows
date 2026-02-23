@@ -5,11 +5,11 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 user-invocable: true
+argument-hint: "[pr-numbers...] [--unreviewed]"
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
-  argument-hint: "[pr-numbers...] [--unreviewed]"
 chains-to:
   - skill: git-merge-pr
     condition: "all reviews approved"
@@ -173,7 +173,7 @@ Run full test suite. Capture pass/fail/skip counts and coverage %.
 Output format (MANDATORY):
 `## PR #{number}: {title}` then `**Verdict**: ✅ LGTM / ⚠️ Needs Changes / 🚨 Critical Issues` then `N files · N critical · N warnings · N suggestions`.
 
-Group findings by severity (omit empty groups): 🚨 Critical (with code snippet + file:line), ⚠️ Warnings (file:line + brief fix), 💡 Suggestions (compact `file:line — title`), ✅ Good (bullets), Test Results (pass/fail/coverage).
+Group findings by severity (omit empty groups): 🚨 Critical (with code snippet + file:line), ⚠️ Warnings (file:line + brief fix), 💡 Suggestions (compact `file:line — title`), ✅ Good (bullets), Test Results (pass/fail/coverage), Quick Fix (copyable `/x-auto` prompt with Critical+Warning findings — non-APPROVE only).
 
 CATEGORY tags: SECURITY, BUG, LOGIC, PERFORMANCE, TESTING, BREAKING CHANGE, CODE QUALITY. Include violation IDs when applicable (V-SOLID-01, A01-A10, etc.).
 
