@@ -89,7 +89,6 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-prompt` | Prompt enhancement | enhance prompt |
 | `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-setup` | Project initialization | setup, scaffold |
-| `/x-team` | Team orchestration | team, parallel, swarm |
 
 ## Git Workflow Skills (13)
 

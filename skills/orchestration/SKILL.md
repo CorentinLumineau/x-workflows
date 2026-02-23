@@ -312,7 +312,7 @@ Orchestration uses subagents by default. Escalate to Agent Teams when subagent d
 
 1. **Read complexity-detection Team field** — if `Team: none`, use subagents
 2. **If Team pattern suggested** — advisory only, present option to user
-3. **Never auto-spawn teams** — teams require explicit user confirmation or command invocation (e.g., `/x-team`)
+3. **Never auto-spawn teams** — teams require explicit user confirmation
 4. **Fallback** — if team tools unavailable (no `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), continue with subagent delegation
 
 ## References

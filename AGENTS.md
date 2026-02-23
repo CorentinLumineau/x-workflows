@@ -61,7 +61,6 @@ x-workflows is a skills.sh-compatible plugin providing workflow skills for softw
 | `/x-prompt` | Prompt enhancement | enhance prompt |
 | `/git-create-release` | Release workflow | release, tag, version |
 | `/x-setup` | Project initialization | setup, scaffold |
-| `/x-team` | Team orchestration | team, swarm, parallel |
 
 ## Behavioral Skills (4)
 

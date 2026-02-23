@@ -61,4 +61,4 @@ Legend: Y = Primary, B = Basic, N = Not available
 - Use teams only when parallelism or coordination provides clear value
 - Default to subagents; escalate to teams via complexity-detection advisory
 
-See @skills/x-team/references/team-patterns.md for spawn templates and lifecycle details.
+See @skills/agent-awareness/ for team composition patterns and model selection guidance.

@@ -680,7 +680,7 @@ Teams are advisory, triggered by the complexity-detection `Team` field:
 | `Team: Research Team (2 agents)` | Suggest spawning a research team |
 | `Team: Feature Team (3 agents)` | Suggest spawning a feature team |
 
-Teams never auto-spawn. They require user confirmation or explicit `/x-team` invocation.
+Teams never auto-spawn. They require explicit user confirmation.
 
 ### Relationship to Subagent Delegation
 
@@ -715,7 +715,7 @@ Agent Teams (coordinated)
 | **BRAINSTORM** | Research Team | Multi-perspective exploration with evidence synthesis |
 | **ONESHOT** | none | Too lightweight for team overhead |
 
-See @skills/agent-awareness/ for team composition details and @skills/x-team/references/team-patterns.md for spawn templates.
+See @skills/agent-awareness/ for team composition details and spawn patterns.
 
 ---
 

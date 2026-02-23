@@ -56,7 +56,6 @@ For complete architectural documentation, see [ccsetup/ARCHITECTURE.md](https://
 | `x-setup` | Utility | Project documentation scaffolding |
 | `x-create` | Utility | Create new skills, commands, agents |
 | `x-prompt` | Utility | Transform prompts into structured XML format |
-| `x-team` | Utility | Orchestrate teams of parallel agent sessions |
 
 ### Behavioral Skills (2)
 
@@ -164,7 +163,6 @@ x-workflows/
 │   ├── x-setup/
 │   ├── x-create/
 │   ├── x-prompt/
-│   ├── x-team/
 │   ├── interview/          # Behavioral
 │   ├── complexity-detection/ # Behavioral
 │   └── orchestration/      # Utility
