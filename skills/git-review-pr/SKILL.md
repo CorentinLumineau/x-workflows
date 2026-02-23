@@ -5,11 +5,11 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 user-invocable: true
+argument-hint: "<pr-number> [--worktree]"
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
-  argument-hint: "<pr-number> [--worktree]"
 chains-to:
   - skill: git-merge-pr
     condition: "review approved"
@@ -174,7 +174,7 @@ If tests fail, flag as blocking issue in review findings (severity: Critical).
 
 Generate comprehensive review report with sections:
 
-Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion findings (with location and recommendation), Test Results (counts + coverage), Security Assessment (OWASP + secrets check).
+Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion findings (with location and recommendation), Test Results (counts + coverage), Security Assessment (OWASP + secrets check), Quick Fix (copyable self-contained `/x-auto` prompt — only for non-APPROVE verdicts, see template).
 
 **Verdict**: REQUEST_CHANGES if critical findings/test failures/security issues; APPROVE if none; COMMENT for suggestions only.
 
