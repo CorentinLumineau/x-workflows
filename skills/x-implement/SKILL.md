@@ -5,6 +5,7 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 user-invocable: true
+argument-hint: "<task description>"
 metadata:
   author: ccsetup contributors
   version: "3.0.0"

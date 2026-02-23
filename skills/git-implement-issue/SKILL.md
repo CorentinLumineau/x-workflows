@@ -5,11 +5,11 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
+argument-hint: "[issue-number]"
 metadata:
   author: ccsetup contributors
   version: "1.2.0"
   category: workflow
-  argument-hint: "[issue-number]"
 chains-to:
   - skill: x-auto
     condition: "default routing"

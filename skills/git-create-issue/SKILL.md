@@ -5,11 +5,11 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash AskUserQuestion
 user-invocable: true
+argument-hint: "<title>"
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
   category: workflow
-  argument-hint: "<title>"
 chains-to:
   - skill: git-implement-issue
     condition: "after issue creation"
