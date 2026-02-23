@@ -89,41 +89,35 @@ This workflow activates:
    - Milestones: `gh api repos/{owner}/{repo}/milestones --jq '.[].title'` / `tea milestones ls`
    - If fetch fails or returns empty, skip the corresponding gate below
 
-5. Present metadata selection via structured gates:
+5. **Present metadata selection** — build AskUserQuestion options dynamically from fetched data:
 
-<workflow-gate type="multi-select" id="label-selection">
-  <question>Which labels should be applied to this issue?</question>
-  <header>Labels</header>
-  <options source="fetched-labels">
-    <option key="suggested" recommended="true">
-      <label>{type-appropriate label}</label>
-      <description>Auto-suggested based on issue type</description>
-    </option>
-    <!-- Additional options populated from fetched labels -->
-  </options>
-</workflow-gate>
+   **Labels gate** (multi-select):
+   - Parse the label names from the CLI output in step 4
+   - Determine a type-appropriate label based on issue type: bug → `type:bug`, feature → `type:feature`, task → `type:chore`, docs → `type:chore`
+   - Build an `AskUserQuestion` call with `multiSelect: true` where:
+     - The first option is the auto-suggested type label with `(Recommended)` appended to its label text
+     - All remaining fetched labels are listed as additional options
+     - Each option has `label` = the label name and `description` = the label description (or "Repository label" if no description)
+   - Set `question` = "Which labels should be applied to this issue?" and `header` = "Labels"
+   - **If no labels were fetched** (empty output or fetch failed), skip this gate entirely and proceed without labels
 
-<workflow-gate type="choice" id="milestone-selection">
-  <question>Assign to a milestone?</question>
-  <header>Milestone</header>
-  <option key="none">
-    <label>No milestone</label>
-    <description>Skip milestone assignment</description>
-  </option>
-  <!-- Additional options populated from fetched milestones -->
-</workflow-gate>
+   **Milestone gate** (single-select):
+   - Parse the milestone titles from the CLI output in step 4
+   - Build an `AskUserQuestion` call with `multiSelect: false` where:
+     - The first option is `label: "No milestone", description: "Skip milestone assignment"`
+     - Each fetched milestone is an additional option with `label` = milestone title and `description` = milestone due date or "No due date"
+   - Set `question` = "Assign to a milestone?" and `header` = "Milestone"
+   - **If no milestones were fetched** (empty output or fetch failed), skip this gate entirely and set milestone to none
 
-<workflow-gate type="multi-select" id="assignee-selection">
-  <question>Assign to anyone? (optional)</question>
-  <header>Assignees</header>
-  <option key="none" recommended="true">
-    <label>No assignees</label>
-    <description>Leave unassigned for now</description>
-  </option>
-  <!-- Additional options populated from repo collaborators -->
-</workflow-gate>
-
-Note: If the repository has no labels or milestones configured, skip the corresponding gate entirely and proceed with defaults.
+   **Assignee gate** (multi-select):
+   - Fetch collaborators/members:
+     - GitHub: `gh api repos/{owner}/{repo}/collaborators --jq '.[].login'`
+     - Gitea: `tea organizations members ls` or skip if not available
+   - Build an `AskUserQuestion` call with `multiSelect: true` where:
+     - The first option is `label: "No assignees (Recommended)", description: "Leave unassigned for now"`
+     - Each fetched collaborator is an additional option with `label` = username and `description` = "Repository collaborator"
+   - Set `question` = "Assign to anyone? (optional)" and `header` = "Assignees"
+   - **If no collaborators were fetched** (empty output or fetch failed), skip this gate entirely and leave unassigned
 
 ### Phase 2: Review Issue Content
 
@@ -148,7 +142,21 @@ Note: If the repository has no labels or milestones configured, skip the corresp
    {full description}
    ---
    ```
-<workflow-gate type="human-approval" criticality="high" prompt="Review issue content. Approve, edit, or cancel?">
+<workflow-gate type="choice" id="review-approval">
+  <question>Review the issue content above. How would you like to proceed?</question>
+  <header>Review</header>
+  <option key="approve" recommended="true">
+    <label>Approve</label>
+    <description>Issue content looks good — proceed to creation</description>
+  </option>
+  <option key="edit">
+    <label>Edit</label>
+    <description>Make changes to title, description, labels, or milestone</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Discard and abort issue creation</description>
+  </option>
 </workflow-gate>
 3. Allow user to edit title, description, labels, or milestone
 
@@ -158,7 +166,17 @@ Note: If the repository has no labels or milestones configured, skip the corresp
    - GitHub: `gh issue create --title "{title}" --body "{description}" --label {labels} --milestone {milestone}`
    - Gitea: `tea issue create --title "{title}" --description "{description}" --labels {labels} --milestone {milestone}`
 2. Present command to user for final approval
-<workflow-gate type="human-approval" criticality="critical" prompt="Create this issue on {forge}?">
+<workflow-gate type="choice" id="creation-approval">
+  <question>Ready to create this issue on the forge?</question>
+  <header>Create</header>
+  <option key="create" recommended="true">
+    <label>Create issue</label>
+    <description>Execute the issue creation command shown above</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort — no issue will be created</description>
+  </option>
 </workflow-gate>
 3. Execute command and capture issue number and URL from output
 4. Store result in `issue_context.created_issue`
