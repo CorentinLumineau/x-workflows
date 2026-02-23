@@ -75,7 +75,74 @@ context-awareness activates automatically at workflow boundaries to ensure envir
     "platform": "linux",
     "architecture": "x86_64",
     "shell": "bash",
+    "is_worktree": false,
+    "worktree_name": null,
     "detected_at": "2026-02-16T10:30:00Z"
+  }
+}
+```
+
+---
+
+## Worktree Detection
+
+### Detection Algorithm
+
+After environment detection, check for git worktree context:
+
+```
+5. Detect git worktree state:
+   - git rev-parse --is-inside-work-tree → confirms git repo
+   - git rev-parse --show-toplevel → current working tree root
+   - git rev-parse --git-dir → .git path for current tree
+   - git rev-parse --git-common-dir → shared .git for worktrees
+   - If git-common-dir path differs from git-dir → session is in a worktree
+   - Extract worktree name from path (e.g., .claude/worktrees/<name>/)
+   - Get current branch: git branch --show-current
+   - Report: is_worktree, worktree_name, worktree_branch, main_repo_path
+```
+
+### Worktree Context Schema
+
+```json
+{
+  "worktree": {
+    "is_worktree": true,
+    "worktree_name": "feature-auth",
+    "worktree_branch": "worktree-feature-auth",
+    "worktree_path": "/repo/.claude/worktrees/feature-auth",
+    "main_repo_path": "/repo",
+    "detected_at": "2026-02-23T10:30:00Z"
+  }
+}
+```
+
+When not in a worktree:
+```json
+{
+  "worktree": {
+    "is_worktree": false,
+    "detected_at": "2026-02-23T10:30:00Z"
+  }
+}
+```
+
+### Worktree State in Environment Context
+
+Add worktree fields to the environment context:
+
+```json
+{
+  "environment": {
+    "is_ci": false,
+    "ci_platform": null,
+    "agent_type": "claude-code",
+    "platform": "linux",
+    "architecture": "x86_64",
+    "shell": "bash",
+    "is_worktree": true,
+    "worktree_name": "feature-auth",
+    "detected_at": "2026-02-23T10:30:00Z"
   }
 }
 ```
@@ -307,6 +374,7 @@ At workflow start:
 2. If exists → validate and clean stale entries
 3. If not exists → create fresh state file
 4. Detect environment (CI, agent, platform)
+4b. Detect worktree state (git rev-parse commands)
 5. Detect tool availability (cached or fresh check)
 6. Write initial state to disk
 7. Create backup (.bak file)
