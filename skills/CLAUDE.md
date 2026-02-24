@@ -40,15 +40,15 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 
 | Source | Purpose | Skills | Naming |
 |--------|---------|--------|--------|
-| **x-workflows** | HOW to work | 21 workflow skills | `x-{verb}/` |
-| x-workflows | Git operations | 13 git skills | `git-{verb}-{type}/` |
-| x-workflows | Auto-triggered | 12 behavioral skills | `{name}/` (includes interview, orchestration) |
+| **x-workflows** | HOW to work | 20 workflow skills | `x-{verb}/` |
+| x-workflows | Git operations | 14 git skills | `git-{verb}-{type}/` |
+| x-workflows | Auto-triggered | 10 behavioral skills | `{name}/` (includes interview, orchestration) |
 | **x-devsecops** | WHAT to know | 21 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 1 | initiative |
 
-**Total: 68 skills**
+**Total: 66 skills**
 
-## Verb Skills by Workflow (21)
+## Verb Skills by Workflow (20)
 
 ### BRAINSTORM Workflow (3)
 | Verb | Purpose | Triggers |
@@ -76,7 +76,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |------|---------|----------|
 | `/x-troubleshoot` | Hypothesis-driven debugging | troubleshoot, debug, diagnose |
 
-### UTILITY (11)
+### UTILITY (10)
 | Verb | Purpose | Triggers |
 |------|---------|----------|
 | `/x-archive` | Archive completed initiatives | archive, complete initiative |
@@ -90,7 +90,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/x-quickwins` | Pareto-scored quick wins | quickwins, quick wins, low-hanging fruit |
 | `/x-setup` | Project initialization | setup, scaffold |
 
-## Git Workflow Skills (13)
+## Git Workflow Skills (14)
 
 | Verb | Purpose | Triggers |
 |------|---------|----------|
@@ -100,6 +100,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/git-create-issue` | Create forge issue | create issue, new issue |
 | `/git-create-pr` | Create pull request | create pr, pull request |
 | `/git-create-release` | Release workflow | release, tag, version |
+| `/git-fix-pr` | Fix PR from review feedback | fix pr, address review |
 | `/git-implement-issue` | Issue-driven development | issue, gitea issue |
 | `/git-implement-multiple-issue` | Batch issue implementation | implement issues, batch implement |
 | `/git-merge-pr` | Merge pull request | merge pr, merge |
@@ -108,7 +109,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/git-review-multiple-pr` | Batch PR review | review prs, batch review |
 | `/git-review-pr` | Review pull request | review pr, code review |
 
-## Behavioral Skills (9)
+## Behavioral Skills (10)
 
 | Skill | Purpose |
 |-------|---------|
@@ -121,6 +122,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `interview` | Zero-doubt confidence gate (auto-triggered) |
 | `orchestration` | Batch operation coordination (auto-triggered) |
 | `permission-awareness` | Permission escalation patterns (auto-triggered) |
+| `worktree-awareness` | Worktree lifecycle and parallel work suggestions (auto-triggered) |
 
 ## Knowledge Skills (21)
 
