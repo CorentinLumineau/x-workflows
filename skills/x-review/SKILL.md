@@ -55,6 +55,7 @@ Detect mode from `$ARGUMENTS` keywords:
 | `quick` | "quick", "gates", "verify" | 0→2→6→7 | Fast quality gate validation |
 | `audit` | "audit", "security", "deep" | 0→1→3→6→7 | Deep code + security review |
 | `docs` | "docs", "documentation" | 0→1→4→6→7 | Documentation completeness |
+| `spec-compliance` | "spec", "specification", "compliance" | 0→1→SC→6→7 | Verify implementation matches spec |
 
 ## Phase Architecture
 
@@ -79,6 +80,10 @@ Detect mode from `$ARGUMENTS` keywords:
 > See [references/mode-review.md](references/mode-review.md) for full agent delegation matrix by phase.
 
 <instructions>
+
+<hook-trigger event="PostToolUse" tool="Bash" condition="After quality gate execution (lint, test, build)">
+  <action>Capture gate results and update readiness report with pass/fail evidence per the Verification Evidence Protocol</action>
+</hook-trigger>
 
 ### Phase 0: Confidence + State Check
 
@@ -279,6 +284,7 @@ Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). 
 - **For security-focused review checklist (OWASP, injection, auth)**: See `references/mode-security.md`
 - **For readiness report output template with verdict format**: See `references/readiness-report-template.md`
 - **For 5-step evidence protocol and coverage hard gate**: See `references/verification-protocol.md`
+- **For spec-compliance checklist and requirement tracing patterns**: See `references/mode-spec-compliance.md`
 
 ## Human-in-Loop Gates
 
