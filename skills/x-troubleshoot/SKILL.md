@@ -263,6 +263,8 @@ Use `complexity-detection` skill to route appropriately:
 - **For debug patterns and systematic investigation steps**: See `references/mode-debug.md`
 - **For explanation mode (code comprehension and flow tracing)**: See `references/mode-explain.md`
 - **For post-implementation feedback intake, categorization, and hybrid routing**: See `references/mode-feedback.md`
+- **For backward tracing from symptom to root cause**: See `references/root-cause-tracing.md`
+- **For layered validation and defense-in-depth patterns**: See `references/defense-in-depth.md`
 
 ## References
 
