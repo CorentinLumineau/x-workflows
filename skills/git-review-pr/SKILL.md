@@ -77,59 +77,7 @@ Verify PR exists via forge CLI:
 
 If PR not found, exit with error message.
 
-<workflow-gate type="choice" id="confirm-review-scope">
-  <question>Proceed with comprehensive review of PR #{number} (code quality, security, tests)?</question>
-  <header>Review scope confirmation</header>
-  <option key="proceed" recommended="true">
-    <label>Full review</label>
-    <description>Code quality + security + tests + enforcement audit + regression detection</description>
-  </option>
-  <option key="quick">
-    <label>Quick review</label>
-    <description>Code quality only — skip security, tests, enforcement audit, regression detection</description>
-  </option>
-  <option key="deep">
-    <label>Deep review</label>
-    <description>Full review + spec compliance check against linked issue + documentation audit</description>
-  </option>
-  <option key="cancel">
-    <label>Cancel</label>
-    <description>Abort review</description>
-  </option>
-</workflow-gate>
-
-Present PR details to user before gate:
-- Title and description
-- Author and branch
-- File change count
-- Review scope (full review with security + tests)
-
-**Worktree decision** (skip if `USE_WORKTREE` already set by `--worktree` flag):
-
-<workflow-gate type="choice" id="worktree-isolation">
-  <question>Review in an isolated worktree? This avoids switching your current branch.</question>
-  <header>Isolation mode</header>
-  <option key="worktree" recommended="true">
-    <label>Use worktree</label>
-    <description>Isolated copy — your working tree stays untouched</description>
-  </option>
-  <option key="in-place">
-    <label>In-place checkout</label>
-    <description>Checkout PR branch directly (will switch your current branch)</description>
-  </option>
-</workflow-gate>
-
-Set `USE_WORKTREE=true` if user selects "Use worktree".
-
----
-
-## Review Depth Routing
-
-| Scope | Phases Executed | When |
-|-------|----------------|------|
-| **Quick** | 0, 1, 2b (code only), 4b | Fast feedback on code quality |
-| **Full** (default) | 0, 1, 1b, 2a, 2b, 3a, 3b, 4a, 4b | Standard comprehensive review |
-| **Deep** | All phases at maximum depth | Linked issue spec compliance + full audit |
+> **Reference**: See `references/review-scope-selection.md` for scope gate (full/quick/deep), worktree isolation decision, and depth routing table.
 
 ---
 
@@ -298,53 +246,7 @@ List blocking issues again before this gate. Require exact match of "APPROVE ANY
 
 ## Phase 6: Cleanup and Chaining
 
-**Cleanup local state**:
-- **If worktree was used**: The worktree (`review-pr-{number}`) is automatically cleaned up on session exit. No branch switching needed — the user's original branch was never changed.
-- **If in-place checkout**: Return to original branch (`git checkout -`) and optionally delete PR branch locally (`git branch -d pr-{number}`).
-
-<chaining-instruction id="approve-path">
-
-**If verdict is APPROVE** and user wants to proceed with merge:
-
-<workflow-gate type="choice" id="post-review-action">
-  <question>Review approved. How would you like to proceed?</question>
-  <header>Post-review action</header>
-  <option key="merge" recommended="true">
-    <label>Proceed to merge</label>
-    <description>Chain to git-merge-pr to merge the approved PR</description>
-  </option>
-  <option key="done">
-    <label>Done</label>
-    <description>Review submitted, no further action needed</description>
-  </option>
-</workflow-gate>
-
-<workflow-chain on="merge" skill="git-merge-pr" args="{pr-number}" />
-<workflow-chain on="done" action="end" />
-
-</chaining-instruction>
-
-<chaining-instruction id="request-changes-path">
-
-**If verdict is REQUEST_CHANGES**:
-
-<workflow-gate type="choice" id="post-request-changes">
-  <question>Review submitted with REQUEST_CHANGES. Implement fixes now?</question>
-  <header>Fix findings</header>
-  <option key="fix" recommended="true">
-    <label>Fix findings now</label>
-    <description>Chain to git-fix-pr to implement fixes on the PR branch</description>
-  </option>
-  <option key="done">
-    <label>Done — wait for author</label>
-    <description>Leave for the PR author to address</description>
-  </option>
-</workflow-gate>
-
-<workflow-chain on="fix" skill="git-fix-pr" args="{pr-number}" />
-<workflow-chain on="done" action="end" />
-
-</chaining-instruction>
+> **Reference**: See `references/post-review-chaining.md` for cleanup logic and chaining paths (approve→merge, request-changes→fix).
 
 </instructions>
 

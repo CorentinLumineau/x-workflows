@@ -78,38 +78,11 @@ This workflow activates:
 
 ### Phase 1: Validate Merge Readiness
 
-1. Check PR state is "OPEN" - if already merged/closed, inform user and exit
-2. Validate CI status via `ci-awareness`:
-   - Read `ci_context.merge_ready` state
-   - If false, check `ci_context.failing_checks` for details
-3. Validate required reviews approved:
-   - Parse review status from PR JSON
-   - Confirm at least one approval (or per repo settings)
-4. Check mergeable status (no conflicts):
-   - If `mergeable: false` detected, offer to chain to `git-resolve-conflict`
-   <!-- <workflow-chain next="git-resolve-conflict" condition="merge conflicts detected"> -->
-5. If any validation fails:
-   - Present detailed status report
-   - Ask user if they want to force merge (require explicit "force merge" confirmation)
-   <workflow-gate type="human-approval" criticality="critical" prompt="CI failing or reviews incomplete. Force merge anyway?">
-   </workflow-gate>
+> **Reference**: See `references/merge-readiness-checklist.md` for full validation matrix (PR state, CI, reviews, mergeable, force-merge gate).
 
 ### Phase 2: Select Merge Strategy
 
-1. Present merge strategy options with explanations:
-   ```
-   1. Squash and merge - Combine all commits into one (recommended for feature branches)
-   2. Rebase and merge - Replay commits on base branch (clean linear history)
-   3. Create merge commit - Preserve all commits with merge commit (full history)
-   ```
-2. Analyze PR to recommend strategy:
-   - Single commit → suggest squash
-   - Multiple clean commits → suggest rebase
-   - Complex history → suggest merge commit
-3. Prompt user for strategy selection
-<workflow-gate type="human-approval" criticality="critical" prompt="Select merge strategy (squash/rebase/merge)?">
-</workflow-gate>
-4. Store selected strategy in `merge_context.strategy`
+> **Reference**: See `references/merge-strategy-guide.md` for strategy options (squash/rebase/merge), recommendation heuristics, and strategy gate.
 
 ### Phase 3: Execute Merge
 
@@ -205,33 +178,7 @@ Update state: `local_branch_deleted: true` (or `false` if kept/failed)
 
 ### Phase 5d: Verify Issue Closure
 
-1. Extract issue number from PR body — look for `Closes #N`, `Fixes #N`, `Resolves #N` patterns (case-insensitive)
-2. If issue number found, check issue state via forge API:
-   - Gitea: `tea issues details $ISSUE_NUMBER` — check state field
-   - GitHub: `gh issue view $ISSUE_NUMBER --json state`
-3. If issue is already closed: report "Issue #$ISSUE_NUMBER auto-closed by merge" ✓
-4. If issue is still open:
-
-<workflow-gate type="choice" id="close-issue">
-  <question>Issue #$ISSUE_NUMBER is still open after merge. Close it now?</question>
-  <header>Issue closure</header>
-  <option key="close" recommended="true">
-    <label>Close issue</label>
-    <description>Close issue #$ISSUE_NUMBER via forge API</description>
-  </option>
-  <option key="keep-open">
-    <label>Keep open</label>
-    <description>Leave issue open (may need further work)</description>
-  </option>
-</workflow-gate>
-
-If "Close issue":
-- Gitea: `tea issues close $ISSUE_NUMBER`
-- GitHub: `gh issue close $ISSUE_NUMBER`
-
-5. If no issue number found in PR body: skip (inform user "No linked issue found in PR description")
-
-Update state: `issue_verified_closed: true` (or `false` if kept open/not found)
+> **Reference**: See `references/issue-closure-verification.md` for issue extraction, forge API closure, and closure gate.
 
 ### Phase 5e: Suggest Next Steps
 

@@ -87,22 +87,7 @@ If no PRs found (empty list or no unreviewed), inform user and exit.
 
 ## Phase 0.5: Dependency Ordering
 
-**Stacked PR detection** — build a dependency DAG from base/head branch relationships.
-
-For each PR, check if `baseRefName` matches another PR's `headRefName` → dependency edge.
-
-<deep-think trigger="dependency-ordering" context="Build dependency DAG from PR base/head branches to detect stacked PRs and determine safe review order">
-  <purpose>Analyze base/head branch relationships across all candidate PRs. Build a directed dependency graph. Perform topological sort. Identify any PRs that cannot be safely reviewed because their base PR is still open.</purpose>
-  <context>PR metadata with headRefName and baseRefName for each PR. A PR is "blocked" if its baseRefName matches another open PR's headRefName. The topological sort determines safe review order — dependencies first.</context>
-</deep-think>
-
-**Filtering rules**:
-1. Build dependency edges: `PR_A → PR_B` means "B depends on A" (B's base = A's head)
-2. Topological sort: order so dependencies come first
-3. **Exclude blocked PRs**: any PR whose base PR is open (unmerged) is excluded
-4. Report excluded PRs: `"PR #15 (title) — depends on unmerged PR #12"`
-
-Present the **dependency-safe, ordered list** and any excluded PRs to user.
+> **Reference**: See `references/pr-dependency-ordering.md` for DAG construction, topological sort, and blocked PR filtering.
 
 ---
 
@@ -187,91 +172,13 @@ Wait for all agents to complete. Collect all structured reports.
 
 ## Phase 3: Sequential Approval Loop
 
-Present each review report one-by-one for approval. For each reviewed PR (in dependency-safe order):
-
-**Progress banner**: Show `Review {current}/{total}: PR #{number} — {title} | Verdict: {verdict} | {C}C/{W}W/{S}S`
-
-Display the complete structured review report, then:
-
-<workflow-gate type="choice" id="per-pr-approval">
-  <question>Submit review for PR #{number} with verdict: {verdict}?</question>
-  <header>PR #{number} verdict</header>
-  <option key="submit" recommended="true">
-    <label>Submit as shown</label>
-    <description>Post review with {verdict} verdict to forge</description>
-  </option>
-  <option key="modify-verdict">
-    <label>Modify verdict</label>
-    <description>Change the verdict (e.g., approve despite warnings)</description>
-  </option>
-  <option key="skip">
-    <label>Skip this PR</label>
-    <description>Do not submit review — move to next PR</description>
-  </option>
-</workflow-gate>
-
-If "Modify verdict" → present APPROVE / REQUEST_CHANGES / COMMENT options.
-If overriding to APPROVE with Critical findings:
-
-<workflow-gate type="choice" id="force-approve-batch">
-  <question>WARNING: PR #{number} has {count} blocking issues. Are you CERTAIN you want to APPROVE?</question>
-  <header>Force approve</header>
-  <option key="force-approve">
-    <label>APPROVE ANYWAY</label>
-    <description>Override blocking issues and approve</description>
-  </option>
-  <option key="back" recommended="true">
-    <label>Go back</label>
-    <description>Return to verdict options</description>
-  </option>
-</workflow-gate>
-
-**Submit** via forge CLI with confirmed verdict and the **complete agent report** as the review body. The `$REPORT_BODY` variable MUST contain the full structured output from the review agent — pass it through unchanged. **Do NOT manually reconstruct, summarize, or omit any sections.** This includes: verdict header, all finding groups (Critical/Warnings/Suggestions/Good), Test Results, AND the Quick Fix section (when verdict is not ✅ LGTM). Verify submission via exit code.
-
-> **Forge submission commands**: See `references/forge-commands.md`
-> **Force-approve audit trail**: If force-approving with Critical findings, prepend audit notice — see `references/forge-commands.md#force-approve-audit-trail`
+> **Reference**: See `references/approval-audit-trail.md` for per-PR approval gate, verdict modification, force-approve flow, and submission pattern.
 
 ---
 
 ## Phase 3.5: Worktree Cleanup
 
-After all review approvals are submitted, explicitly clean up worktrees created in Phase 2.
-
-1. **List all worktrees** from the review phase:
-```bash
-git worktree list
-```
-
-2. **For each review worktree**:
-   - If review was **submitted** → remove worktree:
-     ```bash
-     git worktree remove {worktree_path}
-     ```
-   - If review was **skipped**:
-
-<workflow-gate type="choice" id="cleanup-worktree-pr-{pr_number}">
-  <question>Worktree for PR #{pr_number} review was skipped. Remove it?</question>
-  <header>Worktree PR #{pr_number}</header>
-  <option key="remove" recommended="true">
-    <label>Remove worktree</label>
-    <description>Delete the worktree and its working directory</description>
-  </option>
-  <option key="keep">
-    <label>Keep worktree</label>
-    <description>Retain for later manual review</description>
-  </option>
-</workflow-gate>
-
-3. **Prune orphaned worktree references**:
-```bash
-git worktree prune
-```
-
-4. **Verify cleanup**:
-```bash
-git worktree list
-```
-Report remaining worktrees (should only be main working tree + any user chose to keep).
+> **Reference**: See `references/worktree-cleanup.md` for worktree removal, skipped worktree gates, and prune steps.
 
 ---
 
