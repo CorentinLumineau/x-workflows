@@ -137,7 +137,7 @@ Compact format:
 
 ### Verdict: {APPROVED / CHANGES REQUESTED / BLOCKED}
 
-**ANY CRITICAL or unexcepted HIGH violation = cannot proceed to /git-commit.**
+**ANY CRITICAL or unexempted HIGH violation = cannot proceed to /git-commit.**
 ```
 
 ---
@@ -188,7 +188,7 @@ CATEGORY must include the V-code or OWASP ID:
 
 - **BLOCKED**: any CRITICAL violation (V-SOLID-01, V-SOLID-03, V-TEST-01, V-TEST-05, V-TEST-06, V-DOC-02, V-PAT-01) or wrong requirement implemented
 - **CHANGES REQUESTED**: any HIGH violation without documented user exception, or test failures, or security issues
-- **APPROVED**: zero CRITICAL, zero unexcepted HIGH, all MEDIUM flagged, tests pass with evidence, coverage >= 80%
+- **APPROVED**: zero CRITICAL, zero unexempted HIGH, all MEDIUM flagged, tests pass with evidence, coverage >= 80%
 
 ## STOP — Review Approval Hard Gate
 

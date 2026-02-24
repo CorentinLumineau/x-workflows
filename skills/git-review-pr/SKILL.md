@@ -5,7 +5,7 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
 user-invocable: true
-argument-hint: "<pr-number> [--worktree]"
+argument-hint: "<pr-number> [--worktree] | ci"
 metadata:
   author: ccsetup contributors
   version: "2.0.0"
@@ -60,6 +60,54 @@ Perform comprehensive local code review of a pull request including:
 ---
 
 <instructions>
+
+## CI Mode Detection
+
+If `$ARGUMENTS` equals `ci`:
+- Set `CI_MODE=true`
+- **SKIP**: forge detection, PR fetch, human gates, test execution, forge submission, cleanup
+- **Tools**: Read, Glob, Grep only (no Bash, no sub-agents)
+- **Input**: Diff is provided as input text (not fetched from forge)
+- **Output**: Return structured JSON (verdict, summary, findings) — see `references/review-report-template.md` CI Output Format
+
+### CI-1: Context Discovery
+
+Read `CLAUDE.md` at the repo root if it exists. If absent, scan for project markers: `go.mod`, `package.json`, `Cargo.toml`, `requirements.txt`, `pom.xml`, `Makefile`, `tsconfig.json`, `pyproject.toml`, `build.gradle`, `Gemfile`. Note language, framework, testing tools, and conventions.
+
+### CI-2: Inline Code and Security Review
+
+Single-pass review of the provided diff using all knowledge skills:
+- **code-code-quality** — SOLID, DRY, KISS, YAGNI violations. **MANDATORY: V-code IDs** (V-SOLID-01–05, V-DRY-01–03, V-KISS-01/02, V-YAGNI-01/02).
+- **security-secure-coding** — OWASP Top 10, input validation, secrets exposure. **MANDATORY: OWASP category IDs** (A01–A10).
+- **code-design-patterns** — Anti-patterns (V-PAT-01–04).
+
+Focus areas: bugs/logic errors, security vulnerabilities, code quality, testing gaps, breaking changes.
+
+### CI-3: Static Regression Detection
+
+Diff-only analysis (no test execution):
+- Removed/disabled tests (`skip`, `ignore`, commented-out)
+- Removed assertions from existing tests
+- Public API signature changes without test updates
+- Weakened validation or error handling
+- See `references/pr-regression-checks.md` for full detection criteria (skip coverage delta — no Bash)
+
+### CI-4: Compile Structured Report
+
+**STOP — Hard Gate**: Verify all violations against `references/enforcement-audit.md`. Zero CRITICAL and zero unexempted HIGH required for LGTM verdict.
+
+Return JSON with:
+- `verdict`: `"LGTM"` | `"NEEDS_CHANGES"` | `"CRITICAL_ISSUES"`
+- `summary`: `{ files_reviewed, critical_count, warning_count, suggestion_count }`
+- `findings`: `{ critical[], warnings[], suggestions[], good[] }`
+
+Each finding: `{ category (with V-code/OWASP ID), title, file, code? (optional), explanation }`.
+
+Verdict logic: CRITICAL_ISSUES if any critical finding or security vulnerability; LGTM if no critical findings (warnings acceptable); NEEDS_CHANGES if only warnings/suggestions, no critical.
+
+**End of CI mode — do NOT continue to Phase 0.**
+
+---
 
 ## Phase 0: Forge Detection and Validation
 
@@ -185,7 +233,7 @@ Flag missing documentation as V-DOC violations (see `references/enforcement-audi
 
 ## Phase 4b: Compile Structured Review Report
 
-**STOP — Review Approval Hard Gate**: Before generating the verdict, verify all violations against `references/enforcement-audit.md` hard gate checklist. Zero CRITICAL and zero unexcepted HIGH violations required for APPROVE.
+**STOP — Review Approval Hard Gate**: Before generating the verdict, verify all violations against `references/enforcement-audit.md` hard gate checklist. Zero CRITICAL and zero unexempted HIGH violations required for APPROVE.
 
 Generate comprehensive review report with sections:
 
@@ -266,23 +314,9 @@ Structure approval questions with: context (findings summary + verdict), options
 
 ---
 
-## Safety Rules
+## Safety & Critical Rules
 
-1. **Never auto-approve PRs** without explicit human gate confirmation
-2. **Never skip security review** even if user requests "quick review"
-3. **Never force-push** during review process
-4. **Never modify PR branch** without explicit user instruction
-5. **Always verify hard gate** (references/enforcement-audit.md) before generating verdict
-6. **Always require explicit confirmation** for approve-with-issues scenarios
-
----
-
-## Critical Rules
-
-- **CRITICAL**: Test failures ALWAYS trigger REQUEST_CHANGES verdict unless user explicitly overrides
-- **CRITICAL**: Security vulnerabilities ALWAYS flagged as Critical severity
-- **CRITICAL**: Secrets exposure (API keys, passwords) ALWAYS blocks approval without force-approve gate
-- **CRITICAL**: Review submission is IRREVERSIBLE once posted - always confirm before submission
+> **Reference**: See `references/safety-critical-rules.md` for safety rules (6 rules), critical rules (4 rules), and agent delegation matrix (5 roles).
 
 ---
 
@@ -291,18 +325,6 @@ Structure approval questions with: context (findings summary + verdict), options
 - PR fetched and reviewed (code + security + tests) with structured findings
 - Review report generated with V-code IDs, verdict, and submitted to forge
 - User informed of next steps (merge or wait for changes)
-
----
-
-## Agent Delegation
-
-| Role | Agent Type | Model | When | Purpose |
-|------|------------|-------|------|---------|
-| Change scope analyzer | `ccsetup:x-explorer` | haiku | Phase 1b | Categorize PR diff by file type |
-| Code reviewer | `ccsetup:x-reviewer` | sonnet | Phase 2b | Review code quality, design, maintainability |
-| Security reviewer | `ccsetup:x-security-reviewer` | sonnet | Phase 2b | Review for OWASP vulnerabilities and security issues |
-| Test runner | `ccsetup:x-tester` | sonnet | Phase 3a | Execute test suite and report results |
-| Regression detector | `ccsetup:x-tester` | sonnet | Phase 3b | Detect coverage regressions and removed tests |
 
 ---
 
@@ -322,3 +344,4 @@ Structure approval questions with: context (findings summary + verdict), options
 - **For V-code definitions, audit checklists, and hard gate**: See `references/enforcement-audit.md`
 - **For test verification evidence protocol**: See `references/verification-protocol.md`
 - **For PR regression detection criteria**: See `references/pr-regression-checks.md`
+- **For safety rules, critical rules, and agent delegation matrix**: See `references/safety-critical-rules.md`

@@ -235,6 +235,71 @@ glab mr review "$MR_NUMBER" --approve --body-file "$TMPFILE"
 rm -f "$TMPFILE"
 ```
 
+## CI Output Format
+
+When invoked via `/git-review-pr ci`, return structured JSON instead of markdown. Python post-processing handles rendering.
+
+### JSON Contract
+
+```json
+{
+  "verdict": "LGTM" | "NEEDS_CHANGES" | "CRITICAL_ISSUES",
+  "summary": {
+    "files_reviewed": 5,
+    "critical_count": 0,
+    "warning_count": 1,
+    "suggestion_count": 2
+  },
+  "findings": {
+    "critical": [],
+    "warnings": [
+      {
+        "category": "V-SOLID-01: SRP",
+        "title": "Class handles both parsing and validation",
+        "file": "src/handler.py:42-60",
+        "explanation": "Split into separate parser and validator classes."
+      }
+    ],
+    "suggestions": [
+      {
+        "file": "src/utils.py:15",
+        "title": "Use dataclass",
+        "explanation": "Plain dict could be a dataclass for type safety."
+      }
+    ],
+    "good": [
+      "Comprehensive test coverage for new endpoints",
+      "Clean error handling with proper logging"
+    ]
+  }
+}
+```
+
+### Finding Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `category` | Yes | V-code or OWASP ID + short label (e.g., `"V-SOLID-01: SRP"`, `"A03: Injection"`) |
+| `title` | Yes | One-line description of the finding |
+| `file` | Yes | File path with line or line-range (e.g., `"src/foo.py:42"` or `"src/foo.py:42-60"`) |
+| `code` | No | Relevant code snippet (5-10 lines max) — only for critical findings |
+| `explanation` | Yes | Why it matters and what to do (1-2 sentences) |
+
+### Verdict Logic (CI)
+
+- **`CRITICAL_ISSUES`**: Any critical finding or security vulnerability
+- **`LGTM`**: No critical findings, all checks pass (warnings acceptable)
+- **`NEEDS_CHANGES`**: Only warnings and/or suggestions, no critical
+
+### Notes
+
+- The JSON schema is enforced by the calling Python script via `output_format`
+- `good` items are plain strings (no file/category needed)
+- `suggestions` items do not require `category` (optional field)
+- Omit empty arrays — the schema allows missing keys in `findings`
+
+---
+
 ## Verification
 
 - Check CLI exit code after submission

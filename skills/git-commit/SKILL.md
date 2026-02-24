@@ -61,7 +61,20 @@ This skill activates:
   <denied>Force push, amend published commits, commit sensitive files (.env, credentials, keys)</denied>
 </permission-scope>
 
-### Phase 0: Confidence Check (Conditional)
+### Phase 0: Branch Safety & Confidence Check
+
+**Branch safety** (always runs first):
+
+```bash
+CURRENT_BRANCH=$(git branch --show-current)
+```
+
+If `$CURRENT_BRANCH` is `main`, `master`, or `develop`:
+- **WARN** user: "You are committing directly to protected branch `$CURRENT_BRANCH`"
+- Force `@skills/interview/` activation (no bypass) to confirm intent
+- If user declines: suggest `git checkout -b feature/my-change` first
+
+**Confidence check** (conditional):
 
 Activate `@skills/interview/` if:
 - Mixed changes in staging (multiple concerns)

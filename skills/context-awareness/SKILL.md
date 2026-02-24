@@ -290,6 +290,22 @@ Guidance: Install gh via: brew install gh (macOS) or apt install gh (Ubuntu)
 
 ---
 
+## Context Layer Priority
+
+When multiple context sources provide conflicting information, resolve using this priority order (highest wins):
+
+| Priority | Source | Example |
+|----------|--------|---------|
+| 1 (highest) | User instructions | CLAUDE.md, `.claude/rules/` |
+| 2 | Active initiative state | `.claude/initiative.json` |
+| 3 | Workflow session state | L1 files (`.claude/*.json`) |
+| 4 | Auto-memory | L2 (MEMORY.md + topic files) |
+| 5 (lowest) | Skill defaults | Hardcoded in skill instructions |
+
+**Conflict resolution**: When the same key appears in multiple layers, use the highest-priority value. Log the conflict at INFO level for debugging.
+
+---
+
 ## Integration Pattern
 
 context-awareness is **automatically active** in ALL workflow skills. It provides environment context and tool availability data to all phases.

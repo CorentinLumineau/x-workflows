@@ -178,7 +178,10 @@ Update state: `local_branch_deleted: true` (or `false` if kept/failed)
 
 ### Phase 5d: Verify Issue Closure
 
-> **Reference**: See `references/issue-closure-verification.md` for issue extraction, forge API closure, and closure gate.
+> **Reference**: See `references/issue-closure-verification.md` for issue extraction patterns,
+> forge API closure commands (Gitea `tea` / GitHub `gh`), and closure choice gate.
+
+Check that linked issues were closed by the merge. If direct-mode (no PR), manually close via forge API.
 
 ### Phase 5e: Suggest Next Steps
 
