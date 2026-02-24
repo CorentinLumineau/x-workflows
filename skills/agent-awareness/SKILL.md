@@ -158,6 +158,14 @@ At session start, after loading agent catalog:
 11. **Feedback-Informed**: Consider user correction history when suggesting agents (advisory only)
 </behavioral_rules>
 
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "I can handle this myself" | Agent delegation exists to parallelize, not because you can't. Use it. |
+| "Delegation overhead isn't worth it" | 3+ file changes save time with parallel agents. Measure, don't guess. |
+| "The task is too small to delegate" | Small tasks in bulk (5+) are exactly when orchestration helps most. |
+
 ## References
 
 - @skills/complexity-detection/ - Shared complexity and intent detection logic

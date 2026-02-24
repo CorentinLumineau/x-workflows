@@ -48,8 +48,18 @@ Detect all uncommitted changes (staged, unstaged, untracked), group by area, and
 This skill activates:
 - `forge-awareness` - Detect forge type for post-commit chaining context
 - `interview` - Zero-doubt confidence gate (only if ambiguous)
+- `verification-before-completion` - Pre-commit verification evidence gate
 
 <instructions>
+
+<hook-trigger event="PreToolUse" tool="Bash" condition="Before git commit operations">
+  <action>Validate pre-commit hooks pass (secret scanning, lint-staged) before staging files</action>
+</hook-trigger>
+
+<permission-scope mode="default">
+  <allowed>Read, Grep, Glob (change detection); Bash (git add, git commit, git status, git log, git diff)</allowed>
+  <denied>Force push, amend published commits, commit sensitive files (.env, credentials, keys)</denied>
+</permission-scope>
 
 ### Phase 0: Confidence Check (Conditional)
 

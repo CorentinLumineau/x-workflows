@@ -63,6 +63,15 @@ This avoids redundant questioning when the decision engine has already classifie
 - **For per-workflow trigger conditions and activation thresholds**: See `references/triggers-matrix.md`
 - **For bypass rules and when interview can be skipped**: See `references/bypass-conditions.md`
 
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "The scope is obvious" | Obvious to whom? The user's mental model may differ from yours. Ask. |
+| "I already know the answer" | Knowing the answer doesn't mean the user agrees. Confirm anyway. |
+| "This is too simple to ask about" | Simple tasks with wrong assumptions create complex rework. |
+| "The user seems impatient" | A 10-second question prevents a 10-minute redo. Users prefer accuracy. |
+
 ## References
 
 | Reference | Purpose |

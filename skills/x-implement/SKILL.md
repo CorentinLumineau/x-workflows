@@ -57,6 +57,7 @@ This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 - `code-quality` - SOLID, DRY, KISS enforcement
 - `testing` - Testing pyramid (70/20/10)
+- `verification-before-completion` - Evidence-based completion gate (Phase 4)
 
 ### Context-Triggered
 | Skill | Trigger Conditions |
@@ -82,6 +83,15 @@ This skill activates:
 | `sequential-thinking` | Complex implementation decisions |
 
 <instructions>
+
+<hook-trigger event="PreToolUse" tool="Write" condition="Before creating new files during implementation">
+  <action>Verify TDD gate: confirm a failing test exists before allowing production code writes (V-TEST-02 enforcement)</action>
+</hook-trigger>
+
+<permission-scope mode="acceptEdits">
+  <allowed>Read, Write, Edit, Grep, Glob (full implementation); Bash (test execution, quality gates, build commands)</allowed>
+  <denied>Force push; direct commits to main/master without review; skipping TDD gate</denied>
+</permission-scope>
 
 ### Phase 0: Confidence Check
 

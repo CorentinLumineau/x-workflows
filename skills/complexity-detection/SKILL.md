@@ -250,6 +250,14 @@ At workflow completion, x-auto writes correction summary to auto-memory topic fi
 
 ---
 
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "This is clearly simple" | Complexity hides in dependencies, not line count. Check before assuming. |
+| "It's just a quick fix" | "Quick" fixes that skip planning cause 60% of regressions. |
+| "Planning would slow us down" | Skipping planning slows down the rework that follows. |
+
 ## When to Load References
 
 - **For intent detection patterns and intent-to-skill mapping table**: See `references/intent-routing.md`

@@ -49,6 +49,7 @@ Ask user: "What error or issue would you like to fix?"
 This skill activates:
 - `debugging-performance` - Debug methodology (lightweight)
 - `context-awareness` - Project context
+- `verification-before-completion` - Evidence-based completion gate (Phase 3)
 
 ## Agent Delegation
 
