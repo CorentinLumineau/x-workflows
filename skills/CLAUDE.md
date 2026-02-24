@@ -195,6 +195,44 @@ make sync-skills
 # - x-devsecops/skills/security/owasp/ → skills/security-owasp/
 ```
 
+## Reference Pointer Convention
+
+Skills use a 3-layer system to connect SKILL.md to its `references/` directory:
+
+### Layer 1: Inline Pointers (within `<instructions>`)
+
+Direct links inside phase text with a content summary — not a filename restatement.
+
+```markdown
+> **Reference**: See `references/merge-readiness-checklist.md` for full validation matrix
+> (PR state, CI, reviews, mergeable, force-merge gate).
+```
+
+### Layer 2: "When to Load References" Section
+
+A dedicated section **after** `</instructions>` and **before** `## References` (or `## Success Criteria`). Lists every reference file with a descriptive use-case trigger:
+
+```markdown
+## When to Load References
+
+- **For enforcement audit checklists and violation codes**: See `references/enforcement-audit.md`
+- **For full review mode workflow**: See `references/mode-review.md`
+```
+
+**Format**: `- **For {descriptive use case}**: See \`references/{filename}.md\``
+
+Content summaries should describe what is in the file, not restate the filename.
+
+### Layer 3: Agent Prompt Summaries (batch skills only)
+
+For batch orchestrators (`git-review-multiple-pr`, `git-implement-multiple-issue`), the agent prompt inside `<parallel-delegate>` includes a 2-3 line inline summary of what the reference contains. This prevents agents from needing to load the reference at runtime:
+
+```markdown
+> **Full agent prompt and output format**: See `references/review-agent-prompt.md`
+> Review focus areas (bugs, security, quality, tests, breaking changes),
+> output format with verdict/severity/categories, UNTRUSTED-FORGE-DATA wrapping.
+```
+
 ## Version
 
 **Version**: 7.0.0
