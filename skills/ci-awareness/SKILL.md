@@ -85,7 +85,15 @@ Verify CI config files exist:
 
 ### Phase 2: Query CI Status
 
-Query CI status using forge-appropriate CLI (gh/tea/glab) or API. Extract check names, status, conclusion, URLs, and timing.
+<context-query tool="ci_status" params='{"target":"branch","ref":"HEAD"}'>
+  <fallback>
+  Query CI status using forge-appropriate CLI:
+  - GitHub: `gh run list --branch {branch} --limit 5 --json name,status,conclusion,url`
+  - GitHub PR: `gh pr checks {pr_number} --json name,status,conclusion,detailsUrl`
+  - Gitea: Check Gitea Actions via API (tea CLI has limited CI support)
+  Extract check names, status, conclusion, URLs, and timing.
+  </fallback>
+</context-query>
 
 > **Per-forge CLI commands**: See `references/forge-ci-commands.md`
 

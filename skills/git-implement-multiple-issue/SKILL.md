@@ -62,9 +62,14 @@ Perform batch implementation of multiple issues with:
 
 ## Phase 0: Input Resolution and Forge Detection
 
-**Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea).
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea)
+  2. `tea --version 2>/dev/null || gh --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
 
-**Forge CLI availability**: `tea --version 2>/dev/null || gh --version 2>/dev/null` — if neither found, stop: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
+If no forge CLI found, stop: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
 
 Parse `$ARGUMENTS`:
 - If issue numbers provided: strip "#" prefixes, **validate each matches `/^\d+$/`** (reject non-numeric), store as `ISSUE_LIST`
@@ -90,9 +95,12 @@ If no issues found (empty list or no backlog), inform user and exit.
 
 **PR cross-reference** — exclude issues that already have active PRs.
 
-1. **Fetch open PRs** via forge CLI (see [issue-selection-guide.md](references/issue-selection-guide.md) for commands)
-
-2. **Apply 3-condition cross-reference algorithm** from [issue-selection-guide.md](references/issue-selection-guide.md): branch-name match (`feature-branch.N`), body-reference match (`close/closes/fix/fixes/resolve #N`), title-reference match (`#N` at word boundary)
+<context-query tool="list_issues" params='{"state":"open","include_pr_crossref":true}'>
+  <fallback>
+  1. **Fetch open PRs** via forge CLI (see [issue-selection-guide.md](references/issue-selection-guide.md) for commands)
+  2. **Apply 3-condition cross-reference algorithm** from [issue-selection-guide.md](references/issue-selection-guide.md): branch-name match (`feature-branch.N`), body-reference match (`close/closes/fix/fixes/resolve #N`), title-reference match (`#N` at word boundary)
+  </fallback>
+</context-query>
 
 3. **Filter**: issues with matching PRs → excluded (report to user with PR number and match reason). Issues without → eligible.
 

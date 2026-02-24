@@ -62,8 +62,13 @@ This workflow activates:
 
 ### Phase 0: Validation
 
-1. Activate `forge-awareness` to detect forge type (GitHub/Gitea) and validate CLI availability
-2. Verify git repository: `git rev-parse --is-inside-work-tree`
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea) and CLI availability
+  2. `git rev-parse --is-inside-work-tree` → verify git repository
+  </fallback>
+</context-query>
+
 3. Parse `$ARGUMENTS` — all arguments pass through to x-quickwins in Phase 1
 4. Store forge type for Phase 3 label discovery
 

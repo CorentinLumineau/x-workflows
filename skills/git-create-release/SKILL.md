@@ -76,20 +76,27 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Pre-Release Checks
 
-Verify ready for release:
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type for release creation
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
 
+<context-query tool="git_context" params='{"mode":"commit"}'>
+  <fallback>
+  Verify ready for release:
+  ```bash
+  git branch --show-current
+  git status
+  git fetch origin
+  git status
+  ```
+  </fallback>
+</context-query>
+
+Run all quality gates:
 ```bash
-# Ensure on main branch
-git branch --show-current
-
-# Ensure no uncommitted changes
-git status
-
-# Ensure up to date
-git fetch origin
-git status
-
-# Run all quality gates
 pnpm test
 pnpm lint
 pnpm build
@@ -107,15 +114,15 @@ Determine new version based on semantic versioning:
 | New feature | Minor (1.0.0 → 1.1.0) |
 | Bug fix | Patch (1.0.0 → 1.0.1) |
 
-Analyze commits since last release:
-
-```bash
-# Get last tag
-git describe --tags --abbrev=0
-
-# Commits since last tag
-git log $(git describe --tags --abbrev=0)..HEAD --oneline
-```
+<context-query tool="git_context" params='{"mode":"log","limit":50}'>
+  <fallback>
+  Analyze commits since last release:
+  ```bash
+  git describe --tags --abbrev=0
+  git log $(git describe --tags --abbrev=0)..HEAD --oneline
+  ```
+  </fallback>
+</context-query>
 
 ### Phase 3: Release Notes Generation
 

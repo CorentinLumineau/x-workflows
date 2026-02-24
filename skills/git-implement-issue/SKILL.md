@@ -64,34 +64,31 @@ This skill activates:
 
 Verify prerequisites before proceeding.
 
-1. **Forge CLI availability**:
-```bash
-# Try tea first, fall back to gh
-tea --version 2>/dev/null || gh --version 2>/dev/null
-```
-If neither is found, stop and instruct: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
+<context-query tool="project_context">
+  <fallback>
+  1. `tea --version 2>/dev/null || gh --version 2>/dev/null` → verify forge CLI availability
+  2. `git rev-parse --is-inside-work-tree` → verify git repository
+  3. `git remote -v` → detect forge type and remotes
+  </fallback>
+</context-query>
 
-2. **Issue number validation**:
+If no forge CLI is available, stop and instruct: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
+If not in a git repo, stop and instruct: "Run this command from inside a git repository."
+
+1. **Issue number validation**:
    - Extract the issue number from `$ARGUMENTS`
    - Must be a positive integer
    - If not provided or invalid, proceed to **Phase 0.5** for interactive selection
 
-3. **Git repository check**:
-```bash
-git rev-parse --is-inside-work-tree
-```
-If not in a git repo, stop and instruct: "Run this command from inside a git repository."
+2. **PR-awareness check** (only when a valid issue number was provided in step 1):
 
-4. **PR-awareness check** (only when a valid issue number was provided in step 2):
-
-   Fetch open PRs to check for existing work on this issue:
-   ```bash
-   # Gitea
-   tea pulls ls -o tsv -f index,title,head,state --state open --limit 50
-
-   # GitHub
-   gh pr list --state open --limit 50 --json number,title,headRefName,body
-   ```
+<context-query tool="list_prs" params='{"state":"open","limit":50}'>
+  <fallback>
+  Fetch open PRs to check for existing work on this issue:
+  - Gitea: `tea pulls ls -o tsv -f index,title,head,state --state open --limit 50`
+  - GitHub: `gh pr list --state open --limit 50 --json number,title,headRefName,body`
+  </fallback>
+</context-query>
 
    Cross-reference the provided issue number against open PRs using the 3-condition algorithm from [references/issue-selection-guide.md](references/issue-selection-guide.md):
    - Branch-name match: open PR head is `feature-branch.$ISSUE_NUMBER`
@@ -127,7 +124,11 @@ If not in a git repo, stop and instruct: "Run this command from inside a git rep
 
 > Only entered when no valid issue number was provided. See [references/issue-selection-guide.md](references/issue-selection-guide.md) for API commands, scoring, and edge cases.
 
-1. **Fetch open issues and open PRs** using the detected forge CLI (tea or gh)
+<context-query tool="list_issues" params='{"state":"open","include_pr_crossref":true}'>
+  <fallback>
+  1. **Fetch open issues and open PRs** using the detected forge CLI (tea or gh)
+  </fallback>
+</context-query>
 
 2. **Filter** out issues that already have PRs (see [references/issue-selection-guide.md](references/issue-selection-guide.md) for full algorithm):
    - Branch-name match: open PR head is `feature-branch.N`

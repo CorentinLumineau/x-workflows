@@ -59,7 +59,13 @@ Resolve git merge conflicts through guided analysis and user-approved resolution
 
 **Detect conflict context** via `git status --porcelain` and check for `.git/MERGE_HEAD`, `.git/rebase-merge/`, or `.git/CHERRY_PICK_HEAD` to determine operation type (merge/rebase/cherry-pick).
 
-**Activate forge-awareness** if conflict appears PR-related.
+<context-query tool="project_context">
+  <fallback>
+  **Activate forge-awareness** if conflict appears PR-related:
+  1. `git remote -v` → detect forge type
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
 
 Display conflict context (operation type, source/target branch, file count) to user.
 

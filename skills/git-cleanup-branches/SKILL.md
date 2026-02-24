@@ -51,7 +51,12 @@ Safely clean up accumulated git branches through intelligent categorization:
 
 ## Phase 0: Initialize Cleanup Context
 
-**Activate forge-awareness** to detect GitHub/Gitea/GitLab context.
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea/GitLab)
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
 
 **Capture current state**:
 ```bash
@@ -84,15 +89,19 @@ This ensures accurate remote tracking information.
 
 ## Phase 1: Enumerate All Branches
 
-**List local branches** with metadata:
-```bash
-git for-each-ref --format='%(refname:short)|%(upstream)|%(committerdate:iso8601)|%(upstream:track)' refs/heads/
-```
+<context-query tool="git_context" params='{"mode":"branch_list"}'>
+  <fallback>
+  **List local branches** with metadata:
+  ```bash
+  git for-each-ref --format='%(refname:short)|%(upstream)|%(committerdate:iso8601)|%(upstream:track)' refs/heads/
+  ```
 
-**List remote branches**:
-```bash
-git for-each-ref --format='%(refname:short)|%(committerdate:iso8601)' refs/remotes/origin/
-```
+  **List remote branches**:
+  ```bash
+  git for-each-ref --format='%(refname:short)|%(committerdate:iso8601)' refs/remotes/origin/
+  ```
+  </fallback>
+</context-query>
 
 **Parse into structured data**:
 For each local branch, capture:

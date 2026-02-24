@@ -56,7 +56,13 @@ This workflow activates:
 
 ### Phase 0: Forge Detection and Template Check
 
-1. Activate `forge-awareness` to detect forge type and validate CLI availability
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea)
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
+
 2. Check for issue templates in repository:
    - Look for `.github/ISSUE_TEMPLATE/` or `.gitea/ISSUE_TEMPLATE/`
    - Parse available templates (bug_report.md, feature_request.md, etc.)

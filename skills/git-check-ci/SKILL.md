@@ -54,7 +54,12 @@ This workflow activates:
 
 ### Phase 0: Forge Detection and Target Identification
 
-1. Activate `forge-awareness` to detect forge type and validate CLI availability
+<context-query tool="project_context">
+  <fallback>
+  1. Activate `forge-awareness` to detect forge type and validate CLI availability
+  </fallback>
+</context-query>
+
 2. Determine check target:
    - If `$ARGUMENTS` is numeric → treat as PR number
    - If `$ARGUMENTS` is string → treat as branch name
@@ -65,12 +70,16 @@ This workflow activates:
 
 ### Phase 1: Query CI Status via ci-awareness
 
-1. Activate `ci-awareness` behavioral skill
-2. Query CI status based on target type:
+<context-query tool="ci_status" params='{"target":"$TARGET_TYPE","ref":"$TARGET_REF","include_logs":false}'>
+  <fallback>
+  1. Query CI status based on target type:
    - For PR: `gh pr checks {PR}` (GitHub) or `tea pr ci {PR}` (Gitea)
    - For branch: `gh run list --branch {branch}` (GitHub) or check Gitea API
+  2. Parse CI provider (GitHub Actions, Gitea Actions, CircleCI, etc.)
+  </fallback>
+</context-query>
+
 3. Store raw CI response in `ci_context.raw_status`
-4. Parse CI provider (GitHub Actions, Gitea Actions, CircleCI, etc.)
 
 ### Phase 2: Parse and Present Status Report
 

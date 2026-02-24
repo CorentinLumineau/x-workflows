@@ -69,12 +69,28 @@ This workflow activates:
 - Jump directly to **Phase 2** (if merge strategy needs re-confirmation) or **Phase 3** (if strategy was preserved)
 
 **Normal flow**:
-1. Activate `forge-awareness` to detect forge type and validate CLI availability
-2. Activate `ci-awareness` to check CI configuration
+
+<context-query tool="project_context">
+  <fallback>
+  1. Activate `forge-awareness` to detect forge type and validate CLI availability
+  </fallback>
+</context-query>
+
+<context-query tool="ci_status" params='{"target":"pr","ref":"$PR_NUMBER"}'>
+  <fallback>
+  2. Activate `ci-awareness` to check CI configuration and merge readiness
+  </fallback>
+</context-query>
+
 3. Validate `$ARGUMENTS` contains valid PR number
-4. Fetch PR details via forge CLI:
+
+<context-query tool="list_prs" params='{"pr_number":"$PR_NUMBER","include_checks":true}'>
+  <fallback>
+  4. Fetch PR details via forge CLI:
    - GitHub: `gh pr view {PR} --json number,title,state,mergeable,reviews,statusCheckRollup`
    - Gitea: `tea pr show {PR}`
+  </fallback>
+</context-query>
 
 ### Phase 1: Validate Merge Readiness
 

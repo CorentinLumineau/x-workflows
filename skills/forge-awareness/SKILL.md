@@ -34,17 +34,28 @@ This skill eliminates duplicate forge detection code, provides consistent forge 
 
 ## Core Detection Algorithm
 
-### Phase 1: Parse Git Remotes
+### Phases 1-3: Detect Forge, Remotes, and CLI
 
-```bash
-# Extract all configured remotes
-git remote -v | grep fetch
+<context-query tool="project_context">
+  <fallback>
+  **Phase 1: Parse Git Remotes**
+  1. `git remote -v | grep fetch` → extract all configured remotes
+  2. Parse URL patterns: SSH (`git@hostname:owner/repo.git`) and HTTPS (`https://hostname/owner/repo.git`)
+  3. Extract: hostname, owner, repo for each remote
 
-# For each remote, parse URL patterns:
-# SSH format: git@hostname:owner/repo.git
-# HTTPS format: https://hostname/owner/repo.git
-# Extract: hostname, owner, repo
-```
+  **Phase 2: Classify Forge Platform**
+  For each unique hostname:
+  - `github.com` or `*.github.com` → GitHub
+  - `gitlab.com` or `gitlab.*` → GitLab
+  - Known Gitea domains or API probe `GET /api/v1/version` → Gitea/Forgejo
+  - No match → Unknown
+
+  **Phase 3: Check CLI Tool Availability**
+  1. `gh --version 2>/dev/null` → GitHub CLI
+  2. `tea --version 2>/dev/null` → Gitea CLI
+  3. `glab --version 2>/dev/null` → GitLab CLI
+  </fallback>
+</context-query>
 
 **URL Pattern Matching:**
 
@@ -54,59 +65,7 @@ git remote -v | grep fetch
 | HTTPS | `https://gitea.example.com/org/project.git` | hostname=gitea.example.com, owner=org, repo=project |
 | HTTPS (no .git) | `https://github.com/owner/repo` | hostname=github.com, owner=owner, repo=repo |
 
-### Phase 2: Classify Forge Platform
-
-```
-For each unique hostname:
-
-1. GitHub Detection:
-   - hostname == "github.com" → GitHub
-   - hostname matches "*.github.com" → GitHub Enterprise
-   - hostname matches "ghe.*.com" → GitHub Enterprise
-
-2. GitLab Detection:
-   - hostname == "gitlab.com" → GitLab
-   - hostname matches "gitlab.*" → GitLab Self-Hosted
-
-3. Gitea/Forgejo Detection:
-   - Check known Gitea domains (from config)
-   - Try Gitea API probe: GET /api/v1/version
-     - HTTP 200 + valid JSON → Gitea/Forgejo
-     - HTTP 404/other → Not Gitea
-
-4. Unknown Classification:
-   - No match → Unknown
-   - Prompt user: "Detected unknown forge at {hostname}. Is this (g)itea, (l)ab, or (o)ther?"
-```
-
-> See [references/forge-detection.md](references/forge-detection.md) for forge API signatures and response patterns.
-
-### Phase 3: Check CLI Tool Availability
-
-```bash
-# GitHub
-if command -v gh &> /dev/null; then
-  cli_available=true
-  cli_tool="gh"
-  gh_version=$(gh --version | head -n1)
-fi
-
-# Gitea
-if command -v tea &> /dev/null; then
-  cli_available=true
-  cli_tool="tea"
-  tea_version=$(tea --version)
-fi
-
-# GitLab
-if command -v glab &> /dev/null; then
-  cli_available=true
-  cli_tool="glab"
-  glab_version=$(glab --version)
-fi
-```
-
-> See [references/forge-detection.md](references/forge-detection.md) for CLI install commands and fallback strategies.
+> See [references/forge-detection.md](references/forge-detection.md) for forge API signatures, CLI install commands, and fallback strategies.
 
 ## Multi-Remote Support
 

@@ -61,16 +61,22 @@ This skill activates:
   <denied>Force push, amend published commits, commit sensitive files (.env, credentials, keys)</denied>
 </permission-scope>
 
-### Phase 0: Branch Safety & Confidence Check
+### Phase 0-1: Context Gathering, Branch Safety & Change Detection
+
+<context-query tool="git_context" params='{"mode":"commit"}'>
+  <fallback>
+  1. `git branch --show-current` → detect current branch
+  2. `git status --porcelain` → full change detection (staged + unstaged + untracked)
+  3. `git log --oneline -5` → recent commits for style reference
+  4. `git diff --stat` → unstaged diff summary
+  5. `git diff --cached --stat` → staged diff summary
+  </fallback>
+</context-query>
 
 **Branch safety** (always runs first):
 
-```bash
-CURRENT_BRANCH=$(git branch --show-current)
-```
-
-If `$CURRENT_BRANCH` is `main`, `master`, or `develop`:
-- **WARN** user: "You are committing directly to protected branch `$CURRENT_BRANCH`"
+If current branch is `main`, `master`, or `develop`:
+- **WARN** user: "You are committing directly to protected branch"
 - Force `@skills/interview/` activation (no bypass) to confirm intent
 - If user declines: suggest `git checkout -b feature/my-change` first
 
@@ -82,18 +88,6 @@ Activate `@skills/interview/` if:
 - Many unrelated changes across multiple areas
 
 **Bypass allowed**: When changes are homogeneous and type is obvious.
-
-### Phase 1: Change Detection
-
-Detect ALL uncommitted changes (staged + unstaged + untracked):
-
-```bash
-# Full porcelain status for parsing
-git status --porcelain
-
-# Recent commits for style reference
-git log --oneline -5
-```
 
 **Edge case**: No changes detected → inform user "No uncommitted changes found.", exit gracefully.
 

@@ -65,12 +65,25 @@ Perform batch code review of multiple pull requests with:
 
 ## Phase 0: Input Resolution and Forge Detection
 
-**Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea).
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea)
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
 
 Parse `$ARGUMENTS`:
 - If PR numbers provided: strip "#" prefixes, **validate each matches `/^\d+$/`** (reject non-numeric), store as `PR_LIST`
 - If `--unreviewed` flag: auto-fetch unreviewed PRs via forge API (max 20 candidates). On Gitea, uses two-tier check: formal PR reviews AND review-pattern comments from any author (see `references/forge-commands.md`)
 - If no arguments: use **interview** skill to ask user for PR numbers
+
+<context-query tool="list_prs" params='{"state":"open","limit":50}'>
+  <fallback>
+  Fetch open PRs for resolution and metadata:
+  - **GitHub**: `gh pr list --state open --limit 50 --json number,title,headRefName,baseRefName,author`
+  - **Gitea**: `tea pr ls --state open --output json --limit 50`
+  </fallback>
+</context-query>
 
 > **Auto-fetch and submission commands**: See `references/forge-commands.md`
 

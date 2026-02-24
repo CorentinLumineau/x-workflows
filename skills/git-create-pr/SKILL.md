@@ -57,25 +57,34 @@ This workflow activates:
 
 <instructions>
 
-### Phase 0: Forge Detection and Confidence Check
+### Phase 0-1: Context Gathering and Branch Analysis
 
-1. Activate `forge-awareness` behavioral skill to detect forge type and validate CLI availability
-2. Verify current branch is not the default branch (main/master/develop)
-3. If `$ARGUMENTS` provided, checkout that branch first
-4. Check branch has commits ahead of base branch via `git log origin/main..HEAD --oneline`
-5. If no commits found, explain situation and exit (nothing to PR)
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea) and CLI availability
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI
+  3. `git symbolic-ref --short refs/remotes/origin/HEAD` → detect default branch
+  </fallback>
+</context-query>
 
-### Phase 1: Branch Analysis
+<context-query tool="git_context" params='{"mode":"pr_create"}'>
+  <fallback>
+  1. `git rev-parse --abbrev-ref HEAD` → current branch
+  2. `git log origin/{base}..HEAD --oneline` → commits ahead of base
+  3. `git diff origin/{base}...HEAD --stat` → diff summary
+  4. `git diff origin/{base}...HEAD --name-status` → changed files
+  </fallback>
+</context-query>
 
-1. Identify base branch (typically `main` or `master`) via `git remote show origin`
-1b. Check if current branch is worktree-managed:
+1. Verify current branch is not the default branch (main/master/develop)
+2. If `$ARGUMENTS` provided, checkout that branch first
+3. If no commits found ahead of base, explain situation and exit (nothing to PR)
+4. Check if current branch is worktree-managed:
     - If branch name matches `worktree-*` pattern OR inside `.claude/worktrees/` → worktree session
     - Extract task context from worktree name or branch name
     - Note worktree origin for PR description enrichment
-2. Generate diff summary via `git diff origin/{base}...HEAD --stat`
-3. Analyze commit messages via `git log origin/{base}..HEAD --pretty=format:"%s"`
-4. Categorize changes (feat/fix/refactor/docs/test/chore) based on files and commits
-5. Store analysis in `pr_context.analysis` state
+5. Categorize changes (feat/fix/refactor/docs/test/chore) based on files and commits
+6. Store analysis in `pr_context.analysis` state
 
 ### Phase 2: Generate PR Title and Description
 

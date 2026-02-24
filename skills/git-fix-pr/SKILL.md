@@ -67,17 +67,26 @@ Review feedback can come from:
 
 ## Phase 0: Validation and Forge Detection
 
-**Activate forge-awareness behavioral skill** to detect current forge (GitHub/Gitea/GitLab).
+<context-query tool="project_context">
+  <fallback>
+  1. `git remote -v` → detect forge type (GitHub/Gitea/GitLab)
+  2. `gh --version 2>/dev/null || tea --version 2>/dev/null` → verify CLI availability
+  </fallback>
+</context-query>
 
 Parse `$ARGUMENTS`:
 - First token = PR number: strip `#` prefix if present, validate `/^\d+$/`
 - Remaining text after PR number = optional inline findings (from Quick Fix codeblock)
 - If PR number missing, exit with error: "Usage: /git-fix-pr <pr-number> [inline-findings...]"
 
-Verify PR exists and is open via forge CLI:
-- **GitHub**: `gh pr view {number} --json number,title,state,headRefName,baseRefName,author`
-- **Gitea**: `tea pr show {number}`
-- **GitLab**: `glab mr view {number}`
+<context-query tool="list_prs" params='{"pr_number":"$PR_NUMBER","include_checks":false}'>
+  <fallback>
+  Verify PR exists and is open via forge CLI:
+  - **GitHub**: `gh pr view {number} --json number,title,state,headRefName,baseRefName,author`
+  - **Gitea**: `tea pr show {number}`
+  - **GitLab**: `glab mr view {number}`
+  </fallback>
+</context-query>
 
 If PR not found or not open, exit with error.
 
