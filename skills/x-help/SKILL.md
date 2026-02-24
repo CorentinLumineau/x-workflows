@@ -192,7 +192,9 @@ See: skills/WORKFLOWS.md
 
 ## When to Load References
 
-- **For context mode**: See `references/mode-context.md`
+- **For context mode (session state and loaded skills display)**: See `references/mode-context.md`
+- **For command reference display and usage patterns**: See `references/mode-help.md`
+- **For rules directory management (create, list, manage `.claude/rules/`)**: See `references/mode-rules.md`
 
 ## Success Criteria
 

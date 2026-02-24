@@ -290,6 +290,10 @@ After analysis complete:
 - [ ] Executive summary displayed to user
 - [ ] Next step presented
 
+## When to Load References
+
+- **For full audit report template with domain sections and severity format**: See `references/audit-report-template.md`
+
 ## References
 
 - @skills/code-code-quality/ - SOLID principles

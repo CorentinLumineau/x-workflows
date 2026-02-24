@@ -165,6 +165,8 @@ Verdict: 🚨 if Critical findings OR test failures OR security vulns. ✅ if no
 **IMPORTANT**: The above is a **template for one agent**. At runtime, generate one Task call per selected PR, all in a single message. Each agent gets its own worktree via `isolation: "worktree"`.
 
 > **Full agent prompt and output format**: See `references/review-agent-prompt.md`
+> Review focus areas (bugs, security, quality, tests, breaking changes),
+> output format with verdict/severity/categories, UNTRUSTED-FORGE-DATA wrapping.
 
 Wait for all agents to complete. Collect all structured reports.
 
@@ -305,6 +307,9 @@ When approval needed:
 
 ## When to Load References
 
-- **For agent review prompt**: See `references/review-agent-prompt.md`
-- **For forge CLI commands**: See `references/forge-commands.md`
-- **For summary report format**: See `references/summary-report-template.md`
+- **For agent review prompt template, output format, and UNTRUSTED-FORGE-DATA wrapping**: See `references/review-agent-prompt.md`
+- **For forge-specific CLI commands (auto-fetch, submission, review body)**: See `references/forge-commands.md`
+- **For summary report table template and aggregate metrics**: See `references/summary-report-template.md`
+- **For per-PR approval gate, verdict modification, force-approve flow, and submission pattern**: See `references/approval-audit-trail.md`
+- **For stacked PR DAG construction, topological sort, and blocked PR filtering**: See `references/pr-dependency-ordering.md`
+- **For worktree removal, skipped worktree gates, and prune steps after review**: See `references/worktree-cleanup.md`

@@ -286,6 +286,11 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 
 > See [references/conventional-format.md](references/conventional-format.md) for output format templates.
 
+## When to Load References
+
+- **For commit format, type definitions, safety rules, and output templates**: See `references/conventional-format.md`
+- **For config file patterns, sensitive file patterns, and collection directory patterns**: See `references/grouping-rules.md`
+
 ## Success Criteria
 
 - [ ] Changes detected, grouped, and strategy selected

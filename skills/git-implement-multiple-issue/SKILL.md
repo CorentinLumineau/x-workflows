@@ -126,6 +126,8 @@ For each selected issue, spawn an implementation agent with worktree isolation. 
 **IMPORTANT**: The `<parallel-delegate>` above is a **template for one agent**. At runtime, generate one Task call per selected issue.
 
 > **Full agent prompt and output format**: See `references/implement-agent-prompt.md`
+> Branch creation via feature-branch.N naming, x-auto delegation for complexity routing,
+> structured completion report (Status/Branch/Files/Tests/Changes/Notes), UNTRUSTED-FORGE-DATA wrapping.
 
 Wait for all agents to complete. Collect all structured reports.
 
@@ -320,7 +322,8 @@ When approval needed:
 
 ## When to Load References
 
-- **For agent implementation prompt**: See `references/implement-agent-prompt.md`
-- **For issue selection and PR cross-reference**: See `references/issue-selection-guide.md`
-- **For PR description format**: See `references/pr-description-guide.md`
-- **For summary report format**: See `references/batch-summary-template.md`
+- **For agent implementation prompt template and UNTRUSTED-FORGE-DATA wrapping**: See `references/implement-agent-prompt.md`
+- **For issue discovery API commands, scoring heuristic, and PR cross-reference algorithm**: See `references/issue-selection-guide.md`
+- **For PR description template and output format examples**: See `references/pr-description-guide.md`
+- **For batch summary report table template and aggregate metrics**: See `references/batch-summary-template.md`
+- **For issue selection gate, batch size confirmation, base branch detection, and isolation mode**: See `references/multi-issue-selection-gates.md`

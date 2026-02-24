@@ -261,7 +261,9 @@ After research complete:
 ## When to Load References
 
 - **For quick Q&A**: Use `/x-ask` (standalone skill)
-- **For deep research**: See `references/mode-deep.md`
+- **For comprehensive investigation with multi-source evidence gathering**: See `references/mode-deep.md`
+- **For external pattern/library assessment and integration strategy design**: See `references/mode-assess.md`
+- **For fetching best practices from web sources and integrating into knowledge structure**: See `references/mode-lessons.md`
 
 ## References
 

@@ -226,11 +226,11 @@ documentation/
 
 ## When to Load References
 
-- **For generate patterns**: See `references/mode-generate.md`
-- **For sync patterns**: See `references/mode-sync.md`
-- **For verification**: See `references/mode-verify.md`
-- **For cleanup**: See `references/mode-cleanup.md`
-- **For sync patterns reference**: See `references/doc-sync-patterns.md`
+- **For documentation generation workflow and templates**: See `references/mode-generate.md`
+- **For documentation sync workflow (code-to-docs alignment)**: See `references/mode-sync.md`
+- **For documentation router and sub-mode dispatch logic**: See `references/mode-docs.md`
+- **For stale documentation cleanup workflow**: See `references/mode-cleanup.md`
+- **For drift detection patterns and code-doc sync heuristics**: See `references/doc-sync-patterns.md`
 
 ## References
 

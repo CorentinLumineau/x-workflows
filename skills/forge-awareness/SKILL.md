@@ -150,6 +150,10 @@ behavioral-skills:
 4. Forge context detected (primary forge, CLI tool, remotes)
 5. git-create-pr uses the detected forge context to select appropriate CLI/API
 
+## When to Load References
+
+- **For forge API signatures, CLI install commands, CI detection scripts, and error handling**: See `references/forge-detection.md`
+
 ## References
 
 - @skills/vcs-forge-operations/ - CLI equivalences and forge-specific operations

@@ -266,6 +266,20 @@ Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). 
 
 </instructions>
 
+## When to Load References
+
+- **For enforcement audit checklists, violation codes, and severity classification**: See `references/enforcement-audit.md`
+- **For full review mode with agent delegation matrix by phase**: See `references/mode-review.md`
+- **For fast quality gate validation workflow**: See `references/mode-quick.md`
+- **For deep code and security audit patterns**: See `references/mode-audit.md`
+- **For documentation completeness audit patterns**: See `references/mode-docs.md`
+- **For regression detection checks and coverage delta analysis**: See `references/mode-regression.md`
+- **For coverage threshold rules and hard gate**: See `references/mode-coverage.md`
+- **For build gate configuration and CI integration**: See `references/mode-build.md`
+- **For security-focused review checklist (OWASP, injection, auth)**: See `references/mode-security.md`
+- **For readiness report output template with verdict format**: See `references/readiness-report-template.md`
+- **For 5-step evidence protocol and coverage hard gate**: See `references/verification-protocol.md`
+
 ## Human-in-Loop Gates
 
 | **Critical**: ALWAYS ASK | **High**: ASK IF ABLE | **Medium**: ASK IF UNCERTAIN | **Low**: PROCEED |

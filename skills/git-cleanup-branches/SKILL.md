@@ -296,6 +296,8 @@ Generate final report with deleted/retained counts, failed deletions, pruned ref
 
 ## When to Load References
 
-- **For categorization details**: See `references/branch-categorization.md`
-- **For naming conventions**: See `references/naming-conventions.md`
-- **For configuration and usage examples**: See `references/configuration.md`
+- **For branch categorization scripts (merged, stale, orphaned, active)**: See `references/branch-categorization.md`
+- **For branch naming convention patterns and compliance checks**: See `references/naming-conventions.md`
+- **For configuration options and usage examples**: See `references/configuration.md`
+- **For deletion commands, verification steps, and cleanup summary report template**: See `references/cleanup-execution.md`
+- **For safety rules, deletion procedures, and critical constraints**: See `references/safety-protocol.md`

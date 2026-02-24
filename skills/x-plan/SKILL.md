@@ -277,7 +277,8 @@ For exploration before planning:
 
 ## When to Load References
 
-- **For detailed planning workflow**: See `references/mode-plan.md`
+- **For detailed planning workflow with track-specific steps**: See `references/mode-plan.md`
+- **For comprehensive code analysis across quality, security, performance, and architecture**: See `references/mode-analyze.md`
 
 ## References
 

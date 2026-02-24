@@ -191,6 +191,12 @@ Update state: `local_branch_deleted: true` (or `false` if kept/failed)
 
 </instructions>
 
+## When to Load References
+
+- **For PR state, CI, review, and mergeable validation matrix**: See `references/merge-readiness-checklist.md`
+- **For merge strategy options (squash/rebase/merge) and recommendation heuristics**: See `references/merge-strategy-guide.md`
+- **For issue extraction from PR, forge API closure, and closure gate**: See `references/issue-closure-verification.md`
+
 ## Human-in-Loop Gates
 
 | Gate | Criticality | Trigger Condition | Default Action |

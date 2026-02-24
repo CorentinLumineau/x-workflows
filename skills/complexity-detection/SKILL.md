@@ -250,6 +250,12 @@ At workflow completion, x-auto writes correction summary to auto-memory topic fi
 
 ---
 
+## When to Load References
+
+- **For intent detection patterns and intent-to-skill mapping table**: See `references/intent-routing.md`
+- **For tier definitions (LOW/MEDIUM/HIGH/CRITICAL), assessment algorithm, and escalation paths**: See `references/complexity-tiers.md`
+- **For chain resolution algorithm, metadata schema, and named path templates**: See `references/chaining-matrix.md`
+
 ## References
 
 - @skills/agent-awareness/ - Agent delegation awareness and selection patterns

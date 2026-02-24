@@ -236,6 +236,13 @@ x-auto will assess complexity and route to the appropriate workflow chain (APEX,
 
 </instructions>
 
+## When to Load References
+
+- **For branch strategy selection, base branch detection, and existing branch handling**: See `references/branch-setup-gates.md`
+- **For issue discovery API commands, scoring heuristic, and PR cross-reference algorithm**: See `references/issue-selection-guide.md`
+- **For PR creation logic, direct mode recovery, and post-PR gates**: See `references/pr-creation-flow.md`
+- **For PR description template and output format examples**: See `references/pr-description-guide.md`
+
 ## Human-in-Loop Gates
 
 | Decision Level | Action | Example |

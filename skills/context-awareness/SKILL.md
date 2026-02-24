@@ -311,6 +311,10 @@ Before execution:
 
 ---
 
+## When to Load References
+
+- **For complete tool detection protocol, version checks, and fallback strategies**: See `references/tool-detection.md`
+
 ## References
 
 See: @skills/context-awareness/references/tool-detection.md for complete tool detection protocol and fallback strategies.

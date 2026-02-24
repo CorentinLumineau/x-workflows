@@ -133,6 +133,10 @@ Determine required checks from: branch protection API, CI config heuristics (tes
 | Unknown CI system | Config file present but unrecognized | Log warning, skip CI checks |
 | Partial check data | Some checks missing from API | Use available data, mark status as "incomplete" |
 
+## When to Load References
+
+- **For per-forge CLI commands, log retrieval, branch protection queries, and diagnosis output**: See `references/forge-ci-commands.md`
+
 ## References
 
 - @skills/delivery-ci-cd-delivery/ - CI/CD pipeline patterns

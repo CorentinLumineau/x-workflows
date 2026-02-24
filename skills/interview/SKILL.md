@@ -55,6 +55,14 @@ When receiving a routing context from complexity-detection with confidence >= 70
 
 This avoids redundant questioning when the decision engine has already classified the task.
 
+## When to Load References
+
+- **For adaptive dimension scoring and workflow-specific weights**: See `references/confidence-model.md`
+- **For context7/codebase/web research protocol between questions**: See `references/research-loop.md`
+- **For 3-format validation templates (checklist, prose, visual)**: See `references/reformulation-templates.md`
+- **For per-workflow trigger conditions and activation thresholds**: See `references/triggers-matrix.md`
+- **For bypass rules and when interview can be skipped**: See `references/bypass-conditions.md`
+
 ## References
 
 | Reference | Purpose |

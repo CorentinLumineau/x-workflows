@@ -376,9 +376,12 @@ After implementation complete:
 
 ## When to Load References
 
-- **For implementation details**: See `references/mode-implement.md`
-- **For enhancement patterns**: See `references/mode-enhance.md`
-- **For fix patterns**: See `references/mode-fix.md`
+- **For core implementation workflow and TDD cycle details**: See `references/mode-implement.md`
+- **For enhancement patterns and incremental feature additions**: See `references/mode-enhance.md`
+- **For targeted fix patterns within implementation**: See `references/mode-fix.md`
+- **For technical debt cleanup, dead code removal, and codebase organization**: See `references/mode-cleanup.md`
+- **For safe refactoring with zero regression guarantee and SOLID enforcement**: See `references/mode-refactor.md`
+- **For enforcement summary template, documentation sync checklist, and initiative update protocol**: See `references/phase-implementation-gates.md`
 
 ## References
 

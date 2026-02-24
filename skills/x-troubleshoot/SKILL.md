@@ -259,9 +259,10 @@ Use `complexity-detection` skill to route appropriately:
 
 ## When to Load References
 
-- **For troubleshoot workflow**: See `references/mode-troubleshoot.md`
-- **For debug patterns**: See `references/mode-debug.md`
-- **For explanation mode**: See `references/mode-explain.md`
+- **For full troubleshoot workflow with hypothesis-driven methodology**: See `references/mode-troubleshoot.md`
+- **For debug patterns and systematic investigation steps**: See `references/mode-debug.md`
+- **For explanation mode (code comprehension and flow tracing)**: See `references/mode-explain.md`
+- **For post-implementation feedback intake, categorization, and hybrid routing**: See `references/mode-feedback.md`
 
 ## References
 

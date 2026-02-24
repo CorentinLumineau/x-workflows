@@ -153,9 +153,10 @@ Each milestone tracks:
 
 ## When to Load References
 
-- **For create mode**: See `references/mode-create.md`
-- **For continue mode**: See `references/mode-continue.md`
-- **For archive mode**: Delegates to `/x-archive` (standalone skill)
-- **For status mode**: See `references/mode-status.md`
+- **For initiative creation workflow and scoping protocol**: See `references/mode-create.md`
+- **For session resume and progress recovery workflow**: See `references/mode-continue.md`
+- **For initiative archival with documentation updates and lessons learned**: See `references/mode-archive.md`
+- **For progress display and milestone status reporting**: See `references/mode-status.md`
+- **For 2-layer persistence model, checkpoint lifecycle, and cross-session state management**: See `references/persistence-architecture.md`
 
 > **Note**: The `archive` mode delegates to the standalone `/x-archive` skill for backward compatibility. Users can invoke either `/x-initiative archive` or `/x-archive` directly.
