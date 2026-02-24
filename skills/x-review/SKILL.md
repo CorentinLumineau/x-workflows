@@ -65,6 +65,7 @@ Detect mode from `$ARGUMENTS` keywords:
 | 1 | Change Scoping | git diff, initiative context | NEW |
 | 2 | Quality Gates | Lint, types, tests, build | Quality gates |
 | 3 | Code Review | SOLID, security, patterns | From x-review |
+| SC | Spec Compliance | Requirement tracing, gap analysis | references/mode-spec-compliance.md |
 | 4 | Documentation Audit | Docs freshness, API sync | NEW |
 | 5 | Regression Detection | Coverage delta, removed tests | NEW |
 | 6 | Readiness Report | Pass/warn/block synthesis | NEW |

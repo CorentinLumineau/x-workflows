@@ -93,7 +93,7 @@ This skill is referenced by completion-adjacent workflows:
 | `x-implement` | Phase 4 quality gates — evidence required before proceeding |
 | `x-fix` | Phase 3 verification — tests must be run, output read |
 | `git-commit` | Phase 0 confidence check — pre-commit verification gate |
-| `x-review` | Phase 2 quality gates — evidence protocol is mandatory |
+| `x-review` | Phase 2 quality gates — same evidence protocol enforced via `references/verification-protocol.md` |
 
 ## Verification Scope by Context
 
@@ -121,6 +121,12 @@ Non-compliant (BLOCKED):
 Tests should pass based on the changes made.
 → BLOCKED: No execution evidence. Run the tests.
 ```
+
+## When to Load References
+
+- **For the full 5-step verification evidence protocol and coverage thresholds**: See `@skills/x-review/references/verification-protocol.md`
+- **For the full anti-rationalization catalog with violation codes**: See `@skills/code-code-quality/references/anti-rationalization.md`
+- **For the science behind commitment devices and pre-suasion**: See `@skills/meta-persuasion-principles/`
 
 ## References
 

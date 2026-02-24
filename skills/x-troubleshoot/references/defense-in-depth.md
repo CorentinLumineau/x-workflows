@@ -88,3 +88,8 @@ A common root cause pattern is a **missing validation layer**:
 | "It was working yesterday" | Layer 4 (no instrumentation to detect when it broke) |
 
 When the root cause is found, add validation at the appropriate layer to prevent recurrence.
+
+## Integration with x-troubleshoot
+
+This reference supports Phase 2 (Hypothesize) to identify which validation layer failed,
+and Phase 3 (Test) to add missing validation at the correct layer.
