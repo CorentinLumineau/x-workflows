@@ -19,6 +19,10 @@ Extract forge detection logic into a shared behavioral skill to ensure DRY compl
 
 This skill eliminates duplicate forge detection code, provides consistent forge classification, enables forge-agnostic operations, and maintains a cached forge context for session-wide access.
 
+<hook-trigger event="PreToolUse" tool="Bash" condition="When any git-* workflow skill activates">
+  <action>Auto-detect forge platform from git remotes, classify forge type (GitHub/Gitea/GitLab), check CLI availability, and cache forge context for session</action>
+</hook-trigger>
+
 ## Activation Triggers
 
 | Trigger | Condition | Timing |

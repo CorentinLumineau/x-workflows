@@ -28,6 +28,11 @@ In `create` mode, x-initiative uses plan mode for initial scoping:
 
 After approval, initiative files (README.md, milestone-*.md) are written.
 
+<permission-scope mode="adaptive">
+  <allowed>Read, Write, Edit, Grep, Glob (initiative file management); Bash (git operations for milestone tracking)</allowed>
+  <denied>Destructive file operations on active initiative files without user confirmation; modifying archived initiatives</denied>
+</permission-scope>
+
 ## Modes
 
 | Mode | Description |

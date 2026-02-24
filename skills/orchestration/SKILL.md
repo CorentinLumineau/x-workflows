@@ -20,6 +20,11 @@ triggers:
 
 Behavioral skill that auto-activates when batch operations are detected. Prevents sequential bottlenecks that cause session truncation by spawning background agents for independent work streams.
 
+<permission-scope mode="bypassPermissions">
+  <allowed>Read, Grep, Glob (state tracking); background agent spawning via Task tool</allowed>
+  <denied>Direct file modifications (orchestration coordinates, does not edit); force-terminating spawned agents without user approval</denied>
+</permission-scope>
+
 ## Purpose
 
 Based on usage analysis showing 66 sessions with truncation friction due to sequential processing of large batches. This skill:

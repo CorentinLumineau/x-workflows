@@ -63,6 +63,15 @@ Pipeline: **0.5 → 0.5b → 0.6 → 0.7 → 0.8 → mode file**
 **Default mode**: skill
 **No-args behavior**: Enter discover mode
 
+<hook-trigger event="PostToolUse" tool="Write" condition="After new component file is created">
+  <action>Run component validation: verify frontmatter fields, naming convention, and routing compliance</action>
+</hook-trigger>
+
+<permission-scope mode="acceptEdits">
+  <allowed>Read, Write, Edit, Grep, Glob (component creation and ecosystem scanning)</allowed>
+  <denied>Bash (no command execution needed for component creation); direct writes to ccsetup-plugin/skills/ (must use source repos)</denied>
+</permission-scope>
+
 ## Scope Detection
 
 Before creating any component, detect the target scope:

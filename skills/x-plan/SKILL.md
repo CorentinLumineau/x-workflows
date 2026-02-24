@@ -61,6 +61,15 @@ This skill activates:
 
 <instructions>
 
+<hook-trigger event="PreToolUse" tool="Edit" condition="Before any file modification during planning">
+  <action>Enforce read-only plan mode: block Write and Edit tools until plan is approved via ExitPlanMode</action>
+</hook-trigger>
+
+<permission-scope mode="plan">
+  <allowed>Read, Grep, Glob (codebase exploration); Bash (read-only commands for scope assessment)</allowed>
+  <denied>Write, Edit (until plan approved via ExitPlanMode); destructive git operations</denied>
+</permission-scope>
+
 ### Phase 0: Confidence Check
 
 Activate `@skills/interview/` if:

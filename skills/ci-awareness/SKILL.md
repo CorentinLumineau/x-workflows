@@ -19,6 +19,15 @@ Provide CI/CD status intelligence to workflow skills. Auto-triggers before merge
 
 This skill detects the CI/CD system in use, queries pipeline status, classifies check results, determines merge readiness, and provides failure diagnosis when checks fail.
 
+<hook-trigger event="Notification" condition="CI pipeline status changes (completion, failure, or timeout)">
+  <action>Poll CI status at 5-minute intervals and update merge readiness assessment when checks complete or fail</action>
+</hook-trigger>
+
+<permission-scope mode="adaptive">
+  <allowed>Read, Grep, Glob (CI config detection); Bash (forge CLI for status queries: gh, tea, glab)</allowed>
+  <denied>Modifying CI configuration files; triggering pipeline re-runs without user approval</denied>
+</permission-scope>
+
 ## Activation Triggers
 
 | Trigger | Condition | Timing |

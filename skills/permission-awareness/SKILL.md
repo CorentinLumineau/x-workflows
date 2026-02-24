@@ -21,6 +21,15 @@ Detect the current permission mode (default, acceptEdits, bypassPermissions) and
 
 This behavioral skill prevents permission-related failures by detecting what operations are allowed in the current context and adapting workflow execution accordingly.
 
+<hook-trigger event="PreToolUse" condition="Before any phase requiring elevated permissions">
+  <action>Detect current permission mode (default, acceptEdits, bypassPermissions) via environment probing and cache result for session-wide reuse</action>
+</hook-trigger>
+
+<permission-scope mode="adaptive">
+  <allowed>Read, Grep, Glob (all modes); Write, Edit (acceptEdits+); Bash, git (bypassPermissions only)</allowed>
+  <denied>Tools outside skill frontmatter allowed-tools whitelist in CI; destructive operations without explicit user approval in interactive mode</denied>
+</permission-scope>
+
 ---
 
 ## Activation Triggers
