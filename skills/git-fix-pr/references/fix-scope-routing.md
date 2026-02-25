@@ -70,4 +70,4 @@ Review findings to address:
 
 x-auto routes to ONESHOT (x-fix) or APEX (x-plan → x-implement) based on complexity.
 
-**After x-auto completes**, execution returns to Phase 4 for push and PR update.
+**After x-auto completes**, execution returns to Phase 3.5 for local review verification before commit and push.

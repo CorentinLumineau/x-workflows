@@ -32,7 +32,7 @@ chains-from:
 |-----------|-------|
 | **Workflow** | UTILITY |
 | **Position** | After PR review, before re-review |
-| **Flow** | `git-review-pr` → **`git-fix-pr`** → `git-review-pr` |
+| **Flow** | `git-review-pr` → **`git-fix-pr`** (implement → local review → iterate) → `git-review-pr` |
 
 ---
 
@@ -151,7 +151,77 @@ Verify checkout: confirm `git branch --show-current` matches `HEAD_BRANCH`.
 
 > **Reference**: See `references/fix-scope-routing.md` for Case A (inline findings) and Case B (full context) routing, scope gates, and x-auto delegation pattern.
 
-**After x-auto completes**, execution returns here for Phase 4.
+**After x-auto completes**, execution returns here for Phase 3.5.
+
+---
+
+## Phase 3.5: Local Review Gate
+
+> **Shift-left verification**: Review fixes locally before committing to catch regressions early and avoid expensive remote fix → push → review → fix round-trips.
+
+**Iteration tracking**: Initialize `LOCAL_FIX_ITERATION = 0`, `MAX_LOCAL_FIX_ITERATIONS = 3`.
+
+### 3.5.1: Run Local Review
+
+Increment `LOCAL_FIX_ITERATION`.
+
+Review the changes produced by x-auto. Show the diff summary to the user:
+```bash
+git diff --stat
+```
+
+Run x-review on the local changes — focus on correctness of the fixes relative to the review feedback being addressed:
+
+```
+Invoke x-review in quick mode:
+- Scope: uncommitted changes only (git diff)
+- Focus: Do these changes correctly address the review feedback for PR #{PR_NUMBER}?
+- Check for: regressions, incomplete fixes, new issues introduced
+```
+
+### 3.5.2: Assess Review Findings
+
+**If x-review finds no issues**: proceed directly to Phase 4.
+
+**If x-review finds issues**:
+
+<workflow-gate type="choice" id="local-review-result">
+  <question>Local review found issues in the fixes (iteration {LOCAL_FIX_ITERATION}/{MAX_LOCAL_FIX_ITERATIONS}). How should we proceed?</question>
+  <header>Review gate</header>
+  <option key="fix" recommended="true">
+    <label>Fix issues locally</label>
+    <description>Re-delegate to x-auto to address review findings before committing</description>
+  </option>
+  <option key="override">
+    <label>Proceed anyway</label>
+    <description>Accept current changes and continue to commit/push (Phase 4)</description>
+  </option>
+  <option key="abort">
+    <label>Abort</label>
+    <description>Stop — keep changes uncommitted for manual review</description>
+  </option>
+</workflow-gate>
+
+**If "Proceed anyway"**: proceed to Phase 4.
+**If "Abort"**: end workflow — changes remain in working tree for manual intervention.
+
+**If "Fix issues locally"**:
+- **If `LOCAL_FIX_ITERATION >= MAX_LOCAL_FIX_ITERATIONS`** (safety valve):
+
+<workflow-gate type="choice" id="max-iterations-reached">
+  <question>Reached maximum local fix iterations ({MAX_LOCAL_FIX_ITERATIONS}). The remaining issues may need manual attention.</question>
+  <header>Safety valve</header>
+  <option key="push-current">
+    <label>Commit current state</label>
+    <description>Proceed to Phase 4 with changes as-is</description>
+  </option>
+  <option key="abort">
+    <label>Abort</label>
+    <description>Keep changes uncommitted for manual intervention</description>
+  </option>
+</workflow-gate>
+
+- **If iterations remain**: Re-delegate to x-auto with the x-review findings as additional implementation context. After x-auto completes, return to step 3.5.1.
 
 ---
 
@@ -247,6 +317,8 @@ Fixes applied addressing review feedback:
 | `worktree-isolation` | Medium | Before checkout | Choose isolation mode |
 | `inline-fix-confirm` | Medium | Before implementation (Case A) | Confirm inline findings |
 | `fix-scope` | Medium | Before implementation (Case B) | Choose what to fix |
+| `local-review-result` | Medium | After local x-review finds issues | Choose fix / override / abort |
+| `max-iterations-reached` | **Critical** | Max local fix iterations reached | Choose commit or abort |
 | `push-fixes` | **Critical** | Before pushing to remote | Confirm push |
 | `pr-update` | Medium | After push | Optionally comment on PR |
 | `post-fix` | Medium | After workflow | Choose next step |
@@ -298,6 +370,8 @@ When approval needed:
 - Full PR context fetched and displayed (reviews, comments, CI)
 - PR branch checked out (worktree or in-place)
 - Fixes implemented via x-auto delegation
+- Local x-review gate runs before commit/push (Phase 3.5)
+- Fix-review loop iterates locally until review passes or max iterations reached
 - Changes pushed to PR branch (with user confirmation)
 - User informed of next steps (re-review or done)
 
