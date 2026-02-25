@@ -134,7 +134,26 @@ Parse `$ARGUMENTS`:
 
 If PR not found, exit with error message.
 
-> **Reference**: See `references/review-scope-selection.md` for scope gate (full/quick/deep), worktree isolation decision, and depth routing table.
+### Worktree Isolation Decision
+
+> Skip this gate if `USE_WORKTREE` is already set by the `--worktree` flag.
+
+<workflow-gate type="choice" id="worktree-isolation">
+  <question>Review in an isolated worktree? This avoids switching your current branch.</question>
+  <header>Isolation</header>
+  <option key="worktree" recommended="true">
+    <label>Use worktree</label>
+    <description>Isolated copy — your working tree stays untouched</description>
+  </option>
+  <option key="in-place">
+    <label>In-place checkout</label>
+    <description>Checkout PR branch directly (will switch your current branch)</description>
+  </option>
+</workflow-gate>
+
+Set `USE_WORKTREE=true` if user selects "Use worktree".
+
+> **Reference**: See `references/review-scope-selection.md` for scope gate (full/quick/deep) and depth routing table.
 
 ---
 
@@ -313,6 +332,7 @@ List blocking issues again before this gate. Require exact match of "APPROVE ANY
 
 | Gate ID | Severity | Trigger | Required Action |
 |---------|----------|---------|-----------------|
+| `worktree-isolation` | Medium | Phase 0 (if `--worktree` not passed) | Choose worktree vs in-place checkout |
 | `confirm-review-scope` | Medium | Before fetching PR | Confirm review scope and PR number |
 | `submit-review` | Critical | Before submitting review | Approve review submission with chosen verdict |
 | `force-approve` | Critical | User wants to approve despite blocking issues | Explicit confirmation with phrase match |
@@ -349,6 +369,7 @@ Structure approval questions with: context (findings summary + verdict), options
 
 ## When to Load References
 
+- **For scope gate (full/quick/deep) and depth routing table**: See `references/review-scope-selection.md`
 - **For report template and verdict logic**: See `references/review-report-template.md`
 - **For V-code definitions, audit checklists, and hard gate**: See `references/enforcement-audit.md`
 - **For test verification evidence protocol**: See `references/verification-protocol.md`
