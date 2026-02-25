@@ -42,11 +42,11 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |--------|---------|--------|--------|
 | **x-workflows** | HOW to work | 20 workflow skills | `x-{verb}/` |
 | x-workflows | Git operations | 14 git skills | `git-{verb}-{type}/` |
-| x-workflows | Auto-triggered | 10 behavioral skills | `{name}/` (includes interview, orchestration) |
-| **x-devsecops** | WHAT to know | 21 knowledge skills | `{category}-{skill}/` |
+| x-workflows | Auto-triggered | 11 behavioral skills | `{name}/` (includes interview, orchestration) |
+| **x-devsecops** | WHAT to know | 22 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 1 | initiative |
 
-**Total: 66 skills**
+**Total: 68 skills**
 
 ## Verb Skills by Workflow (20)
 
@@ -109,7 +109,7 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/git-review-multiple-pr` | Batch PR review | review prs, batch review |
 | `/git-review-pr` | Review pull request | review pr, code review |
 
-## Behavioral Skills (10)
+## Behavioral Skills (11)
 
 | Skill | Purpose |
 |-------|---------|
@@ -122,9 +122,10 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `interview` | Zero-doubt confidence gate (auto-triggered) |
 | `orchestration` | Batch operation coordination (auto-triggered) |
 | `permission-awareness` | Permission escalation patterns (auto-triggered) |
+| `verification-before-completion` | Fresh evidence verification before task completion (auto-triggered) |
 | `worktree-awareness` | Worktree lifecycle and parallel work suggestions (auto-triggered) |
 
-## Knowledge Skills (21)
+## Knowledge Skills (22)
 
 Skills are prefixed by category for organization:
 
@@ -133,7 +134,7 @@ Skills are prefixed by category for organization:
 | **code-** | 4 | api-design, code-quality, design-patterns, error-handling |
 | **data-** | 2 | data-persistence, messaging |
 | **delivery-** | 3 | ci-cd-delivery, infrastructure, release-git |
-| **meta-** | 1 | analysis-architecture |
+| **meta-** | 2 | analysis-architecture, persuasion-principles |
 | **operations-** | 1 | sre-operations |
 | **quality-** | 3 | debugging-performance, observability, testing |
 | **security-** | 4 | git, identity-access, secrets-supply-chain, secure-coding |

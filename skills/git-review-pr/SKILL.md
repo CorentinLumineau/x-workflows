@@ -275,109 +275,17 @@ Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion find
 
 ## Phase 5: Submit Review to Forge
 
-Present full review report to user before this gate.
+Present full review report to user before this gate. The submission flow has 4 gates depending on verdict:
 
-**If verdict is APPROVE:**
+1. **APPROVE verdict** → submit/modify-verdict/edit/cancel gate
+2. **Non-APPROVE verdict** → fix-first (recommended)/submit/edit/cancel gate
+3. **Fix scope** (if fix-first selected) → critical+warnings/critical-only/all/skip gate, chains to `/git-fix-pr`
+4. **Force approve** (if overriding blocking issues) → explicit confirmation with phrase match
 
-<workflow-gate type="choice" id="submit-review-approve">
-  <question>Submit this review to PR #{number} with verdict: APPROVE?</question>
-  <header>Submit review</header>
-  <option key="submit" recommended="true">
-    <label>Submit as shown</label>
-    <description>Post review with current verdict and findings</description>
-  </option>
-  <option key="modify-verdict">
-    <label>Modify verdict</label>
-    <description>Change verdict to REQUEST_CHANGES or COMMENT</description>
-  </option>
-  <option key="edit-comments">
-    <label>Edit comments</label>
-    <description>Edit review comments before submission</description>
-  </option>
-  <option key="cancel">
-    <label>Cancel</label>
-    <description>Save draft locally without submitting</description>
-  </option>
-</workflow-gate>
+> **Full submission gate definitions**: See `references/submission-gates.md` for all 4 gate definitions
+> with workflow-gate markers, fix-scope chaining to git-fix-pr, and force-approve safety gate.
 
-**If verdict is NOT APPROVE (REQUEST_CHANGES or COMMENT):**
-
-<workflow-gate type="choice" id="submit-review-changes">
-  <question>Review of PR #{number} found issues (verdict: {REQUEST_CHANGES/COMMENT}). How would you like to proceed?</question>
-  <header>Action</header>
-  <option key="fix-first">
-    <label>Fix issues first (Recommended)</label>
-    <description>Run /git-fix-pr to auto-fix findings before submitting the review</description>
-  </option>
-  <option key="submit">
-    <label>Submit as shown</label>
-    <description>Post review with current verdict and findings to the forge</description>
-  </option>
-  <option key="edit-comments">
-    <label>Edit comments</label>
-    <description>Edit review comments before submission</description>
-  </option>
-  <option key="cancel">
-    <label>Cancel</label>
-    <description>Save draft locally without submitting</description>
-  </option>
-</workflow-gate>
-
-**If user selects "fix-first"** → present fix scope gate:
-
-<workflow-gate type="choice" id="fix-scope">
-  <question>Which findings should /git-fix-pr address?</question>
-  <header>Fix scope</header>
-  <option key="critical-and-warnings" recommended="true">
-    <label>Critical + Warnings</label>
-    <description>Fix all Critical and Warning findings (standard scope)</description>
-  </option>
-  <option key="critical-only">
-    <label>Critical only</label>
-    <description>Fix only Critical findings, leave Warnings for later</description>
-  </option>
-  <option key="all">
-    <label>All findings</label>
-    <description>Fix Critical, Warnings, and Suggestions</description>
-  </option>
-  <option key="skip">
-    <label>Skip — post review as-is</label>
-    <description>Changed my mind, submit the review without fixing</description>
-  </option>
-</workflow-gate>
-
-**If user selects "skip"** in fix-scope gate → submit review as-is (same as "submit" in the first gate).
-
-**If user selects a fix scope** (critical-only, critical-and-warnings, or all):
-1. Do NOT submit the review to the forge
-2. Filter findings to the selected scope and chain to `/git-fix-pr {number}` passing the filtered findings
-3. After fixes complete, git-fix-pr chains back to `/git-review-pr {number}` for re-review
-4. The re-review generates a fresh verdict — the original review is discarded
-
-<workflow-chain on="critical-and-warnings" skill="git-fix-pr" args="{number}" />
-<workflow-chain on="critical-only" skill="git-fix-pr" args="{number}" />
-<workflow-chain on="all" skill="git-fix-pr" args="{number}" />
-
-**If user selects "modify-verdict"** (APPROVE gate), or types "modify verdict" via Other (non-APPROVE gate) to force-approve despite blocking issues:
-
-<workflow-gate type="choice" id="force-approve">
-  <question>CRITICAL WARNING: Review found {count} blocking issues. Are you CERTAIN you want to APPROVE despite these issues?</question>
-  <header>Force approve confirmation</header>
-  <option key="force-approve">
-    <label>APPROVE ANYWAY</label>
-    <description>Override blocking issues and approve (requires exact confirmation phrase)</description>
-  </option>
-  <option key="back" recommended="true">
-    <label>Go back</label>
-    <description>Return to review submission options</description>
-  </option>
-</workflow-gate>
-
-List blocking issues again before this gate. Require exact match of "APPROVE ANYWAY" confirmation phrase.
-
-**Submit review via forge CLI** (gh/tea/glab) with chosen verdict and review body. Verify submission via exit code and confirm review appears.
-
-> **Forge submission commands**: See `references/review-report-template.md`
+Submit review via forge CLI (gh/tea/glab) with chosen verdict and review body. Verify submission success.
 
 ---
 
@@ -438,3 +346,4 @@ Structure approval questions with: context (findings summary + verdict), options
 - **For test verification evidence protocol**: See `references/verification-protocol.md`
 - **For PR regression detection criteria**: See `references/pr-regression-checks.md`
 - **For safety rules, critical rules, and agent delegation matrix**: See `references/safety-critical-rules.md`
+- **For Phase 5 submission gates (approve/reject/fix-first/force-approve)**: See `references/submission-gates.md`
