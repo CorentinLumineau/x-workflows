@@ -275,8 +275,12 @@ Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion find
 
 ## Phase 5: Submit Review to Forge
 
-<workflow-gate type="choice" id="submit-review">
-  <question>Submit this review to PR #{number} with verdict: {APPROVE/REQUEST_CHANGES/COMMENT}?</question>
+Present full review report to user before this gate.
+
+**If verdict is APPROVE:**
+
+<workflow-gate type="choice" id="submit-review-approve">
+  <question>Submit this review to PR #{number} with verdict: APPROVE?</question>
   <header>Submit review</header>
   <option key="submit" recommended="true">
     <label>Submit as shown</label>
@@ -284,7 +288,7 @@ Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion find
   </option>
   <option key="modify-verdict">
     <label>Modify verdict</label>
-    <description>Change verdict (e.g., approve despite warnings)</description>
+    <description>Change verdict to REQUEST_CHANGES or COMMENT</description>
   </option>
   <option key="edit-comments">
     <label>Edit comments</label>
@@ -296,9 +300,39 @@ Sections: Executive Summary (verdict + counts), Critical/Warning/Suggestion find
   </option>
 </workflow-gate>
 
-Present full review report to user before this gate.
+**If verdict is NOT APPROVE (REQUEST_CHANGES or COMMENT):**
 
-If user chooses option 2 (force approve with issues):
+<workflow-gate type="choice" id="submit-review-changes">
+  <question>Submit this review to PR #{number} with verdict: {REQUEST_CHANGES/COMMENT}?</question>
+  <header>Submit review</header>
+  <option key="submit" recommended="true">
+    <label>Submit as shown</label>
+    <description>Post review with current verdict and findings</description>
+  </option>
+  <option key="fix-first">
+    <label>Fix issues first</label>
+    <description>Run /git-fix-pr to auto-fix findings, then re-review</description>
+  </option>
+  <option key="edit-comments">
+    <label>Edit comments</label>
+    <description>Edit review comments before submission</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Save draft locally without submitting</description>
+  </option>
+</workflow-gate>
+
+**If user selects "fix-first"** (non-APPROVE gate):
+1. Do NOT submit the review to the forge
+2. Chain to `/git-fix-pr {number}` passing the Critical and Warning findings from this review
+3. After fixes complete, git-fix-pr chains back to `/git-review-pr {number}` for re-review
+4. The re-review generates a fresh verdict — the original review is discarded
+
+<workflow-chain on="fix-first" skill="git-fix-pr" args="{number}" />
+
+**If user selects "modify-verdict"** (APPROVE gate), or types "modify verdict" via Other (non-APPROVE gate) to force-approve despite blocking issues:
+
 <workflow-gate type="choice" id="force-approve">
   <question>CRITICAL WARNING: Review found {count} blocking issues. Are you CERTAIN you want to APPROVE despite these issues?</question>
   <header>Force approve confirmation</header>
@@ -334,11 +368,12 @@ List blocking issues again before this gate. Require exact match of "APPROVE ANY
 |---------|----------|---------|-----------------|
 | `worktree-isolation` | Medium | Phase 0 (if `--worktree` not passed) | Choose worktree vs in-place checkout |
 | `confirm-review-scope` | Medium | Before fetching PR | Confirm review scope and PR number |
-| `submit-review` | Critical | Before submitting review | Approve review submission with chosen verdict |
+| `submit-review-approve` | Critical | Before submitting APPROVE review | Approve review submission (submit/modify-verdict/edit/cancel) |
+| `submit-review-changes` | Critical | Before submitting non-APPROVE review | Submit, fix issues first, edit, or cancel |
 | `force-approve` | Critical | User wants to approve despite blocking issues | Explicit confirmation with phrase match |
 
 <human-approval-framework>
-Structure approval questions with: context (findings summary + verdict), options (submit/modify/edit/cancel), recommendation (auto-determined verdict), and escape path (save draft locally).
+Structure approval questions with: context (findings summary + verdict), options (submit/fix-first/edit/cancel for non-APPROVE or submit/modify/edit/cancel for APPROVE), recommendation (auto-determined verdict), and escape path (save draft locally or fix issues first).
 </human-approval-framework>
 
 ---

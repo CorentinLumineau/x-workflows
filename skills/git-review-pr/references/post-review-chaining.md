@@ -33,6 +33,8 @@
 
 ### Request Changes Path
 
+> **Note**: If the user chose "Fix issues first" in Phase 5 (pre-submission), the review was NOT submitted and git-fix-pr was already invoked. Phase 6 only applies when the review WAS submitted to the forge.
+
 <chaining-instruction id="request-changes-path">
 
 **If verdict is REQUEST_CHANGES**:
