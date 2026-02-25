@@ -3,27 +3,29 @@ name: git-quickwins-to-pr
 description: Use when turning quick wins into tracked issues with implementation and PRs in one flow.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Read Grep Glob Bash
+allowed-tools: Read Write Edit Grep Glob Bash
 user-invocable: true
 argument-hint: "[path] [--focus category,...] [--count N]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
+  version: "2.0.0"
   category: workflow
 chains-to:
   - skill: git-create-issue
-    condition: "for each selected quickwin"
+    condition: "batch issue creation (Phase 3.5)"
   - skill: git-implement-issue
-    condition: "after issue created"
+    condition: "sequential fallback only"
   - skill: git-create-pr
     condition: "after implementation complete"
+  - skill: git-review-multiple-pr
+    condition: "all PRs created (user choice)"
 chains-from:
   - skill: x-quickwins
 ---
 
 # /git-quickwins-to-pr
 
-> End-to-end orchestrator: scan for quick wins, create issues, implement, and open PRs — one command for the full lifecycle.
+> End-to-end orchestrator: scan for quick wins, create issues, implement (with optional parallelization), and open PRs.
 
 ## Workflow Context
 
@@ -33,7 +35,7 @@ chains-from:
 | **Phase** | complete |
 | **Position** | 1 of 1 (self-contained orchestrator) |
 
-**Flow**: **`git-quickwins-to-pr`** = `x-quickwins` → (for each selected) → `git-create-issue` → `git-implement-issue` → `git-create-pr`
+**Flow**: `x-quickwins` → select → analyze parallelization → batch create issues → parallel implement (worktree) OR sequential → PR creation loop → summary
 
 ## Intention
 
@@ -43,20 +45,13 @@ chains-from:
 Ask user: "What path or module would you like to scan for quick wins?"
 {{/if}}
 
-Arguments are passed through to `x-quickwins` (path, --focus, --count).
+Arguments pass through to `x-quickwins` (path, --focus, --count).
 
 ## Behavioral Skills
 
-This workflow activates:
-- `forge-awareness` - Detects forge type for label discovery and CLI usage
-- `context-awareness` - Project context for accurate scanning
+- `forge-awareness` - Forge type detection
+- `context-awareness` - Project context
 - `interview` (via x-quickwins) - Confidence gate on scan scope
-
-## MCP Servers
-
-| Server | When |
-|--------|------|
-| `sequential-thinking` | Label-to-quickwin mapping (Phase 3) |
 
 <instructions>
 
@@ -64,303 +59,239 @@ This workflow activates:
 
 <context-query tool="project_context">
   <fallback>
-  1. `git remote -v` → detect forge type (GitHub/Gitea) and CLI availability
+  1. `git remote -v` → detect forge type and CLI availability
   2. `git rev-parse --is-inside-work-tree` → verify git repository
   </fallback>
 </context-query>
 
-3. Parse `$ARGUMENTS` — all arguments pass through to x-quickwins in Phase 1
-4. Store forge type for Phase 3 label discovery
+If no forge CLI found, stop: "Neither `tea` nor `gh` CLI found. Install one to use this workflow."
+
+3. Parse `$ARGUMENTS` — pass through to x-quickwins
+4. Store forge type for Phase 3
 
 ### Phase 1: Quick Wins Scan
 
-Invoke the `x-quickwins` skill to scan the codebase and produce the ranked report.
+Invoke `x-quickwins` via Skill tool: `skill: "x-quickwins", args: "$ARGUMENTS"`
 
-Invoke via Skill tool:
-```
-skill: "x-quickwins"
-args: "$ARGUMENTS"
-```
+Capture the ranked report (scored findings with category, file, impact, effort, suggested fix).
 
-**Capture the output**: The quick wins report (top N scored findings with category, file, impact, effort, and suggested fix) is the input for Phase 2.
-
-**IMPORTANT**: x-quickwins will present its own action gate (fix/implement/fix all/stop). When that gate appears, select **"Stop here"** — this orchestrator handles the downstream workflow differently.
+**IMPORTANT**: When x-quickwins presents its action gate, select **"Stop here"** — this orchestrator handles downstream.
 
 ### Phase 2: Selection Gate
-
-Present all surfaced quick wins to the user for multi-selection.
 
 <workflow-gate type="multi-select" id="quickwin-selection">
   <question>Which quick wins would you like to turn into tracked issues with implementation and PR?</question>
   <header>Select wins</header>
-  <context>Each selected quick win will go through: create issue → implement → create PR. Select the ones worth the full lifecycle.</context>
+  <context>Each selected quick win gets: issue → implement → PR. Select the ones worth the full lifecycle.</context>
   <options>
     <!-- Dynamically generated from x-quickwins report -->
-    <!-- Each option = one quick win with its score, category, and file -->
   </options>
 </workflow-gate>
 
-Present the quick wins as a numbered list with scores:
-```
-Which quick wins do you want to implement? (multi-select)
+Present numbered list with scores. If none selected, end workflow.
 
-  [1] (Score: 96) [security] Hardcoded secret in config.js:42
-  [2] (Score: 88) [dry] Duplicated validation in auth.js:15, auth.js:89
-  [3] (Score: 80) [solid] God class UserService.js (412 lines)
-  [4] (Score: 72) [testing] No tests for PaymentController
-  ...
+**Batch-size confirmation** (if >3 selected):
 
-Select by number (e.g., 1,2,4) or "all":
-```
-
-If user selects none or cancels, end the workflow.
-
-Store the selected quick wins as an ordered list for the loop.
-
-### Phase 3: Label Discovery
-
-Fetch existing labels from the forge **once** before the loop.
-
-```bash
-# GitHub
-gh label list --json name,description --limit 100
-
-# Gitea
-tea labels ls
-```
-
-<deep-think purpose="label-mapping" context="Map each selected quick win's category to the best-matching existing label from the forge">
-  <purpose>For each selected quick win, determine which existing forge label(s) best match the quickwin category and nature</purpose>
-  <context>Available labels from forge: {labels}. Quick win categories: testing, solid, dry, kiss, security, dead-code, docs. Map each quickwin to 1-2 existing labels. NEVER suggest labels that don't exist on the forge.</context>
-</deep-think>
-
-**Label mapping rules**:
-- Only use labels that exist on the forge (fetched above)
-- Map quickwin categories to closest existing labels (e.g., `security` → "security" or "bug", `dry` → "refactor" or "enhancement")
-- If no reasonable match exists, use no labels (don't force a bad match)
-- Store the mapping: `{quickwin_index → [label1, label2]}`
-
-### Phase 4: Sequential Execution Loop
-
-For each selected quick win (in order of score, highest first):
-
-#### Phase 4.0: Progress Banner
-
-```
-═══════════════════════════════════════════════════
-  Quick Win {current}/{total}: {quickwin_title}
-  Score: {score} | Category: {category}
-═══════════════════════════════════════════════════
-```
-
-#### Phase 4a: Create Issue — `git-create-issue`
-
-Invoke `git-create-issue` with pre-filled context from the quick win:
-
-```
-skill: "git-create-issue"
-args: "{quickwin_suggested_fix_title}"
-```
-
-**Context to carry forward** into the issue:
-- **Title**: Derived from the quick win finding (e.g., "fix: remove hardcoded secret in config.js")
-- **Description**: Include the quick win details — category, file:line, impact/effort scores, and suggested fix
-- **Labels**: Use the mapped labels from Phase 3 (existing labels only)
-- **Type**: Infer from category (security → bug, dry/solid/kiss → enhancement, testing → enhancement, docs → documentation)
-
-**IMPORTANT**: When `git-create-issue` asks for labels, suggest ONLY labels from the Phase 3 mapping. When it asks for issue type, use the inferred type above.
-
-Capture the created issue number and URL from the output.
-
-#### Phase 4b: Implement Issue — `git-implement-issue`
-
-Invoke `git-implement-issue` with the created issue number:
-
-```
-skill: "git-implement-issue"
-args: "{issue_number}"
-```
-
-**IMPORTANT**: When `git-implement-issue` reaches its PR creation gate (Phase 4), select **"Skip PR"** — `git-create-pr` will handle PR creation in the next step.
-
-Capture the feature branch name from the output.
-
-#### Phase 4c: Create PR — `git-create-pr`
-
-Invoke `git-create-pr` from the feature branch:
-
-```
-skill: "git-create-pr"
-args: "{feature_branch_name}"
-```
-
-The PR will automatically:
-- Link to the issue via `Closes #{issue_number}` (git-create-pr Phase 4 handles this)
-- Use conventional commit-style title
-- Include structured description
-
-Capture the PR number and URL.
-
-#### Phase 4d: Iteration Checkpoint
-
-Store iteration result:
-```json
-{
-  "quickwin_index": N,
-  "quickwin_title": "...",
-  "issue_number": 456,
-  "issue_url": "https://...",
-  "pr_number": 123,
-  "pr_url": "https://...",
-  "status": "completed"
-}
-```
-
-Present iteration summary:
-```
-  Completed {current}/{total}: #{issue_number} → PR #{pr_number}
-  {pr_url}
-```
-
-If more quickwins remain, ask:
-
-<workflow-gate type="choice" id="continue-loop">
-  <question>Quick win {current}/{total} complete. Continue to the next one?</question>
-  <header>Continue?</header>
-  <option key="continue" recommended="true">
-    <label>Next quick win</label>
-    <description>Proceed to quick win {current+1}: {next_title}</description>
+<workflow-gate type="choice" id="confirm-batch-size">
+  <question>You selected {count} quick wins. Each gets an issue, implementation, and PR. Proceed?</question>
+  <header>Confirm batch</header>
+  <option key="proceed" recommended="true">
+    <label>Proceed</label>
+    <description>Implement all {count} quick wins (parallel groups of 5 max)</description>
   </option>
-  <option key="stop">
-    <label>Stop here</label>
-    <description>End the loop — remaining quick wins stay as-is</description>
+  <option key="reduce">
+    <label>Reduce selection</label>
+    <description>Go back and select fewer</description>
   </option>
 </workflow-gate>
 
-If user stops, proceed directly to Phase 5.
+### Phase 2.5: Parallelization Analysis
+
+> **Reference**: See `references/parallelization-analysis.md` for algorithm, display format, limitation caveat, and edge cases.
+
+Skip if ≤2 quick wins selected.
+
+For 3+ selected: extract primary file per quickwin, build conflict graph (edges = shared files), partition into independent groups, present parallelization plan.
+
+> **Limitation**: Uses primary file only — quick wins with broad scope (e.g., `solid` decomposition) may modify secondary files not captured. See reference for full caveat.
+
+### Phase 3: Label Discovery
+
+Fetch existing labels from the forge once (GitHub: `gh label list`, Gitea: `tea labels ls`).
+
+<deep-think purpose="label-mapping" context="Map each quickwin category to existing forge labels">
+  <purpose>Map quickwin categories to existing forge labels. NEVER suggest labels not on the forge.</purpose>
+  <context>Categories: testing, solid, dry, kiss, security, dead-code, docs.</context>
+</deep-think>
+
+Store mapping: `{quickwin_index → [label1, label2]}`.
+
+### Phase 3.5: Execution Mode & Batch Issue Creation
+
+#### 3.5a: Execution Mode
+
+<workflow-gate type="choice" id="execution-mode">
+  <question>How should the quick wins be implemented?</question>
+  <header>Exec mode</header>
+  <option key="parallel" recommended="true">
+    <label>Parallel (worktree isolation)</label>
+    <description>Each in its own worktree — true parallel. Best for 3+ independent wins.</description>
+  </option>
+  <option key="sequential">
+    <label>Sequential (current branch)</label>
+    <description>One at a time. Simpler, lower resource cost.</description>
+  </option>
+</workflow-gate>
+
+#### 3.5b: Base Branch
+
+Detect shared base branch: `git branch -r --list 'origin/release-branch.*'` (closest by merge-base, fallback `main`).
+
+<workflow-gate type="choice" id="base-branch">
+  <question>Which base branch for all feature branches?</question>
+  <header>Base branch</header>
+  <option key="auto" recommended="true">
+    <label>$DETECTED_BASE (auto-detected)</label>
+    <description>Default or closest release branch</description>
+  </option>
+  <option key="custom">
+    <label>Other</label>
+    <description>Specify a different base branch</description>
+  </option>
+</workflow-gate>
+
+#### 3.5c: Batch Issue Creation
+
+> **Reference**: See `references/batch-issue-creation.md` for CLI templates, input sanitization, type inference, and error handling.
+
+Create all issues upfront via direct CLI calls. Write body to tmpfile (never double-quoted interpolation). Sanitize both title AND body. Capture `{quickwin_index → issue_number}` mapping.
+
+### Phase 4: Implementation Dispatch
+
+#### Parallel Mode (worktree)
+
+> **Agent prompt**: See `references/quickwin-agent-prompt.md` — UNTRUSTED-DATA wrapping, branch naming (`feature-branch.{issue_number}`), focused fix, structured report.
+
+**Pre-dispatch**: If >5 quickwins, split into sequential batches of 5.
+
+Per parallelization group (Phase 2.5), spawn agents in a single message:
+
+<parallel-delegate strategy="concurrent">
+  <agent role="general-purpose" subagent="general-purpose" model="sonnet" isolation="worktree">
+    <prompt>See references/quickwin-agent-prompt.md. Create branch feature-branch.{issue_number}, implement quickwin fix, commit with close #{issue_number}. Do NOT push or create PR. Return Status/Branch/Category/Files/Tests/Changes/Notes.</prompt>
+    <context>Quick win implementation in isolated worktree.</context>
+  </agent>
+</parallel-delegate>
+
+Wait for group completion before starting next group. Collect all reports.
+
+#### Sequential Mode (direct)
+
+For each quickwin (highest score first): show progress banner, invoke `git-implement-issue` via Skill tool with the issue number. When `git-implement-issue` reaches its branch strategy gate, select **"Feature branch"**. When it reaches its PR creation gate, select **"Skip PR"** (this orchestrator handles PR creation in Phase 4.5). Offer continue/stop checkpoint after each iteration.
+
+<workflow-gate type="choice" id="continue-loop">
+  <question>Quick win {current}/{total} complete. Continue?</question>
+  <header>Continue?</header>
+  <option key="continue" recommended="true">
+    <label>Next quick win</label>
+    <description>Proceed to {current+1}: {next_title}</description>
+  </option>
+  <option key="stop">
+    <label>Stop here</label>
+    <description>Remaining stay as issues only</description>
+  </option>
+</workflow-gate>
+
+### Phase 4.5: PR Creation Loop
+
+> **Reference**: See `references/pr-creation-flow.md` for diff display, PR heredoc template, and worktree cleanup.
+
+For each implemented quickwin (in order): display report, show diff, confirm PR via gate.
+
+<workflow-gate type="choice" id="per-quickwin-pr">
+  <question>Create PR for #{number} ({title})? Status: {status}</question>
+  <header>PR #{number}</header>
+  <option key="create" recommended="true">
+    <label>Create PR</label>
+    <description>Push and create PR with close #{number}</description>
+  </option>
+  <option key="skip">
+    <label>Skip PR</label>
+    <description>Keep branch, no PR now</description>
+  </option>
+</workflow-gate>
+
+Use single-quoted heredoc for PR body — see reference for full template.
+
+### Phase 4.75: Worktree Cleanup (Parallel Mode Only)
+
+> See `references/pr-creation-flow.md` Phase 4.75 section.
+
+For PR-created: auto-remove worktree. For skipped/failed: ask remove or keep. Prune orphans.
 
 ### Phase 5: Summary Report
 
-Generate the final orchestration summary:
+> **Template**: See `references/quickwin-batch-summary.md` for full format.
 
-```markdown
-# Quick Wins to PR — Summary
+Generate batch summary: scan overview, aggregate table (quickwin/score/category/issue/implementation/PR), per-quickwin details.
 
-## Scan
-- Path: {path}
-- Quick wins found: {total_found}
-- Quick wins selected: {total_selected}
-- Quick wins completed: {completed_count}
+<chaining-instruction>
 
-## Results
+<workflow-gate type="choice" id="post-batch-action">
+  <question>All {count} quick wins processed. How to proceed?</question>
+  <header>Next step</header>
+  <option key="review" recommended="true">
+    <label>Batch review PRs</label>
+    <description>Chain to git-review-multiple-pr</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>No further action</description>
+  </option>
+</workflow-gate>
 
-| # | Quick Win | Issue | PR | Status |
-|---|-----------|-------|----|--------|
-| 1 | {title} | #{issue} | #{pr} ({url}) | completed |
-| 2 | {title} | #{issue} | #{pr} ({url}) | completed |
-| 3 | {title} | — | — | skipped |
+<workflow-chain on="review" skill="git-review-multiple-pr" args="{pr_numbers}" />
+<workflow-chain on="done" action="end" />
 
-## Next Steps
-- Review open PRs for merge readiness
-- Run `/git-review-pr {pr_number}` for local review
-- Run `/git-check-ci {pr_number}` to verify CI status
-```
+</chaining-instruction>
 
 </instructions>
 
 ## Human-in-Loop Gates
 
-| Decision Level | Action | Example |
-|----------------|--------|---------|
-| **Critical** | ALWAYS ASK | Quick win selection (Phase 2), each issue creation (via git-create-issue) |
-| **High** | ALWAYS ASK | Continue/stop between iterations (Phase 4d) |
-| **Medium** | ASK IF UNCERTAIN | Label mapping ambiguity, PR description review |
-| **Low** | PROCEED | Label fetching, scan execution, progress banners |
-
-<human-approval-framework>
-
-When approval needed, structure question as:
-1. **Context**: Current quickwin being processed (N/M), score, category
-2. **Options**: Continue / Stop / Skip this one
-3. **Recommendation**: Continue with next highest-scored quickwin
-4. **Escape**: "Stop here" option always available at every gate
-
-</human-approval-framework>
-
-## Workflow Chaining
-
-<chaining-instruction>
-
-**Chains from**: x-quickwins (enhanced action path)
-**Chains to**: git-create-issue → git-implement-issue → git-create-pr (sequential per quickwin)
-
-**Orchestration pattern**:
-This skill is a **loop orchestrator** — it invokes a chain of 3 skills sequentially for each selected quickwin. The chain within each iteration is:
-
-```
-git-create-issue(quickwin_title)
-    → git-implement-issue(issue_number)  [skip PR at its gate]
-        → git-create-pr(feature_branch)
-```
-
-**Forward chaining**:
-- After all quickwins processed → suggest `/git-review-pr` or `/git-check-ci`
-- If stopped early → suggest resuming with remaining quickwins
-
-**Skill invocation**: Each chained skill is invoked via the Skill tool sequentially. Context (issue number, branch name, PR URL) flows forward through captured outputs.
-
-</chaining-instruction>
+| Level | Action | Example |
+|-------|--------|---------|
+| **Critical** | ALWAYS ASK | Selection, exec mode, each PR |
+| **High** | ALWAYS ASK | Continue/stop, batch-size, base branch |
+| **Medium** | ASK IF UNCERTAIN | Label mapping, worktree cleanup |
 
 ## Safety Rules
 
-**NEVER:**
-- Create issues without user selection and confirmation
-- Create labels that don't exist on the forge
-- Skip the selection gate (Phase 2) — user must choose which quickwins to implement
-- Run iterations in parallel (would cause branch conflicts)
-- Force-push or modify base branch
+**NEVER:** Create issues without selection. Create non-existent labels. Spawn >5 concurrent agents. Force-push. Use double-quoted interpolation for issue/PR body.
 
-**ALWAYS:**
-- Fetch existing labels before the loop (Phase 3)
-- Present progress banners between iterations
-- Offer escape hatch (stop) between iterations
-- Capture and report all created issues and PRs
-- Clean up workflow state on completion
+**ALWAYS:** Sanitize title AND body via tmpfile/heredoc. Offer escape between iterations. Execute worktree cleanup (parallel mode).
+
+**PARALLEL WHEN SAFE:** Disjoint primary files → parallel. Shared files → sequential. User can always opt for sequential.
 
 ## Critical Rules
 
-1. **Existing Labels Only** — Never suggest or create labels not present on the forge. Phase 3 label discovery is mandatory.
-2. **Sequential Iteration** — Each quickwin goes through the full create-issue → implement → PR cycle before the next starts.
-3. **Human Gates at Every Level** — Selection (Phase 2), each issue (via git-create-issue), continue/stop (Phase 4d).
-4. **Context Forwarding** — Each skill in the chain receives context from the previous: quickwin details → issue number → branch name.
-5. **Skip PR in git-implement-issue** — When git-implement-issue reaches its PR gate, skip it since git-create-pr handles PR creation.
-6. **Graceful Early Stop** — If user stops mid-loop, Phase 5 shows partial results (completed + skipped).
+1. **Existing Labels Only** — Phase 3 mandatory
+2. **Batch Issues First** — Upfront before implementation
+3. **Human Gates** — Selection, exec mode, each PR, continue/stop
+4. **Input Sanitization** — Body via tmpfile. Never interpolation.
+5. **5-Agent Cap** — Batches of 5
+6. **Parallelization Advisory** — Primary-file-only. User chooses.
 
-## Navigation
+## When to Load References
 
-| Direction | Verb | When |
-|-----------|------|------|
-| Scan only | `/x-quickwins` | Just want the report without lifecycle |
-| Review PRs | `/git-review-pr` | After PRs created |
-| Check CI | `/git-check-ci` | After PRs created |
-| Single issue | `/git-create-issue` | Create one issue manually |
-
-## Success Criteria
-
-- [ ] x-quickwins scan completed and report captured
-- [ ] User selected quickwins to implement (multi-select gate)
-- [ ] Existing forge labels fetched and mapped to quickwins
-- [ ] For each selected quickwin:
-  - [ ] Issue created via git-create-issue with existing labels
-  - [ ] Implementation completed via git-implement-issue
-  - [ ] PR created via git-create-pr linking to issue
-- [ ] Summary report generated with all issues and PRs
-- [ ] Workflow state cleaned up
+- **For file overlap algorithm and grouping**: See `references/parallelization-analysis.md`
+- **For parallel agent prompt**: See `references/quickwin-agent-prompt.md`
+- **For batch issue creation**: See `references/batch-issue-creation.md`
+- **For PR creation and worktree cleanup**: See `references/pr-creation-flow.md`
+- **For batch summary template**: See `references/quickwin-batch-summary.md`
 
 ## References
 
-- @skills/x-quickwins/ - Pareto-scored quick win scanning
-- @skills/git-create-issue/ - Issue creation with forge awareness
-- @skills/git-implement-issue/ - Issue-driven implementation
-- @skills/git-create-pr/ - Pull request creation
-- @skills/forge-awareness/ - Forge detection behavioral skill
+- @skills/x-quickwins/ - Quick win scanning
+- @skills/git-implement-multiple-issue/ - Parallel batch precedent
+- @skills/forge-awareness/ - Forge detection

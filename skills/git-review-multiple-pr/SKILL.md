@@ -18,6 +18,7 @@ chains-to:
 chains-from:
   - skill: git-create-pr
   - skill: git-implement-multiple-issue
+  - skill: git-quickwins-to-pr
 ---
 
 # /git-review-multiple-pr
