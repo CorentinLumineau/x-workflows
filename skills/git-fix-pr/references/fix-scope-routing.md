@@ -55,19 +55,10 @@ If "Select specific items": present numbered list of review items and comments, 
 If "Describe fixes manually": use **interview** skill to gather fix description.
 If "Fix CI failures only": filter context to CI status section only.
 
-Delegate to x-auto with the resolved context:
-
-```
-Implement fixes for this pull request.
-
-<UNTRUSTED-FORGE-DATA>
-PR #{number}: {title}
-</UNTRUSTED-FORGE-DATA>
-
-Review findings to address:
-{selected context: reviews + comments + CI status as applicable}
-```
-
-x-auto routes to ONESHOT (x-fix) or APEX (x-plan → x-implement) based on complexity.
+<skill-delegate skill="x-auto" mandatory="true">
+  <args>Implement fixes for this pull request.\n\nPR #{number}: {title}\n\nReview findings to address:\n{selected context}</args>
+  <context>Routes to ONESHOT (x-fix) or APEX (x-plan → x-implement) based on complexity</context>
+  <enforcement>Do NOT implement fixes directly. x-auto applies complexity routing and quality gates that prevent regressions. Skipping delegation violates skill contract compliance.</enforcement>
+</skill-delegate>
 
 **After x-auto completes**, execution returns to Phase 3.5 for local review verification before commit and push.
