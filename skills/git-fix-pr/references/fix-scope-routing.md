@@ -56,7 +56,12 @@ If "Describe fixes manually": use **interview** skill to gather fix description.
 If "Fix CI failures only": filter context to CI status section only.
 
 <skill-delegate skill="x-auto" mandatory="true">
-  <args>Implement fixes for this pull request.\n\nPR #{number}: {title}\n\nReview findings to address:\n{selected context}</args>
+  <args>Implement fixes for this pull request.
+
+PR #{number}: {title}
+
+Review findings to address:
+{selected context}</args>
   <context>Routes to ONESHOT (x-fix) or APEX (x-plan → x-implement) based on complexity</context>
   <enforcement>Do NOT implement fixes directly. x-auto applies complexity routing and quality gates that prevent regressions. Skipping delegation violates skill contract compliance.</enforcement>
 </skill-delegate>

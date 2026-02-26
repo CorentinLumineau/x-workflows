@@ -35,7 +35,12 @@ Read CLAUDE.md at repo root if it exists for project conventions.
 
 Setup:
 1. Create feature branch: `git checkout -b feature-branch.{number} origin/{base_branch}`
-2. Implement the issue by invoking: `/x-auto Implement issue #{number}: {title}\n\n{body}`
+2. Implement the issue by invoking `/x-auto` with the following args (preserve newlines):
+   ```
+   Implement issue #{number}: {title}
+
+   {body}
+   ```
 3. After implementation, ensure all changes are committed with a message referencing the issue: `close #{number}`
 4. Do NOT push the branch or create a PR — the orchestrator handles that.
 

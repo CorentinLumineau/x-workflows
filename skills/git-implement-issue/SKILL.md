@@ -3,7 +3,7 @@ name: git-implement-issue
 description: Use when implementing a feature or fix tracked by a Gitea issue.
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
-allowed-tools: Read Grep Glob Bash
+allowed-tools: Read Grep Glob Bash AskUserQuestion
 user-invocable: true
 argument-hint: "[issue-number]"
 metadata:
@@ -224,7 +224,10 @@ Delegate to x-auto for implementation.
 Invoke x-auto with the routing context:
 ```
 skill: "x-auto"
-args: "Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY"
+args: |
+  Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE
+
+  $ISSUE_BODY
 ```
 
 x-auto will assess complexity and route to the appropriate workflow chain (APEX, ONESHOT, DEBUG, etc.).
@@ -257,7 +260,9 @@ x-auto will assess complexity and route to the appropriate workflow chain (APEX,
 
 <chaining-instruction>
 
-<workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY" />
+<workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE
+
+$ISSUE_BODY" />
 <workflow-chain on="pr-create" action="phase4" />
 <workflow-chain on="existing-pr-review" skill="git-review-pr" args="$PR_NUMBER" />
 <workflow-chain on="post-pr-action" skill="git-check-ci" args="$PR_NUMBER" condition="after PR created" />
