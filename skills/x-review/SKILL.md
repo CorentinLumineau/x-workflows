@@ -207,7 +207,18 @@ Compare implementation against the plan, issue, or user request:
   <context>Pattern analysis to support code review</context>
 </agent-delegate>
 
-**Parallel review** (when changeset spans 5+ files or multiple domains):
+**Team review** (when changeset spans 5+ files or multiple domains):
+
+<team name="review-team" pattern="review">
+  <lead role="code reviewer" model="sonnet" />
+  <teammate role="security reviewer" subagent="x-security-reviewer" model="sonnet" />
+  <task-template>
+    <task owner="security reviewer" subject="Review all changed files for security — OWASP Top 10, input validation, auth flows, data exposure risks" />
+  </task-template>
+  <activation>When changeset spans 5+ files or touches multiple domains (auth, API, UI, infra) and coordinated review with shared state would improve coverage</activation>
+</team>
+
+**Parallel review** (fallback when teams unavailable):
 
 <parallel-delegate strategy="concurrent">
   <agent role="code reviewer" subagent="x-reviewer" model="sonnet">
@@ -286,6 +297,7 @@ Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). 
 - **For readiness report output template with verdict format**: See `references/readiness-report-template.md`
 - **For 5-step evidence protocol and coverage hard gate**: See `references/verification-protocol.md`
 - **For spec-compliance checklist and requirement tracing patterns**: See `references/mode-spec-compliance.md`
+- **For confidence-based review filtering and approval matrix**: See `references/confidence-filtering.md`
 
 ## Human-in-Loop Gates
 

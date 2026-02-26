@@ -22,7 +22,7 @@ log_error() {
 
 log_warning() {
     echo -e "${YELLOW}WARNING:${NC} $1"
-    ((warnings++))
+    ((warnings++)) || true
 }
 
 log_success() {

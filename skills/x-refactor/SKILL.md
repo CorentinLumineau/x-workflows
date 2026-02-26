@@ -140,6 +140,17 @@ Analyze code for refactoring opportunities:
 
 **CRITICAL**: Small steps, verify after each.
 
+<team name="refactor-team" pattern="refactor">
+  <lead role="refactoring agent" model="sonnet" />
+  <teammate role="test runner" subagent="x-tester" model="sonnet" />
+  <teammate role="code reviewer" subagent="x-reviewer-quick" model="haiku" />
+  <task-template>
+    <task owner="test runner" subject="Run tests after each incremental refactoring step and report pass/fail evidence" />
+    <task owner="code reviewer" subject="Verify SOLID compliance after each refactoring change is applied" />
+  </task-template>
+  <activation>When refactoring scope is Medium (4-10 files, 2-3 components) and continuous test verification during incremental changes would accelerate zero-regression guarantee</activation>
+</team>
+
 <agent-delegate role="refactoring agent" subagent="x-refactorer" model="sonnet">
   <prompt>Apply incremental refactoring for {target} — one change at a time, run tests after each step, rollback on failure</prompt>
   <context>Safe restructuring with zero regression guarantee — atomic commits per refactoring step</context>
