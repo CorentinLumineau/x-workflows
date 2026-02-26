@@ -5,7 +5,7 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
-argument-hint: "[scope or path]"
+argument-hint: "[review|quick|audit|docs|spec] [scope or path]"
 metadata:
   author: ccsetup contributors
   version: "3.0.0"
