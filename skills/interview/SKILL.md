@@ -43,10 +43,40 @@ Traditional workflows assume the agent understands the request. This behavioral 
                     (until 100% confidence)
 ```
 
-1. **ASK** - Targeted question for lowest-confidence dimension
+1. **ASK** - Targeted question for lowest-confidence dimension **using an interactive gate** (see Question-Type Mapping below)
 2. **DOCUMENT** - Record answer in interview state
 3. **RESEARCH** - Context7, codebase, web based on answer content
 4. **SYNTHESIZE** - Update confidence scores, reformulate if > 80%
+
+### Question-Type → Gate Mapping
+
+Every question in the ASK step **MUST** use a `<workflow-gate>` interactive gate. The gate format depends on the question type:
+
+| Question Type | Gate Pattern | Example |
+|---------------|-------------|---------|
+| **Discrete choices** (design decisions, scope, type selection) | `<workflow-gate>` with concrete `<option>` elements | "Which approach?" → options: A, B, C |
+| **Multi-select** (labels, features to include) | `<workflow-gate type="multi">` with enumerable options | "Which areas affected?" → options list |
+| **Free-form input** (descriptions, error messages) | `<workflow-gate>` with descriptive option stubs + "Other" fallback | "What error?" → common patterns as options |
+| **Simple confirmation** (reformulation validation) | `<workflow-gate>` with approve/reject options | "Is this correct?" → Yes / No / Partially |
+
+### Anti-Pattern: Prose-Text Questions
+
+**VIOLATION**: Outputting questions as plain text prose instead of using interactive gates.
+
+```
+❌ WRONG — plain text question:
+   "What approach should we take? We could do A, B, or C."
+
+✅ CORRECT — interactive gate with structured options:
+   <workflow-gate type="choice" id="approach-selection">
+     <question>What approach should we take?</question>
+     <header>Approach</header>
+     <option key="a"><label>Option A</label><description>First approach</description></option>
+     <option key="b"><label>Option B</label><description>Second approach</description></option>
+   </workflow-gate>
+```
+
+**Why this matters**: Plain text questions are easily missed by users, provide no structured input mechanism, and cannot be tracked for confidence scoring. Interactive gates create explicit decision points that ensure the user actively makes a choice.
 
 ## Previously Assessed Dimensions
 

@@ -5,7 +5,7 @@ license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash AskUserQuestion
 user-invocable: true
-argument-hint: "<title>"
+argument-hint: "<title> [bug|feature|task|docs]"
 metadata:
   author: ccsetup contributors
   version: "1.0.0"
@@ -73,7 +73,10 @@ This workflow activates:
 1. Activate `interview` behavioral skill to gather:
    - Issue type (bug/feature/task/documentation/question)
    - If templates exist, ask user to select template or use blank
-2. Based on type, gather structured details:
+
+   **IMPORTANT**: All structured questions in this phase **MUST** use `<workflow-gate>` interactive gates — never output questions as plain text prose. This includes issue type selection, template selection, and any design/scope decisions surfaced during analysis.
+
+2. Based on type, gather structured details **using `<workflow-gate>` gates for each decision point**:
 
    **For bugs**:
    - Expected behavior
@@ -86,6 +89,8 @@ This workflow activates:
    - Proposed solution
    - Alternatives considered
    - Additional context
+
+   **When analysis surfaces design/scope decisions** (e.g., "should this be one issue or two?", "which approach?", "what scope?"), present these via `<workflow-gate>` gates **before** drafting the issue body. Never bundle unanswered design questions into the issue description.
 
    **For tasks/docs**:
    - Description of work needed
