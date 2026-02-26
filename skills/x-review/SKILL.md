@@ -57,20 +57,6 @@ Detect mode from `$ARGUMENTS` keywords:
 | `docs` | "docs", "documentation" | 0→1→4→6→7 | Documentation completeness |
 | `spec-compliance` | "spec", "specification", "compliance" | 0→1→SC→6→7 | Verify implementation matches spec |
 
-## Phase Architecture
-
-| Phase | Name | Purpose | Source |
-|-------|------|---------|--------|
-| 0 | Confidence + State | Interview gate, workflow state | Standard |
-| 1 | Change Scoping | git diff, initiative context | NEW |
-| 2 | Quality Gates | Lint, types, tests, build | Quality gates |
-| 3 | Code Review | SOLID, security, patterns | From x-review |
-| SC | Spec Compliance | Requirement tracing, gap analysis | references/mode-spec-compliance.md |
-| 4 | Documentation Audit | Docs freshness, API sync | NEW |
-| 5 | Regression Detection | Coverage delta, removed tests | NEW |
-| 6 | Readiness Report | Pass/warn/block synthesis | NEW |
-| 7 | Workflow State | State update, chaining | Standard |
-
 ## Behavioral Skills
 
 **Always**: `interview`, `code-quality`, `secure-coding`
@@ -78,7 +64,7 @@ Detect mode from `$ARGUMENTS` keywords:
 
 ## Agent Delegation
 
-> See [references/mode-review.md](references/mode-review.md) for full agent delegation matrix by phase.
+> See [references/mode-review.md](references/mode-review.md) for full agent delegation matrix by phase and phase architecture breakdown (phases 0-7 + SC).
 
 <instructions>
 
@@ -114,12 +100,7 @@ git diff --name-only --stat main...HEAD
 cat .claude/initiative.json 2>/dev/null || echo "No active initiative"
 ```
 
-**Output** — scope summary used by subsequent phases:
-- File count and categories (code, test, docs, config)
-- Lines added/removed
-- Domains affected (auth, API, UI, infra, etc.)
-- Active initiative (if any)
-- Estimated complexity: LOW (<5 files) | MEDIUM (5-15) | HIGH (>15)
+For Phase 1 output format and scope summary details, see `references/mode-review.md#phase-1-scope-awareness`.
 
 ---
 
@@ -181,16 +162,7 @@ Auto-fix capabilities: `pnpm lint --fix`, type error suggestions, test failure a
 
 > **This sub-phase runs FIRST. Code quality review (Phase 3b) ONLY runs after spec compliance passes.**
 
-Compare implementation against the plan, issue, or user request:
-
-1. **Identify the spec source**: plan from `/x-plan`, issue from `/git-implement-issue`, or user request
-2. **Check implementation completeness**:
-   - [ ] All requirements from spec are implemented
-   - [ ] No scope creep (code not in requirements)
-   - [ ] No missing requirements (requirements not in code)
-   - [ ] Correct requirement implemented (not a different interpretation)
-
-**If spec compliance FAILS → BLOCK.** Return to `/x-implement` with spec violation details. Do NOT proceed to Phase 3b. See [references/enforcement-audit.md](references/enforcement-audit.md) for spec violation severity classification.
+Compare implementation against plan/issue/request. **If spec compliance FAILS → BLOCK** and return to `/x-implement`. For spec source identification, compliance checklist, and violation severity classification, see `references/mode-spec-compliance.md`.
 
 #### Phase 3b: Code Quality Review — BLOCKING AUDIT
 
@@ -246,13 +218,7 @@ Check documentation sync with code changes. Uses Phase 1 scoping data.
   <context>Documentation audit for x-review readiness assessment</context>
 </agent-delegate>
 
-**Checks:**
-- [ ] API docs match code signatures
-- [ ] Examples are current
-- [ ] No broken internal links
-- [ ] Initiative docs updated (if active initiative from `.claude/initiative.json`)
-
-See `references/mode-docs.md` for detailed documentation audit patterns.
+See `references/mode-docs.md` for documentation audit checks and detailed patterns.
 
 ---
 
@@ -298,6 +264,7 @@ Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). 
 - **For 5-step evidence protocol and coverage hard gate**: See `references/verification-protocol.md`
 - **For spec-compliance checklist and requirement tracing patterns**: See `references/mode-spec-compliance.md`
 - **For confidence-based review filtering and approval matrix**: See `references/confidence-filtering.md`
+- **For team review, parallel delegation, and concurrent verification configurations**: See `references/review-delegation.md`
 
 ## Human-in-Loop Gates
 
@@ -328,8 +295,6 @@ Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). 
 3. **Security First** — Security issues always CRITICAL
 4. **Readiness report required** — MUST output Phase 6 report
 5. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
-
-For full enforcement rules (SOLID, DRY, test coverage, documentation), see `references/enforcement-audit.md`.
 
 ## Navigation
 

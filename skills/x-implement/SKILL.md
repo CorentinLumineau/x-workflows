@@ -179,53 +179,13 @@ Follow Red-Green-Refactor cycle:
 - 20% Integration tests
 - 10% E2E tests
 
-**Phase 2 Exit Gate:**
-- [ ] Tests exist for all new production code (V-TEST-01)
-- [ ] Tests written before production code (V-TEST-02)
-- [ ] All tests pass
-- [ ] No CRITICAL SOLID violations introduced (V-SOLID-01, V-SOLID-03)
-
-**BLOCK if any exit gate fails.**
-
-#### STOP — TDD Hard Gate
-
-> **You MUST stop here and verify before writing any production code.**
-
-**Checklist** (ALL must be true to proceed):
-- [ ] A failing test exists for the new behavior
-- [ ] The test was written BEFORE the production code
-- [ ] All tests currently pass (run them, read the output — not "should pass")
-
-**Common Rationalizations** (if you're thinking any of these, STOP):
-
-| Excuse | Reality |
-|--------|---------|
-| "The code is trivial" | Trivial code gets trivial tests. Still mandatory. (V-TEST-02) |
-| "I will add tests after" | TDD means tests FIRST. "After" is not TDD. (V-TEST-02) |
-| "Running low on context" | Stop coding. Write the test. Resume after. (V-TEST-01) |
-| "This is just a refactor" | Refactors need tests to prove behavior unchanged. (V-TEST-01) |
-
-> **Foundational principle**: Violating the letter of this gate IS violating its spirit. There is no "technically compliant" shortcut.
-
-See `@skills/code-code-quality/references/anti-rationalization.md` for the full excuse/reality reference.
+For TDD hard gate checklist, common rationalizations, and Phase 2 exit gate, see `references/tdd-hard-gate.md`.
 
 ### Phase 3: Code Quality
 
-Apply quality principles:
+Apply SOLID (SRP, OCP, LSP, ISP, DIP), DRY, KISS, YAGNI. No God Objects (V-PAT-01), no circular dependencies (V-PAT-02).
 
-| Principle | Check |
-|-----------|-------|
-| **S**ingle Responsibility | One reason to change |
-| **O**pen/Closed | Extend without modifying |
-| **L**iskov Substitution | Subtypes work |
-| **I**nterface Segregation | Specific interfaces |
-| **D**ependency Inversion | Depend on abstractions |
-
-Also enforce:
-- **DRY** - Don't Repeat Yourself
-- **KISS** - Keep It Simple
-- **YAGNI** - You Ain't Gonna Need It
-- **Patterns** - No God Objects (V-PAT-01), No circular dependencies (V-PAT-02)
+See `@skills/code-code-quality/` for violation IDs, detection patterns, and enforcement rules.
 
 ### Phase 4: Quality Gates
 
@@ -316,14 +276,6 @@ Uses: @skills/worktree-awareness/ merge-back protocol.
 
 ## Workflow Chaining
 
-**Next Verb**: `/x-review`
-
-| Trigger | Chain To |
-|---------|----------|
-| Code written | `/x-review` (suggest) |
-| Needs restructure | `/x-refactor` (suggest) |
-| Tests failing | Stay in x-implement |
-
 <chaining-instruction>
 
 After implementation complete:
@@ -369,14 +321,6 @@ After implementation complete:
 8. **Initiative Docs** — Update milestone documentation when active initiative exists
 9. **Anti-rationalization** — See `@skills/code-code-quality/references/anti-rationalization.md`
 
-## Navigation
-
-| Direction | Verb | When |
-|-----------|------|------|
-| Previous | `/x-plan` | Need to revise plan |
-| Next | `/x-review` | Implementation complete |
-| Branch | `/x-refactor` | Need to restructure |
-
 ## Success Criteria
 
 - [ ] TDD followed (tests first) — V-TEST-02
@@ -392,6 +336,7 @@ After implementation complete:
 - **For technical debt cleanup, dead code removal, and codebase organization**: See `references/mode-cleanup.md`
 - **For safe refactoring with zero regression guarantee and SOLID enforcement**: See `references/mode-refactor.md`
 - **For enforcement summary template, documentation sync checklist, and initiative update protocol**: See `references/phase-implementation-gates.md`
+- **For TDD hard gate checklist, common rationalizations, and Phase 2 exit gate**: See `references/tdd-hard-gate.md`
 
 ## References
 

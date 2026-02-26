@@ -213,67 +213,9 @@ Present groups table to user:
 
 **For "cancel"**: Inform user "Commit cancelled.", exit gracefully.
 
-**For "all-separate" or "review-each"**: Iterate through each group in order:
+For the full per-group commit loop steps (present summary, show diff, generate message, confirm, stage+commit with HEREDOC, verify) and the single-commit strategy, see `references/commit-loop.md`.
 
-1. Present group summary:
-   ```
-   ## Group {i}/{total}: {group_name}
-   Files: {file_list}
-   Type: {inferred_type}({scope})
-   ```
-
-2. If strategy is "review-each": show `git diff` for the group's files (staged and unstaged)
-
-3. Auto-generate conventional commit message by analyzing the group's diff:
-   - Refine type from diff content (not just path heuristics)
-   - Generate imperative description (<50 chars)
-   - Add body if changes warrant explanation
-
-4. Present for text confirmation:
-   ```
-   Proposed: {type}({scope}): {description}
-   Accept [Y], Skip [n], Edit [e]?
-   ```
-   - **Y** (default): Proceed to commit
-   - **n**: Skip this group entirely (files remain uncommitted)
-   - **e**: User provides alternative message
-
-5. If confirmed:
-   ```bash
-   # Stage specific files for this group
-   git add {file1} {file2} ...
-
-   # Commit with HEREDOC for message
-   git commit -m "$(cat <<'EOF'
-   {type}({scope}): {description}
-
-   {body}
-
-   {{#if CLOSE_ISSUE_NUMBER}}
-   Closes #{CLOSE_ISSUE_NUMBER}
-   {{/if}}
-   EOF
-   )"
-
-   # Verify success
-   git status
-   ```
-
-6. Record commit hash, continue to next group
-
-**For "single"**: Merge all groups into one commit:
-1. Determine dominant type across all groups
-2. Use broadest scope (or omit scope if too diverse)
-3. Generate combined description
-4. If `CLOSE_ISSUE_NUMBER` is set, append `Closes #N` footer (same pattern as per-group)
-5. Present for confirmation (text prompt)
-6. `git add` all files → single `git commit` → `git status`
-
-**Safety enforced throughout**:
-- Never use `git add -A` or `git add .` — always add specific files
-- Never commit sensitive files (auto-excluded in Phase 1)
-- Always use HEREDOC for commit messages
-- Verify with `git status` after each commit
+**Key safety rules**: Never `git add -A`, never commit sensitive files, always use HEREDOC, always verify with `git status` after each commit.
 
 ### Phase 5: Completion Summary + Chaining
 
@@ -337,12 +279,11 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 6. **Enforcement gate** — x-review enforcement summary MUST show all pass before staging
 7. **Sensitive Scan** — Always scan for sensitive files and auto-exclude before grouping
 
-> See [references/conventional-format.md](references/conventional-format.md) for output format templates.
-
 ## When to Load References
 
 - **For commit format, type definitions, safety rules, and output templates**: See `references/conventional-format.md`
 - **For config file patterns, sensitive file patterns, and collection directory patterns**: See `references/grouping-rules.md`
+- **For per-group commit loop steps, single-commit strategy, and HEREDOC template**: See `references/commit-loop.md`
 
 ## Success Criteria
 
