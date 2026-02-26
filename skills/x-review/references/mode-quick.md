@@ -5,7 +5,7 @@
 ## Purpose
 
 <purpose>
-Fast quality gate validation. Run lint, type-check, tests, and build with auto-fix loop. Integrated into x-review as the quick path for fast validation before commit.
+Fast quality gate validation. Run lint, type-check, tests, and build with detailed failure reporting. Integrated into x-review as the quick path for fast validation before commit. **Read-only — never modifies code.**
 </purpose>
 
 ## Phases (from x-review)
@@ -30,14 +30,18 @@ Quick mode runs phases: **0 → 2 → 6 → 7**
 | Tests | `pnpm test` | 100% pass |
 | Build | `pnpm build` | Success |
 
-### Auto-Fix Loop
+### Failure Reporting — READ-ONLY
+
+**x-review NEVER modifies code.** When a gate fails, report with actionable detail so the user can fix it.
 
 If any gate fails:
-1. Attempt auto-fix (`pnpm lint --fix`, `pnpm prettier --write .`)
-2. Re-run failed gate
-3. If still failing: analyze with sequential-thinking, apply manual fix
-4. Verify fix worked
-5. Max 3 auto-fix attempts per gate
+1. Capture the full error output as evidence
+2. Analyze root cause — what went wrong and why
+3. Suggest specific fix (exact file, line, code change or command the user should run)
+4. Continue to next gate (report all failures, don't stop at first)
+5. Aggregate all failures in the readiness report
+
+**NEVER run** `pnpm lint --fix`, `pnpm prettier --write`, or any command that modifies files.
 
 ### Verification Evidence Protocol — MANDATORY
 

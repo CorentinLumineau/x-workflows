@@ -132,15 +132,23 @@ Execute all quality gates with **mandatory evidence protocol**:
 
 For the full protocol, coverage thresholds, and coverage hard gate, see `references/verification-protocol.md`.
 
-#### Handle Failures
+#### Handle Failures — READ-ONLY REPORTING
+
+**x-review NEVER modifies code.** When a gate fails, report the failure with actionable detail.
 
 If any gate fails:
 
 ```
-Gate Failure Detected → Attempt Auto-Fix → Re-run Gate → Still Failing? → Report and suggest fix
+Gate Failure Detected → Analyze Root Cause → Report with Detailed Fix Suggestions
 ```
 
-Auto-fix capabilities: `pnpm lint --fix`, type error suggestions, test failure analysis.
+For each failure, provide:
+1. **Gate name** and exact error output
+2. **Root cause analysis** — what went wrong and why
+3. **Suggested fix** — specific code changes, commands, or config edits the user should apply
+4. **File and line** — exact location(s) to change
+
+**NEVER run fix commands** (`pnpm lint --fix`, `pnpm prettier --write`, etc.). Only suggest them.
 
 ---
 
