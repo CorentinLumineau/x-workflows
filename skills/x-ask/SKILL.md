@@ -1,6 +1,7 @@
 ---
 name: x-ask
 description: Use when you have a question about the codebase, a library, or need quick factual answers.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob WebFetch WebSearch
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "<question>"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 ---
 
@@ -179,20 +179,22 @@ Deliver the answer in this format:
 
 Offer contextual next steps:
 
-```json
-{
-  "questions": [{
-    "question": "Does this answer your question?",
-    "header": "Follow-up",
-    "options": [
-      {"label": "Yes, thanks", "description": "Question answered"},
-      {"label": "Explain more", "description": "Need deeper explanation"},
-      {"label": "Different question", "description": "Ask something else"}
-    ],
-    "multiSelect": false
-  }]
-}
-```
+<workflow-gate type="choice" id="ask-followup">
+  <question>Does this answer your question?</question>
+  <header>Follow-up</header>
+  <option key="yes" recommended="true">
+    <label>Yes, thanks</label>
+    <description>Question answered</description>
+  </option>
+  <option key="deeper">
+    <label>Dig deeper</label>
+    <description>Need comprehensive investigation</description>
+  </option>
+  <option key="different">
+    <label>Different question</label>
+    <description>Ask something else</description>
+  </option>
+</workflow-gate>
 
 </instructions>
 
@@ -238,15 +240,9 @@ When approval needed, structure question as:
 
 <chaining-instruction>
 
-After answering, if the user needs more:
-- "Need comprehensive investigation?" → `/x-research deep`
-- "Want to debug this?" → `/x-troubleshoot`
-- "Ready to implement?" → `/x-plan` or `/x-implement`
-- "Another question?" → Stay in `/x-ask`
-
-On escalation, use Skill tool:
-- skill: "x-research"
-- args: "deep {original question with context}"
+<workflow-chain on="yes" action="end" />
+<workflow-chain on="deeper" skill="x-research" args="deep {original question with context}" />
+<workflow-chain on="different" action="end" />
 
 </chaining-instruction>
 

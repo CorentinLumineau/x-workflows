@@ -1,6 +1,7 @@
 ---
 name: git-quickwins-to-pr
 description: Use when turning quick wins into tracked issues with implementation and PRs in one flow.
+version: "2.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[path] [--focus category,...] [--count N]"
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
   category: workflow
 chains-to:
   - skill: git-create-issue

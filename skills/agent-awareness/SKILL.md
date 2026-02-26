@@ -1,13 +1,13 @@
 ---
 name: agent-awareness
 description: Use when delegating work to agents. Provides agent catalog, decision matrix, and delegation patterns. Auto-triggered.
+version: "2.0.0"
 license: Apache-2.0
 allowed-tools:
   - Read
 user-invocable: false
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
   category: behavioral
 ---
 
@@ -175,3 +175,4 @@ At session start, after loading agent catalog:
 - **For agent details**: See `references/agent-catalog.md`
 - **For capability grid and teams**: See `references/capability-matrix.md`
 - **For delegation patterns and escalation**: See `references/delegation-patterns.md`
+- **For iterative retrieval and context-efficient search patterns**: See `references/iterative-retrieval.md`

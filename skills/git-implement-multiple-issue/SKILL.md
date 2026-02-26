@@ -1,6 +1,7 @@
 ---
 name: git-implement-multiple-issue
 description: Use when multiple issues need batch implementation with parallel worktree agents.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "<issue-numbers...> [--backlog]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-review-multiple-pr

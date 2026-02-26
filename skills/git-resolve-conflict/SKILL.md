@@ -1,6 +1,7 @@
 ---
 name: git-resolve-conflict
 description: Use when git reports merge conflicts during merge, rebase, or cherry-pick operations.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[file or path]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-merge-pr
@@ -224,14 +224,22 @@ Stage resolved files (`git add`), verify with `git status` (all conflicts resolv
 
 Accept `resume_context` from the calling workflow if provided (e.g., PR number, merge strategy from `git-merge-pr`).
 
-- **Merge conflict** (from `git-merge-pr`):
-  - Set `resume_from_conflict: true` in workflow state along with preserved caller context (`pr_number`, `merge_strategy`, `feature_branch`, `base_branch`)
-  - Chain to `git-merge-pr $PR_NUMBER` — the flag tells git-merge-pr to skip Phase 0–1 validation and resume at merge execution
-  <!-- <workflow-chain next="git-merge-pr" condition="conflict resolved, resume merge"> -->
-- **Merge conflict** (standalone or from `git-commit`):
-  - Chain to `git-commit`
-- **Rebase conflict**: Run `git rebase --continue`; if more conflicts appear, re-enter this skill
-- **Cherry-pick conflict**: Run `git cherry-pick --continue`, chain to `git-commit`
+<workflow-gate type="choice" id="conflict-resolved-next">
+  <question>Conflict resolved. How would you like to proceed?</question>
+  <header>After resolve</header>
+  <option key="resume-merge" recommended="true">
+    <label>Resume merge</label>
+    <description>Return to git-merge-pr to complete the merge</description>
+  </option>
+  <option key="commit">
+    <label>Commit changes</label>
+    <description>Commit the resolved files (rebase/cherry-pick)</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Review resolution before proceeding</description>
+  </option>
+</workflow-gate>
 
 </instructions>
 
@@ -248,12 +256,14 @@ Accept `resume_context` from the calling workflow if provided (e.g., PR number, 
 
 ## Workflow Chaining
 
-| Relationship | Target Skill | Condition |
-|--------------|--------------|-----------|
-| chains-to | `git-merge-pr` | Merge conflict resolved, ready to complete merge |
-| chains-to | `git-commit` | Rebase/cherry-pick conflict resolved, ready to commit |
-| chains-from | `git-merge-pr` | Merge operation encountered conflicts |
-| chains-from | `x-implement` | Implementation changes caused merge conflict |
+<chaining-instruction>
+**Chains from**: `git-merge-pr`, `x-implement`
+**Chains to**: `git-merge-pr`, `git-commit`
+
+<workflow-chain on="resume-merge" skill="git-merge-pr" args="$PR_NUMBER" />
+<workflow-chain on="commit" skill="git-commit" args="conflict resolution" />
+<workflow-chain on="done" action="end" />
+</chaining-instruction>
 
 ---
 

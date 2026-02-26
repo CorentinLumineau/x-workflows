@@ -1,6 +1,7 @@
 ---
 name: git-create-pr
 description: Use when code changes are on a feature branch and ready to submit as a pull request.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[branch-name]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-check-ci
@@ -172,17 +172,29 @@ This workflow activates:
 ## Workflow Chaining
 
 <chaining-instruction>
-**Chains from**: `git-commit`, `x-review`
+**Chains from**: `git-commit`, `x-review`, `git-implement-issue`, `git-quickwins-to-pr`
 **Chains to**: `git-check-ci`, `git-review-pr`
 
-**Forward chaining**:
-- If CI pipeline detected → suggest `/git-check-ci`
-- If reviewers configured → suggest `/git-review-pr`
-- Always present both options
+<workflow-gate type="choice" id="post-pr-next">
+  <question>PR created. What would you like to do next?</question>
+  <header>After PR</header>
+  <option key="check-ci" recommended="true">
+    <label>Check CI</label>
+    <description>Monitor CI pipeline status for this PR</description>
+  </option>
+  <option key="review">
+    <label>Review PR locally</label>
+    <description>Run local code review on the PR</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>PR created — no further action needed</description>
+  </option>
+</workflow-gate>
 
-**Backward compatibility**:
-- Accepts PR creation after any commit workflow
-- Works with manual commits (not just git-commit)
+<workflow-chain on="check-ci" skill="git-check-ci" args="$PR_NUMBER" />
+<workflow-chain on="review" skill="git-review-pr" args="$PR_NUMBER" />
+<workflow-chain on="done" action="end" />
 </chaining-instruction>
 
 ## Safety Rules

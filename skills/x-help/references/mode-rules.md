@@ -136,6 +136,41 @@ Display rule content:
 | security | Security checks |
 | documentation | Doc requirements |
 
+## Auto-Suggested Rules (via config-awareness)
+
+When the `config-awareness` behavioral skill detects configuration gaps, suggestions become available in the rules management flow:
+
+- `/x-help rules` lists existing rules AND pending auto-suggestions
+- Auto-suggestions are marked with `[SUGGESTED]` prefix and include priority level
+- Users can accept (create from template), dismiss (7-day suppression), or permanently suppress
+
+### Suggestion Flow
+
+```
+Phase 1: List rules normally (existing rules table)
+Phase 2: Show auto-suggestions if config-awareness has pending items:
+
+  Existing rules:
+  | Rule File | Description | Active |
+  |-----------|-------------|--------|
+  | testing.md | Test conventions | ✓ |
+
+  Auto-suggestions (from config-awareness):
+  | [SUGGESTED] | Description | Priority |
+  |-------------|-------------|----------|
+  | security-review | Auth module detected, no security rules | HIGH |
+  | api-conventions | Express API detected | MEDIUM |
+
+Phase 3: User selects suggestion → template-based creation with confirmation gate
+```
+
+### Integration
+
+config-awareness runs on session start via `setup.js` hook. Its suggestions persist in `.claude/config-awareness-state.json` and are consumed by `/x-help rules` when listing rules.
+
+- **Source skill**: @skills/config-awareness/ (Phase 4: Suggestion Presentation)
+- **Templates**: @skills/config-awareness/references/templates/
+
 ## Critical Rules
 
 1. **Specific** - Clear conditions

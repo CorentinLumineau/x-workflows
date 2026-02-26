@@ -1,13 +1,13 @@
 ---
 name: error-recovery
 description: Use when a tool call fails, a network error occurs, or a session interruption is detected. Applies recovery strategies.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: behavioral
 ---
 

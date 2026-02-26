@@ -1,6 +1,7 @@
 ---
 name: x-brainstorm
 description: Use when starting from a vague idea that needs structured exploration.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "<topic or idea>"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: x-research

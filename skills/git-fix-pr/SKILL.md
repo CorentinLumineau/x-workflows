@@ -1,6 +1,7 @@
 ---
 name: git-fix-pr
 description: Use when a PR needs fixes from review feedback, CI failures, or reviewer comments.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "<pr-number> [inline-findings...]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-review-pr

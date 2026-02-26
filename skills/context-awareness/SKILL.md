@@ -1,13 +1,13 @@
 ---
 name: context-awareness
 description: Use when session starts or context needs detection. Identifies environment, session state, and tool availability.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: behavioral
 ---
 
@@ -324,6 +324,10 @@ Before execution:
 2. Check tool availability (gh, npm, docker)
 3. Adapt workflow based on available tools
 ```
+
+### Consumers
+
+- **config-awareness** uses environment data from context-awareness for project stack detection (MCP tool `project_context` or fallback scanning)
 
 ---
 

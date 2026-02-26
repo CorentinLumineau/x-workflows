@@ -1,6 +1,7 @@
 ---
 name: x-prompt
 description: Use when a prompt needs structuring and optimization for LLM execution.
+version: "1.1.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read AskUserQuestion
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[create|refine] <prompt text>"
 metadata:
   author: ccsetup contributors
-  version: "1.1.0"
   category: workflow
 ---
 

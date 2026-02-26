@@ -1,6 +1,7 @@
 ---
 name: x-auto
 description: Use when you have a task but are unsure which workflow or command to use.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "<task description>"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to: []
 chains-from:

@@ -1,6 +1,7 @@
 ---
 name: git-review-multiple-pr
 description: Use when multiple pull requests need batch review with parallel code, security, and test analysis.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[pr-numbers...] [--unreviewed]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-merge-pr

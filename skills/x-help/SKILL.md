@@ -1,6 +1,7 @@
 ---
 name: x-help
 description: Use when you need help finding the right command or understanding available workflows.
+version: "2.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[commands|context]"
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
   category: workflow
 ---
 

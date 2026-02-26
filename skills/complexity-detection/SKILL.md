@@ -1,12 +1,12 @@
 ---
 name: complexity-detection
 description: Use when routing a task to determine workflow complexity. Analyzes intent and scope for workflow selection.
+version: "2.1.0"
 license: Apache-2.0
 allowed-tools: Read Grep Glob
 user-invocable: false
 metadata:
   author: ccsetup contributors
-  version: "2.1.0"
   category: behavioral
 ---
 

@@ -1,13 +1,13 @@
 ---
 name: worktree-awareness
 description: Auto-triggered on worktree context or parallelizable work. Manages worktree lifecycle suggestions.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code. Worktree features require git and Claude Code EnterWorktree/Task isolation support.
 allowed-tools: Read Grep Glob Bash
 user-invocable: false
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: behavioral
 ---
 

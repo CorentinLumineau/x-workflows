@@ -24,11 +24,24 @@
 | test | Adding tests |
 | chore | Maintenance |
 
+## Footer: Issue Closure
+
+When committing directly to the default branch (main/master), append issue-closing footer:
+
+| Keyword | Example |
+|---------|---------|
+| Closes | `Closes #42` |
+| Fixes | `Fixes #42` |
+| Resolves | `Resolves #42` |
+
+Only for direct-to-main commits. Feature branches use PR description footers instead.
+
 ## Guidelines
 
 - **Subject**: Imperative mood, <50 chars
 - **Body**: Explain what and why, not how
 - **Scope**: Derived from group name (last path segment)
+- **Footer**: Closes #N for direct-to-main commits linked to an issue
 
 ## Safety Rules
 

@@ -1,14 +1,14 @@
 ---
 name: git-commit
 description: Use when code changes are complete and verified, ready to commit to git.
+version: "2.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
 user-invocable: true
-argument-hint: "[message]"
+argument-hint: "[message] [closes #N]"
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
   category: workflow
 chains-to:
   - skill: git-create-pr
@@ -79,6 +79,34 @@ If current branch is `main`, `master`, or `develop`:
 - **WARN** user: "You are committing directly to protected branch"
 - Force `@skills/interview/` activation (no bypass) to confirm intent
 - If user declines: suggest `git checkout -b feature/my-change` first
+
+**Issue-closing awareness** (main/master only):
+
+If current branch is `main` or `master` (NOT `develop`):
+
+1. **Check $ARGUMENTS** for issue reference pattern:
+   - Match: `closes? #(\d+)`, `fix(?:es)? #(\d+)`, `resolve[sd]? #(\d+)` (case-insensitive)
+   - If found: extract issue number → `CLOSE_ISSUE_NUMBER`, strip pattern from arguments
+
+2. **If no issue in $ARGUMENTS**, offer interactive linking:
+
+<workflow-gate type="choice" id="issue-link">
+  <question>You are committing directly to {branch}. Link this commit to close an issue?</question>
+  <header>Issue closure</header>
+  <option key="enter-number">
+    <label>Enter issue number</label>
+    <description>Append "Closes #N" footer to commit message(s) — auto-closes the issue on push</description>
+  </option>
+  <option key="skip" recommended="true">
+    <label>Skip</label>
+    <description>Commit without issue reference</description>
+  </option>
+</workflow-gate>
+
+   - "Enter issue number" → prompt for number, validate positive integer, store as `CLOSE_ISSUE_NUMBER`
+   - "Skip" → `CLOSE_ISSUE_NUMBER = null`, proceed normally
+
+3. If `CLOSE_ISSUE_NUMBER` set, confirm: `Issue linking: Commits will include "Closes #N" footer`
 
 **Confidence check** (conditional):
 
@@ -220,6 +248,10 @@ Present groups table to user:
    {type}({scope}): {description}
 
    {body}
+
+   {{#if CLOSE_ISSUE_NUMBER}}
+   Closes #{CLOSE_ISSUE_NUMBER}
+   {{/if}}
    EOF
    )"
 
@@ -233,8 +265,9 @@ Present groups table to user:
 1. Determine dominant type across all groups
 2. Use broadest scope (or omit scope if too diverse)
 3. Generate combined description
-4. Present for confirmation (text prompt)
-5. `git add` all files → single `git commit` → `git status`
+4. If `CLOSE_ISSUE_NUMBER` is set, append `Closes #N` footer (same pattern as per-group)
+5. Present for confirmation (text prompt)
+6. `git add` all files → single `git commit` → `git status`
 
 **Safety enforced throughout**:
 - Never use `git add -A` or `git add .` — always add specific files
@@ -246,6 +279,9 @@ Present groups table to user:
 
 Present commit summary table (see [references/conventional-format.md](references/conventional-format.md) for format).
 
+If `CLOSE_ISSUE_NUMBER` was set:
+> Issue closure: Commits include "Closes #N" — issue will auto-close on push to {branch}
+
 Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Protocol.
 
 </instructions>
@@ -256,7 +292,7 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 |----------------|--------|---------|
 | **Critical** | ALWAYS ASK | Secrets detected; Strategy selection |
 | **High** | ASK IF ABLE | Type classification ambiguous |
-| **Medium** | ASK IF UNCERTAIN | Per-group commit confirmation |
+| **Medium** | ASK IF UNCERTAIN | Per-group commit confirmation; Issue linking on main/master |
 | **Low** | PROCEED | Standard single-group commit |
 
 ## Workflow Chaining
@@ -314,6 +350,7 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 - [ ] Sensitive files auto-excluded
 - [ ] Atomic commits created with conventional format
 - [ ] Status verified after each commit
+- [ ] Issue footer appended when on main/master and issue number provided
 
 ## References
 

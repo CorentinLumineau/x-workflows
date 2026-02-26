@@ -1,10 +1,10 @@
 ---
 name: interview
 description: Use when about to take a significant action needing confirmation. Confidence gate with human-in-the-loop validation.
+version: "2.0.0"
 category: behavioral
 metadata:
   author: ccsetup contributors
-  version: "2.0.0"
 user-invocable: false
 triggers:
   - ambiguity_detected

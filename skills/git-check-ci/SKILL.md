@@ -1,6 +1,7 @@
 ---
 name: git-check-ci
 description: Use when you need to check CI pipeline status for a branch or pull request.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[pr-number|branch]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-merge-pr
@@ -139,18 +139,34 @@ This workflow activates:
 ## Workflow Chaining
 
 <chaining-instruction>
-**Chains from**: `git-create-pr`
+**Chains from**: `git-create-pr`, `git-implement-issue`
 **Chains to**: `git-merge-pr`, `x-fix`, `git-fix-pr`
 
-**Forward chaining**:
-- If checks passing → suggest `/git-merge-pr`
-- If checks failing on a PR → suggest `/git-fix-pr {number}` to fix PR-specific failures
-- If checks failing on a branch (no PR) → suggest `/x-fix` to investigate
-- Always present CI status table first
+<workflow-gate type="choice" id="ci-result-next">
+  <question>CI check complete. How would you like to proceed?</question>
+  <header>After CI</header>
+  <option key="merge" recommended="true">
+    <label>Merge PR</label>
+    <description>All checks passing — proceed to merge</description>
+  </option>
+  <option key="fix-pr">
+    <label>Fix PR failures</label>
+    <description>Address CI failures on this PR</description>
+  </option>
+  <option key="fix-branch">
+    <label>Fix branch failures</label>
+    <description>Investigate and fix CI failures (no PR context)</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Review CI status without further action</description>
+  </option>
+</workflow-gate>
 
-**Backward compatibility**:
-- Works with any PR creation workflow
-- Can be called standalone for status checks
+<workflow-chain on="merge" skill="git-merge-pr" args="$PR_NUMBER" />
+<workflow-chain on="fix-pr" skill="git-fix-pr" args="$PR_NUMBER" />
+<workflow-chain on="fix-branch" skill="x-fix" args="CI failures: {failure summary}" />
+<workflow-chain on="done" action="end" />
 </chaining-instruction>
 
 ## Safety Rules

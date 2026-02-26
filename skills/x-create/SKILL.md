@@ -1,6 +1,7 @@
 ---
 name: x-create
 description: Use when you need to create a new skill, agent, hook, or component in the ecosystem.
+version: "3.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob
@@ -9,12 +10,12 @@ argument-hint: "[skill|agent|discover] [name]"
 chains-from:
   - x-brainstorm
   - x-design
+  - x-setup
 chains-to:
   - x-implement
   - x-review
 metadata:
   author: ccsetup contributors
-  version: "3.0.0"
   category: workflow
 ---
 
@@ -232,6 +233,7 @@ agents/{name}.md
 ---
 name: skill-name
 description: |
+version: "3.0.0"
   Brief description of what this skill does.
   Activation triggers and use cases.
 license: Apache-2.0
@@ -239,7 +241,6 @@ compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob
 metadata:
   author: your-name
-  version: "1.0.0"
   category: category
 ---
 
@@ -266,6 +267,20 @@ All created components must pass:
 - [ ] Agent-agnostic (no tool-specific refs)
 - [ ] Examples included
 - [ ] References linked
+
+## When to use x-create vs x-setup
+
+| Aspect | x-create | x-setup |
+|--------|----------|---------|
+| Purpose | Build ecosystem components (skills, agents, hooks) | Initialize project or assess agent-readiness |
+| Input | User knows (or discovers) what to build | User wants project-level setup or health check |
+| Output | New component files with frontmatter and structure | Documentation structure (setup) or readiness report (verify) |
+| Scope | Individual component creation | Whole-project assessment |
+| Ecosystem scan | Duplicate detection and gap analysis | Configuration health and coverage assessment |
+| Chains from | x-brainstorm, x-design, **x-setup** (verify recommendations) | — |
+| Chains to | x-implement, x-review | **x-create** (from verify action gate) |
+
+**Rule of thumb**: x-setup tells you "your project needs better agent coverage" — then x-create helps you build the missing agents. x-create's discover mode finds *component* gaps (missing skills, agents); x-setup's verify mode finds *project-level* gaps (missing CLAUDE.md sections, unconfigured MCP, no rules).
 
 ## When to Load References
 

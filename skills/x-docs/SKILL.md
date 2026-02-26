@@ -1,6 +1,7 @@
 ---
 name: x-docs
 description: Use when documentation is stale, missing, or needs sync with code changes.
+version: "3.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Edit Grep Glob
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[generate|sync|verify|cleanup] [path or component]"
 metadata:
   author: ccsetup contributors
-  version: "3.0.0"
   category: workflow
 chains-to: []
 chains-from:

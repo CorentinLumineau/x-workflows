@@ -1,6 +1,7 @@
 ---
 name: git-create-issue
 description: Use when you need to create a new issue on the forge to track a bug, feature, or task.
+version: "1.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash AskUserQuestion
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "<title> [bug|feature|task|docs]"
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: workflow
 chains-to:
   - skill: git-implement-issue
@@ -236,13 +236,21 @@ This workflow activates:
 **Chains from**: None (start of lifecycle)
 **Chains to**: `git-implement-issue`
 
-**Forward chaining**:
-- Always suggest `git-implement-issue` after successful creation
-- User can defer implementation if issue needs triage
+<workflow-gate type="choice" id="post-issue-next">
+  <question>Issue #{issue_number} created. What would you like to do next?</question>
+  <header>After issue</header>
+  <option key="implement" recommended="true">
+    <label>Start implementation</label>
+    <description>Begin implementing this issue immediately</description>
+  </option>
+  <option key="done">
+    <label>Done</label>
+    <description>Issue created — defer implementation for later</description>
+  </option>
+</workflow-gate>
 
-**Issue lifecycle**:
-- This is the entry point for tracked work
-- Creates foundation for issue → branch → PR → merge flow
+<workflow-chain on="implement" skill="git-implement-issue" args="$ISSUE_NUMBER" />
+<workflow-chain on="done" action="end" />
 </chaining-instruction>
 
 ## Safety Rules

@@ -1,12 +1,12 @@
 ---
 name: orchestration
 description: Use when batch detection identifies >5 similar items needing parallel processing. Coordinates parallel batch execution.
+version: "1.0.0"
 license: Apache-2.0
 allowed-tools: Read, Grep, Glob
 user-invocable: false
 metadata:
   author: ccsetup contributors
-  version: "1.0.0"
   category: behavioral
 triggers:
   - batch_operation_detected

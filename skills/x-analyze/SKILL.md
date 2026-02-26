@@ -1,6 +1,7 @@
 ---
 name: x-analyze
 description: Use when you need to assess a codebase before planning changes.
+version: "1.1.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Write Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[path or component]"
 metadata:
   author: ccsetup contributors
-  version: "1.1.0"
   category: workflow
 chains-to:
   - skill: x-plan

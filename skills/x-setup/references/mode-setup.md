@@ -141,6 +141,26 @@ documentation/
 - Database: {database}
 ```
 
+### Phase 5.5: Lightweight Verification Pass
+
+Before presenting next steps, run a quick existence check on the created structure:
+
+1. **Verify created files** — Glob for all expected files:
+   - `documentation/CLAUDE.md` exists
+   - `documentation/config.yaml` exists
+   - Each subfolder has `README.md`
+2. **Report any missing files** — If any expected file was not created (write error, permission issue), flag it:
+   ```
+   ⚠ Missing: documentation/reference/README.md — creation may have failed
+   ```
+3. **Completeness summary**:
+   ```
+   Created: {n}/{total} files successfully
+   ```
+4. **Suggest full assessment**: "Run `/x-setup verify` for a full agent-readiness assessment of your project."
+
+---
+
 ### Phase 6: Next Steps
 
 ```json
@@ -150,6 +170,7 @@ documentation/
     "header": "Next",
     "options": [
       {"label": "Populate docs (Recommended)", "description": "Add initial content"},
+      {"label": "Run readiness check", "description": "Assess full agent-readiness with /x-setup verify"},
       {"label": "Start development", "description": "Begin coding"},
       {"label": "Done", "description": "Setup complete"}
     ],

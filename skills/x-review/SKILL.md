@@ -1,6 +1,7 @@
 ---
 name: x-review
 description: "Use after implementation to perform quality gates, code review, documentation audit, and regression detection."
+version: "3.0.0"
 license: Apache-2.0
 compatibility: Works with Claude Code, Cursor, Cline, and any skills.sh agent.
 allowed-tools: Read Grep Glob Bash
@@ -8,7 +9,6 @@ user-invocable: true
 argument-hint: "[review|quick|audit|docs|spec] [scope or path]"
 metadata:
   author: ccsetup contributors
-  version: "3.0.0"
   category: workflow
 chains-to:
   - skill: git-commit
