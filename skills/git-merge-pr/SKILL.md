@@ -215,6 +215,7 @@ Check that linked issues were closed by the merge. If direct-mode (no PR), manua
 - **For PR state, CI, review, and mergeable validation matrix**: See `references/merge-readiness-checklist.md`
 - **For merge strategy options (squash/rebase/merge) and recommendation heuristics**: See `references/merge-strategy-guide.md`
 - **For issue extraction from PR, forge API closure, and closure gate**: See `references/issue-closure-verification.md`
+- **For git lifecycle FSM states, transition contracts, and common author mistakes**: See `references/git-state-machine-checklist.md`
 
 ## Human-in-Loop Gates
 
@@ -231,24 +232,37 @@ Check that linked issues were closed by the merge. If direct-mode (no PR), manua
 
 <chaining-instruction>
 **Chains from**: `git-check-ci`, `git-review-pr`, `git-resolve-conflict`
-**Chains to**: `git-create-release`, `git-resolve-conflict`, `git-cleanup-branches`, `git-implement-issue`
+**Chains to**: `git-create-release`, `git-cleanup-branches`, `git-implement-issue`
 
-**Forward chaining**:
-- If merged to default branch → suggest `git-create-release`
-- If local branches exist → suggest `git-cleanup-branches`
-- After merge complete → suggest `git-implement-issue` for next issue
+<workflow-gate type="choice" id="post-merge-next">
+  <question>PR merged successfully. What would you like to do next?</question>
+  <header>After merge</header>
+  <option key="release">
+    <label>Create release</label>
+    <description>Start release workflow (if merged to default branch)</description>
+  </option>
+  <option key="next-issue">
+    <label>Next issue</label>
+    <description>Start implementing the next issue</description>
+  </option>
+  <option key="cleanup">
+    <label>Cleanup branches</label>
+    <description>Clean up stale local branches</description>
+  </option>
+  <option key="done" recommended="true">
+    <label>Done</label>
+    <description>No further action needed</description>
+  </option>
+</workflow-gate>
 
-**Backward chaining**:
-- If merge conflicts → chain to `git-resolve-conflict` and return here after resolution
-- Accepts input from any PR validation workflow
+<workflow-chain on="release" skill="git-create-release" args="{merge summary}" />
+<workflow-chain on="next-issue" skill="git-implement-issue" args="" />
+<workflow-chain on="cleanup" skill="git-cleanup-branches" args="" />
+<workflow-chain on="done" action="end" />
 
 **Conflict recovery mode**:
-- If `resume_from_conflict: true` in workflow state → skip Phase 0–1 validation, resume at Phase 2 (merge strategy) or Phase 3 (execute merge)
+- If `resume_from_conflict: true` in workflow state → skip Phase 0–1 validation, resume at Phase 2 or Phase 3
 - Set by `git-resolve-conflict` when chaining back after conflict resolution
-
-<workflow-chain on="clean-local-branch" action="phase5c" />
-<workflow-chain on="close-issue" action="phase5d" />
-<workflow-chain on="suggest-next" skill="git-implement-issue" args="" condition="start next issue" />
 </chaining-instruction>
 
 ## Safety Rules

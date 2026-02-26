@@ -246,6 +246,7 @@ x-auto will assess complexity and route to the appropriate workflow chain (APEX,
 - **For issue discovery API commands, scoring heuristic, and PR cross-reference algorithm**: See `references/issue-selection-guide.md`
 - **For PR creation logic, direct mode recovery, and post-PR gates**: See `references/pr-creation-flow.md`
 - **For PR description template and output format examples**: See `references/pr-description-guide.md`
+- **For git lifecycle FSM states, transition contracts, and common author mistakes**: See `references/git-state-machine-checklist.md`
 
 ## Human-in-Loop Gates
 
@@ -260,10 +261,13 @@ x-auto will assess complexity and route to the appropriate workflow chain (APEX,
 
 <chaining-instruction>
 
-<workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE
+**Chains from**: `git-create-issue`, `git-merge-pr`, `git-quickwins-to-pr`
 
-$ISSUE_BODY" />
-<workflow-chain on="pr-create" action="phase4" />
+Phase-internal chains (triggered by gates within phases):
+- `on="implement"` → x-auto (triggered in Phase 3 after branch setup)
+- `on="existing-pr-review"` → git-review-pr (triggered in Phase 0 PR-awareness gate)
+
+<workflow-chain on="implement" skill="x-auto" args="Implement issue #$ISSUE_NUMBER: $ISSUE_TITLE\n\n$ISSUE_BODY" />
 <workflow-chain on="existing-pr-review" skill="git-review-pr" args="$PR_NUMBER" />
 <workflow-chain on="post-pr-action" skill="git-check-ci" args="$PR_NUMBER" condition="after PR created" />
 <workflow-chain on="direct-mode-pr" skill="git-create-pr" args="" condition="direct mode PR recovery" />
