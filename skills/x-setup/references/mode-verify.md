@@ -247,9 +247,7 @@ Rank recommendations by impact (highest first):
   - If broad gaps → chain to `/x-create discover` for ecosystem gap analysis
   - Carry forward: recommendation list, detected scope, stack info
 
-<workflow-chain target="x-create" trigger="user selects 'create'">
-<context>Pass readiness report gaps as creation candidates. Include: detected scope, stack, missing component types, and priority ranking from recommendations.</context>
-</workflow-chain>
+<workflow-chain on="create" skill="x-create" args="create from readiness report gaps: detected scope, stack, missing component types, and priority ranking from recommendations" />
 
 - **"Re-run project setup"**:
   - Chain to `/x-setup setup` (useful if bare scope detected)
