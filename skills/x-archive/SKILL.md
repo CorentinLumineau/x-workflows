@@ -65,8 +65,21 @@ Before proceeding, verify confidence using `interview` behavioral skill:
 
 ### Phase 1: Completion Verification
 
-<workflow-gate options="archive,defer,cancel" default="archive">
-Confirm initiative is ready for archival — verify all milestones complete, tests passing, documentation updated.
+<workflow-gate id="archive-readiness">
+  <question>Confirm initiative is ready for archival — all milestones complete, tests passing, documentation updated?</question>
+  <header>Archive</header>
+  <option key="archive" recommended="true">
+    <label>Archive now</label>
+    <description>Initiative is complete — move to archived state</description>
+  </option>
+  <option key="defer">
+    <label>Defer archival</label>
+    <description>Not ready yet — continue working on remaining items</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort archival process</description>
+  </option>
 </workflow-gate>
 
 Verify initiative is ready for archival:

@@ -84,8 +84,9 @@ Classify the question to select the right tool:
 
 #### For Codebase Questions
 
-<agent-delegate subagent="codebase explorer" context="Codebase questions requiring file search and pattern discovery">
-Delegate to a codebase explorer agent for fast, read-only codebase investigation.
+<agent-delegate role="codebase explorer" subagent="x-explorer" model="haiku">
+  <prompt>Delegate to a codebase explorer agent for fast, read-only codebase investigation.</prompt>
+  <context>Codebase questions requiring file search and pattern discovery</context>
 </agent-delegate>
 
 Delegate to a **codebase explorer** agent (fast, read-only):
@@ -95,8 +96,9 @@ Then synthesize the explorer's findings into a direct answer.
 
 #### For Library Questions
 
-<doc-query library="$DETECTED_LIBRARY" topic="$QUESTION">
-Use Context7 MCP for authoritative library documentation: resolve-library-id then query-docs.
+<doc-query trigger="library-question">
+  <purpose>Use Context7 MCP for authoritative library documentation: resolve-library-id then query-docs.</purpose>
+  <context>Library: $DETECTED_LIBRARY, Topic: $QUESTION</context>
 </doc-query>
 
 Use Context7 for authoritative documentation:
@@ -109,8 +111,9 @@ Use Context7 for authoritative documentation:
 
 #### For External Information
 
-<web-research query="$QUESTION" sources="WebSearch,WebFetch">
-Use WebSearch for current information, then WebFetch for detail extraction with source attribution.
+<web-research trigger="external-information">
+  <purpose>Use WebSearch for current information, then WebFetch for detail extraction with source attribution.</purpose>
+  <strategy>1. WebSearch for broad results, 2. WebFetch for specific page extraction, 3. Synthesize with source attribution</strategy>
 </web-research>
 
 Use WebSearch for current information, then WebFetch for detail:

@@ -42,8 +42,9 @@ Analyze documentation state.
 This skill activates:
 - `interview` - Zero-doubt confidence gate (Phase 0)
 
-<agent-delegate subagent="documentation writer" context="Large documentation generation or API documentation">
-Delegate to a documentation writer agent for comprehensive doc generation.
+<agent-delegate role="documentation writer" subagent="x-doc-writer" model="sonnet">
+  <prompt>Delegate to a documentation writer agent for comprehensive doc generation.</prompt>
+  <context>Large documentation generation or API documentation</context>
 </agent-delegate>
 
 ## Agent Delegation
@@ -64,8 +65,25 @@ Activate `@skills/interview/` if:
 
 ### Phase 1: Documentation Analysis
 
-<workflow-gate options="generate,sync,verify,cleanup" default="sync">
-Determine documentation action based on user intent and detected drift.
+<workflow-gate id="docs-action">
+  <question>What documentation action is needed based on user intent and detected drift?</question>
+  <header>Docs action</header>
+  <option key="generate">
+    <label>Generate</label>
+    <description>Create new documentation from scratch</description>
+  </option>
+  <option key="sync" recommended="true">
+    <label>Sync</label>
+    <description>Update existing docs to match current code</description>
+  </option>
+  <option key="verify">
+    <label>Verify</label>
+    <description>Check documentation accuracy without changes</description>
+  </option>
+  <option key="cleanup">
+    <label>Cleanup</label>
+    <description>Remove stale or redundant documentation</description>
+  </option>
 </workflow-gate>
 
 Determine what's needed:

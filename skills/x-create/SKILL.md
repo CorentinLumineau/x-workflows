@@ -163,13 +163,20 @@ Determine the correct repository and path for the new component.
 </deep-think>
 
 <workflow-gate id="routing-confirmation">
-<purpose>Confirm routing decision with user before proceeding to creation</purpose>
-<context>Show the user: component type classification, target repository, resolved file path, and routing rationale. Allow override if the auto-detected route is wrong.</context>
-<options>
-  <option id="confirm">Proceed with detected route</option>
-  <option id="override">Choose different target</option>
-  <option id="abort">Cancel creation</option>
-</options>
+  <question>Confirm routing decision: component type, target repository, resolved file path, and routing rationale shown above. Proceed?</question>
+  <header>Routing</header>
+  <option key="confirm" recommended="true">
+    <label>Proceed with detected route</label>
+    <description>Route is correct — continue to creation</description>
+  </option>
+  <option key="override">
+    <label>Choose different target</label>
+    <description>Override the auto-detected routing</description>
+  </option>
+  <option key="abort">
+    <label>Cancel creation</label>
+    <description>Abort the creation process</description>
+  </option>
 </workflow-gate>
 
 **Protocol**: See `references/routing-rules.md` for full decision tree.

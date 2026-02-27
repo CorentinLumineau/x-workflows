@@ -56,8 +56,9 @@ This skill activates:
 
 Activate `@skills/complexity-detection/` on the user's task description.
 
-<deep-think purpose="complexity assessment" context="Classifying user task for optimal workflow routing">
-Think step-by-step about: workflow intent (APEX/ONESHOT/DEBUG/BRAINSTORM), complexity tier (LOW/MEDIUM/HIGH/CRITICAL), recommended agent, variant selection, and suggested chain ordering.
+<deep-think trigger="complexity-assessment">
+  <purpose>Classify user task for optimal workflow routing</purpose>
+  <context>Think step-by-step about: workflow intent (APEX/ONESHOT/DEBUG/BRAINSTORM), complexity tier (LOW/MEDIUM/HIGH/CRITICAL), recommended agent, variant selection, and suggested chain ordering.</context>
 </deep-think>
 
 Produce a **routing context** with the following fields:
@@ -100,8 +101,25 @@ Present the assessment in a structured format:
 
 **CRITICAL: NEVER auto-invoke a workflow without explicit user confirmation.**
 
-<workflow-gate options="proceed,different-workflow,modify,cancel" default="proceed">
-Present routing assessment and wait for explicit user choice before continuing.
+<workflow-gate id="routing-confirmation">
+  <question>Review the routing assessment above. How would you like to proceed?</question>
+  <header>Routing</header>
+  <option key="proceed" recommended="true">
+    <label>Proceed</label>
+    <description>Execute the recommended workflow</description>
+  </option>
+  <option key="different-workflow">
+    <label>Different workflow</label>
+    <description>Choose an alternative workflow</description>
+  </option>
+  <option key="modify">
+    <label>Modify</label>
+    <description>Adjust parameters (agent, variant, chain)</description>
+  </option>
+  <option key="cancel">
+    <label>Cancel</label>
+    <description>Abort routing</description>
+  </option>
 </workflow-gate>
 
 Present options:
