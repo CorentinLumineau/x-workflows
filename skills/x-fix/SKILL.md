@@ -168,6 +168,7 @@ When approval needed, structure question as:
 | Needs implementation | `/x-implement` | No (escalate) |
 
 <chaining-instruction>
+<!-- V-CHAIN-01: AskUserQuestion MUST be called. V-CHAIN-02: Use interactive gate, not prose. -->
 
 **Human approval required**: fix → commit (or verify)
 
@@ -181,11 +182,11 @@ After fix applied and verified:
 <workflow-gate type="choice" id="fix-next">
   <question>Fix applied and verified. What's next?</question>
   <header>After fix</header>
-  <option key="verify">
+  <option key="verify" recommended="true">
     <label>Full verification</label>
     <description>Run all quality gates before committing</description>
   </option>
-  <option key="commit" recommended="true" approval="required">
+  <option key="commit" approval="required">
     <label>Quick commit</label>
     <description>Commit the fix directly (requires approval)</description>
   </option>

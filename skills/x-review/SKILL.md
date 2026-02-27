@@ -281,6 +281,7 @@ Collect V-* violations, determine blocking status (CRITICAL/HIGH → blocking). 
 ## Workflow Chaining
 
 <chaining-instruction>
+<!-- V-CHAIN-01: AskUserQuestion MUST be called. V-CHAIN-02: Use interactive gate, not prose. -->
 
 <workflow-gate type="choice" id="review-next">
   <question>Review complete. How would you like to proceed?</question>

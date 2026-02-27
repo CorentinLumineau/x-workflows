@@ -211,6 +211,7 @@ When approval needed, structure question as:
 | Large scope | `/x-initiative` | No (suggest) |
 
 <chaining-instruction>
+<!-- V-CHAIN-01: AskUserQuestion MUST be called. V-CHAIN-02: Use interactive gate, not prose. -->
 
 **Human approval required**: plan → implement
 

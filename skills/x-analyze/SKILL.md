@@ -221,6 +221,7 @@ When approval needed, structure question as:
 | Needs implementation | `/x-implement` (suggest) |
 
 <chaining-instruction>
+<!-- V-CHAIN-01: AskUserQuestion MUST be called. V-CHAIN-02: Use interactive gate, not prose. -->
 
 After analysis complete:
 

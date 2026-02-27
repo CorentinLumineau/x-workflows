@@ -277,6 +277,7 @@ Uses: @skills/worktree-awareness/ merge-back protocol.
 ## Workflow Chaining
 
 <chaining-instruction>
+<!-- V-CHAIN-01: AskUserQuestion MUST be called. V-CHAIN-02: Use interactive gate, not prose. -->
 
 After implementation complete:
 

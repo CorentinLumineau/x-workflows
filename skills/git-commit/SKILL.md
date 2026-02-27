@@ -246,6 +246,10 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
 <workflow-gate type="choice" id="commit-next">
   <question>{N} commit(s) created. What's next?</question>
   <header>After commit</header>
+  <option key="pr">
+    <label>Create PR</label>
+    <description>Open a pull request for this feature branch (branch != main only)</description>
+  </option>
   <option key="release">
     <label>Create release</label>
     <description>Start release workflow for versioning and publishing</description>
@@ -256,6 +260,7 @@ Write a 1-line summary to MEMORY.md (L2) per the Workflow Completion Write Proto
   </option>
 </workflow-gate>
 
+<workflow-chain on="pr" skill="git-create-pr" args="{branch name and commit summary}" />
 <workflow-chain on="release" skill="git-create-release" args="{commit summary}" />
 <workflow-chain on="done" action="end" />
 
