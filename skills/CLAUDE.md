@@ -1,6 +1,6 @@
 # Skills Navigation
 
-> ccsetup v7.0 - Verb-based workflow skills with 4 canonical workflows + git-forge layer
+> ccsetup v6.28 - Verb-based workflow skills with 4 canonical workflows + git-forge layer
 
 ## Workflows Overview
 
@@ -42,11 +42,11 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 |--------|---------|--------|--------|
 | **x-workflows** | HOW to work | 20 workflow skills | `x-{verb}/` |
 | x-workflows | Git operations | 14 git skills | `git-{verb}-{type}/` |
-| x-workflows | Auto-triggered | 11 behavioral skills | `{name}/` (includes interview, orchestration) |
+| x-workflows | Auto-triggered | 12 behavioral skills | `{name}/` (includes interview, orchestration) |
 | **x-devsecops** | WHAT to know | 22 knowledge skills | `{category}-{skill}/` |
 | **local** | Project-specific | 1 | initiative |
 
-**Total: 68 skills**
+**Total: 69 skills**
 
 ## Verb Skills by Workflow (20)
 
@@ -109,13 +109,14 @@ All skills are organized in a flat structure under `skills/` for Claude Code aut
 | `/git-review-multiple-pr` | Batch PR review | review prs, batch review |
 | `/git-review-pr` | Review pull request | review pr, code review |
 
-## Behavioral Skills (11)
+## Behavioral Skills (12)
 
 | Skill | Purpose |
 |-------|---------|
 | `agent-awareness` | Agent delegation catalog (auto-triggered) |
 | `ci-awareness` | CI pipeline detection and querying (auto-triggered) |
 | `complexity-detection` | Routing logic (auto-triggered) |
+| `config-awareness` | Configuration gap detection (auto-triggered) |
 | `context-awareness` | Context loading (auto-triggered) |
 | `error-recovery` | Error recovery patterns (auto-triggered) |
 | `forge-awareness` | Git forge detection — GitHub/Gitea/GitLab (auto-triggered) |
@@ -236,5 +237,5 @@ For batch orchestrators (`git-review-multiple-pr`, `git-implement-multiple-issue
 
 ## Version
 
-**Version**: 7.0.0
+**Version**: 6.28.0
 **x-workflows**: 2.0.0 (git-forge-layer)
